@@ -101,7 +101,7 @@ TRNUM deg(TAngle &A);
 
 
 
-
+/*
 template<bool POSITIVE_PI_OFFSET=false, int PIx2_OFFSET=0>
 class TAngleR: public TAngle
 {
@@ -147,7 +147,7 @@ public:
 // 	}
 };
 
-
+*/
 
 
 

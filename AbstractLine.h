@@ -283,14 +283,19 @@ public:
 ////////////////////
 	void operator =(const AlPolyline &pl);
 	void Clear();
-	void operator +=(AbstractLine* al);
+    void operator +=(const AbstractLine* al);
+    void operator +=(const AbstractLine &al);
 	void operator +=(AlPolyline pl);
 	AbstractLine * operator [](int i) ;
+    const AbstractLine * operator [](int i) const;
 	AbstractLine * First();
 	AbstractLine * Last();
+    const AbstractLine * First() const;
+    const AbstractLine * Last() const;
 	int Count() const;
 	AbstractLine * At(int index);
-	void Add(AbstractLine* al);
+    void Add(const AbstractLine* al);
+    void Add(const AbstractLine& al);
 	void Insert(int index, AbstractLine *al);
 	void Remove(int index, int len=1);
 	void RemoveFirst();

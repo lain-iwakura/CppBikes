@@ -32,7 +32,7 @@ typedef double TAMETRIC; // тип для хранения угловых величин
 const TAMETRIC TAMETRIC_O=0.000001; // точность TAMETRIC (размерность радианы => точность ~ 3.82e-5 градусов  )
 
 
-// typedef Vector V;
+// typedef Vector Vector;
 // typedef Point P;
 
 

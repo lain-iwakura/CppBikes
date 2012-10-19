@@ -7,6 +7,23 @@
 
  
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+
 // long long iBit64(int i);
 // int iBit32(int i);
 // short iBit16(int i);
@@ -99,21 +116,50 @@ template<class T> int GetTypeID(const T&)
 
 class NullType
 {
-
+public:
+	NullType(){}
 };
 
 template<int iT> struct iType
 {
-	typedef NullType t;	
+	typedef NullType t;
 	enum{val=iT};
 };
 
 
 
 
+// 
+// template <class T1=NullType,class T2=NullType,class T3=NullType,class T4=NullType,class T5=NullType,class T6=NullType,class T7,class T8=NullType,class T9=NullType>
+// class ParametrList
+// {
+// public:
+// 	ParametrList(T1 p1_=T1(), T2 p2_=T2(), T3 p3_=T3(), T4 p4_=T4(), T5 p5_=T5(), T6 p6_=T6(), T7 p7_=T7(), T8 p8_=T8(), T9 p9_=T9()):
+// 		p1(p1_),p2(p2_),p3(p3_),p4(p4_),p5(p5_),p6(p6_),p7(p7_),p8(p8_),p9(p9_)
+// 
+// 	T1 p1;
+// 	T2 p2;
+// 	T3 p3;
+// 	T4 p4;
+// 	T5 p5;
+// 	T6 p6;
+// 	T7 p7;
+// 	T8 p8;
+// 	T9 p9;
+// };
+// 
+// template <class T1=NullType,class T2=NullType,class T3=NullType,class T4=NullType,class T5=NullType,class T6=NullType,class T7,class T8=NullType,class T9=NullType>
+// class AbstructVoidFunction
+// {
+// 
+// };
 
 
-#define REGTYPE(X) template<> struct iType<sizeof(new char[TypeInfo<X>::id])>{typedef X t; enum{val=sizeof(new char[TypeInfo<X>::id])};};
+
+
+
+#define REGTYPE(X) template<> struct iType<TypeInfo<X>::id>{typedef X t; enum {val=TypeInfo<X>::id};};
+//#define REGTYPE(X) template<> struct iType<sizeof(new char[TypeInfo<X>::id])>{typedef X t; enum{val=sizeof(new char[TypeInfo<X>::id])};};
 #define GETTYPE(X) iType<sizeof(new char[GetTypeID(X)])>::t
 #define GETTYPE_I(X) iType<sizeof(new char[GetTypeID(X)])>::val
 

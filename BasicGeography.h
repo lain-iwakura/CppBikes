@@ -4,6 +4,8 @@
 #include "BasicGeometry.h"
 
 
+
+
 // Константы эллипсоида земли:
 const double GEO_A=6378245; // большая полуось [м]
 const double GEO_ALPHA=/*1.0/2.0;//*/(1.0/298.29974); // =(EE_A-EE_B)/EE_A
@@ -29,6 +31,8 @@ struct DegMinSecAngle
 	void setFromDeg(double a_deg);
 	double toRad();
 	double toDeg();
+		
+
 	int sign();
 };
 

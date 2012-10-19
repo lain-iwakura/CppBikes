@@ -592,6 +592,28 @@ void AlCircuit::Clear()
 	InCircuits.clear();
 }
 
+
+struct IntersectionLineModel
+{
+    AlPolyline mash;
+    List<IntersectPoint*> iPoints;
+};
+
+struct CircuitLineModel
+{
+    CircuitLineModel(int l=0, int dl=0, AbstractLine* pL=0, AbstractLine* nL=0)	:Level(l),dLevel(dl),preLine(pL),nextLine(nL)
+    {
+        skipMarker=false;
+        arrayIndex=0;
+    }
+    int Level;
+    int dLevel;
+    AbstractLine* preLine;
+    AbstractLine* nextLine;
+    bool skipMarker;
+    int arrayIndex;
+};
+
 void AlCircuit::operator +=(const AlPolyline &pl)
 {	
 
@@ -603,7 +625,7 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 	OutCircuits.last().Create(pl);
 	OutCircuits.last().Obj().SetCircuitMode(true);
 	AlPolylineCircuit /*plc(pl);//*/&plc=OutCircuits.last().Obj();	
-	if(plc.StartPoint()!=plc.EndPoint()) plc+=&AlLine(plc.EndPoint(),plc.StartPoint());
+    if(plc.StartPoint()!=plc.EndPoint()) plc+=AlLine(plc.EndPoint(),plc.StartPoint());
 	plc.Last()->setNext(plc.First());
 
 //////////////////////////////////////////////////////////////
@@ -629,29 +651,10 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 //
 
 
-	struct IntersectionLineModel
-	{
-		AlPolyline mash;
-		List<IntersectPoint*> iPoints;
-	};
 
-	struct CircuitLineModel
-	{
-		CircuitLineModel(int l=0, int dl=0, AbstractLine* pL=0, AbstractLine* nL=0)	:Level(l),dLevel(dl),preLine(pL),nextLine(nL)
-		{
-			skipMarker=false;
-			arrayIndex=0;
-		}
-		int Level;
-		int dLevel;
-		AbstractLine* preLine;
-		AbstractLine* nextLine;		
-		bool skipMarker;
-		int arrayIndex;
-	};
 
 	ContainerModelMap<AlPolyline> mash; // разбивка
-	ContainerModelMap<List<IntersectPoint*> > iPoints; // точки пересечения
+    ContainerModelMap<List<IntersectPoint* > > iPoints; // точки пересечения
 	ContainerModelMap<CircuitLineModel> clm; // уровни и связи
 
 	List<List<IntersectPoint*> > iPointsCrit;
@@ -747,7 +750,7 @@ int curLevel=0;
 		{
 			mash[plci].TakeLine(pBAL);
 			clm[mash[plci].Last()].Level=curLevel;
-			circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
+            circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
 		}
 
 	}
@@ -1198,7 +1201,7 @@ return;
 // 				rCirc.Obj()+=Ltr;
 // 				Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 // 				Vector v2=CurStartLine->StartPoint()&&CurStartLine->EndPoint();
-// 				Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+// 				Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 // 				break;
 			} else CurEndLineBR=false;
 			if(Ltr->markers[LM_NOINTERSECTIONS]||Ltr->markers[LM_TRAVERSE])
@@ -1209,7 +1212,7 @@ return;
 				Itr=plc.iRelative(Itr,+1);
 				Ltr=plc[Itr];	
 				Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-				Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+				Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 				continue;
 			}
 
@@ -1281,7 +1284,7 @@ return;
 						Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 						Ltr=Ltrtr;
 						Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 						Itr=plc.iLine(Ltr);
 					}												
 				}else // а если не нашли
@@ -1292,7 +1295,7 @@ return;
 						rCirc.Obj()+=Ltr;
 						Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 						Vector v2=CurStartLine->StartPoint()&&CurStartLine->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 						break;
 					}else
 					{					
@@ -1302,7 +1305,7 @@ return;
 						Itr=plc.iRelative(Itr,+1);
 						Ltr=plc[Itr];	
 						Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 					}
 				}
 		}
@@ -1473,8 +1476,8 @@ List<Point> MaxCircuit(List<Point> *ps) // что это??
 }
 
 
-TMETRIC CircuitAreaABS(List<Point> &ps){return abs(CircuitArea(ps));}
-TMETRIC CircuitArea(List<Point> &ps)
+TMETRIC CircuitAreaABS(const List<Point> &ps){return abs(CircuitArea(ps));}
+TMETRIC CircuitArea(const List<Point> &ps)
 {
 	if(ps.count()<3) return 0;
 	TMETRIC A=0;
@@ -1483,15 +1486,15 @@ TMETRIC CircuitArea(List<Point> &ps)
 	{
 		Vector v(ps[0],ps[i-1]);
 		b.SetOrtoBasis_InXY_ByI(v);
-		ps[i].SetBasis(&b);
-		A+=ps[i].y()*TMETRIC(0.5)*v.length();
+        //ps[i].SetBasis(&b);
+        A+=ps[i].ly(&b)*TMETRIC(0.5)*v.length();
 	}
 	return A;
 }
 
-TMETRIC APolylineCircuitAreaABS(AlPolyline &pl){return abs(APolylineCircuitArea(pl));}
+TMETRIC APolylineCircuitAreaABS(const AlPolyline &pl){return abs(APolylineCircuitArea(pl));}
 
-TMETRIC APolylineCircuitArea(AlPolyline &pl)
+TMETRIC APolylineCircuitArea(const AlPolyline &pl)
 {
 	TMETRIC A=0;
 
@@ -1527,7 +1530,7 @@ TMETRIC APolylineCircuitArea(AlPolyline &pl)
 		{
 			A+=CircuitArea(pl[i]->toPolyline());
 		}
-	}
+    }
 	return A;
 }
 

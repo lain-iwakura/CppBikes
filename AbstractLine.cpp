@@ -64,7 +64,12 @@ bool AbstractLine::isLinesCollapsed(AbstractLine *l1, AbstractLine *l2, TMETRIC 
 	return false;
 }
 
-AbstractLine::AbstractLine( LineType lt/*=LT_NULL*/, AbstractLine *parentLine/*=0*/ ){line_type=lt;  parent=parentLine; LEN=0;}
+AbstractLine::AbstractLine( LineType lt/*=LT_NULL*/, AbstractLine *parentLine/*=0*/ )
+{
+    line_type=lt;
+    parent=parentLine;
+    LEN=0;
+}
 AbstractLine::AbstractLine( const AbstractLine &al ) :p1(al.p1),p2(al.p2),pM(al.pM),LEN(al.LEN),parent(0){line_type=al.line_type;}
 
 AbstractLine* AbstractLine::clone() const{return new AbstractLine(*this);}
@@ -84,8 +89,8 @@ Vector AbstractLine::InDirection() const{return p1==pM?v_null:Vector(p1,pM).e();
 Vector AbstractLine::MiddleDirection() const{return sDirection(length()/2);}
 Vector AbstractLine::sDirection( TMETRIC s ) const{	if(s<0) return Vector(false,InDirection()); if(s>length()) return Vector(false,OutDirection()); Vector r(OutDirection()*s+InDirection()*(length()-s)); r.fulcrum=PointFromSCoordinate(s); return r.e();}
 
-TMETRIC AbstractLine::SCoordinateFromPoint( const Point &p ) const{	return p.lx(&OrtoBasis_InXY_ByI(Vector(p1,p2)));}
-Point AbstractLine::PointFromSCoordinate( TMETRIC s ) const{return Point(s,0,0,&OrtoBasis_InXY_ByI(Vector(p1,p2)));}
+TMETRIC AbstractLine::SCoordinateFromPoint( const Point &p ) const{ Basis b; b.SetOrtoBasis_InXY_ByI(Vector(p1,p2));	return p.lx(&b);}
+Point AbstractLine::PointFromSCoordinate( TMETRIC s ) const{Basis b; b.SetOrtoBasis_InXY_ByI(Vector(p1,p2)); return Point(s,0,0,&b);}
 bool AbstractLine::PointBelongToLine( const Point &p ) const{TMETRIC s=SCoordinateFromPoint(p); if((s<-TMETRIC_O)||(s>(length()+TMETRIC_O))) return false; return p==PointFromSCoordinate(s);}
 
 Vector AbstractLine::InRCurvature() const{return v_null;}
@@ -351,9 +356,13 @@ void AlArcline::ArcConjugationBy2LinesAndRadiusOpt(AlLine &l1, AlLine &l2, TMETR
 	Point crl1=(v1*h).destination();
 	Point crl2=(v2*h).destination();
 	angle=PI-a;
-	Vector or=(v2*v1)*v1; or.fulcrum=crl1;
-	Point O=vm.Intersection(or); or.fulcrum=O;
-	arcbas.SetOrtoBasis_ByIJ(or,v1*(-1));	
+
+    Vector or_((v2*v1)*v1);
+
+    or_.fulcrum=crl1;
+    Point O(vm.Intersection(or_));
+    or_.fulcrum=O;
+    arcbas.SetOrtoBasis_ByIJ(or_,v1*(-1));
 
 	Set(arcbas,r,angle);
 
@@ -461,7 +470,12 @@ AlPolyline::AlPolyline(List<Point> &ps):AbstractLine(LT_POLYLINE)
 {	
 	pltype=POLY_AUTOJOINING;
 	circuitMode=false;
-	for(int i=0; i<ps.count()-1; i++) Add(&AlLine(ps[i],ps[i+1]));
+    AlLine al;
+    for(int i=0; i<ps.count()-1; i++)
+    {
+        al.Set(ps[i],ps[i+1]);
+        Add(&al);
+    }
 }
 
 void AlPolyline::Set(const AlPolyline &pl)
@@ -636,7 +650,13 @@ void AlPolyline::operator +=(AlPolyline pl)
 	for(int i=0; i<pl.Count(); i++) Add(pl[i]);
 }
 
-void AlPolyline::operator +=(AbstractLine *al)
+
+void AlPolyline::operator +=(const AbstractLine &al)
+{
+    (*this)+=&al;
+}
+
+void AlPolyline::operator +=(const AbstractLine *al)
 {
 	//	if(Line *lal(dynamic_cast<Line *>(al)))
 	//	nal = new Line(*lal);
@@ -673,6 +693,12 @@ AbstractLine * AlPolyline::operator [](int i)
 	if((i<0)||(i>=Count())) return 0;		
 	return lines[i];
 }
+
+ const AbstractLine * AlPolyline::operator [](int i) const
+ {
+     if((i<0)||(i>=Count())) return 0;
+     return lines[i];
+ }
 
 void AlPolyline::Insert(int i, AbstractLine *al)
 {
@@ -716,7 +742,8 @@ void AlPolyline::Remove(int index, int len)
 }
 void AlPolyline::RemoveFirst() {Remove(0);}
 void AlPolyline::RemoveLast(){Remove(Count()-1);}
-void AlPolyline::Add(AbstractLine *al){*this+=al;}
+void AlPolyline::Add(const AbstractLine *al){*this+=al;}
+void AlPolyline::Add(const AbstractLine &al){*this+=al;}
 
 
 
@@ -998,9 +1025,9 @@ void AlPolyline::TurnFromDirectionToDirection2(const Vector &dir1, const Vector 
 				AlLine cl(Point(0,-r,0,&b),Point(O1O2,-r,0,&b));
 				Basis ab1; ab1.SetOrtoBasis_ByIJ(vO1[i1].fulcrum&&T1,vO1[i1]*(vO1[i1].fulcrum&&T1));
 				Basis ab2; ab2.SetOrtoBasis_ByIJ(vO2[i2].fulcrum&&cl.EndPoint(),vO2[i2]*(vO2[i2].fulcrum&&cl.EndPoint()));				
-				pl+=&AlArcline(ab1,r,cl.StartPoint()[ab1].PolarAlpha());
+                pl+=AlArcline(ab1,r,cl.StartPoint()[ab1].PolarAlpha());
 				pl+=&cl;
-				pl+=&AlArcline(ab2,r,T2[ab2].PolarAlpha());	
+                pl+=AlArcline(ab2,r,T2[ab2].PolarAlpha());
 				
 			}else if(O1O2>=2*r) // перекрестное сопряжение
 			{
@@ -1014,9 +1041,9 @@ void AlPolyline::TurnFromDirectionToDirection2(const Vector &dir1, const Vector 
 				AlLine cl(Point(cx,cy,0,&b),Point(O1O2-cx,-cy,0,&b));
 				Basis ab1; ab1.SetOrtoBasis_ByIJ(vO1[i1].fulcrum&&T1,vO1[i1]*(vO1[i1].fulcrum&&T1));
 				Basis ab2; ab2.SetOrtoBasis_ByIJ(vO2[i2].fulcrum&&cl.EndPoint(),vO2[i2]*(vO2[i2].fulcrum&&cl.EndPoint()));
-				pl+=&AlArcline(ab1,r,cl.StartPoint()[ab1].PolarAlpha());
+                pl+=AlArcline(ab1,r,cl.StartPoint()[ab1].PolarAlpha());
 				pl+=&cl;
-				pl+=&AlArcline(ab2,r,T2[ab2].PolarAlpha());	
+                pl+=AlArcline(ab2,r,T2[ab2].PolarAlpha());
 			}
 		}
 	}
@@ -1193,7 +1220,7 @@ void AlPolyline::TurnFromPointToDirection( Vector dir,  Point p, TMETRIC r)
 		angle=aO1Op-a_;
 		//////////////////////////////////////////////////////////////////////////
 		AlArcline al(arcbas,r,angle);
-		Add(&AlLine(p,al.EndPoint()));
+        Add(AlLine(p,al.EndPoint()));
 		Add(&al);
 	}
 	else
@@ -1477,6 +1504,10 @@ AlPolyline* AlPolyline::clone() const{return new AlPolyline(*this);}
 
 AbstractLine * AlPolyline::First(){	if(!Count()) return 0; return lines.first();}
 AbstractLine * AlPolyline::Last(){	if(!Count()) return 0; return lines.last();}
+const AbstractLine * AlPolyline::First() const {	if(!Count()) return 0; return lines.first();}
+const AbstractLine * AlPolyline::Last() const {	if(!Count()) return 0; return lines.last();}
+
+
 int AlPolyline::Count() const{return lines.size();}
 AbstractLine* AlPolyline::ChildrenLine( int index ){return (*this)[index];}
 AbstractLine * AlPolyline::At( int index ){	return (*this)[index];}

@@ -132,10 +132,10 @@ bool PointInCircuit(Point p, List<Point> *circuit, bool closed=true); // +
 List<int> MaxCircuit_i(List<Point> *ps); // -
 List<Point> MaxCircuit(List<Point> *ps); // ?
 
-TMETRIC CircuitArea(List<Point> &ps); // +
-TMETRIC CircuitAreaABS(List<Point> &ps); // +
-TMETRIC APolylineCircuitArea(AlPolyline &pl); // +
-TMETRIC APolylineCircuitAreaABS(AlPolyline &pl); // +
+TMETRIC CircuitArea(const List<Point> &ps); // +
+TMETRIC CircuitAreaABS(const List<Point> &ps); // +
+TMETRIC APolylineCircuitArea(const AlPolyline &pl); // +
+TMETRIC APolylineCircuitAreaABS(const AlPolyline &pl); // +
 
 
 class AlPolylineCircuit: public AlPolyline

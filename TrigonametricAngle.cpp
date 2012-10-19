@@ -66,7 +66,7 @@ TAngle::TAngle(const TAngle &a)
 
 void TAngle::SetPositivePiOffset(bool positive_pi_offset)
 {
-	if(RAD.Exist()&&(positive_pi_offset!=pi_offset))
+    if( RAD.Exist() && (positive_pi_offset!=pi_offset))
 	{
 		//RAD=nAngle(RAD,positive_pi_offset);
 		if(positive_pi_offset)

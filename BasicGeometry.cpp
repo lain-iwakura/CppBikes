@@ -5,7 +5,7 @@
 ////////////////////////// POINT /////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-Point::Point(TMETRIC plx,TMETRIC ply,TMETRIC plz, const Basis *b,bool notransient)
+Point::Point(TMETRIC plx, TMETRIC ply, TMETRIC plz, const Basis *b, bool notransient)
 {
 	_transient=!notransient;
 	basis=0;
@@ -13,7 +13,7 @@ Point::Point(TMETRIC plx,TMETRIC ply,TMETRIC plz, const Basis *b,bool notransien
 	gy=ply;
 	gz=plz;
 	ReplaceGBasis(b);	
-	_null=false;		
+	_null=false;	
 }
 
 Point::Point(bool IsNotNull, const Point &p,bool notransient)
@@ -195,7 +195,7 @@ Point& Point::Rotate_Z(TAMETRIC a)
 
 bool Point::operator ==(const Point &p) const
 {
-	if(abs(p.gx-gx)<TMETRIC_O&&abs(p.gy-gy)<TMETRIC_O&&abs(p.gz-gz)<TMETRIC_O) return true; 
+	if(Abs(p.gx-gx)<TMETRIC_O&&Abs(p.gy-gy)<TMETRIC_O&&Abs(p.gz-gz)<TMETRIC_O) return true; 
 	return false;
 }
 
@@ -386,7 +386,7 @@ Vector Vector::operator *(TMETRIC n)const {return Vector(gx*n,gy*n,gz*n,fulcrum,
 Vector Vector::operator /(TMETRIC n)const {not0set(n); return Vector(gx/n,gy/n,gz/n,fulcrum,0,false);}
 void Vector::operator *=(TMETRIC n){gx*=n;gy*=n;gz*=n;}
 void Vector::operator /=(TMETRIC n){not0set(n); gx/=n; gy/=n; gz/=n;}
-bool Vector::operator ==(const Vector &v)const {return (abs(v.gx-gx)<TMETRIC_O)&&(abs(v.gy-gy)<TMETRIC_O)&&(abs(v.gz-gz)<TMETRIC_O);}
+bool Vector::operator ==(const Vector &v)const {return (Abs(v.gx-gx)<TMETRIC_O)&&(Abs(v.gy-gy)<TMETRIC_O)&&(Abs(v.gz-gz)<TMETRIC_O);}
 bool Vector::operator !=(const Vector &v)const {return !(*this==v);}
 Vector Vector::operator -() const {return (*this)*(-1);}
 //////// extra operators ///////
@@ -475,7 +475,7 @@ Vector& Vector::rotate_W(const Vector &w, TAMETRIC a) //+?
 		Vector vzsh=ew*zsh;
 		Vector vrsh=*this-vzsh;
 		a=NormAngle(a);
-		TAMETRIC aa=abs(a);
+		TAMETRIC aa=Abs(a);
 		int sa=a>0?1:-1;
 		aa=NormAngle(aa);
 		while(aa>=PI/2){aa-=PI/2;vrsh=ew*vrsh*sa;}
@@ -506,7 +506,7 @@ Vector& Vector::rotateWithoutFulcrum_W(const Vector &w, TAMETRIC a) //+?
 		Vector vzsh=ew*zsh;
 		Vector vrsh=*this-vzsh;
 		a=NormAngle(a);
-		TAMETRIC aa=abs(a);
+		TAMETRIC aa=Abs(a);
 		int sa=a>0?1:-1;
 		while(aa>=PI/2){aa-=PI/2;vrsh=ew*vrsh*sa;}
 		if(aa>PI/4){aa-=PI/4; vrsh=((ew*vrsh*sa)+vrsh).e()*rsh;}
@@ -556,14 +556,15 @@ Point Vector::Intersection(const Vector &v) const//+?
 bool Vector::isParallel(const Vector &v1, const Vector &v2) // +
 {
 	TMETRIC v1v2=v1.e()&v2.e();
-	if(isEqual(abs(v1v2),1,TMETRIC_O)) return true;
+	if(isEqual(Abs(v1v2),1,TMETRIC_O)) return true;
 	return false;
 }
 
 TMETRIC Vector::ParallelDistance(const Vector &v1, const Vector &v2) //+?
 {
-//	if(!isParallel(v1,v2)) return 0;	
-	return v2.fulcrum.ly(&(v1&&v2.fulcrum));
+//	if(!isParallel(v1,v2)) return 0;
+    Basis b(v1&&v2.fulcrum);
+    return v2.fulcrum.ly(&b);
 }
 
 Vector& Vector::invert()

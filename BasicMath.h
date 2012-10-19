@@ -62,6 +62,13 @@ T MIN(T x, T y)
 	return y;
 }
 
+template<class T>
+T Abs(T val)
+{
+    if(val<0) return -val;
+    return val;
+}
+
 enum MathFunctionResultType
 {
 	MATHFUNC_NORMAL_RESULT,

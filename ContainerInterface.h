@@ -1,12 +1,12 @@
 #ifndef CONTAINERINTERFACE_H
 #define CONTAINERINTERFACE_H
 #include <vector>
-
+#include <stdlib.h>
 
 template<class T> class List : public std::vector<T*>
 {
 	typedef std::vector<T*> Container;
-
+    using Container::begin;
 public:
 
 	List(){}	
@@ -92,7 +92,7 @@ public:
 	{
 		int c=size();
 		//if(c==0) return T();
-		if(abs(i)%c==0) return *Container::operator[](0);
+        if(abs(i)%c==0) return *Container::operator[](0);
 		else if(i<0)
 		{			
 			return *Container::operator[]( c-((-i)%c) );
@@ -114,7 +114,7 @@ public:
 
 	void remove_i1i2(int i1,int i2)
 	{
-		if(i1>=0&&i1<size()&&i2=>0&&i2<size()&&i2=>i1)
+        if(i1>=0&&i1<size()&&i2>=0&&i2<size()&&i2>=i1)
 		{
 			for(int i=i1; i<=i2; i++) delete Container::operator [](i);
 			erase(begin()+i1,begin()+i2);

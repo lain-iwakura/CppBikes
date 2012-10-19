@@ -24,7 +24,7 @@ public:
 
 	T& At(int i) 
 	{
-		pmap::iterator it(this->begin());
+        typename std::map<void*,T>::iterator it(this->begin());
 		for(int j=0; j<i; j++)it++;
 
 		return pmap::operator [](it->first);
@@ -32,7 +32,7 @@ public:
 
 	int Count() const
 	{
-		return size();
+        return this->size();
 	}
 
 //	using pmap::size;
@@ -121,8 +121,8 @@ public:
 	}
 	template<class T> ContainerModelMapItem<T>* ModelT(ContainerModelMap<T> *)
 	{
-		if(TypeInfo<T>::id >=_models.size()) return 0;
-		return _models[TypeInfo<T>::id];
+    //	if(TypeInfo<T>::id >=_models.size()) return 0;
+        return 0;//_models[TypeInfo<T>::id];
 		//static T o;//?
 		//static List<T> lo; //?
 	}
@@ -145,8 +145,8 @@ public:
 
 	template<class T> void SetModelT(T * pO)
 	{
-		for(int i=_models.size(); i<=TypeInfo<T>::id; i++) _models.push_back(0);
-		_models[TypeInfo<T>::id]=pO;
+//		for(int i=_models.size(); i<=TypeInfo<T>::id; i++) _models.push_back(0);
+    //	_models[TypeInfo<T>::id]=pO;
 	}
 
 
@@ -284,7 +284,7 @@ public:
 
 private:
 	int contIndex;
-	List<ContainerModelMapItem<T>> contents;
+    List<ContainerModelMapItem<T> > contents;
 
 // 	void ItemContainerLeaved(/*int index,*/ContainerModelMapItem<T>* cmmi, AbstractContainer* c ) //?
 // 	{
