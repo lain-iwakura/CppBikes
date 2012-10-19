@@ -32,7 +32,7 @@ typedef double TAMETRIC; // тип для хранения угловых величин
 const TAMETRIC TAMETRIC_O=0.000001; // точность TAMETRIC (размерность радианы => точность ~ 3.82e-5 градусов  )
 
 
-// typedef Vector Vector;
+// typedef Vector V;
 // typedef Point P;
 
 
@@ -239,7 +239,7 @@ public:
 	bool operator |=(const Vector &v) const; // возвращает isRightVectors(*this,v);
 	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
 	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(fulcrum,p))
-	TAMETRIC operator ^ (const Vector &v) const;// возвращает AngleA(v)
+	TAMETRIC operator ^ (const Vector &v) const;// возвращает Angle(v)
 	Vector operator [] (const Basis &b) const;// возвращает inBasis(&b)
 	Vector operator [] (const Basis *b) const;// возвращает inBasis(b)
 	Vector& operator >> (const Basis &b);// возвращает SetBasis(&b)

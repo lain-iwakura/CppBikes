@@ -14,7 +14,6 @@ const double GEO_R=(GEO_A+GEO_B)/2.0; // средний радиус [м]
 const double GEO_EE=GEO_ALPHA*(2.0-GEO_ALPHA); // e^2
 
 
-
 struct DegMinSecAngle
 {
 	int deg;
@@ -58,10 +57,10 @@ Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовать (фи,лямда)
 PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 
-Vector EllipsePhiTan(const Point &p);
-Vector EllipseLamTan(const Point &p);
+Vector EllipsePhiTan(const Point &p); // единичный касательный вектор к меридиану
+Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
 
-void MovePointToEllipsoidSurface(Point &p);
+void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
 
 #endif

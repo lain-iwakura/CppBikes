@@ -46,14 +46,14 @@ public:
 		Created();
 	}
 
-	void Take(T* pOBJ) // unsafe
+	void Take(T* pOBJ) 
 	{
 		Destroy(); 
 		OBJ=pOBJ;
 		if(pOBJ) Taked();
 	}
 
-	T* PassObj() // unsafe
+	T* PassObj() 
 	{		
 		T* rOBJ=OBJ;
 		OBJ=0;
@@ -116,6 +116,7 @@ protected:
 	virtual void Passed(){Destroyed();} //?
 	virtual void Taked(){Created();} //?
 };
+
 
 
 

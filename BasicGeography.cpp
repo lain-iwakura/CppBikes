@@ -18,10 +18,12 @@ void DegMinSecAngle::setFromRad( double a_rad )
 
 void DegMinSecAngle::setFromDeg( double a_deg )
 {
-	if(negative=a_deg<0) a_deg*=-1;	
-	deg=a_deg;
-	min=(a_deg-deg)*60.0;
-	sec=((a_deg-deg)*60.0-min)*60.0+0.5;
+	if(negative=a_deg<0) a_deg*=-1;
+  int const seconds(floor(a_deg * 3600 + .5));
+  sec = seconds % 60;
+  int const d_m(seconds / 60);
+	deg = d_m / 60;
+	min = d_m % 60;
 }
 
 double DegMinSecAngle::toRad()
