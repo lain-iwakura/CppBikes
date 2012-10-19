@@ -81,9 +81,13 @@ public:
 	virtual Point PointFromSCoordinate(TMETRIC s){return Point(s,0,0,&OrtoBasis_InXY_ByI(V(p1,p2)));}; //?
 	virtual bool PointBelongToLine(const Point &p) { TMETRIC s=SCoordinateFromPoint(p); if((s<-TMETRIC_O)||(s>(length()+TMETRIC_O))) return false; return p==PointFromSCoordinate(s);}	
 	virtual TransALine divideS(TMETRIC s){return TransObject<AbstractLine>();}
+	
+	static bool isLinesCollapsed(AbstractLine *l1, AbstractLine *l2, TMETRIC epsilon=TMETRIC_O); //?
+	
+	//PlaneAnalysis ->
 	static List<Point> LinesIntersections(AbstractLine *l1, AbstractLine *l2,bool ContinuesMode=true);
-	static bool isLinesCollapsed(AbstractLine *l1, AbstractLine *l2, TMETRIC epsilon=TMETRIC_O);
 	List<TMETRIC> sIntersections(AbstractLine *al, bool ContinuesMode=true);
+	// <- PlaneAnalysis
 
 	Point P1() const {return p1.Val(p_null);}
 	Point P2() const {return p2.Val(p_null);}
@@ -286,8 +290,11 @@ public:
 	Point StartPoint() {return First()->StartPoint();}
 	Point EndPoint() {return Last()->EndPoint();}
 
+	void SetCircuitMode(bool on=true);
+
 private:
 	List <AbstractLine*> lines;
+	bool circuitMode;
 };
 
 

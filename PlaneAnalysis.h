@@ -2,6 +2,51 @@
 #include "AbstractLine.h"
 
 
+// Правило заполнения:
+//		|***A
+//		|***|
+//		|***|
+//		V***|
+//
+
+ 
+struct IntersectPoint
+{
+	IntersectPoint(AbstractLine *itAl1=0,AbstractLine *itAl2=0, const Point &itP=p_null, TMETRIC itS1=-1, TMETRIC itS2=-1, bool itRight12=false)
+		:al1(itAl1),al2(itAl2),p(itP),s1(itS1),s2(itS2),right12(itRight12)
+	{
+	}
+ 	AbstractLine *al1;
+ 	AbstractLine *al2;	
+ 	Point p;
+ 	TMETRIC s1;
+ 	TMETRIC s2;
+ 	bool right12; 
+	int dLevel() const {return right12?(-1):(1);}
+
+	// Right intersection (right12=true):
+	//
+	//       A 
+	//    \\\|
+	//    \\\|
+	//   <---|---2
+	//    XXX|///
+	//    XXX|///
+	//       1
+	//
+	//
+	// Left intersection (right12=false):
+	//
+	//       A
+	//    XXX|///
+	//    XXX|///
+	//   2---|--->
+	//    \\\|
+	//    \\\|
+	//       1
+};
+
+List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2);
 
 bool PointInCircuit(Point p, AlPolyline *circuit, bool closed=true); // -
 bool PointInCircuit(Point p, List<Point> *circuit, bool closed=true); // +

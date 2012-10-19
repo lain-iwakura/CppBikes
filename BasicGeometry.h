@@ -243,7 +243,7 @@ public:
 	bool operator < (const Vector &v) const;// возвращает length()<v.length()
 	////////////////////////////////	
 
-	// Phi & Lamda
+	// Phi & Lamda //?
 	TAMETRIC Phi();	
 	TAMETRIC Lamda();
 	TAMETRIC Lamda2PI();

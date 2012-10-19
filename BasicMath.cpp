@@ -1,6 +1,26 @@
 #include "BasicMath.h"
 
 
+void _DEF_SINAPROX()
+{
+	TRNUM a=0;
+	for(int i=0; i<APROX_N; i++)
+	{		
+		SINAPROX[i]=sin(a);
+		a+=APROX_DANGEL;
+	}
+}
+
+
+TRNUM sinaprox(TRNUM a)
+{
+	TRNUM da=a/APROX_DANGEL;
+	int i=da;
+	TRNUM d=da-i;
+	return SINAPROX[i]+(SINAPROX[i+1]-SINAPROX[i])*d;
+}
+
+
 
 void VoidInterchange(void* a, void* b, unsigned int n) //c=a; a=b; b=c;
 {	
@@ -77,8 +97,8 @@ TRNUM arcsin(TRNUM n)
 	return asin(n);
 }
 
-TRNUM DEG_to_RAD(TRNUM deg){return (deg/(TRNUM)180)*PI;}
-TRNUM RAD_to_DEG(TRNUM rad){return (rad/PI)*(TRNUM)180;}
+TRNUM DEG_to_RAD(TRNUM deg){return deg*DEG_IN_RAD;}
+TRNUM RAD_to_DEG(TRNUM rad){return rad*RAD_IN_DEG;}
 bool isEqual(TRNUM n1, TRNUM n2, TRNUM O){return (abs(n1-n2)<O);}
 bool isEquelAngle(TRNUM a1, TRNUM a2)
 {
@@ -199,7 +219,7 @@ TRNUM TAngle::sCos()
 
 TRNUM TAngle::Cos()
 {
-	if(COS.Exist()) return COS;
+	if(COS.Exist()) return COS.Obj();
 	
 	if(SIN.Exist()) COS=sqrt(1-Sin()*Sin())*sCos();
 	else if(TAN.Exist()) COS=sqrt(1/(Tan()*Tan()+1))*sCos();
@@ -207,24 +227,24 @@ TRNUM TAngle::Cos()
 	else return 1;
 	
 		
-	return COS;
+	return COS.Obj();
 }
 
 TRNUM TAngle::Sin()
 {
-	if(SIN.Exist()) return SIN;
+	if(SIN.Exist()) return SIN.Obj();
 	
-	if(COS.Exist()) SIN=sqrt(1-Cos()*Cos())*sSin();
-	else if(TAN.Exist()) SIN=sqrt((Tan()*Tan())/(1+(Tan()*Tan())))*sSin();
+	if(COS.Exist()) SIN=sqrt(1-COS.Obj()*COS.Obj())*sSIN.Val(1);
+	else if(TAN.Exist()) SIN=sqrt((TAN.Obj()*TAN.Obj())/(1+(TAN.Obj()*TAN.Obj())))*sSIN.Val(1);
 	else if(RAD.Exist()) SIN=sin(Rad());
 	else return 0;
 	
-	return SIN;
+	return SIN.Obj();
 }
 
 TRNUM TAngle::Tan() 
 {
-	if(TAN.Exist()) return TAN;
+	if(TAN.Exist()) return TAN.Obj();
 	
 		if(COS.Exist()||SIN.Exist()) 
 		{
@@ -233,7 +253,7 @@ TRNUM TAngle::Tan()
 		}
 		else if(RAD.Exist()) TAN=tan(Rad());
 		else return 0;
-	return TAN;
+	return TAN.Obj();
 }
 
 TRNUM TAngle::cTan()

@@ -2,55 +2,7 @@
 
 
 
-//
-//		|***A
-//		|***|
-//		|***|
-//		V***|
-//
-
-
-
- 
-struct IntersectPoint
-{
-	IntersectPoint(AbstractLine *itAl1=0,AbstractLine *itAl2=0, const Point &itP=p_null, TMETRIC itS1=-1, TMETRIC itS2=-1, bool itRight12=false)
-		:al1(itAl1),al2(itAl2),p(itP),s1(itS1),s2(itS2),right12(itRight12)
-	{
-	}
- 	AbstractLine *al1;
- 	AbstractLine *al2;	
- 	Point p;
- 	TMETRIC s1;
- 	TMETRIC s2;
- 	bool right12; 
-	int dLevel() const {return right12?(-1):(1);}
-
-	// Right intersection (right12=true):
-	//
-	//       A 
-	//    \\\|
-	//    \\\|
-	//   <---|---2
-	//    XXX|///
-	//    XXX|///
-	//       1
-	//
-	//
-	// Left intersection (right12=false):
-	//
-	//       A
-	//    XXX|///
-	//    XXX|///
-	//   2---|--->
-	//    \\\|
-	//    \\\|
-	//       1
-};
-
-
-
-List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
+List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 {
 	List<IntersectPoint> ret;
 
@@ -73,8 +25,8 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 		Vector v1=(s1==0)?(al1->InDirection()):(al1->sDirection(s1));
 		Vector v2=(s2==0)?(al2->InDirection()):(al2->sDirection(s2));
 
-		int rl_up=0; // Положение верхних концов пересечения (al2 относительно al1)
-		int rl_down=0; // Положение нижних концов пересечения (prAl2 относительно al1)
+		int rl_up=0; // Положение верхних концов пересечения (al2_up относительно al1_up)
+		int rl_down=0; // Положение нижних концов пересечения (al2_down относительно al1_down)
 
 
 		AbstractLine *al1_up=al1;
@@ -92,31 +44,31 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 				{
 					Vector rc1=(s1_up==0)?(al1_up->InRCurvature()):(al1_up->sRCurvature(s1));
 					Vector rc2=(s2_up==0)?(al2_up->InRCurvature()):(al2_up->sRCurvature(s2));
-					if(rc1.isNull()) // al1 - прямая
+					if(rc1.isNull()) // al1 - прямая  -
 					{
-						if(rc2.isNull()) // al2 - прямая
+						if(rc2.isNull()) // al2 - прямая	-
 						{
-							rl_up=0;
-							//???
-						}else // al2 - кривая
+							rl_up=0; // (!)
+							// (?)
+						}else // al2 - кривая	~
 						{
 							rl_up=(Vector::isRightVectors(v1_up,rc2))?(-1):(1);							
 						}
-					}else // al1 - кривая
+					}else // al1 - кривая	~
 					{
-						if(rc2.isNull()) // al2 - прямая
+						if(rc2.isNull()) // al2 - прямая	-
 						{
 							rl_up=(Vector::isRightVectors(v1_up,rc1))?(1):(-1);							
-						}else // al2 - кривая
+						}else // al2 - кривая	~
 						{
-							if((rc1&rc2)<0) // противоположно-выпуклые
+							if((rc1&rc2)<0) // противоположно-выпуклые  )(
 							{
 								rl_up=(Vector::isRightVectors(v1_up,rc2))?(-1):(1);								
-							}else if(rc1==rc2) // равные кривизны
+							}else if(rc1==rc2) // равные кривизны   ((
 							{
-								rl_up=0;
-								//???								
-							}else // односторонне-выпуклые
+								rl_up=0; // (!)
+								// (?)									
+							}else // односторонне-выпуклые	(c
 							{
 								rl_up=(Vector::isRightVectors(v1_up,rc1)==(rc2<rc1))?(-1):(1);																	
 							}
@@ -129,7 +81,7 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 
 
 			
-				if(rl_up==0) // совпадение 
+				if(rl_up==0) // совпадение ||
 				{				
 					TMETRIC l1_up=al1_up->length()-s1_up;
 					TMETRIC l2_up=al2_up->length()-s2_up;
@@ -156,7 +108,7 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 						v1_up=al1_up->sDirection(s1_up);
 						v2_up=al2_up->InDirection();
 					}
-				}else // несовпадение 
+				}else // несовпадение (пересечение определено)
 				{
 					break;
 				}				
@@ -221,7 +173,6 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 							}
 						}
 					}
-
 				}else // несовпадающее пересечение  \|
 				{
 					rl_down=(Vector::isRightVectors(prV1,prV2))?(1):(-1);
@@ -241,12 +192,12 @@ List<IntersectPoint> tIntesection(AbstractLine *al1, AbstractLine *al2)
 		
 		}else // несовпадение концов
 		{
-			if(rl_up==rl_down) // Касание K
+			if(rl_up!=rl_down) // Пересечение X
 			{
-				continue;
-			}else // Пересечение X
+				right12=(rl_up<0);				
+			}else // Касание K 
 			{
-				right12=(rl_up<0);
+				continue;				
 			}				
 		}	
 
@@ -725,6 +676,7 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 		for(int j=i+1; j<plc.Count(); j++)
 		{			
 			List<TMETRIC> si=plc[i]->sIntersections(plc[j]);
+		//	List<IntersectPoint> si=plc[i]
 			if(si.count())
 			{
 				if(plc[j]->previous()==plc[i])while(si.count()){if(isEqual(si.last(),plc[i]->length(),TMETRIC_O*3)) si.removeLast(); else break;}			

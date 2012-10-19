@@ -426,10 +426,11 @@ Vector AlArcline::OutRCurvature()
 //////////////////////////////////////////////////////////////////////
 //////////////////////// POLYLINE ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-AlPolyline::AlPolyline(PolylineType plt):AbstractLine(LT_POLYLINE){pltype=plt; /*ccngtype=cngt;*/}
+AlPolyline::AlPolyline(PolylineType plt):AbstractLine(LT_POLYLINE){pltype=plt; circuitMode=false; /*ccngtype=cngt;*/}
 AlPolyline::AlPolyline(List<Point> &ps):AbstractLine(LT_POLYLINE)
 {	
 	pltype=POLY_AUTOJOINING;
+	circuitMode=false;
 	for(int i=0; i<ps.count()-1; i++) Add(&AlLine(ps[i],ps[i+1]));
 }
 
@@ -438,6 +439,7 @@ void AlPolyline::Set(const AlPolyline &pl)
 	//if(parent) if(parent->LEN.Exist()) parent->LEN-=length(); //in Clear();
 	Clear();
 	pltype=pl.pltype;
+	circuitMode=pl.circuitMode;
 	for(int i=0; i<pl.lines.count(); i++) Add(pl.lines.at(i));
 	//if(parent) if(parent->LEN.Exist()) parent->LEN+=length();
 }
@@ -447,10 +449,6 @@ AlPolyline::AlPolyline(const AlPolyline &pl): AbstractLine(LT_POLYLINE)
 }
 AlPolyline::~AlPolyline()
 {
-// 	if(debug_marker==1||debug_marker==2)
-// 	{
-// 		debug_marker*=1;
-// 	}
 	for(int i=0; i<lines.count(); i++)
 		delete lines[i];
 }
@@ -458,10 +456,6 @@ AlPolyline::~AlPolyline()
 
 TMETRIC AlPolyline::length()
 {
-// 	if(LEN.Exist()) return LEN;
-// 	LEN=0;
-// 	//TMETRIC rl=0;
-// 	for(int i=0; i<lines.count(); i++)	LEN+=lines[i]->length();
 	return LEN;
 }
 
@@ -1178,6 +1172,12 @@ void AlPolyline::ConvertToSimplePolyline()
 			delete inpoly;				
 		}
 	}
+
+	if(circuitMode&&(lines.count()>=2))
+	{
+		if(lines.last()->next()!=lines.first())
+			lines.last()->setNext(lines.first());
+	}
 }
 
 
@@ -1192,6 +1192,11 @@ void AlPolyline::ConvertToSimplePolyline(AlPolyline &al)
 		{
 			al+=At(i);
 		}
+	}
+	if(circuitMode&&(lines.count()>=2))
+	{
+		if(lines.last()->next()!=lines.first())
+			lines.last()->setNext(lines.first());
 	}
 }
 
@@ -1213,17 +1218,32 @@ void AlPolyline::TakeLine(AbstractLine * al)
 	if(al==0) return;
 	LEN.AddMaster(al->LEN);
 	if(lines.count()) al->insertAsNext(*lines.last()); //lines.last()->insertAsNext(*al);
-	lines+=al;
+	lines+=al;	
 	al->SetParentLine(this);
+
+	if(circuitMode&&(lines.count()>=2))
+	{
+		if(lines.last()->next()!=lines.first())
+			lines.last()->setNext(lines.first());
+	}
+
 }
 
 void AlPolyline::TakeLine(int index, AbstractLine *al)
 {
 	if(al==0) return;
+	if(lines.count()==0||index>=lines.count()){ TakeLine(al); return;}
+	if(index<0) index=0;	
 	LEN.AddMaster(al->LEN);
 	al->insertAsPrevious(*lines[index]);
 	lines.Insert(index,al);
 	al->SetParentLine(this);
+
+	if(circuitMode)
+	{
+		if(lines.last()->next()!=lines.first())
+			lines.last()->setNext(lines.first());
+	}
 }
 
 
