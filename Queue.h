@@ -2,7 +2,7 @@
 #define MYCPP_QUEUE_H
 
 
-namespace mycpp
+namespace CppBikes
 {
 
 	template<class T> class QueueItem

@@ -3,8 +3,8 @@
 #include "BasicMath.h"
 #include "BasicGeometry.h"
 
-
-
+namespace CppBikes
+{
 
 // Константы эллипсоида земли:
 const double GEO_A=6378245; // большая полуось [м]
@@ -36,8 +36,6 @@ struct DegMinSecAngle
 };
 
 
-
-
 struct PhiLamCoord // точка в фи/лямбда координатах
 {
 	PhiLamCoord(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
@@ -48,11 +46,11 @@ struct PhiLamCoord // точка в фи/лямбда координатах
 
 
 // Для сферы:
-Point PhiLam_to_PointS(TAMETRIC phi, TAMETRIC lam);  // преобразовать (фи,лямда) в (x,y,z)
+Point PhiLam_to_PointS(RNUM phi, RNUM lam);  // преобразовать (фи,лямда) в (x,y,z)
 PhiLamCoord Point_to_PhiLamS(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 // Для эллипсоида:
-Point PhiLam_to_PointE(TAMETRIC phi, TAMETRIC lam); // преобразовать (фи,лямда) в (x,y,z)
+Point PhiLam_to_PointE(RNUM phi, RNUM lam); // преобразовать (фи,лямда) в (x,y,z)
 Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовать (фи,лямда) в (x,y,z)
 PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
@@ -62,5 +60,5 @@ Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
 
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
-
+}
 #endif

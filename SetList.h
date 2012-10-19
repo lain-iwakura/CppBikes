@@ -3,6 +3,8 @@
 
 
 
+namespace CppBikes
+{
 
 template<class T> class SetList
 {    
@@ -99,5 +101,5 @@ public:
 };
 
 
-
+}
 #endif

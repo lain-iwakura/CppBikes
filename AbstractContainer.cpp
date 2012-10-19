@@ -1,6 +1,6 @@
 #include "AbstractContainer.h"
 
-
+using namespace CppBikes;
 
 
 

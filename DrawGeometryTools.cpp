@@ -63,14 +63,14 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	
 	// реализация только для направления  (p1)>-->(p2)
 	
-	TRNUM dx=p2.x-p1.x;
+	RNUM dx=p2.x-p1.x;
 
 	 if(p1z.v==1) 
 	 {
 		 if(p2z.h==1)
 		 {		 
 			 // 11 ->
-			 TRNUM dy=-p2.y+p1.y;
+			 RNUM dy=-p2.y+p1.y;
 			 if(dy*(scr.x1-p1.x) > (-scr.y1+p1.y)*dx) return false;
 			 if(p1z.h==3&&p2z.v==3)
 			 {
@@ -83,7 +83,7 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 		// ...
 		if(p2z.h==3)
 		{
-			TRNUM dy=p2.y-p1.y;
+			RNUM dy=p2.y-p1.y;
 			if(dx*(scr.y2-p1.y) < (scr.x1-p1.x)*dy ) return false;
 			if(p1z.h==1&&p2z.v==3)
 			{
@@ -98,14 +98,14 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	if(p1z.h==1) 
 	{
 		/*p2z.v==3*/
-		TRNUM dy=p2.y-p1.y;
+		RNUM dy=p2.y-p1.y;
 		return (dx*(scr.y1-p1.y) < (scr.x2-p1.x)*dy);
 	}
 	 // <- 13
 	 
 	 // 33 ->
 	/*(p1z.h==3&&p2z.v==3)*/
-	TRNUM dy=-p2.y+p1.y;
+	RNUM dy=-p2.y+p1.y;
 	 //...
 	 return  dy*(scr.x2-p1.x) > (p1.y-scr.y2)*dx;
 	 // <- 33

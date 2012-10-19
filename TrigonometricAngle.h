@@ -1,155 +1,77 @@
-#ifndef TRIGONAMETRICANGLE_H
-#define TRIGONAMETRICANGLE_H
-#include "BasicMath.h"
-#include "PhantomObject.h"
+#ifndef CPPBIKES_TRIGONOMETRICANGLE_H
+#define CPPBIKES_TRIGONOMETRICANGLE_H
 
-typedef PhantomVal<TRNUM> TRNUM_CALC;
+#include <CppBikes/BasicMath.h>
 
-
-
-//template<bool POSITIVE_PI_OFFSET=false, int PIx2_OFFSET=0>
-TRNUM normAngle(TRNUM a, bool POSITIVE_PI_OFFSET=false, int PIx2_OFFSET=0);
-
-
-class TAngle
+namespace CppBikes
 {
-public:
 
-	void SetCos(TRNUM cos_a, TRNUM sin_sign=1);
-	void SetSin(TRNUM sin_a, TRNUM cos_sign=1);
-	void SetTan(TRNUM tan_a, TRNUM cos_sign=1);
-	void SetCtan(TRNUM ctan_a, TRNUM cos_sign=1);
-	void SetPositivePiOffset(bool positive_pi_offset);
-
-	void SetRad(TRNUM rad_a);
-	void SetDeg(TRNUM grad_a);
-	void SetUndefAll();
-	void SetNull();
-	bool isDefined();
-	
-	TAngle(TRNUM cos_a, TRNUM ssin=1,bool positive_pi_offset=false);
-	TAngle(const TAngle &A);
-	TAngle();
-	~TAngle();	
-	TRNUM Cos();
-	TRNUM Sin();
-	TRNUM Tan();
-	TRNUM cTan();	
-	TRNUM Rad();
-	TRNUM Deg();
-
-	TRNUM sSin();
-	TRNUM sCos();
-
-//	int Grad();
-//	int Min();
-//	int Sec();
-
-	void setOpposite();
-	void plusPI(int nPI=1);
-	//	void plusedPI(int nPI=1);
-	void plusPIdiv2(int nPIdiv2=1);
-	TAngle plusedPIdiv2(int nPidiv2=1);
-	void mult2(int n2=1);
-	TAngle multd2(int n2=1);
-	void div2(int n2=1);
-	TAngle divd2(int n2=1);
-	
-	
-	operator TRNUM();	
-	void operator = (TRNUM a);
-	void operator +=(TRNUM a);
-	void operator +=(TAngle &A);
-	void operator -=(TRNUM a);
-	void operator -=(TAngle &A);
-	void operator *=(TRNUM k);
-	void operator /=(TRNUM k);
-	bool operator ==(TRNUM a);
-	bool operator ==(TAngle &A);
-	bool operator >(TAngle &A);
-	bool operator >(TRNUM a);
-	bool operator <(TAngle &A);
-	bool operator <(TRNUM a);
-	bool operator >=(TAngle &A);
-	bool operator >=(TRNUM a);
-	bool operator <=(TAngle &A);
-	bool operator <=(TRNUM a);
-	TAngle operator +(TAngle &A);
-	TAngle operator -(TAngle &A);
-	TAngle operator *(TRNUM k);
-	TAngle operator /(TRNUM k);
-
-
-protected:
-
-	char sSIN;
-	char sCOS;
-	TRNUM_CALC SIN;
-	TRNUM_CALC COS;
-	TRNUM_CALC TAN;
-	TRNUM_CALC RAD;
-	
-	bool pi_offset;
-};
-
-TRNUM cos(TAngle &A);
-TRNUM sin(TAngle &A);
-TRNUM tan(TAngle &A);
-TRNUM ctan(TAngle &A);
-TRNUM rad(TAngle &A);
-TRNUM deg(TAngle &A);
-
-
-
-/*
-template<bool POSITIVE_PI_OFFSET=false, int PIx2_OFFSET=0>
-class TAngleR: public TAngle
-{
-public:
-
-	TRNUM Rad()
+	class TrAngle
 	{
-		TRNUM r=TAngle::Rad();
-		return  r + ( PIx2_OFFSET + ((POSITIVE_PI_OFFSET&&(r<0))?(1):(0)) )*PImult2;
-	}
+	public:
 
-	TRNUM Deg(){return RAD_to_DEG(Rad());}
-
-
-
-
-
-
-	//template<bool PIx2O_small> bool operator < (const TAngleR<POSITIVE_PI_OFFSET,PIx2O> &tar)
-
-
-	template<int PIx2O>
-	bool isLessThan(const TAngleR<POSITIVE_PI_OFFSET,PIx2O> &tar)
-	{
-
-	}
-
-	template<>
-	bool operator < (const TAngleR<POSITIVE_PI_OFFSET,PIx2_OFFSET> &tar)
-	{
-	}
+		enum MData
+		{		
+			MD_UNDEF	=	0,
+			MD_DEF		=	1<<0,
+			MD_SINCALC	=	1<<1,
+			MD_COSCALC	=	1<<2,
+			MD_TANCALC	=	1<<3,
+			MD_RADCALC	=	1<<4,
+			MD_SINM		=	1<<5,
+			MD_COSM		=	1<<6
+		};
 
 
-// 	template<int PIx2O>
-// 	bool operator < (const TAngleR<POSITIVE_PI_OFFSET,PIx2O> &tar)
-// 	{
+		TrAngle(RNUM cos_val=1, bool sin_negative=false);
+
+		operator RNUM (){return Rad();}
+		TrAngle & operator = (RNUM ang_rad) {setRad(ang_rad); return *this;}
+
+
+		void setCos(RNUM cos_val, bool sin_negative=false);
+		void setSin(RNUM sin_val, bool cos_negative=false);
+		void setTan(RNUM tan_val, bool cos_negative=false);
+		void setRad(RNUM rad);
+		void setDeg(RNUM deg);
+
+	
+		RNUM Sin();
+		RNUM Cos();
+		RNUM Tg();
+		RNUM Ctg();
+		RNUM Rad();
+		RNUM Deg();
+
+		RNUM sigSin();
+		RNUM sigCos();
+
+	//private:
+
+		char _mdat;
+		RNUM _sin;
+		RNUM _cos;
+		RNUM _tan;
+		RNUM _rad;
+	};
+
+
+	inline RNUM Sin(TrAngle &ang){return ang.Sin();}
+	inline RNUM Cos(TrAngle &ang){return ang.Cos();}
+	inline RNUM Tan(TrAngle &ang){return ang.Tg();}
+	inline RNUM Tg(TrAngle &ang){return ang.Tg();}
+	inline RNUM Ctg(TrAngle &ang){return ang.Ctg();}
+	inline RNUM Rad(TrAngle &ang){return ang.Rad();}
+	inline RNUM Deg(TrAngle &ang){return ang.Deg();}
+
 // 
-// 	}
-// 
-// 	template<>
-// 	bool operator < (const TAngleR<POSITIVE_PI_OFFSET,PIx2_OFFSET> &tar)
-// 	{
-// 	}
-};
-
-*/
-
-
+// 	inline RNUM sin(RNUM ang){return ::sin(ang);}
+// 	inline RNUM cos(RNUM ang){return ::cos(ang);}
+// 	inline RNUM tan(RNUM ang){return ::tan(ang);}
+// 	inline RNUM ctg(RNUM ang){return 1.0/not0(::tan(ang));}
+// 	inline RNUM tg(RNUM ang){return ::tan(ang);}
+// 	
+}
 
 
 #endif

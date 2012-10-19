@@ -15,7 +15,7 @@
 #include <QWaitCondition>
 
 
-namespace mycpp
+namespace CppBikes
 {
 
 	class SavedCommand

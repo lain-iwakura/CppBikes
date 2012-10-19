@@ -1,7 +1,10 @@
 #ifndef BIKES_H
 #define BIKES_H
 
-#include "ContainerInterface.h"
+#include "List.h"
+
+namespace CppBikes
+{
 
 
 
@@ -179,7 +182,7 @@ private:
 	int _typeId;
 };
 
-
+}
 #endif
 
 

@@ -1,8 +1,11 @@
 #ifndef MYCPP_VALUESERIES_H
 #define MYCPP_VALUESERIES_H
 
-#include "ContainerInterface.h"
+#include "List.h"
 #include "BasicMath.h"
+
+namespace CppBikes
+{
 
 template<class T>
 class ValueSeries
@@ -10,7 +13,7 @@ class ValueSeries
 public:
 	ValueSeries(int maxN=1)
 	{
-		nSeries=Abs(maxN);
+		nSeries=ABS(maxN);
 	}
 	~ValueSeries(){}
 
@@ -22,7 +25,7 @@ public:
 
 	void setMaxNumber(int maxN)
 	{
-		nSeries=Abs(maxN);
+		nSeries=ABS(maxN);
 		while(series.count()>nSeries) series.removeFirst();
 	}
 
@@ -42,5 +45,5 @@ private:
 };
 
 
-
+}
 #endif

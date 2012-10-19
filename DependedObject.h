@@ -2,6 +2,10 @@
 #define DEPENDEDOBJECT_H
 #include "PhantomObject.h"
 
+
+namespace CppBikes
+{
+
 template<class T> class DependedObject
 {
 public:
@@ -277,4 +281,5 @@ private:
 	} 
 };
 
+}
 #endif

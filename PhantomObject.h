@@ -2,7 +2,7 @@
 #define PHANTOMOBJECT_H
 
 
-#include "ContainerInterface.h"
+#include "List.h"
 #include "AdjacentObject.h"
 #define TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this(){}; C_this(const C_this<T> &xo):C_that<T>(xo){} C_this(const T& o):C_that<T>(o){}
 #define TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T) void operator =(const T&  obj){C_that<T>::operator=(obj);} void operator=(C_this<T> & cobj){C_that<T>::operator=(cobj);}
@@ -18,6 +18,8 @@
 //     using C_that<T>::Exist;
 
 
+namespace CppBikes
+{
 
 template<class T> class PhantomObject
 {
@@ -331,5 +333,6 @@ public:
 // 	void operator +=(void *delObj){if(delObj) delObjects+=delObj;}
 // 	List<void*> delObjects;
 // };
-
+}
 #endif
+

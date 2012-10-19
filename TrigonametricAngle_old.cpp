@@ -1,30 +1,31 @@
-#include "TrigonometricAngle.h"
+#include "TrigonometricAngle_old.h"
+#include <math.h>
 
-
+using namespace CppBikes;
 
 
 ///////////////////////////////////////////////////////////
 /////////////////// ANGLE /////////////////////////////////
 ///////////////////////////////////////////////////////////
-TRNUM cos(TAngle &A) {return A.Cos();}
-TRNUM sin(TAngle &A){return A.Sin();}
-TRNUM tan(TAngle &A){return A.Tan();}
-TRNUM ctan(TAngle &A){return A.cTan();}
-TRNUM rad(TAngle &A){return A.Rad();}
-TRNUM deg(TAngle &A){return A.Deg();}
+RNUM CppBikes::cos(TAngle &A) {return A.Cos();}
+RNUM CppBikes::sin(TAngle &A){return A.Sin();}
+RNUM CppBikes::tan(TAngle &A){return A.Tan();}
+RNUM CppBikes::ctan(TAngle &A){return A.cTan();}
+RNUM CppBikes::rad(TAngle &A){return A.Rad();}
+RNUM CppBikes::deg(TAngle &A){return A.Deg();}
 
-TRNUM normAngle(TRNUM a, bool POSITIVE_PI_OFFSET/*=false*/, int PIx2_OFFSET/*=0*/)
+RNUM CppBikes::normAngle(RNUM a, bool POSITIVE_PI_OFFSET/*=false*/, int PIx2_OFFSET/*=0*/)
 {
-	TRNUM r=abs(a);
+	RNUM r=abs(a);
 	r-=((int)(r/PImult2))*PImult2;
 	if(r>PI) r-=PImult2;
 	if(a<0) r*=-1;
 	return r+ (PIx2_OFFSET + ((POSITIVE_PI_OFFSET&&r<0)?(1):(0)) )*PImult2;
 }
 
-TRNUM nAngle(TRNUM a, bool POSITIVE_PI_OFFSET)
+RNUM nAngle(RNUM a, bool POSITIVE_PI_OFFSET)
 {
-	TRNUM r=abs(a);
+	RNUM r=abs(a);
 	r-=((int)(r/PImult2))*PImult2;
 	if(r>PI) r-=PImult2;
 	if(a<0) r*=-1;
@@ -38,7 +39,7 @@ TAngle::TAngle()
 	sSIN=1;
 	sCOS=1;
 }
-TAngle::TAngle(TRNUM cos_a, TRNUM ssin, bool positive_pi_offset)
+TAngle::TAngle(RNUM cos_a, RNUM ssin, bool positive_pi_offset)
 {
 	SetCos(cos_a,ssin);
 	SetPositivePiOffset(positive_pi_offset);
@@ -71,7 +72,7 @@ void TAngle::SetPositivePiOffset(bool positive_pi_offset)
 		//RAD=nAngle(RAD,positive_pi_offset);
 		if(positive_pi_offset)
 		{
-			if(RAD<TRNUM(0)) RAD+=PImult2;
+			if(RAD<RNUM(0)) RAD+=PImult2;
 		}else
 		{
 			if(RAD>PI) RAD-=PImult2;
@@ -93,13 +94,13 @@ void TAngle::SetUndefAll()
 void TAngle::SetNull()
 {
 	SetUndefAll();
-	COS=TRNUM(1);	
-	SIN=TRNUM(0);
-	TAN=TRNUM(0);
-	RAD=TRNUM(0);
+	COS=RNUM(1);	
+	SIN=RNUM(0);
+	TAN=RNUM(0);
+	RAD=RNUM(0);
 }
 
-void TAngle::SetCos(TRNUM cos_a, TRNUM ssin)
+void TAngle::SetCos(RNUM cos_a, RNUM ssin)
 {
 	SetUndefAll();
 	if(cos_a>1) cos_a=1;
@@ -107,7 +108,7 @@ void TAngle::SetCos(TRNUM cos_a, TRNUM ssin)
 	COS=cos_a;
 	sSIN=signum(ssin);
 }
-void TAngle::SetSin(TRNUM sin_a, TRNUM scos)
+void TAngle::SetSin(RNUM sin_a, RNUM scos)
 {
 	SetUndefAll();
 	if(sin_a>1) sin_a=1;
@@ -118,7 +119,7 @@ void TAngle::SetSin(TRNUM sin_a, TRNUM scos)
 
 
 
-void TAngle::SetTan(TRNUM tan_a, TRNUM scos)
+void TAngle::SetTan(RNUM tan_a, RNUM scos)
 {
 	SetUndefAll();
 	TAN=tan_a;
@@ -126,17 +127,17 @@ void TAngle::SetTan(TRNUM tan_a, TRNUM scos)
 	sSIN=sCOS*signum(tan_a);
 }
 
-void TAngle::SetCtan( TRNUM ctan_a,TRNUM cos_sign/*=1*/ )
+void TAngle::SetCtan( RNUM ctan_a,RNUM cos_sign/*=1*/ )
 {
 	SetTan(ctan_a/not0(ctan_a),cos_sign);
 }
 
 
-void TAngle::SetRad(TRNUM rad_a)
+void TAngle::SetRad(RNUM rad_a)
 {
 	SetUndefAll();
 	RAD=nAngle(rad_a,pi_offset);	
-	//TRNUM na=normAngle(rad_a);//NormAngle_0_2PI(rad_a);
+	//RNUM na=normAngle(rad_a);//NormAngle_0_2PI(rad_a);
 	if(pi_offset)
 	{
 		if(RAD>PIdiv2&&RAD<PI3div2) sCOS=-1;
@@ -147,7 +148,7 @@ void TAngle::SetRad(TRNUM rad_a)
 	{
 		if(abs(RAD)>PIdiv2) sCOS=-1;
 		else sCOS=1;
-		if(RAD<TRNUM(0)) sSIN=-1;
+		if(RAD<RNUM(0)) sSIN=-1;
 		else sSIN=1;
 	}
 //	sSIN=signum(PI-na);
@@ -155,7 +156,7 @@ void TAngle::SetRad(TRNUM rad_a)
 //	else sCOS=1;
 }
 
-void TAngle::SetDeg(TRNUM deg_a)
+void TAngle::SetDeg(RNUM deg_a)
 {	
 	SetRad(DEG_to_RAD(deg_a));
 }
@@ -170,78 +171,80 @@ bool TAngle::isDefined()
 }
 
 
-TRNUM TAngle::sSin()
+RNUM TAngle::sSin()
 {
 //	if(SIN.Exist()) return signum(SIN);  //?
 //	return sSIN.Val(1);	
 	return sSIN;
 }
 
-TRNUM TAngle::sCos()
+RNUM TAngle::sCos()
 {
 //	if(COS.Exist()) return signum(COS); //?
 //	return sCOS.Val(1);
 	return sCOS; 
 }
 
-TRNUM TAngle::Cos()
+RNUM TAngle::Cos()
 {
 	if(COS.Exist()) return COS.Obj();
 
 	if(SIN.Exist()) COS=sqrt(1-Sin()*Sin())*sCOS;
 	else if(TAN.Exist()) COS=sqrt(1/(Tan()*Tan()+1))*sCOS;
-	else if(RAD.Exist()) COS=cos(Rad());
+	else if(RAD.Exist())
+		COS.Obj()=::cos(Rad());
 	else return 1;
 
 
 	return COS.Obj();
 }
 
-TRNUM TAngle::Sin()
+RNUM TAngle::Sin()
 {
 	if(SIN.Exist()) return SIN.Obj();
 
 	if(COS.Exist()) SIN=sqrt(1-COS.Obj()*COS.Obj())*sSIN;
 	else if(TAN.Exist()) SIN=sqrt((TAN.Obj()*TAN.Obj())/(1+(TAN.Obj()*TAN.Obj())))*sSIN;
-	else if(RAD.Exist()) SIN=sin(Rad());
+	else if(RAD.Exist()) SIN=::sin(Rad());
 	else return 0;
 
 	return SIN.Obj();
 }
 
-TRNUM TAngle::Tan() 
+RNUM TAngle::Tan() 
 {
 	if(TAN.Exist()) return TAN.Obj();
 
 	if(COS.Exist()||SIN.Exist()) 
 	{
-		if(isEqual(Cos(),0,TRNUM_O)) TAN=TRNUM_INFINITY; 
+		if(isEqual(Cos(),0,RNUM_O)) TAN=RNUM_INFINITY; 
 		else TAN=Sin()/Cos();		
 	}
-	else if(RAD.Exist()) TAN=tan(Rad());
+	else if(RAD.Exist())
+		TAN.Obj()=::tan(Rad());
 	else return 0;
 	return TAN.Obj();
 }
 
-TRNUM TAngle::cTan()
+RNUM TAngle::cTan()
 {
-	if(isEqual(Tan(),0,TRNUM_O)) return TRNUM_INFINITY;
+	if(isEqual(Tan(),0,RNUM_O)) return RNUM_INFINITY;
 	return 1/Tan();
 } 
 
-TRNUM TAngle::Rad() // +(?)
+RNUM TAngle::Rad() // +(?)
 {
 	if(RAD.Exist()) return RAD;
 
-	if(SIN.Exist()) {RAD=arcsin(Sin()); if(sCos()<0) RAD=PI-RAD.Val(); else if(RAD<TRNUM_0) RAD+=PImult2;}
+	if(SIN.Exist()) {RAD=arcsin(Sin()); if(sCos()<0) RAD=PI-RAD.Val(); else if(RAD<0) RAD+=PImult2;}
 	else if(COS.Exist()) {RAD=arccos(Cos()); if(sSin()<0) RAD=PImult2-RAD.Val();}
-	else if(TAN.Exist()) {RAD=atan(Tan()); if(RAD>TRNUM_0){if(sSin()<0)RAD+=PI;}else{if(sSin()>0)RAD+=PI; else RAD+=2*PI;}}
+	else if(TAN.Exist()) {RAD=atan(Tan()); if(RAD>0){if(sSin()<0)RAD+=PI;}else{if(sSin()>0)RAD+=PI; else RAD+=2*PI;}}
 	else return 0;
 	//	RAD=NormAngle_0_2PI(RAD);
 	return RAD;
 }
 
-TRNUM TAngle::Deg()
+RNUM TAngle::Deg()
 {
 	return RAD_to_DEG(Rad());	
 }
@@ -259,7 +262,7 @@ int TAngle::Min()
 
 int TAngle::Sec() // (?)
 {
-	return (int)((Deg()-Grad()-(TRNUM)Min()/60)*3600);
+	return (int)((Deg()-Grad()-(RNUM)Min()/60)*3600);
 }
 */
 
@@ -292,8 +295,8 @@ void TAngle::plusPIdiv2(int nPIdiv2) // (?)
 
 		sSIN;//?
 		sCOS;//?
-		//TRNUM *sCOS=0;
-		TRNUM_CALC saveCOS(COS);
+		//RNUM *sCOS=0;
+		RNUM_CALC saveCOS(COS);
 		if(SIN.Exist()){COS=(-SIN)*s;} else COS.Clear();
 		if(saveCOS){SIN=saveCOS.Val()*s;} else SIN.Clear();
 		if(TAN.Exist())	TAN=-(1/(TAN.Val())); //!!! div 0
@@ -308,13 +311,13 @@ void TAngle::mult2(int n2)
 	if(RAD.Exist()) RAD*=2;
 	sSIN; //?
 	sCOS; //?
-	TRNUM_CALC saveSIN(SIN);
-	TRNUM_CALC saveCOS(COS);
+	RNUM_CALC saveSIN(SIN);
+	RNUM_CALC saveCOS(COS);
 	if(COS.Exist()) COS=COS*COS*2-1;
 	else if(SIN.Exist()) COS=1-SIN*SIN*2;
 	if(saveSIN.Exist()&&saveCOS.Exist()) SIN=saveSIN*saveCOS*2;
 	else SIN.Clear();
-	if(TAN.Exist()) TAN=TAN*TRNUM(2)/(1-TAN*TAN);
+	if(TAN.Exist()) TAN=TAN*RNUM(2)/(1-TAN*TAN);
 
 	mult2(n2-1);
 }
@@ -333,24 +336,24 @@ void TAngle::div2(int n2)
 ///////////////////////////////////////////////////////////
 
 
-TAngle::operator TRNUM()
+TAngle::operator RNUM()
 {
 	return Rad();
 }
 
-void TAngle::operator = (TRNUM a)
+void TAngle::operator = (RNUM a)
 {
 	SetRad(a);
 }
 
 
-void TAngle::operator +=(TRNUM a){SetRad(Rad()+a);}
+void TAngle::operator +=(RNUM a){SetRad(Rad()+a);}
 
-void TAngle::operator -=(TRNUM a) {*this+=-a;}
+void TAngle::operator -=(RNUM a) {*this+=-a;}
 
-void TAngle::operator *=(TRNUM k){SetRad(Rad()*k);}
+void TAngle::operator *=(RNUM k){SetRad(Rad()*k);}
 
-void TAngle::operator /= (TRNUM k){SetRad(Rad()/k);}
+void TAngle::operator /= (RNUM k){SetRad(Rad()/k);}
 
 
 void TAngle::operator +=(TAngle &A) ///??
@@ -383,14 +386,14 @@ bool TAngle::operator <(TAngle &A)
 	if(RAD.Exist()||A.RAD.Exist()){return (Rad()<A.Rad());}
 	return (Cos()<A.Cos());	
 }
-bool TAngle::operator <(TRNUM a){ return (Rad()<a);}
+bool TAngle::operator <(RNUM a){ return (Rad()<a);}
 
 bool TAngle::operator >(TAngle &A)
 {
 	if(RAD.Exist()||A.RAD.Exist()){return (Rad()>A.Rad());}
 	return (Sin()>A.Sin());	
 }
-bool TAngle::operator >(TRNUM a){ return (Rad()>a);}
+bool TAngle::operator >(RNUM a){ return (Rad()>a);}
 
 bool TAngle::operator ==(TAngle &A)
 {
@@ -398,29 +401,29 @@ bool TAngle::operator ==(TAngle &A)
 	return isEqual(Sin(),A.Sin(),ANGLE_O)&&isEqual(Cos(),A.Cos(),ANGLE_O);
 }
 
-bool TAngle::operator ==(TRNUM a)
+bool TAngle::operator ==(RNUM a)
 {
 // 	if(RAD.Exist()) return isEqualAngle(Rad(),a);
 // 	else
 // 	{
-		// 		TRNUM na=NormAngle_0_2PI(a);
+		// 		RNUM na=NormAngle_0_2PI(a);
 		// 		if(isEqual(na,0,ANGLE_O)) return isEqual(Sin(),0,ANGLE_O)&&isEqual(Cos(),1,ANGLE_O);
 		// 		if(isEqual(na,PI/2,ANGLE_O)) return isEqual(Sin(),1,ANGLE_O)&&isEqual(Cos(),0,ANGLE_O);
 		// 		if(isEqual(na,PI,ANGLE_O)) return isEqual(Sin(),0,ANGLE_O)&&isEqual(Cos(),-1,ANGLE_O);
 		// 		if(isEqual(na,3*PI/2,ANGLE_O)) return isEqual(Sin(),-1,ANGLE_O)&&isEqual(Cos(),0,ANGLE_O);
 		// 		if(isEqual(na,2*PI,ANGLE_O)) return isEqual(Sin(),0,ANGLE_O)&&isEqual(Cos(),1,ANGLE_O);
-		// 		if(isEqual(na,PI/4,ANGLE_O)) return isEqual(Sin(),TRNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),TRNUM_SQRT2/2,ANGLE_O);
-		// 		if(isEqual(na,3*PI/4,ANGLE_O)) return isEqual(Sin(),TRNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),-TRNUM_SQRT2/2,ANGLE_O);
-		// 		if(isEqual(na,5*PI/4,ANGLE_O)) return isEqual(Sin(),-TRNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),-TRNUM_SQRT2/2,ANGLE_O);
-		// 		if(isEqual(na,7*PI/4,ANGLE_O)) return isEqual(Sin(),-TRNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),TRNUM_SQRT2/2,ANGLE_O);
-		// 		if(isEqual(na,PI/6,ANGLE_O)) return isEqual(Sin(),0.5,ANGLE_O)&&isEqual(Cos(),TRNUM_SQRT3/2,ANGLE_O);
-		// 		if(isEqual(na,PI/3,ANGLE_O)) return isEqual(Sin(),TRNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),0.5,ANGLE_O);				
-		// 		if(isEqual(na,2*PI/3,ANGLE_O)) return isEqual(Sin(),TRNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),-0.5,ANGLE_O);				
-		// 		if(isEqual(na,5*PI/6,ANGLE_O)) return isEqual(Sin(),0.5,ANGLE_O)&&isEqual(Cos(),-TRNUM_SQRT3/2,ANGLE_O);				
-		// 		if(isEqual(na,7*PI/6,ANGLE_O)) return isEqual(Sin(),-0.5,ANGLE_O)&&isEqual(Cos(),-TRNUM_SQRT3/2,ANGLE_O);				
-		// 		if(isEqual(na,4*PI/3,ANGLE_O)) return isEqual(Sin(),-TRNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),-0.5,ANGLE_O);				
-		// 		if(isEqual(na,5*PI/3,ANGLE_O)) return isEqual(Sin(),-TRNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),0.5,ANGLE_O);				
-		// 		if(isEqual(na,2*PI-PI/6,ANGLE_O)) return isEqual(Sin(),-0.5,ANGLE_O)&&isEqual(Cos(),TRNUM_SQRT3/2,ANGLE_O);				
+		// 		if(isEqual(na,PI/4,ANGLE_O)) return isEqual(Sin(),RNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),RNUM_SQRT2/2,ANGLE_O);
+		// 		if(isEqual(na,3*PI/4,ANGLE_O)) return isEqual(Sin(),RNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),-RNUM_SQRT2/2,ANGLE_O);
+		// 		if(isEqual(na,5*PI/4,ANGLE_O)) return isEqual(Sin(),-RNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),-RNUM_SQRT2/2,ANGLE_O);
+		// 		if(isEqual(na,7*PI/4,ANGLE_O)) return isEqual(Sin(),-RNUM_SQRT2/2,ANGLE_O)&&isEqual(Cos(),RNUM_SQRT2/2,ANGLE_O);
+		// 		if(isEqual(na,PI/6,ANGLE_O)) return isEqual(Sin(),0.5,ANGLE_O)&&isEqual(Cos(),RNUM_SQRT3/2,ANGLE_O);
+		// 		if(isEqual(na,PI/3,ANGLE_O)) return isEqual(Sin(),RNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),0.5,ANGLE_O);				
+		// 		if(isEqual(na,2*PI/3,ANGLE_O)) return isEqual(Sin(),RNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),-0.5,ANGLE_O);				
+		// 		if(isEqual(na,5*PI/6,ANGLE_O)) return isEqual(Sin(),0.5,ANGLE_O)&&isEqual(Cos(),-RNUM_SQRT3/2,ANGLE_O);				
+		// 		if(isEqual(na,7*PI/6,ANGLE_O)) return isEqual(Sin(),-0.5,ANGLE_O)&&isEqual(Cos(),-RNUM_SQRT3/2,ANGLE_O);				
+		// 		if(isEqual(na,4*PI/3,ANGLE_O)) return isEqual(Sin(),-RNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),-0.5,ANGLE_O);				
+		// 		if(isEqual(na,5*PI/3,ANGLE_O)) return isEqual(Sin(),-RNUM_SQRT3/2,ANGLE_O)&&isEqual(Cos(),0.5,ANGLE_O);				
+		// 		if(isEqual(na,2*PI-PI/6,ANGLE_O)) return isEqual(Sin(),-0.5,ANGLE_O)&&isEqual(Cos(),RNUM_SQRT3/2,ANGLE_O);				
 //	}
 	return isEqualAngle(Rad(),a);
 }

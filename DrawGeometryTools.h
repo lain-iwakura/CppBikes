@@ -1,8 +1,8 @@
 #ifndef BIKES_DRAWGEOMETRYTOOLS_H
 #define BIKES_DRAWGEOMETRYTOOLS_H
 
-#include <mycpp/BasicMath.h>
-#include <mycpp/BasicGeometry.h>
+#include <CppBikes/BasicMath.h>
+#include <CppBikes/BasicGeometry.h>
 
 /**********************************************************************************************//**
  
@@ -22,18 +22,18 @@ namespace CppBikes
 {	
 	struct ScreenPoint
 	{
-		ScreenPoint(TRNUM x_=0, TRNUM y_=0):x(x_),y(y_){}
-		TRNUM x;
-		TRNUM y;
+		ScreenPoint(RNUM x_=0, RNUM y_=0):x(x_),y(y_){}
+		RNUM x;
+		RNUM y;
 	};
 
 	struct ScreenRect
 	{
-		ScreenRect(TRNUM x1_=0,TRNUM x2_=0, TRNUM y1_=0, TRNUM y2_=0):x1(x1_),y1(y1_),x2(x2_),y2(y2_){}
-		TRNUM x1; // лева€ граница
-		TRNUM x2; // права€ граница
-		TRNUM y1; // верхн€€ граница 
-		TRNUM y2; // нижн€€ граница 
+		ScreenRect(RNUM x1_=0,RNUM x2_=0, RNUM y1_=0, RNUM y2_=0):x1(x1_),y1(y1_),x2(x2_),y2(y2_){}
+		RNUM x1; // лева€ граница
+		RNUM x2; // права€ граница
+		RNUM y1; // верхн€€ граница 
+		RNUM y2; // нижн€€ граница 
 	};
 
 	struct ScreenZone

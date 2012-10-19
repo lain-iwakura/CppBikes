@@ -1,10 +1,12 @@
 #ifndef ABSTRACTCONTAINER_H
 #define ABSTRACTCONTAINER_H
-#include "ContainerInterface.h"
+#include "List.h"
 #include "PhantomObject.h"
 #include "SetList.h"
 #include <map>
 
+namespace CppBikes
+{
 
 
 template<class T> class PMap: public std::map<void*,T>
@@ -302,5 +304,5 @@ private:
 //template<class T> int ContainerModelMap<T>::stindex=AbstractContainer::ReserveIndex();
 
 
-
+}
 #endif
