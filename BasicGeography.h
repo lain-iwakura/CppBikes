@@ -2,9 +2,14 @@
 #define BASICGEOGRAPHY_H
 #include "BasicMath.h"
 #include "BasicGeometry.h"
+//#include "TrigonometricAngle.h"
 
 namespace CppBikes
 {
+
+	
+
+// если разбить весь шар по секундам получится 1679616000000 точек
 
 // Константы эллипсоида земли:
 const double GEO_A=6378245; // большая полуось [м]
@@ -36,11 +41,19 @@ struct DegMinSecAngle
 };
 
 
-struct PhiLamCoord // точка в фи/лямбда координатах
+struct PhiLamCoord // географические координаты (phi,lambda)
 {
 	PhiLamCoord(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
-	double phi;
-	double lam;
+	RNUM phi;
+	RNUM lam;
+};
+
+struct PhiLamHCoord // географические координаты (phi,lambda,h)
+{
+	PhiLamHCoord(RNUM Phi=0,RNUM Lambda=0, RNUM H=0):phi(Phi),lam(Lambda),h(H){}
+	RNUM phi;
+	RNUM lam;
+	RNUM h;
 };
 
 
@@ -50,8 +63,10 @@ Point PhiLam_to_PointS(RNUM phi, RNUM lam);  // преобразовать (фи,лямда) в (x,y,
 PhiLamCoord Point_to_PhiLamS(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 // Для эллипсоида:
-Point PhiLam_to_PointE(RNUM phi, RNUM lam); // преобразовать (фи,лямда) в (x,y,z)
-Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовать (фи,лямда) в (x,y,z)
+Point PhiLam_to_PointE(RNUM phi, RNUM lam); // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
+Point PhiLam_to_PointE(RNUM phi, RNUM lam, RNUM h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
+Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
+Point PhiLam_to_PointE(const PhiLamHCoord &phi_lam_h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
 PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 
@@ -60,5 +75,9 @@ Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
 
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
+
+class TrAngle;
+Point PhiLam_to_PointE(TrAngle *phi, TrAngle *lam);
+Point PhiLam_to_PointE_old( RNUM phi, RNUM lam );
 }
 #endif

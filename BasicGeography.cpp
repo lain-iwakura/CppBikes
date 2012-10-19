@@ -1,4 +1,5 @@
 #include "BasicGeography.h"
+#include <CppBikes/TrigonometricAngle.h>
 
 
 
@@ -89,20 +90,76 @@ Point CppBikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
 
 Point CppBikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
 {
+	phi=NormAngle(phi);
+	lam=NormAngle(lam);
+
 	RNUM cosB=cos(phi);
-	RNUM sinB=sin(phi);
+	RNUM sinB=sqrt(1-cosB*cosB);//sin(phi);
+	if(phi<0) sinB=-sinB;
 	RNUM cosL=cos(lam);
-	RNUM sinL=sin(lam);
+	RNUM sinL=sqrt(1-cosL*cosL);//sin(lam);
+	if(lam<0) sinL=-sinL; 
 	//RNUM H=0;
 	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
 	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
 }
+
+
+Point CppBikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
+{
+	//phi=NormAngle(phi);
+	//lam=NormAngle(lam);
+
+	RNUM cosB=cos(phi);
+	RNUM sinB=sin(phi);
+	//if(phi<0) sinB=-sinB;
+	RNUM cosL=cos(lam);
+	RNUM sinL=sin(lam);
+	//if(lam<0) sinL=-sinL; 
+	//RNUM H=0;
+	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
+	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
+}
+
 
 PhiLamCoord CppBikes::Point_to_PhiLamE( const Point &p )
 {
 	RNUM D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;
 	return PhiLamCoord(atan(p.gz/not0((1-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
+}
+
+Point PhiLam_to_PointE( RNUM phi, RNUM lam, RNUM h )
+{
+	phi=NormAngle(phi);
+	lam=NormAngle(lam);
+
+	RNUM cosB=cos(phi);
+	RNUM sinB=sqrt(1-cosB*cosB);//sin(phi);
+	if(phi<0) sinB=-sinB;
+	RNUM cosL=cos(lam);	
+	RNUM sinL=sqrt(1-cosL*cosL);//sin(lam);
+	if(lam<0) sinL=-sinL; 
+	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
+	return Point((N+h)*cosB*cosL,(N+h)*cosB*sinL,((1-GEO_EE)*N+h)*sinB);
+}
+
+Point PhiLam_to_PointE( const PhiLamHCoord &phi_lam_h )
+{
+	return PhiLam_to_PointE(phi_lam_h.phi,phi_lam_h.lam,phi_lam_h.h);
+}
+
+Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
+{
+	RNUM cosB=phi->Cos();
+	RNUM sinB=phi->Sin();//sin(phi);	
+	RNUM cosL=lam->Cos();
+	RNUM sinL=lam->Sin();//sin(lam);
+	//if(lam<0) sinL=-sinL; 
+	//RNUM H=0;
+	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
+	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
+
 }
 
 
@@ -117,5 +174,6 @@ void CppBikes::MovePointToEllipsoidSurface(Point &p)
 	vr*=r;
 	p=vr.destination();
 }
+
 
 }

@@ -77,7 +77,7 @@ T ABS(T val)
 
 //=============================================
 
-// WTF
+// WTF?
 
 enum MathFunctionResultType
 {

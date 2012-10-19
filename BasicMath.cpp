@@ -26,16 +26,14 @@ void CppBikes::not0set(RNUM &n, RNUM o/* =RNUM_O */)
 
 RNUM CppBikes::NormAngle(RNUM a)
 {
-	RNUM r=ABS(a);
-	r-=(int(r/PImult2))*PImult2;
-	if(r>PI) r-=PImult2;
-	if(a<0) r=-r;
-	return r;
+	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
+	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
+	return a;
 }
 
 RNUM CppBikes::NormAngle_0_2PI(RNUM a)
 {
-	if(ABS(a)>2*PI)	a-=((long)(a/(2*PI)))*PImult2;
+	if(ABS(a)>2*PI)	a-=((long)(a/(PImult2)))*PImult2;
 	if(a<0) a+=PImult2;
 	return a;
 }
