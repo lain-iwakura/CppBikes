@@ -1,6 +1,11 @@
-#ifndef MYCPP_TYPES_H
-#define MYCPP_TYPES_H
+#ifndef CPPBYKES_TYPES_H
+#define CPPBYKES_TYPES_H
 
-typedef double TAMETRIC;
+namespace CppBikes
+{
+	typedef double RNUM;
 
+	typedef RNUM TRNUM
+	typedef RNUM TAMETRIC;
+}
 #endif

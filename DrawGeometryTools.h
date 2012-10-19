@@ -18,7 +18,7 @@ y2	---|------|---				y
 
  **************************************************************************************************/
 
-namespace Bikes
+namespace CppBikes
 {	
 	struct ScreenPoint
 	{
@@ -38,14 +38,14 @@ namespace Bikes
 
 	struct ScreenZone
 	{
-		ScreenZone (char h_=0, char v_=0):h(h_),v(v_),hv(h_*10+v_){}
-		char h;		//
-		char v;		//
-		char hv;	//
+		ScreenZone (char h_=0, char v_=0):h(h_),v(v_)/*,hv(h_*10+v_)*/{}
+		char h;
+		char v;
+		//char hv;	
 		void set(char h_, char v_);
-		bool operator == (char hv_) const;
-		ScreenZone& operator = (char hv_);
-		ScreenZone& operator = (const ScreenZone&  hv_);
+		bool operator == (char hv) const;
+		ScreenZone& operator = (char hv);
+		ScreenZone& operator = (const ScreenZone&  scrz);
 
 	};
 
@@ -56,7 +56,6 @@ namespace Bikes
 	bool LineSegmentCrossScreenRect(const ScreenPoint &p1, const ScreenZone &p1_zone, const ScreenPoint &p2, const ScreenZone &p2_zone, const ScreenRect &scrRect);
 
 	bool LineSegmentCrossScreenRect(const ScreenPoint &p1, const ScreenPoint &p2, const ScreenRect &scr);
-
 	
 }
 #endif

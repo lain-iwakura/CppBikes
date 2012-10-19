@@ -1,12 +1,12 @@
 #include "DrawGeometryTools.h"
 
-using namespace Bikes;
+using namespace CppBikes;
 
 
 
 ScreenZone& ScreenZone::operator = (char hv_)
 {
-	hv=hv_;
+	//hv=hv_;
 	h=hv_/10;
 	v=hv_%10;
 	return *this;
@@ -17,31 +17,31 @@ ScreenZone& ScreenZone::operator = (const ScreenZone&  sz)
 {
 	h=sz.h;
 	v=sz.v;
-	hv=sz.hv;
+	//hv=sz.hv;
 	return *this;
 }
 
-bool ScreenZone::operator == (char hv_) const
+bool ScreenZone::operator == (char hv) const
 {
-	return hv==hv_;
+	return (h==hv/10)&&(v==hv%10);
 }
 
 void ScreenZone::set( char h_, char v_ )
 {
 	h=h_;
 	v=v_;
-	hv=h_*10+v_;
+	//hv=h_*10+v_;
 }
 
 
 
 
-inline bool Bikes::PointInScreenRect(const ScreenPoint &p, const ScreenRect &scr)
+inline bool CppBikes::PointInScreenRect(const ScreenPoint &p, const ScreenRect &scr)
 {
 	return (p.x>=scr.x1)&&(p.x<=scr.x2)&&(p.y>=scr.y1)&&(p.y<=scr.y2);
 }
 
-ScreenZone Bikes::ScreenZoneOfPoint(const ScreenPoint &p, const ScreenRect &scr )
+ScreenZone CppBikes::ScreenZoneOfPoint(const ScreenPoint &p, const ScreenRect &scr )
 {
 	char v=2;
 	char h=2;
@@ -61,7 +61,7 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	
 	if(p1.x>p2.x) return LineSegmentCrossScreenRect_ambiguous(p2,p2z,p1,p1z,scr);
 	
-	// реализация только для направления  >-->
+	// реализация только для направления  (p1)>-->(p2)
 	
 	TRNUM dx=p2.x-p1.x;
 
@@ -113,7 +113,7 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 
 }
 
-bool Bikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone &p1z, const ScreenPoint &p2, const ScreenZone &p2z, const ScreenRect &scr )
+bool CppBikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone &p1z, const ScreenPoint &p2, const ScreenZone &p2z, const ScreenRect &scr )
 {
 	if(p1z.v==p2z.v) // в одной вертикале 
 	{
@@ -129,7 +129,7 @@ bool Bikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone 
 		return (p1z.h==2); // в видимой области | в периферии		
 	}
 
-	if((p1z==22)||(p2z==22)) return true; // в диагонале (в видимой области)
+	if((p1z.h==2&&p1z.v==2)||(p2z.h==2&&p2z.v==2)) return true; // в диагонале (в видимой области)
 
 
 	// * * * * * * * * * * * * * * * * * * * * 
@@ -180,7 +180,7 @@ bool Bikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone 
 */
 }
 
-bool Bikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenPoint &p2, const ScreenRect &scr )
+bool CppBikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenPoint &p2, const ScreenRect &scr )
 {
 	return LineSegmentCrossScreenRect(p1,ScreenZoneOfPoint(p1,scr),p2,ScreenZoneOfPoint(p2,scr),scr);
 }

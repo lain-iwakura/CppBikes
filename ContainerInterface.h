@@ -30,10 +30,22 @@ public:
 		return *this;
 	}
 
+	T& increase(int di)
+	{
+		for(int i=0; i<di; i++) Container::push_back(new T());
+		return last();
+	}
+
+	T& increase()
+	{
+		Container::push_back(new T());
+		return last();
+	}
+
 	void operator += (const List<T> & other ){append(other);}
-	void operator += (const T & obj ){append(obj);}
-	void add(const T &a){append(a);}
-	void append ( const T & obj ) { push_back(obj); /*cnt++;*/}
+	void operator += (const T & obj ){Container::push_back(new T(obj));}
+	void add(const T &a){Container::push_back(new T(obj));}
+	void append ( const T & obj ) { Container::push_back(new T(obj)); /*cnt++;*/}
 	void append (const List<T> & other )
 	{
 		int c=other.size();
