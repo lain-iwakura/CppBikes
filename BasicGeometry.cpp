@@ -5,7 +5,7 @@
 ////////////////////////// POINT /////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-Point::Point(TMETRIC plx,TMETRIC ply,TMETRIC plz, Basis *b,bool notransient)
+Point::Point(TMETRIC plx,TMETRIC ply,TMETRIC plz, const Basis *b,bool notransient)
 {
 	_transient=!notransient;
 	basis=0;
@@ -69,10 +69,10 @@ void Point::operator = (const Vector &v)
 
 
 Vector Point::operator && (const Point &p) const {return Vector(*this,p,false);}
-Point Point::operator [](Basis &b) const {return inBasis(&b);}
-Point Point::operator [](Basis *b) const {return inBasis(b);}
-Point& Point::operator >>(Basis &b)  {return SetBasis(&b);}
-Point& Point::operator >>(Basis *b)  {return SetBasis(b);}	
+Point Point::operator [](const Basis &b) const {return inBasis(&b);}
+Point Point::operator [](const Basis *b) const {return inBasis(b);}
+Point& Point::operator >>(const Basis &b)  {return SetBasis(&b);}
+Point& Point::operator >>(const Basis *b)  {return SetBasis(b);}	
 
 Point Point::operator + (const Vector &v) const {return Point(Vector(*this)+v,false);}
 Point Point::operator - (const Vector &v) const {return Point(Vector(*this)-v,false);}
@@ -101,7 +101,7 @@ Point& Point::SetGlobalBasis()
 
 Vector Point::v() const {return Vector(*this,false);} 
 
-Point& Point::SetBasis(Basis *b)
+Point& Point::SetBasis(const Basis *b)
 {
 	if(basis) basis->Remove(this);
 	basis=b;
@@ -109,7 +109,7 @@ Point& Point::SetBasis(Basis *b)
 	return *this;
 }
 
-Point Point::inBasis(Basis *b) const
+Point Point::inBasis(const Basis *b) const
 {
 	Point rp(true,*this,false);
 	rp.SetBasis(b);
@@ -123,7 +123,7 @@ Point Point::inGlobalBasis() const
 	return rp;
 }
 
-Point& Point::ReplaceGBasis(Basis *b)
+Point& Point::ReplaceGBasis(const Basis *b)
 {
 	if(basis) basis->Remove(this);
 	if(b)
@@ -138,7 +138,7 @@ Point& Point::ReplaceGBasis(Basis *b)
 	return *this;
 }
 
-Point& Point::ReplaceBasis(Basis *b)
+Point& Point::ReplaceBasis(const Basis *b)
 {	
 	if(basis) basis->Remove(this);
 	if(b)
@@ -156,7 +156,7 @@ Point& Point::ReplaceBasis(Basis *b)
 	return *this;
 }
 
-Point Point::inReplacedBasis(Basis *b) const
+Point Point::inReplacedBasis(const Basis *b) const
 {
 	Point rp(true,*this,false); rp.ReplaceBasis(b);
 	return rp;
@@ -204,14 +204,14 @@ bool Point::operator !=(const Point &p) const
 	return !(*this==p);
 }
 
-TMETRIC Point::lx(Basis *b) const {if(b) return (b->O&&*this)&b->i; return gx;}
-TMETRIC Point::ly(Basis *b) const {if(b) return (b->O&&*this)&b->j; return gy;}
-TMETRIC Point::lz(Basis *b) const {if(b) return (b->O&&*this)&b->k; return gz;}
+TMETRIC Point::lx(const Basis *b) const {if(b) return (b->O&&*this)&b->i; return gx;}
+TMETRIC Point::ly(const Basis *b) const {if(b) return (b->O&&*this)&b->j; return gy;}
+TMETRIC Point::lz(const Basis *b) const {if(b) return (b->O&&*this)&b->k; return gz;}
 TMETRIC Point::x() const {return lx(basis);}
 TMETRIC Point::y() const {return ly(basis);}
 TMETRIC Point::z() const {return lz(basis);}
 
-Point& Point::Set(TMETRIC px, TMETRIC py,TMETRIC pz, Basis *b)
+Point& Point::Set(TMETRIC px, TMETRIC py,TMETRIC pz, const Basis *b)
 {
 	*this=Point(px,py,pz,b,true);
 	return *this;
@@ -262,12 +262,40 @@ bool Point::isEqual(const Point &p1, const Point &p2, TMETRIC e)
 	return isEqual(p1.gx,p2.gx,e)&&isEqual(p1.gy,p2.gy,e)&&isEqual(p1.gz,p2.gz,e);
 }
 
+
+TMETRIC Point::PolarR() const
+{
+	TMETRIC px=x();
+	TMETRIC py=y();
+	return sqrt(px*px+py*py);
+}
+
+TAMETRIC Point::PolarAlpha() const
+{
+	TMETRIC px=x();
+	TMETRIC py=y();
+	TMETRIC l=sqrt(px*px+py*py);
+	TAMETRIC a=arccos(px/l);
+	if(py<0) a=2*PI-a;
+	return a;
+}
+
+bool Point::isNull() const
+{
+	return _null;
+}
+
+bool Point::isTransient() const
+{
+	return _transient;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //////////////////////// VECTOR //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
 
-Vector::Vector(TMETRIC vx, TMETRIC vy, TMETRIC vz, const Point &fp, Basis *b, bool notransient)
+Vector::Vector(TMETRIC vx, TMETRIC vy, TMETRIC vz, const Point &fp,const Basis *b, bool notransient)
 :fulcrum(true,fp,notransient)
 {
 	_transient=!notransient;
@@ -329,7 +357,7 @@ Vector::Vector(const Point &p,bool notransient)
 	_null=p.isNull();
 }
 
-Vector::Vector(const Point &p1, const Point &p2, Basis *b, bool notransient)
+Vector::Vector(const Point &p1, const Point &p2,const Basis *b, bool notransient)
 :fulcrum(true,p1,notransient)
 {
 	_transient=!notransient;
@@ -347,6 +375,7 @@ Vector::~Vector()
 {
 	if(basis) basis->Remove(this);
 }
+
 Vector Vector::operator +(const Vector &v) const { return Vector(gx+v.gx,gy+v.gy,gz+v.gz,fulcrum,0,false);}
 Vector Vector::operator -(const Vector &v) const { return Vector(gx-v.gx,gy-v.gy,gz-v.gz,fulcrum,0,false);}
 void Vector::operator += (const Vector &v){ gx+=v.gx; gy+=v.gy; gz+=v.gz;}
@@ -363,13 +392,14 @@ Vector Vector::operator -() const {return (*this)*(-1);}
 //////// extra operators ///////
 Point Vector::operator % (const Vector &v) const {return Intersection(v);}
 bool Vector::operator || (const Vector &v) const {return isParallel(*this,v);}
+bool Vector::operator |=(const Vector &v) const {return isRightVectors(*this,v);}
 Basis Vector::operator && (const Vector &v) const {return OrtoBasis_ByIJ(*this,v);}
 Basis Vector::operator && (const Point &p) const {return OrtoBasis_ByIJ(*this,Vector(fulcrum,p));}
-TAngle Vector::operator ^ (const Vector &v) const {return AngleA(v);}
-Vector Vector::operator [] (Basis &b) const {return inBasis(&b);}
-Vector Vector::operator [] (Basis *b) const {return inBasis(b);}
-Vector& Vector::operator >> (Basis &b)  {return SetBasis(&b);}
-Vector& Vector::operator >> (Basis *b)  {return SetBasis(b);}
+TAMETRIC Vector::operator ^ (const Vector &v) const {return Angle(*this,v);}
+Vector Vector::operator [] (const Basis &b) const {return inBasis(&b);}
+Vector Vector::operator [] (const Basis *b) const {return inBasis(b);}
+Vector& Vector::operator >> (const Basis &b)  {return SetBasis(&b);}
+Vector& Vector::operator >> (const Basis *b)  {return SetBasis(b);}
 Vector Vector::operator !() const { return Vector(true,*this,false).invert();}
 bool Vector::operator > (const Vector &v) const {return length()>v.length();}
 bool Vector::operator < (const Vector &v) const {return length()<v.length();}
@@ -388,7 +418,7 @@ Vector& Vector::SetGlobalBasis()
 	return *this;
 }
 
-Vector& Vector::SetBasis(Basis *b)
+Vector& Vector::SetBasis(const Basis *b)
 {	
 	if(b==basis) return *this;
 	if(basis) basis->Remove(this); 	
@@ -398,7 +428,7 @@ Vector& Vector::SetBasis(Basis *b)
 	return *this;
 }
 
-Vector& Vector::ReplaceGBasis(Basis *b) //-!
+Vector& Vector::ReplaceGBasis(const Basis *b) //-!
 {
 	if(basis){basis->Remove(this);}	
 	if(b)
@@ -411,7 +441,7 @@ Vector& Vector::ReplaceGBasis(Basis *b) //-!
 	return *this;
 }
 
-Vector& Vector::ReplaceBasis(Basis *b) //-!
+Vector& Vector::ReplaceBasis(const Basis *b) //-!
 {
 	if(b==basis) return *this; //!	
 	if(b)
@@ -428,9 +458,9 @@ Vector& Vector::ReplaceBasis(Basis *b) //-!
 	return *this;
 }
 
-Vector Vector::inBasis(Basis *b)const {Vector rv(true,*this,false);rv.SetBasis(b);return rv;}
+Vector Vector::inBasis(const Basis *b)const {Vector rv(true,*this,false);rv.SetBasis(b);return rv;}
 Vector Vector::inGlobalBasis()const {Vector rv(true,*this,false);rv.SetGlobalBasis();return rv;}
-Vector Vector::inReplacedBasis(Basis *b)const {Vector rv(true,*this,false); rv.ReplaceBasis(b); return rv;}
+Vector Vector::inReplacedBasis(const Basis *b)const {Vector rv(true,*this,false); rv.ReplaceBasis(b); return rv;}
 
 
 Vector& Vector::rotate_W(const Vector &w, TAMETRIC a) //+?
@@ -447,6 +477,7 @@ Vector& Vector::rotate_W(const Vector &w, TAMETRIC a) //+?
 		a=NormAngle(a);
 		TAMETRIC aa=abs(a);
 		int sa=a>0?1:-1;
+		aa=NormAngle(aa);
 		while(aa>=PI/2){aa-=PI/2;vrsh=ew*vrsh*sa;}
 		if(aa>PI/4){aa-=PI/4; vrsh=((ew*vrsh*sa)+vrsh).e()*rsh;}
 		vrsh=(vrsh+(ew*vrsh).e()*rsh*tan(aa)*sa).e()*rsh;
@@ -490,17 +521,17 @@ Vector& Vector::rotateWithoutFulcrum_W(const Vector &w, TAMETRIC a) //+?
 Vector& Vector::rotate_X(TAMETRIC a)
 {
 	if(basis) return rotate_W(basis->i,a);
-	return rotate_W(V(1,0,0),a);
+	return rotate_W(Vector(1,0,0),a);
 }
 Vector& Vector::rotate_Y(TAMETRIC a)
 {
 	if(basis) return rotate_W(basis->j,a);
-	return rotate_W(V(0,1,0),a);
+	return rotate_W(Vector(0,1,0),a);
 }
 Vector& Vector::rotate_Z(TAMETRIC a)
 {
 	if(basis) return rotate_W(basis->k,a);
-	return rotate_W(V(0,0,1),a);
+	return rotate_W(Vector(0,0,1),a);
 }
 
 
@@ -510,13 +541,13 @@ TAMETRIC Vector::Angle(const Vector &v1, const Vector &v2)
 //	if(v2.gx==0&&v2.gy==0&&v2.gz==0) return 0;
 	return arccos(v1.e()&v2.e());
 }
-TAngle Vector::AngleA(const Vector &v) const{ return TAngle(e()&v.e());}
+//TAngle Vector::AngleA(const Vector &v) const{ return TAngle(e()&v.e());}
 
 Point Vector::Intersection(const Vector &v) const//+?
 {
 	if(isParallel(*this,v))  return Point(false);
 	Basis b; b.SetOrtoBasis_ByIJ(*this,v);
-	TAngle a=AngleA(v);
+	TAMETRIC a=Angle(v);
 	//v.SetBasis(&b); 		
 	Point rp(v.fulcrum.lx(&b)-v.fulcrum.ly(&b)/tan(a),0,0,&b,false); rp.SetGlobalBasis(); //!
 	return rp;
@@ -547,17 +578,17 @@ TMETRIC Vector::x()const {return lx(basis);}
 TMETRIC Vector::y()const {return ly(basis);}
 TMETRIC Vector::z()const {return lz(basis);}
 
-TMETRIC Vector::lx(Basis *b) const
+TMETRIC Vector::lx(const Basis *b) const
 {
 	if(b)	return b->i&(*this);
 	return gx;
 }
-TMETRIC Vector::ly(Basis *b) const
+TMETRIC Vector::ly(const Basis *b) const
 {
 	if(b)	return b->j&(*this);
 	return gy;
 }
-TMETRIC Vector::lz(Basis *b) const
+TMETRIC Vector::lz(const Basis *b) const
 {
 	if(b)	return b->k&(*this);
 	return gz;
@@ -635,14 +666,42 @@ TAMETRIC Vector::Phi()
 	return arcsin(z()/length());
 }
 
+bool Vector::isTransient() const
+{
+	return _transient;
+}
+
+bool Vector::isNull() const
+{
+	return _null;
+}
+
+Point Vector::RangeIntersection( const Vector &v ) const
+{
+	Point rp=Intersection(v);
+	if(rp.isNull()) return rp;
+	Vector v1(fulcrum,rp);
+	TMETRIC v1tv=v1&e();
+	if(v1tv<0||v1tv>this->length()) 
+	{
+		//rp._null=true;
+		return Point(false,rp);
+	}else
+	{
+		TMETRIC v1v=v1&v.e();
+		if(v1v<0||v1v>v.length()) return Point(false,rp);
+	}
+	return rp;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////// BASIS ///////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
 Basis::Basis(const Vector &bi,const Vector &bj, const Vector &bk, const Point &bO)
-:i(bi),j(bj),k(bk),O(bO)
-{
+:i(bi),j(bj),k(bk),O(bO), vectors(new List<Vector*>), points(new List<Point*>)
+{	
 	O.SetGlobalBasis();
 	i.SetGlobalBasis().fulcrum=O;
 	j.SetGlobalBasis().fulcrum=O;
@@ -650,7 +709,7 @@ Basis::Basis(const Vector &bi,const Vector &bj, const Vector &bk, const Point &b
 }
 
 Basis::Basis(const Basis &b)
-:i(b.i),j(b.j),k(b.k),O(b.O)
+:i(b.i),j(b.j),k(b.k),O(b.O), vectors(new List<Vector*>), points(new List<Point*>)
 {
 
 }
@@ -658,6 +717,8 @@ Basis::Basis(const Basis &b)
 Basis::~Basis()
 {
 	RemoveAll();
+	delete vectors;
+	delete points;
 }
 
 
@@ -671,14 +732,14 @@ void Basis::operator =(const Basis &b)
 }
 
 //////// extra operators ///////
-Basis& Basis::operator << (Point &p) {p.SetBasis(this); return *this;}
-Basis& Basis::operator << (Vector &v) {v.SetBasis(this); return *this;}
-Vector Basis::operator [] (const Vector &v) {return v.inBasis(this);}
-Point  Basis::operator [] (const Point &p) {return p.inBasis(this);}
+const Basis& Basis::operator << (Point &p) const {p.SetBasis(this); return *this;}
+const Basis& Basis::operator << (Vector &v) const {v.SetBasis(this); return *this;}
+Vector Basis::operator [] (Vector &v) const  {return v.inBasis(this);}
+Point  Basis::operator [] (const Point &p) const {return p.inBasis(this);}
 ////////////////////////////////
 
 
-Basis& Basis::SetOrtoBasis_ByIJ(const Vector &bi,const Vector &bj)
+Basis& Basis::SetOrtoBasis_ByIJ(const Vector &bi, const Vector &bj)
 {
 //	RemoveAll(); //?
 	i=bi;
@@ -721,44 +782,44 @@ Basis& Basis::SetOrtoBasisL_ByIJ(const Vector &bi, const Vector &bj){SetOrtoBasi
 Basis& Basis::SetOrtoBasisL_InXY_ByI(const Vector &bi){SetOrtoBasis_InXY_ByI(bi);j*=-1; return *this;}
 Basis& Basis::SetO(const Point &pO){O=pO.inGlobalBasis(); i.fulcrum=O;	j.fulcrum=O; k.fulcrum=O; return *this;}
 Basis& Basis::SetOrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY){return SetOrtoBasis_ByIJ(Vector(pO,pX),Vector(pO,pY));}
-void Basis::Add(Point *p)
+void Basis::Add(Point *p) const
 {
 	//p->basis=this;//?
 	if(!(p->isTransient()))
 	{
-		if(!points.contains(p)) points+=p;
+		if(!points->contains(p)) (*points)+=p;
 	}
 }
-void Basis::Add(Vector *v)
+void Basis::Add(Vector *v) const
 {	
 	//v->basis=this;//?
 	if(!(v->isTransient()))
 	{
-		if(!vectors.contains(v)) vectors+=v;
+		if(!vectors->contains(v)) (*vectors)+=v;
 	}
 }
-void Basis::Remove(Point *p)
+void Basis::Remove(Point *p) const
 {
 	if(p->basis==this)
 	{	
 		//p->basis=0;//?
-		if(!(p->isTransient()))	points.remove(p);
+		if(!(p->isTransient()))	points->remove(p);
 	}
 }
-void Basis::Remove(Vector *v)
+void Basis::Remove(Vector *v) const
 {
 	if(v->basis==this)
 	{	
 		//v->basis=0;//?
-		if(!(v->isTransient()))	vectors.remove(v);
+		if(!(v->isTransient()))	vectors->remove(v);
 	}
 }
-void Basis::RemoveAll()
+void Basis::RemoveAll() const
 {
- 	for(int i=0; i<vectors.count(); i++) if(vectors[i]->basis==this)/*?*/ vectors[i]->basis=0;
- 	for(int i=0; i<points.count(); i++) if(points[i]->basis==this)/*?*/ points[i]->basis=0;
- 	vectors.clear();
- 	points.clear();
+ 	for(int i=0; i<vectors->count(); i++) if((*vectors)[i]->basis==this)/*?*/ (*vectors)[i]->basis=0;
+ 	for(int i=0; i<points->count(); i++) if((*points)[i]->basis==this)/*?*/ (*points)[i]->basis=0;
+ 	vectors->clear();
+ 	points->clear();
 }
 
 Basis OrtoBasis_ByIJ(const Vector &bi,const Vector &bj){Basis b; b.SetOrtoBasis_ByIJ(bi,bj); return b;}	
@@ -786,5 +847,5 @@ CylCoord ToCylCoord_Arc(const Point &p)
 	return cc;
 }
 
-Point FromCylCoord_Arc(TAMETRIC a, TMETRIC r, TMETRIC z, Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
-Point FromCylCoord_Arc(TAngle &a, TMETRIC r, TMETRIC z, Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+Point FromCylCoord_Arc(TAMETRIC a, TMETRIC r, TMETRIC z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+//Point FromCylCoord_Arc(TAngle &a, TMETRIC r, TMETRIC z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}

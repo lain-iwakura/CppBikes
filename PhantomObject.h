@@ -13,6 +13,7 @@
 #define PHANTOMOBJECT_DEFALL(C_this,C_that,T) PHANTOMOBJECT_CONSTRUCTOR_DEFALL(C_this,C_that,T) PHANTOMOBJECT_ASSIGMENTOPERATORS(C_this,C_that,T)
 
 
+
 template<class T> class PhantomObject
 {
 public:
@@ -21,7 +22,8 @@ public:
     PhantomObject(const PhantomObject<T> &phantom)
 	{
 		OBJ=0;
-		phantom.transObject(*this);
+		if(phantom.OBJ) Create(*phantom.OBJ);
+	//	phantom.transObject(*this);
 	}		
 	virtual ~PhantomObject(){Destroy();}
 
@@ -81,20 +83,25 @@ public:
 	T* pObj(){return OBJ;} 
 
 	operator T() const { if(OBJ) return *OBJ;  return T();}	
-	T& operator =(const T &obj){Create(obj); return *OBJ;}
+// 	operator T*() const { return OBJ;}
+// 	operator const T*() const { return OBJ;}
+// 	operator T const *() const { return OBJ;}
+	T& operator =(const T &obj){Create(); *OBJ=obj; return *OBJ;}
 	T* operator =(T *pobj) {Take(pobj);	return OBJ;}
-	PhantomObject<T>& operator =(const PhantomObject<T> &phantom){phantom.transObject(*this); return *this;}
+	//PhantomObject<T>& operator =(const PhantomObject<T> &phantom){phantom.transObject(*this); return *this;}
 
+	T* operator -> () {return OBJ;}
+	T& operator *(){if(!OBJ) {OBJ=new T();Created();}  return *OBJ; }
 
 protected:
 	T *OBJ;	
 
 	virtual void destructor(){Destroy();}
-	virtual void transObject(PhantomObject<T> &phobj) const
-	{			
-		if(OBJ) phobj.Create(*OBJ);		
-		else phobj.Destroy();
-	}
+// 	virtual void transObject(PhantomObject<T> &phobj) const
+// 	{			
+// 		if(OBJ) {phobj.Create(); *phobj.OBJ=*OBJ;}
+// 		else phobj.Destroy();	
+// 	}
 	virtual void Created(){}
 	virtual void Destroyed(){}
 	virtual void Passed(){Destroyed();} //?
@@ -243,35 +250,55 @@ public:
 	T operator -(){if(OBJ) return -*OBJ; return -T(0);}
 	T operator +(){if(OBJ) return +*OBJ; return +T(0);}
 	bool operator ==(const JointPhantomValue<T> &jval) const{if(Exist()&&jval.Exist()) return *OBJ==*jval.OBJ; return false;}
-
 };
 
-template<class T> class CalcVal: public PhantomObject<T>   
+
+
+#define VALOPERATORS_DEFALL(T,B) \
+	void operator +=(const T &v){ B::operator +=(v);}\
+	void operator -=(const T &v){ B::operator -=(v);}\
+	void operator /=(const T &v){ B::operator /=(v);}\
+	void operator *=(const T &v){ B::operator *=(v);}\
+	
+
+
+template<class T> class PhantomVal: public PhantomObject<T>   
 {
 public:
-	TEMPLT_DEFALL(CalcVal,PhantomObject,T)
+	TEMPLT_DEFALL(PhantomVal,PhantomObject,T)
 
 	void Clear(){Destroy();}
 
 	operator T() const {if(OBJ) return *OBJ; return T(0);}
+	//T val() const {return PhantomObject<T>::Val()}
 
 	void operator +=(const T &val){if(OBJ) *OBJ+=val; else OBJ=new T(val);}
 	void operator -=(const T &val){if(OBJ) *OBJ-=val; else OBJ=new T(-val);}
 	void operator *=(const T &val){if(OBJ) *OBJ*=val;}
 	void operator /=(const T &val){if(OBJ) *OBJ/=val;}
 
-	void operator +=(const CalcVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ+=*cval.OBJ; else *OBJ=new T(*cval.OBJ);}}
-	void operator -=(const CalcVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ-=*cval.OBJ; else *OBJ=new T(-(*cval.OBJ));}}
-	void operator /=(const CalcVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ/=*cval.OBJ;}}
-	void operator *=(const CalcVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ*=*cval.OBJ;}}
+	void operator +=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ+=*cval.OBJ; else *OBJ=new T(*cval.OBJ);}}
+	void operator -=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ-=*cval.OBJ; else *OBJ=new T(-(*cval.OBJ));}}
+	void operator /=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ/=*cval.OBJ;}}
+	void operator *=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ*=*cval.OBJ;}}
 
-	T operator -() const{if(OBJ) return -*OBJ; return -T(0);}
-	T operator +() const{if(OBJ) return +*OBJ; return +T(0);}
+	T operator -() const {if(OBJ) return -*OBJ; return -T(0);}
+	T operator +() const {if(OBJ) return +*OBJ; return +T(0);}
 
-	bool operator ==(const CalcVal<T> &cval) const{if(Exist()&&cval.Exist()) return *OBJ==*cval.OBJ; return false;}	
-
+	bool operator ==(const PhantomVal<T> &cval) const{if(Exist()&&cval.Exist()) return *OBJ==*cval.OBJ; return false;}	
 };
 
+// 
+// class Deleter // ?
+// {
+// public:
+// 	Deleter(void *delObj=0){*this+=delObj;}
+// 	~Deleter()
+// 	{
+// 		for(int i=0; i<delObjects.count(); i++) delete delObjects[i];
+// 	}
+// 	void operator +=(void *delObj){if(delObj) delObjects+=delObj;}
+// 	List<void*> delObjects;
+// };
 
 #endif
-

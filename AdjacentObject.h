@@ -1,6 +1,8 @@
 #ifndef ADJACENTOBJECT_H
 #define ADJACENTOBJECT_H
+
 //#include "ContainerInterface.h"
+
 
 #define ADJACENTOBJECT_DEFFUNC(C_this) C_this * next(){return (C_this*)AdjacentObject::next();} C_this * previous(){return (C_this*) AdjacentObject::previous();} C_this * nextN(int n){return (C_this*)AdjacentObject::nextN(n);} C_this * previousN(int n){return (C_this*)AdjacentObject::previousN(n);}
 
