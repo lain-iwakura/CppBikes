@@ -7,10 +7,18 @@ namespace CppBikes
 {
 
 
-// 	class TrAngleConst
-// 	{
-// 
-// 	};
+	struct TrAngleConst
+	{
+		TrAngleConst(RNUM _rad_val=0,RNUM _sin_val=0, RNUM _cos_val=1, RNUM _tan_val=0):
+			rad_val(_rad_val),sin_val(_sin_val),cos_val(_cos_val),tan_val(_tan_val)
+		{
+		}
+
+		RNUM rad_val;
+		RNUM sin_val;
+		RNUM cos_val;
+		RNUM tan_val;
+	};
 
 
 	class TrAngle
@@ -47,7 +55,7 @@ namespace CppBikes
 		TrAngle(RNUM rad_val);		
 		TrAngle();
 
-		operator RNUM (){return Rad();}
+		operator RNUM (){return rad();}
 		operator TrAngle*(){return this;}
 		TrAngle & operator = (RNUM ang_rad) {setRad(ang_rad); return *this;}
 
@@ -55,20 +63,23 @@ namespace CppBikes
 		void operator -= (TrAngle &ta);
 		TrAngle operator + (TrAngle &ta);
 		TrAngle operator - (TrAngle &ta);
-		TrAngle operator -();
+		void operator += (const TrAngleConst &ta);
+		void operator -= (const TrAngleConst &ta);
+		TrAngle operator + (const TrAngleConst &ta);
+		TrAngle operator - (const TrAngleConst &ta);
+		TrAngle operator-();
 
 		bool operator > (TrAngle &ta);  //-
 		bool operator < (TrAngle &ta);  //-
 
-
 		void operator += (RNUM ang_rad);
-		void operator -= (RNUM ang_rad);
-		
+		void operator -= (RNUM ang_rad);		
 
 		bool operator < (RNUM ang_rad);
 		bool operator <= (RNUM ang_rad);
 		bool operator > (RNUM ang_rad);
 		bool operator >= (RNUM ang_rad);
+
 
 
 		void setCos(RNUM cos_val, bool sin_negative=false);
@@ -78,13 +89,13 @@ namespace CppBikes
 		void setDeg(RNUM deg);
 
 	
-		RNUM Sin();
-		RNUM Cos();
-		RNUM Tg();
-		RNUM Tan();
-		RNUM Ctg();
-		RNUM Rad();
-		RNUM Deg();
+		RNUM sin();
+		RNUM cos();
+		RNUM tg();
+		RNUM tan();
+		RNUM ctg();
+		RNUM rad();
+		RNUM deg();
 
 		RNUM sSin();
 		RNUM sCos();
@@ -100,37 +111,37 @@ namespace CppBikes
 	};
 
 
-	inline RNUM Sin(TrAngle &ang){return ang.Sin();}
-	inline RNUM Cos(TrAngle &ang){return ang.Cos();}
-	inline RNUM Tan(TrAngle &ang){return ang.Tg();}
-	inline RNUM Tg(TrAngle &ang){return ang.Tg();}
-	inline RNUM Ctg(TrAngle &ang){return ang.Ctg();}
-	inline RNUM Rad(TrAngle &ang){return ang.Rad();}
-	inline RNUM Deg(TrAngle &ang){return ang.Deg();}
-
 
 	//							rad		sin		cos		tan	
-	static TrAngle g_tr0(		0,		0,		1,		0	);
-	static TrAngle g_trPI(		PI,		0,		-1,		0	);
-	static TrAngle g_tr2PI(		PImult2,0,		-1,		0	);
-	static TrAngle g_trPIdiv2(	PIdiv2,	1,		0,		RNUM_INFINITY);
-	static TrAngle g_trPIdiv3(	PIdiv3,	SQRT3/2.0,0.5,	SQRT3);
-	static TrAngle g_trPIdiv4(	PIdiv4,	1./SQRT2,1./SQRT2,1.);
-	static TrAngle g_trPIdiv6(	PIdiv6,	0.5,SQRT3/2,	1.0/SQRT3);
+	const TrAngleConst g_tr0(		0,		0,		1,		0	);
+	const TrAngleConst g_trPI(		PI,		0,		-1,		0	);
+	const TrAngleConst g_tr2PI(		PImult2,0,		-1,		0	);
+	const TrAngleConst g_trPIdiv2(	PIdiv2,	1,		0,		RNUM_INFINITY);
+	const TrAngleConst g_trPIdiv3(	PIdiv3,	SQRT3/2.0,0.5,	SQRT3);
+	const TrAngleConst g_trPIdiv4(	PIdiv4,	1./SQRT2,1./SQRT2,1.);
+	const TrAngleConst g_trPIdiv6(	PIdiv6,	0.5,SQRT3/2,	1.0/SQRT3);
 
-	static TrAngle g_tr1DEG(DEG_IN_RAD,sin(DEG_IN_RAD),cos(DEG_IN_RAD),tan(DEG_IN_RAD));
-	static TrAngle g_tr1MIN(DEG_IN_RAD/60.0,sin(DEG_IN_RAD/60.0),cos(DEG_IN_RAD/60.0),tan(DEG_IN_RAD/60.0));
-	static TrAngle g_tr1SEC(DEG_IN_RAD/3600.0,sin(DEG_IN_RAD/3600.0),cos(DEG_IN_RAD/3600.0),tan(DEG_IN_RAD/3600.0));
+	const TrAngleConst g_tr1DEG(DEG_IN_RAD,sin(DEG_IN_RAD),cos(DEG_IN_RAD),tan(DEG_IN_RAD));
+	const TrAngleConst g_tr1MIN(DEG_IN_RAD/60.0,sin(DEG_IN_RAD/60.0),cos(DEG_IN_RAD/60.0),tan(DEG_IN_RAD/60.0));
+	const TrAngleConst g_tr1SEC(DEG_IN_RAD/3600.0,sin(DEG_IN_RAD/3600.0),cos(DEG_IN_RAD/3600.0),tan(DEG_IN_RAD/3600.0));
 
-	
 
-// 
-// 	inline RNUM sin(RNUM ang){return ::sin(ang);}
-// 	inline RNUM cos(RNUM ang){return ::cos(ang);}
-// 	inline RNUM tan(RNUM ang){return ::tan(ang);}
-// 	inline RNUM ctg(RNUM ang){return 1.0/not0(::tan(ang));}
-// 	inline RNUM tg(RNUM ang){return ::tan(ang);}
-// 	
+	inline RNUM sin(TrAngle &ta){return ta.sin();}
+	inline RNUM cos(TrAngle &ta){return ta.cos();}
+	inline RNUM tan(TrAngle &ta){return ta.tg();}
+	inline RNUM rad(TrAngle &ta){return ta.rad();}
+	inline RNUM deg(TrAngle &ta){return ta.deg();}
+
+	inline RNUM sin(TrAngleConst &tac){return tac.sin_val;}
+	inline RNUM cos(TrAngleConst &tac){return tac.cos_val;}
+	inline RNUM tan(TrAngleConst &tac){return tac.tan_val;}
+	inline RNUM rad(TrAngleConst &tac){return tac.rad_val;}
+	inline RNUM deg(TrAngleConst &tac){return RAD_to_DEG(tac.rad_val);}
+
+	using ::sin;
+	using ::cos;
+	using ::tan;
+
 }
 
 
