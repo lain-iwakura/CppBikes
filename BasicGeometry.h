@@ -1,71 +1,75 @@
 // BasicGeometry содержит 3 класса, являющиеся инструментом для решения
 // геометрических задач на плоскости и в пространстве:
 //
-// Point - класс точки, задается тремя координатами в глобальной СК.
-// Точка может быть привязана к некоторому базису(локальной СК), 
+// Point - класс точки, задается тремя координатами в глобальной системе координат (далее СК).
+// Точка может быть привязана к некоторому базису (локальной СК), 
 // что дает возможность работать с локальными координатами. 
 //
 // Vector - класс вектора, задается точкой приложения (началом) 
 // и тремя проекциями на оси координат глобальной СК.
-// Вектор, так же как и точка, может быть привязан к некоторому базису (локальной СК) 
+// Вектор так же, как и точка, может быть привязан к некоторому базису (локальной СК) 
 //
 // Basis - класс базиса (локальная СК), задается точкой (началом координат)
 // и тремя единичными векторами (осями координат).
-// В момент привязки объекта (точки или вектора) к базису в объект помещается указатель
-// на этот базис, а сам базис хранит указатели на все привязанные к нему объекты.
-// Если привязанный к базису объект удаляется, то и указатель на данный объект
-// в соответствующем базисе удаляется. 
-// Если базис удаляется, то удаляются указатели на данный базис во всех
-// привязанных к нему объектах, другими словами, 
-// все объекты, привязанные к данному базису, переводятся в глобальную СК.   
+// Если базис уничтожается, все объекты, привязанные к данному базису, переводятся в глобальную СК.
 
-#ifndef BASICGEOMETRY_H
-#define BASICGEOMETRY_H
 
-#include "ContainerInterface.h"
-#include "BasicMath.h"
+#ifndef CPPBYKES_BASICGEOMETRY_H
+#define CPPBYKES_BASICGEOMETRY_H
+
+//#include "List.h"
+//#include "BasicMath.h"
+#include <CppBikes/Types.h>
+#include <CppBikes/List.h>
+#include <CppBikes/BasicMath.h>
+
+//#define CPPBIKES_USE_TRANGLE
+
+#ifdef CPPBIKES_USE_TRANGLE
+#include <CppBikes/TrigonometricAngle.h>
+#endif
+
+namespace CppBikes
+{
 
 class Basis; 
 class Vector;
 class Point;
 struct CylCoord;
 
-typedef double TMETRIC; // тип для хранения линейных координат и длин отрезков 
-typedef CalcVal<TMETRIC> TMETRIC_CALC;						
-const TMETRIC TMETRIC_O=0.0000001; // точность TMETRIC (предполагаемая размерность километры => точность 0.1 мм)
-typedef double TAMETRIC; // тип для хранения угловых величин 
-const TAMETRIC TAMETRIC_O=0.0000001; // точность TAMETRIC (предполагаемая размерность радианы => точность ~ 5.73e-6 градусов ~ 0.021 секунд )
-typedef CalcVal<TAMETRIC> TAMETRIC_CALC;
+//typedef double RNUM; // тип для хранения линейных координат и длин отрезков 
+//const RNUM METRIC_O=0.000001; // точность RNUM (предполагаемая размерность километры => точность 1 мм)
+//typedef double RNUM; // тип для хранения угловых величин 
+//const RNUM RADIAN_O=0.000001; // точность RNUM (размерность радианы => точность ~ 3.82e-5 градусов  )
 
-typedef Vector V;
-typedef Point P;
+const RNUM METRIC_O=0.000001; // точность измерения линейных размеров (предполагаемая размерность километры => точность 1 мм)
+const RNUM RADIAN_O=0.000001; // точность измерения угловых размеров (размерность радианы => точность ~ 3.82e-5 градусов  )
+
+// typedef Vector V;
+// typedef Point P;
 
 
 /////////////////////////// POINT /////////////////////////////////////////////
-class Point //Класс точки
-{
-	bool _transient; // _transient=true => временный объект.
-	// Временный объект не имеет привязки к базису в котором находится,
-	// т.е. в *basis не хранится указатель на данный объект.
-	
-	bool _null;	 // _null=true - нулевая точка (точка не существует)	
-	
+class Point //Класс точки {40b}
+{	
 public:
-	Basis *basis; // локальный базис (по умолчанию basis=0 - глобальный базис, т.е. локальные координаты равны глобальным)
-	TMETRIC gx; // координата X в глобальном(!) базисе // для получения локальной использовать x()
-	TMETRIC gy; // координата Y в глобальном(!) базисе // для получения локальной использовать y()
-	TMETRIC gz;	// координата Z в глобальном(!) базисе // для получения локальной использовать z()
+
+	const Basis *basis; // локальный базис (по умолчанию basis=0 - глобальный базис, т.е. локальные координаты равны глобальным)
+	RNUM gx; // координата X в глобальном(!) базисе // для получения локальной использовать x()
+	RNUM gy; // координата Y в глобальном(!) базисе // для получения локальной использовать y()
+	RNUM gz; // координата Z в глобальном(!) базисе // для получения локальной использовать z()
 	
 	// Конструктор по умолчанию:
 	// plx,ply,plz - логкальные координаты в базисе *b (b=0 - глобальный базис), notransient=true/false - обычный/временный объект 
-	Point(TMETRIC plx=0,TMETRIC ply=0,TMETRIC plz=0,Basis *b=0, bool notransient=true);
+	Point(RNUM plx=0,RNUM ply=0,RNUM plz=0,const Basis *b=0, bool notransient=true);
+	// Point(RNUM plx=0,RNUM ply=0,RNUM plz=0,const Basis *b=0,);//notransient=false;
 
 	// Конструктор для нулевых (несуществующих) точек:
 	// NotNull=true/false => обычная/нулевая точка; gx,gy,gz,*basis копируем из p
 	Point(bool NotNull, const Point &p=Point(), bool notransient=true); 
 	
 	// Консруктор копии:
-	// Копируем gx,gy,gz,_null. Привязываемся к базису p.basis. Не копируем: _transient
+	// Копируем gx,gy,gz,_null. Привязываемся к базису p.basis. 
 	Point(const Point &p); 
 	
 	// Конструктор задает точку на "конце" вектора v:
@@ -75,42 +79,46 @@ public:
 	void operator =(const Vector &v); // Точка на конце вектора. 
 	~Point(); // удаляем связь с локальным базисом *basis.
 	
-	bool isNull() const {return _null;} // Нулевая точка?
-	bool isTransient()const {return _transient;} // Временный объект?
+	bool isNull() const; // Нулевая(несуществующая) точка?  
+	bool isTransient()const; // Временный объект? // *рудимент*
 	
-	Point& Set(TMETRIC px, TMETRIC py, TMETRIC pz, Basis *b=0); //Точка по координатам в базисе *b
-	Point& SetGlobal(TMETRIC pgx, TMETRIC pgy, TMETRIC pgz); // Точка по координатам в глобальном базисе
-	Point& SetLocal(TMETRIC localx,TMETRIC localy, TMETRIC localz); // Точка  по координатам в локальном базисе
-	Point& SetLocalX(TMETRIC localx); // Изменить локальную координату X
-	Point& SetLocalY(TMETRIC localy); // Изменить локальную координату Y
-	Point& SetLocalZ(TMETRIC localz); // Изменить локальную координату Z
-	Point& SetBasis(Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
-	Point& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0)
-	Point& ReplaceBasis(Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
-	Point& ReplaceGBasis(Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
-	Point& Rotate_W(const Vector &w,TAMETRIC a);// вращать точку по правилу буравчика относительно оси w на угол a
-	Point& Rotate_X(TAMETRIC a); //  вращать точку по правилу буравчика относительно оси OX(в локальном базисе) на угол a
-	Point& Rotate_Y(TAMETRIC a); //  вращать точку по правилу буравчика относительно оси OY(в локальном базисе) на угол a
-	Point& Rotate_Z(TAMETRIC a); //  вращать точку по правилу буравчика относительно оси OZ(в локальном базисе) на угол a
+	Point& Set(RNUM px, RNUM py, RNUM pz,const Basis *b=0); //Точка по координатам в базисе *b
+	Point& SetGlobal(RNUM pgx, RNUM pgy, RNUM pgz); // Точка по координатам в глобальном базисе
+	Point& SetLocal(RNUM localx,RNUM localy, RNUM localz); // Точка  по координатам в локальном базисе
+	Point& SetLocalX(RNUM localx); // Изменить локальную координату X
+	Point& SetLocalY(RNUM localy); // Изменить локальную координату Y
+	Point& SetLocalZ(RNUM localz); // Изменить локальную координату Z
+	Point& SetBasis(const Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
+	Point& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
+	Point& ReplaceBasis(const Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
+	Point& ReplaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
+	Point& Rotate_W(const Vector &w,RNUM a); // вращать точку по правилу буравчика относительно оси w на угол a
+	Point& Rotate_X(RNUM a); //  вращать точку по правилу буравчика относительно оси OX(в локальном базисе) на угол a
+	Point& Rotate_Y(RNUM a); //  вращать точку по правилу буравчика относительно оси OY(в локальном базисе) на угол a
+	Point& Rotate_Z(RNUM a); //  вращать точку по правилу буравчика относительно оси OZ(в локальном базисе) на угол a
 	
-	TMETRIC x() const; // координата X в локальном(!) базисе *basis
-	TMETRIC y() const; // координата Y в локальном(!) базисе *basis
-	TMETRIC z() const; // координата Z в локальном(!) базисе *basis
-	TMETRIC lx(Basis *b) const; // координата X в локальном базисе *b
-	TMETRIC ly(Basis *b) const; // координата Y в локальном базисе *b
-	TMETRIC lz(Basis *b) const; // координата Z в локальном базисе *b
+	RNUM x() const; // координата X в локальном(!) базисе *basis
+	RNUM y() const; // координата Y в локальном(!) базисе *basis
+	RNUM z() const; // координата Z в локальном(!) базисе *basis
+	RNUM PolarAlpha() const;
+	RNUM PolarR() const;
+	RNUM lx(const Basis *b) const; // координата X в локальном базисе *b
+	RNUM ly(const Basis *b) const; // координата Y в локальном базисе *b
+	RNUM lz(const Basis *b) const; // координата Z в локальном базисе *b
 	Point inGlobalBasis() const; // та же точка в глобальном базисе
-	Point inBasis(Basis *b) const; // та же точка в базисе *b
-	Point inReplacedBasis(Basis *b) const; // та же точка в замещенном базисе (аналог ReplaceBasis())
+	Point inBasis(const Basis *b) const; // та же точка в базисе *b
+	Point inReplacedBasis(const Basis *b) const; // та же точка в замещенном базисе (аналог ReplaceBasis())
 	Vector v() const;	// преобразовать точку в вектор, начало которого совпадает с началом координат глобального базиса Point(0,0,0), а концом является эта точка.
-		
-	bool operator ==(const Point &p) const; // Правда, если точка p лежит в окрестности TMETRIC_O 
+	
+	// Основные операторы:
+	bool operator ==(const Point &p) const; // Правда, если точка p лежит в окрестности METRIC_O 
 	bool operator !=(const Point &p) const;	// Неправда если... (см. выше)
-	//////// extra operators ///////
-	Point operator [] (Basis &b) const;// возвращает inBasis(&b)
-	Point operator [] (Basis *b) const;// возвращает inBasis(b)
-	Point& operator >> (Basis &b);// возвращает SetBasis(&b)
-	Point& operator >> (Basis *b);// возвращает SetBasis(b);
+
+	// Дополнительные операторы:
+	Point operator [] (const Basis &b) const;// возвращает inBasis(&b)
+	Point operator [] (const Basis *b) const;// возвращает inBasis(b)
+	Point& operator >> (const Basis &b); // возвращает SetBasis(&b)
+	Point& operator >> (const Basis *b); // возвращает SetBasis(b);
 	Vector operator && (const Point &p) const; // возвращает Vector(*this,p)
 	Point operator + (const Vector &v) const; // возвращает Point(Vector(*this)+v)
 	Point operator - (const Vector &v) const; // возвращает Point(Vector(*this)-v)
@@ -119,7 +127,16 @@ public:
 	////////////////////////////////
 
 	
-	static bool isEqual(const Point &p1, const Point &p2, TMETRIC e=TMETRIC_O);
+	static bool isEqual(const Point &p1, const Point &p2, RNUM e=METRIC_O);
+
+
+private:
+
+	bool _transient; /*рудимент*/  // _transient=true => временный объект.
+	// Временный объект не имеет привязки к базису в котором находится,
+	// т.е. в *basis не хранится указатель на данный объект.
+
+	bool _null;	 // _null=true - нулевая точка (несуществующая точка)	
 
 };
 const Point p_gO(0,0,0,0); // начало координат глобального базиса
@@ -129,32 +146,30 @@ const Point p_null(false,p_gO); // нулевая (несуществующая) точка по умолчанию
 
 
 /////////////////////////// VECTOR /////////////////////////////////////////////
-class Vector // Класс вектора
+class Vector // Класс вектора {80b}
 {
-private:
-	bool _transient; // _transient=true - временный объект (не имеет привязки к базису в котором находится)
-	bool _null;  // _null=true - нулевой вектор (несуществующий вектор)
+
 public:
-	Basis *basis; // локальный базис (basis=0 - глобальный базис, т.е. локальные проекции равны глобальным)
-	Point fulcrum; // точка приложения вектора (начало вектора)
-	TMETRIC gx; // проекция на ось OX в глобальном(!) базисе // для получения локальной использовать x()
-	TMETRIC gy; // проекция на ось OY в глобальном(!) базисе // для получения локальной использовать y()
-	TMETRIC gz;	// проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
+	const Basis *basis; // локальный базис (basis=0 - глобальный базис, т.е. локальные проекции равны глобальным)
+	Point anchor; // точка приложения/привязки вектора (начало вектора)
+	RNUM gx; // проекция на ось OX в глобальном(!) базисе // для получения локальной использовать x()
+	RNUM gy; // проекция на ось OY в глобальном(!) базисе // для получения локальной использовать y()
+	RNUM gz;	// проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
 
 	// Конструктор по умолчанию:
-	// vx,vy,vz - проекции на оси координат в базисе *b, fp - точка приложения(fulcrum), notransient=true/false=обычный/временный объект.
-	Vector(TMETRIC vx=0, TMETRIC vy=0, TMETRIC vz=0, const Point &fp=p_gO, Basis *b=0, bool notransient=true);
+	// vx,vy,vz - проекции на оси координат в базисе *b, ap - точка приложения(anchor), notransient=true/false=обычный/временный объект.
+	Vector(RNUM vx=0, RNUM vy=0, RNUM vz=0, const Point &ap=p_gO,const Basis *b=0, bool notransient=true);
 	
 	// Конструктор создает вектор, началом которого является точка p1, а концом - точка p2,
 	// вектор привязывается к базису *b.  
-	Vector(const Point &p1, const Point &p2, Basis *b=0, bool notransient=true); 
+	Vector(const Point &p1, const Point &p2,const Basis *b=0, bool notransient=true); 
 	
 	// Конструктор для нулевых (несуществующих) векторов:
-	// NotNull=true/false => обычный/нулевой вектор; fulcrum,gx,gy,gz, копируем из v и привязываемся к v.basis;
+	// NotNull=true/false => обычный/нулевой вектор; anchor,gx,gy,gz, копируем из v и привязываемся к v.basis;
 	Vector(bool NotNull,const Vector &v=Vector(), bool notransient=true);
 	
 	// Конструктор копии:
-	// Копируем _null,fulcrum,gx,gy,gz, привязываемся к базису v.basis. Не копируем _transient.
+	// Копируем _null,anchor,gx,gy,gz, привязываемся к базису v.basis. 
 	Vector(const Vector &v);
 	
 	// Конструктор [точка]->[вектор]:
@@ -164,90 +179,115 @@ public:
 	
 	void operator = (const Vector &v); // Аналогично конструктору копии.
 	void operator = (const Point &p); // Аналогично конструктору [точка]->[вектор]
+	operator Point(){ return destination();}
 	~Vector(); // удаляем связь с базисом *basis
 	
-	bool isNull()const {return _null;} // нулевой вектор?
-	bool isTransient() const{return _transient;} // временный объект?
+	bool isNull()const; // нулевой вектор?
+	bool isTransient() const; // временный объект? 
 		
-	Vector& Set(TMETRIC vx, TMETRIC vy, TMETRIC vz, Basis *b=0); //Вектор по проекциям в базисе *b
-	Vector& SetGlobal(TMETRIC gx, TMETRIC gy, TMETRIC gz);  // Вектор по проекциям в глобальном базисе
-	Vector& SetLocal(TMETRIC localx, TMETRIC localy, TMETRIC localz); // Вектор по проекциям в локальном базисе
-	Vector& SetLocalX(TMETRIC localx); // Изменить локальную проекцию на ось OX
-	Vector& SetLocalY(TMETRIC localy); // Изменить локальную проекцию на ось OY
-	Vector& SetLocalZ(TMETRIC localz); // Изменить локальную проекцию на ось OZ
-	Vector& SetBasis(Basis *b); // Привязка к базису *b
-	Vector& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0)
-	Vector& ReplaceBasis(Basis *b); // Изменить глобальные проекции вектора таким образом, чтобы при переходе в новый базис *b локальные проекции не изменились (а так же вызов fulcrum.ReplaceBasis(b))
-	Vector& ReplaceGBasis(Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
+	Vector& Set(RNUM vx, RNUM vy, RNUM vz,const Basis *b=0); //Вектор по проекциям в базисе *b
+	Vector& SetGlobal(RNUM gx, RNUM gy, RNUM gz);  // Вектор по проекциям в глобальном базисе
+	Vector& SetLocal(RNUM localx, RNUM localy, RNUM localz); // Вектор по проекциям в локальном базисе
+	Vector& SetLocalX(RNUM localx); // Изменить локальную проекцию на ось OX
+	Vector& SetLocalY(RNUM localy); // Изменить локальную проекцию на ось OY
+	Vector& SetLocalZ(RNUM localz); // Изменить локальную проекцию на ось OZ
+	Vector& SetBasis(const Basis *b); // Привязка к базису *b
+	Vector& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
+	Vector& ReplaceBasis(const Basis *b); // Изменить глобальные проекции вектора таким образом, чтобы при переходе в новый базис *b локальные проекции не изменились (а так же вызов anchor.ReplaceBasis(b))
+	Vector& ReplaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
 	Vector& normalize(); // Превратить в единичный вектор (разделить вектор на его длину)
 	Vector& invert(); // Перевернуть вектор (поменять местами начало и конец)
-	Vector& rotate_W(const Vector &w, TAMETRIC a); // вращать вектор по правилу буравчика относительно оси w на угол a
-	Vector& rotateWithoutFulcrum_W(const Vector &w, TAMETRIC a); // Аналогично rotate_W(const Vector &w, TAMETRIC a), но точка приложения остается неизменной.
-	Vector& rotate_X(TAMETRIC a); // вращать вектор по правилу буравчика относительно оси OX(в локальном базисе) на угол a
-	Vector& rotate_Y(TAMETRIC a); // вращать вектор по правилу буравчика относительно оси OY(в локальном базисе) на угол a
-	Vector& rotate_Z(TAMETRIC a); // вращать вектор по правилу буравчика относительно оси OZ(в локальном базисе) на угол a	
+	Vector& rotate_W(const Vector &w, RNUM a); // вращать вектор по правилу буравчика относительно оси w на угол a
+	Vector& rotateWithoutFulcrum_W(const Vector &w, RNUM a); // Аналогично rotate_W(const Vector &w, RNUM a), но точка приложения остается неизменной.
+	Vector& rotate_X(RNUM a); // вращать вектор по правилу буравчика относительно оси OX(в локальном базисе) на угол a
+	Vector& rotate_Y(RNUM a); // вращать вектор по правилу буравчика относительно оси OY(в локальном базисе) на угол a
+	Vector& rotate_Z(RNUM a); // вращать вектор по правилу буравчика относительно оси OZ(в локальном базисе) на угол a	
 	
-	TMETRIC x() const; // проекция на ось OX в локальном(!) базисе *basis
-	TMETRIC y() const; // проекция на ось OY в локальном(!) базисе *basis
-	TMETRIC z() const; // проекция на ось OZ в локальном(!) базисе *basis
-	TMETRIC lx(Basis *b) const; // проекция на ось OX в локальном базисе *b
-	TMETRIC ly(Basis *b) const; // проекция на ось OY в локальном базисе *b
-	TMETRIC lz(Basis *b) const; // проекция на ось OZ в локальном базисе *b
-	TMETRIC length() const; // длина вектора
+	RNUM x() const; // проекция на ось OX в локальном(!) базисе *basis
+	RNUM y() const; // проекция на ось OY в локальном(!) базисе *basis
+	RNUM z() const; // проекция на ось OZ в локальном(!) базисе *basis
+	RNUM lx(const Basis *b) const; // проекция на ось OX в локальном базисе *b
+	RNUM ly(const Basis *b) const; // проекция на ось OY в локальном базисе *b
+	RNUM lz(const Basis *b) const; // проекция на ось OZ в локальном базисе *b
+	RNUM length() const; // длина вектора
 	Vector e() const; // единичный вектор соответсвующий данному вектору
 	Point destination() const; // точка на конце вектора
-	Vector inBasis(Basis *b) const; // тот же вектор в базисе *b
+	Vector inBasis(const Basis *b) const; // тот же вектор в базисе *b
 	Vector inGlobalBasis() const; //  тот же вектор в глобальном базисе
-	Vector inReplacedBasis(Basis *b) const; // тот же вектор в замещенном базисе *b	
+	Vector inReplacedBasis(const Basis *b) const; // тот же вектор в замещенном базисе *b	
 
- 	TAngle AngleA(const Vector &v) const;  // метод не доработан
-	TAMETRIC Angle(const Vector &v) const {return Angle(*this,v);} 
+
+
+#ifdef CPPBIKES_USE_TRANGLE	
+	TrAngle Angle(const Vector &v) const {return Angle(*this,v);}  // вероятно ненужная функция
+#else
+	RNUM Angle(const Vector &v) const {return Angle(*this,v);} 
+#endif
 	
 	Point Intersection(const Vector &v) const; // Пересечение двух векторов. 
+	Point RangeIntersection(const Vector &v) const; 
 	// Если вектора параллельны, то возвращается нулевая точка(p_null). 
 	// Если вектора скрещивающиеся, то точкой пересечения считается точка лежащая
 	// на векторе *this и являющаяся концом отрезка минимального расстояния до вектора v
-	
-	static TAMETRIC Angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
+
+#ifdef CPPBIKES_USE_TRANGLE	
+	static TrAngle Angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
+#else
+	static RNUM Angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
+#endif
+
 	static bool isParallel(const Vector &v1, const Vector &v2); // v1,v2  прарллельны?
-	static TMETRIC ParallelDistance(const Vector &v1, const Vector &v2); // Найти расстояние между параллельными векторами. Если векторы не параллельны, то возвращается 0.
+	static RNUM ParallelDistance(const Vector &v1, const Vector &v2); // Найти расстояние между параллельными векторами. Если векторы не параллельны, то возвращается 0.
 	
 	static bool isRightVectors(Vector v1, Vector v2, Vector v3=Vector(0,0,1)); // правая тройка векторов?
-		
+	
+	// Основные операторы:
 	Vector operator + (const Vector &v) const; // сложение двух векторов
 	Vector operator - (const Vector &v) const; // вычитание двух векторов
 	void operator += (const Vector &v); // прибавить к данному вектору вектор v
 	void operator -= (const Vector &v); // отнять от данного вектора вектор v
-	TMETRIC operator &(const Vector &v) const; // скалярное произведение двух векторов
+	RNUM operator &(const Vector &v) const; // скалярное произведение двух векторов
 	Vector operator *(const Vector &v) const; // векторное произведение двух векторов
-	Vector operator *(TMETRIC n) const; // умножение вектора на число
-	Vector operator /(TMETRIC n) const; // деление вектора на число
-	void operator *=(TMETRIC n); // изменить данный вектор, умножив его на n
-	void operator /=(TMETRIC n); // изменить данный вектор, разделив его на n
-	bool operator ==(const Vector &v) const; // Правда, если проекции вектора v отличаются не более чем на TMETRIC_O
+	Vector operator *(RNUM n) const; // умножение вектора на число
+	Vector operator /(RNUM n) const; // деление вектора на число
+	void operator *=(RNUM n); // изменить данный вектор, умножив его на n
+	void operator /=(RNUM n); // изменить данный вектор, разделив его на n
+	bool operator ==(const Vector &v) const; // Правда, если проекции вектора v отличаются не более чем на METRIC_O
 	bool operator !=(const Vector &v) const; // Неправда если.. (см.выше)
 	Vector operator -() const; // возвращает (*this)*(-1)
 //	Vector operator +() const;
-	//////// extra operators ///////
+
+	// Дополнительные операторы:
 	Point operator % (const Vector &v) const;// возвращает Intersection(v)
 	bool operator || (const Vector &v) const;// возвращает isParallel(*this,v)
+	bool operator |=(const Vector &v) const; // возвращает isRightVectors(*this,v);
 	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
-	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(fulcrum,p))
-	TAngle operator ^ (const Vector &v) const;// возвращает AngleA(v)
-	Vector operator [] (Basis &b) const;// возвращает inBasis(&b)
-	Vector operator [] (Basis *b) const;// возвращает inBasis(b)
-	Vector& operator >> (Basis &b);// возвращает SetBasis(&b)
-	Vector& operator >> (Basis *b);// возвращает SetBasis(b)
+	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(anchor,p))
+
+#ifdef CPPBIKES_USE_TRANGLE
+	TrAngle operator ^ (const Vector &v) const;// возвращает Angle(v)
+#else
+	RNUM operator ^ (const Vector &v) const;// возвращает Angle(v)
+#endif
+	
+	Vector operator [] (const Basis &b) const;// возвращает inBasis(&b)
+	Vector operator [] (const Basis *b) const;// возвращает inBasis(b)
+	Vector& operator >> (const Basis &b);// возвращает SetBasis(&b)
+	Vector& operator >> (const Basis *b);// возвращает SetBasis(b)
 	Vector operator !() const;// возвращает Vector(true,*this,false).invert()
 	bool operator > (const Vector &v) const;// возвращает length()>v.length()
 	bool operator < (const Vector &v) const;// возвращает length()<v.length()
-	////////////////////////////////	
 
-	// Phi & Lamda //?
-	TAMETRIC Phi();	
-	TAMETRIC Lamda();
-	TAMETRIC Lamda2PI();
 
+	// Phi & Lamda // (?)
+	RNUM Phi();	
+	RNUM Lamda();
+	RNUM Lamda2PI();
+
+
+private:
+	bool _transient; /*рудимент*/ // _transient=true - временный объект (не имеет привязки к базису в котором находится)
+	bool _null;  // _null=true - нулевой вектор (несуществующий вектор)
 };
 
 const Vector v_gi(1,0,0,p_gO,0); // единичный вектор соответствующий оси OX глобальной СК
@@ -257,10 +297,10 @@ const Vector v_null(false,Vector(0,0,0)); // нулевой вектор по умолчанию
 
 
 /////////////////////////// BASIS /////////////////////////////////////////////
-class Basis // Класс локальной СК
+class Basis // Класс локальной СК {288b}
 {
-	List<Vector*> vectors; //список привязанных векторов
-	List<Point*> points; //список привязанных точек
+	List<Vector*> *vectors; //список привязанных векторов
+	List<Point*> *points; //список привязанных точек
 public:
 	Point O; // Начало координат
 	Vector i; // ось OX
@@ -280,26 +320,28 @@ public:
 	// ( vectors[i].basis=0; points[i].basis=0; ) 
 
 	Basis& SetOrtoBasis_ByIJ(const Vector &bi,const Vector &bj); // Ортонормированный правый базис,
-	// в котором плоскость OXY задана векторами  bi,bj (bi задает направление i, bi*bj задает направление k, O=bi.fulcrum)
+	// в котором плоскость OXY задана векторами  bi,bj (bi задает направление i, bi*bj задает направление k, O=bi.anchor)
 	Basis& SetOrtoBasisL_ByIJ(const Vector &bi, const Vector &bj);	//То же что и SetOrtoBasis_ByIJ, но базис левый	
 	Basis& SetOrtoBasis_InXY_ByI(const Vector &bi); // Ортонормированный правый базис,
-	// в котором k=v_gk, k*bi задает направление j,  O=bi.fulcrum;  
+	// в котором k=v_gk, k*bi задает направление j,  O=bi.anchor;  
 	Basis& SetOrtoBasis_InXY_ByI_l(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но k=-v_gk;
 	Basis& SetOrtoBasisL_InXY_ByI(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но базис левый; 
 	Basis& SetOrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);	// возвращает SetOrtoBasis_ByIJ(Vector(pO,pX),Vector(pO,pY));
 	Basis& SetO(const Point &pO); // Выбрать начало координат 
 
-	void Add(Point *p); //? Привязать точку 
-	void Add(Vector *v); //? Привязать вектор 
-	void Remove(Point *p); //? удалить привязку точки 
-	void Remove(Vector *v); //? удалить привязку вектора 
-	void RemoveAll(); // удалить все привязки
+	void Add(Point *p) const; //(?) Привязать точку 
+	void Add(Vector *v) const; //(?) Привязать вектор 
+	void Remove(Point *p) const; //(?) удалить привязку точки 
+	void Remove(Vector *v) const; //(?) удалить привязку вектора 
+	void RemoveAll() const; // удалить все привязки
 
 	//////// extra operators ///////
-	Basis& operator << (Point &p);// {p.SetBasis(this);  return *this;}
-	Basis& operator << (Vector &v);// {v.SetBasis(this);  return *this;}
-	Vector operator [] (const Vector &v);// {return v.inBasis(this);}
-	Point operator [] (const Point &p);// {return p.inBasis(this);}
+	operator Basis*(){return this;}
+	Basis * operator ->(){return this;}
+	const Basis& operator << (Point &p) const;// {p.SetBasis(this);  return *this;}
+	const Basis& operator << (Vector &v) const;// {v.SetBasis(this);  return *this;}
+	Vector operator [] (Vector &v) const;// {return v.inBasis(this);}
+	Point operator [] (const Point &p) const;// {return p.inBasis(this);}
 	////////////////////////////////
 };
 
@@ -312,18 +354,18 @@ Basis OrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);
 
 struct CylCoord
 {
-	TMETRIC z;
-	TMETRIC r;
-	TAMETRIC a;
+	RNUM z;
+	RNUM r;
+	RNUM a;
 };
 
 
 CylCoord ToCylCoord(const Point &p);
 CylCoord ToCylCoord_Arc(const Point &p);
 
-Point FromCylCoord_Arc(TAMETRIC a, TMETRIC r, TMETRIC z=0, Basis *b=0);
-Point FromCylCoord_Arc(TAngle a, TMETRIC r, TMETRIC z=0, Basis *b=0);
+Point FromCylCoord_Arc(RNUM a, RNUM r, RNUM z=0, const Basis *b=0);
+//Point FromCylCoord_Arc(TAngle a, RNUM r, RNUM z=0, const Basis *b=0);
 
-
+}
 #endif // BASICGEOMETRY_H
 

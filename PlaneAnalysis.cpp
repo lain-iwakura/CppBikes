@@ -1,5 +1,51 @@
 #include "PlaneAnalysis.h"
 
+#include "Bikes.h"
+
+using namespace CppBikes;
+//int qweqwe=Ccc::TypeID<RNUM>::val;
+
+/*
+class ALineCircuitModel: public AbstractContainerModel
+{
+public:
+	ALineCircuitModel(bool noSelfDelete=true):AbstractContainerModel(noSelfDelete)
+	{
+		preLine=0;
+		nextLine=0;
+		Level=0;
+		dLevel=0;
+	}
+// 	ALineCircuitModel(const ALineCircuitModel &m):preLine(m.preLines),nextLines(m.nextLines)
+// 	{
+// 		Level=m.Level;
+// 		dLevel=m.dLevel;
+// 	}
+
+	~ALineCircuitModel();
+	ALineCircuitModel * clone(){return new ALineCircuitModel();} // ?!
+	ALineCircuitModel * createDefaultModel(){return new ALineCircuitModel();}
+
+
+	int Level;
+	int dLevel;
+	AbstractLine* preLine;
+	AbstractLine* nextLine;
+};
+//*/
+
+// ALineCircuitModel* CircModel(AbstractLine *al)
+// {
+// 	if(al)
+// 	{
+// 		if(al->Content())
+// 		{		
+// 			return (ALineCircuitModel*)(al->Content()); 			
+// 		}
+// 	}
+// 	return 0;
+// }
+
 
 
 List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
@@ -10,8 +56,8 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 
 	for(int i=0; i<inte.count(); i++)
 	{
-		TMETRIC s1=(inte[i]==al1->StartPoint())?(0):(al1->SCoordinateFromPoint(inte[i]));
-		TMETRIC s2=(inte[i]==al2->StartPoint())?(0):(al2->SCoordinateFromPoint(inte[i]));
+		RNUM s1=(inte[i]==al1->StartPoint())?(0):(al1->SCoordinateFromPoint(inte[i]));
+		RNUM s2=(inte[i]==al2->StartPoint())?(0):(al2->SCoordinateFromPoint(inte[i]));
 
 		int j=0;
 		while(j<ret.count())
@@ -25,28 +71,48 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 		Vector v1=(s1==0)?(al1->InDirection()):(al1->sDirection(s1));
 		Vector v2=(s2==0)?(al2->InDirection()):(al2->sDirection(s2));
 
+		bool codirectional=((v1&v2)>0);
+
 		int rl_up=0; // Положение верхних концов пересечения (al2_up относительно al1_up)
 		int rl_down=0; // Положение нижних концов пересечения (al2_down относительно al1_down)
 
+		
+		
+		//Deleter deleter;
+		//AbstractLine *cAl2=al2->clone(); deleter+=cAl2; 
+			
 
 		AbstractLine *al1_up=al1;
 		AbstractLine *al2_up=al2;
 		Vector v1_up=v1;
 		Vector v2_up=v2;
-		TMETRIC s1_up=s1;
-		TMETRIC s2_up=s2;
+		RNUM s1_up=s1;
+		RNUM s2_up=s2;
+
+		if(!codirectional)
+		{
 		
+			if(s2==0) 
+			{
+				al2_up=al2->previous();
+				if(al2_up==0) continue; // Касание & обрыв полилинии 
+				s2_up=al2_up->length();
+				v2_up=al2_up->OutDirection();
+			}
+			v2_up*=-1;		
+		}
 		
 		 
 		for(;;) 
 		{
 				if(v1_up||v2_up) // совпадающее пересечение  ||
 				{
-					Vector rc1=(s1_up==0)?(al1_up->InRCurvature()):(al1_up->sRCurvature(s1));
-					Vector rc2=(s2_up==0)?(al2_up->InRCurvature()):(al2_up->sRCurvature(s2));
-					if(rc1.isNull()) // al1 - прямая  -
+					Vector rc1=al1_up->sRCurvature(s1_up);
+					Vector rc2=al2_up->sRCurvature(s2_up);
+										
+					if(rc1.isNull()) // al1 - прямая -
 					{
-						if(rc2.isNull()) // al2 - прямая	-
+						if(rc2.isNull()) // al2 - прямая -
 						{
 							rl_up=0; // (!)
 							// (?)
@@ -56,10 +122,10 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 						}
 					}else // al1 - кривая	~
 					{
-						if(rc2.isNull()) // al2 - прямая	-
+						if(rc2.isNull()) // al2 - прямая -
 						{
 							rl_up=(Vector::isRightVectors(v1_up,rc1))?(1):(-1);							
-						}else // al2 - кривая	~
+						}else // al2 - кривая ~
 						{
 							if((rc1&rc2)<0) // противоположно-выпуклые  )(
 							{
@@ -83,32 +149,34 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 			
 				if(rl_up==0) // совпадение ||
 				{				
-					TMETRIC l1_up=al1_up->length()-s1_up;
-					TMETRIC l2_up=al2_up->length()-s2_up;
+					RNUM l1_up=al1_up->length()-s1_up;
+					RNUM l2_up=(codirectional)?(al2_up->length()-s2_up):s2_up;
 
 					if(l1_up<l2_up) // переход вверх по первой линии
 					{
 						s1_up=0;
-						s2_up=l2_up-l1_up;
+						s2_up+=l1_up*((codirectional)?(1):(-1));
 						al1_up=al1_up->next();
 
 						if(al1_up==0||al1_up==al1) break; //Верхний обрыв полилинии || зацикливание
 
 						v1_up=al1_up->InDirection();
 						v2_up=al2_up->sDirection(s2_up);
+						if(!codirectional) v2_up*=-1;
 						
 					}else // переход вверх по второй линии
 					{
-						s1_up=l1_up-l2_up;
-						s2_up=0;
-						al2_up=al2_up->next();
+						s1_up+=l2_up;
+						al2_up=(codirectional)?(al2_up->next()):(al2_up->previous());
+						s2_up=(codirectional)?(0):(al2_up->length());
 
 						if(al2_up==0||al2_up==al2) break; //Верхний обрыв полилинии || зацикливание
 
 						v1_up=al1_up->sDirection(s1_up);
-						v2_up=al2_up->InDirection();
+						v2_up=al2_up->sDirection(s2_up);
+						if(!codirectional)  v2_up*=-1;
 					}
-				}else // несовпадение (пересечение определено)
+				}else // несовпадение (пересечение определено) (*)
 				{
 					break;
 				}				
@@ -118,9 +186,10 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 		if(s1==0||s2==0) // пересечение на концах
 		{
 			AbstractLine *al1_down=al1;
-			AbstractLine *al2_down=al2;
+			AbstractLine *al2_down=al2;			
 			Vector prV1=v1;
 			Vector prV2=v2;
+			if(!codirectional) prV2*=-1;
 
 			if(s1==0) // пересечение на конце al1
 			{
@@ -133,17 +202,17 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 
 			if(s2==0) // пересечение на конце al2
 			{
-				al2_down=al2->previous();
+				al2_down=(codirectional)?(al2->previous()):(al2);
 				if(al2_down)
 				{
-					prV2=al2_down->OutDirection();
+					prV2=(codirectional)?(al2_down->OutDirection()):(-al2_down->InDirection());
 				}else{continue;} // Касание & нижний обрыв полилинии	K
 			}
 					
 			if(prV1||prV2) // совпадающее пересечение ||
 			{
-				Vector prRc1=al1_down->OutRCurvature();
-				Vector prRc2=al2_down->OutRCurvature();
+				Vector prRc1=(s1==0)?(al1_down->OutRCurvature()/*!!!*/):(al1_down->sRCurvature(s1));
+				Vector prRc2=(s2==0)?(al2_down->OutRCurvature()/*!!!*/):(al2_down->sRCurvature(s2));
 						
 				if(prRc1.isNull()) // prAl1 - прямая  -
 				{
@@ -184,24 +253,24 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 		}
 
 
-		if(rl_up==0||rl_down==0) //совпадение концов // Верхний обрыв полилинии (касание) || зацикливание :-(
+		if(rl_up==0||rl_down==0) //совпадение концов // пропуск лишнего пересечения (rl_down==0)  // Верхний обрыв полилинии (касание) || зацикливание :-(
 		{
-			/////////////////////???					
+			///////////////////???					
 			continue;  
-			/////////////////////???
+			///////////////////???
 		
 		}else // несовпадение концов
 		{
 			if(rl_up!=rl_down) // Пересечение X
 			{
-				right12=(rl_up<0);				
+				right12=((rl_up<0)==(codirectional));				
 			}else // Касание K 
 			{
 				continue;				
 			}				
 		}	
 
-		ret.Insert(j,IntersectPoint(al1,al2,inte[i],s1,s2,right12));
+		ret.insert(j,IntersectPoint(al1,al2,inte[i],s1,s2,right12));
 	}
 	
 
@@ -213,166 +282,24 @@ List<IntersectPoint> FindIntersectPoints(AbstractLine *al1, AbstractLine *al2)
 
 
 
-/*
-						if(rc2.isNull()) //al2 - прямaя 
-						{
-							//???
-							//???
-							//???
-						}else //al2 - кривая 
-						{				
-							Vector prRc2=prAl2->OutRCurvature();
-							if(prRc2.isNull()) //предшествующая(al2) - прямая
-							{
-								if(prAl2->OutDirection()||
-							}else //предшествующая(al2) - кривая
-							{
-
-							}
-						}
-					}else // несовпадающее пересечение	\|
-					{
-						Vector prV2=prAl2->OutDirection();						
-						if(prV2||v1) //предшествующее(al2) совпадающее пересечение	||
-						{
-							Vector prRc2=prAl2->OutRCurvature();
-							Vector rc1=al1->sRCurvature(s1);
-							if(prRc2.isNull()) //предшествующая(al2) - прямая
-							{
-								if(rc1.isNull()) // al1 - прямая
-								{
-									// Здесь не обрабатывается (?)
-									//	???
-									//	???
-									//	???
-								}else // al1 - кривая
-								{
-									Vector::isRightVectors(rc1,v1);
-									if(rc1&v2<0) // Касание  K
-									{
-										continue; 
-									}else // Пересечение X
-									{
-										right12=Vector::isRightVectors(v1,v2);
-									}
-								}
-							}else  //предшествующая(al2) - кривая
-							{
-								bool bX=(rc1.isNull()||((rc1&prRc2)<0)||(prRc2<rc1)) // правда, если al1 прямая или противоположно-выпуклая кривая или кривая с большей кривизной
-								
-								// Случай с равными кривизнами никак не обрабатывается! (?)
-									
-								if(((prRc2&v2)>0)==bX)) // Касание K
-								{			
-									continue;
-								}else // Пересечение X
-								{
-									right12=Vector::isRightVectors(v1,v2);
-								}																
-							}							
-						}else //предшествующее несовпадающее пересечение	\|
-						{
-							bool r12=Vector::isRightVectors(v1,v2);
-							bool prR12=Vector::isRightVectors(v1,prV2);
-							if(r12==prR12) // Пересечение!	X
-							{
-								right12=r12;
-							} else {continue;} // Касание!	K
-						}
-						//*/
-/*
-		if(s1==0) //пересечение на конце 1ой линии
-		{
-			AbstractLine *prAl1=al1->previous();
-			if(prAl1) // предшествующая часть полилинии(al1)
-			{
-				if(v1||v2) // совпадающее пересечение	||
-				{
-					//???
-					//???
-					//???
-				}else // несовпадающее пересечение		\|
-				{
-				
-					Vector prV1=prAl1->OutDirection();					
-					if(prV1||v2) // предшествующее совпадающее пересечение ||
-					{
-						Vector prRc1=prAl1->OutRCurvature();
-						if(prRc1.isNull()) //предшествующая прямая
-						{
-							//???
-							//???
-							//???
-						}else  //предшествющая кривая
-						{
-							Vector rc2=al2->sRCurvature(s2);
-
-							bool bX=(rc2.isNull()||((rc2&prRc1)<0)||(prRc1<rc2)); // правда, если al2 прямая или противоположно-выпуклая кривая или кривая с большей кривизной
-								
-							if(((prRc1&v1)>0)==bX) // Касание K
-							{
-								continue;
-							}else // Пересечение X
-							{
-								right12=Vector::isRightVectors(v1,v2);
-							}
-						}		
-					}else //предшествующее несовпадающее пересечение \|
-					{
-						bool r12=Vector::isRightVectors(v1,v2);
-						bool prR12=Vector::isRightVectors(prV1,v2);
-						if(r12==prR12) // Пересечение!	X
-						{
-							right12=r12;
-						} else {continue;} // Касание!	K
-					}
-				}
-			}else  {continue;} // Касание & обрыв полилинии	K
-
-		}else // нормальное пересечение
-		{
-			// Считаем что касания быть не может  (?)
-			right12=Vector::isRightVectors(v1,v2); // !(v1||v2)
-			//???			
-		}				
-
-//*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-List<TMETRIC> AbstractLine::sIntersections(AbstractLine *al,bool ContinuesMode)
+List<RNUM> AbstractLine::sIntersections(AbstractLine *al,bool ContinuesMode)
 {
-	List<TMETRIC> rl;
+	List<RNUM> rl;
 	List<Point> inte=LinesIntersections(this,al,ContinuesMode);	
 	for(int i=0; i<inte.count(); i++)
 	{
-		TMETRIC s=SCoordinateFromPoint(inte[i]);
+		RNUM s=SCoordinateFromPoint(inte[i]);
 		int j=0;
 		while(j<rl.count())
 		{
 			if(s<rl[j])break;
 			j++;
 		}
-		rl.Insert(j,s);
+		rl.insert(j,s);
 	}
 
 	return rl;
 }
-
-
-
 
 
 
@@ -392,82 +319,141 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 	if(lt1==LT_ARCLINE)
 	{
 		if(lt2==LT_LINE) rpl+=AbstractLinesIntersections(l2,l1);
-		else if(lt2==LT_ARCLINE)
+		else if(lt2==LT_ARCLINE) // дуга + дуга
 		{
 			AlArcline *arcl1=(AlArcline*)l1;
 			AlArcline *arcl2=(AlArcline*)l2;
-			Vector vo12(*arcl1->GetLinePoint(LP_CENTER),*arcl2->GetLinePoint(LP_CENTER));
-			TMETRIC o12l=vo12.length();
+			Vector vo12(arcl1->arcbas.O,arcl2->arcbas.O);
+			RNUM o12l=vo12.length();
 			List<Point> arcp;
 
-			if(isEqual(o12l,arcl1->r+arcl2->r,TMETRIC_O))
-			{
-				arcp+=(vo12*(arcl1->r/o12l)).destination();								
-			}
-			else if(o12l<(arcl1->r+arcl2->r)) 
-			{
-				TMETRIC r1=arcl1->r,r2=arcl2->r;
-				TMETRIC ppt=(r1+r2+o12l)/2;
-				TMETRIC h=sqrt(ppt*(ppt-r1)*(ppt-r2)*(ppt-o12l))*TMETRIC(2)/o12l;
-				TMETRIC hx=sqrt(r1*r1-h*h);
-				TMETRIC hx_=sqrt(r2*r2-h*h);
-				if((hx+hx_>o12l+TMETRIC_O*2)&&(r1<r2)) hx*=-1;
-				Basis b; b.SetOrtoBasis_ByIJ(vo12,arcl1->arcbas.k*vo12);
-				arcp+=Point(hx,h,0,&b).inGlobalBasis();
-				arcp+=Point(hx,-h,0,&b).inGlobalBasis();
-			}
-			for(int i=0; i<arcp.count(); i++)
-			{
-				Point rp=arcp[i];
-				TAngle a1=arcl1->arcbas.i.AngleA(Vector(vo12.fulcrum,rp));
-				TAngle a2=arcl2->arcbas.i.AngleA(Vector(vo12.destination(),rp));
-				a1.Rad(); a2.Rad();
-				bool rp1=false, rp2=false;
-				if(ToCylCoord_Arc(rp.inBasis(&arcl1->arcbas)).a<=arcl1->angle)rp1=true;					
-				if(ToCylCoord_Arc(rp.inBasis(&arcl2->arcbas)).a<=arcl2->angle)rp2=true;	
-				if(rp1&&rp2) rpl+=rp;
+// 			if(isEqual(o12l,arcl1->r+arcl2->r-METRIC_O/2,METRIC_O/2)) // Внешнее касание
+// 			{
+// 				arcp+=(vo12*(arcl1->r/o12l)).destination();								
+// 			}else
+// 			if(isEqual(o12l,abs(arcl1->r-arcl2->r),METRIC_O)) //внутреннее касание
+// 			{
+// 				if(o12l>METRIC_O)
+// 				{
+// 
+// 				}
+// 			}else			
+			RNUM rpr=arcl1->r+arcl2->r;
+			RNUM rmr=abs(arcl1->r-arcl2->r);
+			if( (o12l<rpr+METRIC_O) && (o12l>rmr-METRIC_O) )
+			{			
+				if( (o12l<rpr-METRIC_O) && (o12l>rmr+METRIC_O))
+				{				
+					RNUM r1=arcl1->r,r2=arcl2->r;
+					RNUM ppt=(r1+r2+o12l)/2;
+					RNUM h=sqrt(ppt*(ppt-r1)*(ppt-r2)*(ppt-o12l))*RNUM(2)/o12l;
+					RNUM hx=sqrt(r1*r1-h*h);
+					RNUM hx_=sqrt(r2*r2-h*h);
+					if((hx+hx_>o12l+METRIC_O*2)&&(r1<r2)) hx*=-1;
+					Basis b; b.SetOrtoBasis_ByIJ(vo12,arcl1->arcbas.k*vo12);
+					arcp+=Point(hx,h,0,&b).inGlobalBasis();
+					arcp+=Point(hx,-h,0,&b).inGlobalBasis();
+				}
+			
+				for(int i=0; i<arcp.count(); i++)
+				{
+					Point rp=arcp[i];
+					//RNUM a1=arcl1->arcbas.i.Angle(Vector(vo12.fulcrum,rp));
+					//RNUM a2=arcl2->arcbas.i.Angle(Vector(vo12.destination(),rp));
+					//TAngle a1=arcl1->arcbas.i.AngleA(Vector(vo12.fulcrum,rp));
+					//TAngle a2=arcl2->arcbas.i.AngleA(Vector(vo12.destination(),rp));
+					//a1.Rad(); a2.Rad();
+					
+					RNUM a=ToCylCoord_Arc(rp.inBasis(&arcl1->arcbas)).a;
+					if((a<arcl1->angle-RADIAN_O)&&(a>RADIAN_O))
+					{				
+						a=ToCylCoord_Arc(rp.inBasis(&arcl2->arcbas)).a;
+						if((a<arcl2->angle-RADIAN_O)&&(a>RADIAN_O))
+						{
+							rpl+=rp;
+						}
+					}
+				}
+
+				if(rpl.count()<=1&&ContinuesMode)
+				{
+					CylCoord p11cyl=ToCylCoord_Arc(p11[arcl2->arcbas]);
+					if(isEqual(p11cyl.r,arcl2->r,METRIC_O))	if(p11cyl.a>METRIC_O&&p11cyl.a<arcl2->angle+METRIC_O)
+					{
+						bool no=false;
+						if(l1->previous()) 
+						{
+							if(l1->previous()==l2) no=true;
+							else
+							{	
+								//(?)
+							}
+						}		
+						if(!no)rpl+=p11;
+					}
+					if(rpl.count()<=1)
+					{				
+						CylCoord p21cyl=ToCylCoord_Arc(p21[arcl1->arcbas]);
+						if(isEqual(p21cyl.r,arcl1->r,METRIC_O))	if(p21cyl.a>METRIC_O&&p21cyl.a<arcl1->angle+METRIC_O)
+						{
+							bool no=false;
+							if(l2->previous()) 
+							{
+								if(l2->previous()==l1) no=true;
+								else
+								{	
+									//(?)
+								}
+							}		
+							if(!no)rpl+=p21;
+						}	
+					}
+				}
 			}
 		}
+
 	}else if(lt1==LT_LINE)
 	{
-		if(lt2==LT_LINE)
+		if(lt2==LT_LINE) // прямая линия + прямая линяя
 		{
 			Vector v1(p11,p12);
 			Vector v2(p21,p22);
-			TMETRIC lv1=v1.length(), lv2=v2.length();
+			RNUM lv1=v1.length(), lv2=v2.length();
 			Vector v1e=v1/lv1, v2e=v2/lv2;
 			Point c=v1.Intersection(v2);
 
-			if(c.isNull()) //если нет пересечений
+			if(c.isNull()) // если нет пересечений
 			{
 				if(ContinuesMode)
 				{				
 					Vector v12(p11,p21);
-					TMETRIC pr11=-(v12&v2e);			
-					if((pr11>-TMETRIC_O)&&(pr11<lv2+TMETRIC_O))
+					RNUM pr11=-(v12&v2e);			
+
+					if((pr11>-METRIC_O)&&(pr11<lv2+METRIC_O))
 					{
-						if((v12*v2e).length()<TMETRIC_O)
+						if((v12*v2e).length()<METRIC_O)
 						{
 							if(l1->previous())
 							{
 								if(l1->previous()==l2) return rpl;
-								List<TMETRIC> ss=l1->previous()->sIntersections(l2,false);
-								if(ss.count())if(isEqual(ss.last(),l1->previous()->length(),TMETRIC_O*2)) return rpl;
+								List<RNUM> ss=l1->previous()->sIntersections(l2,false);
+								if(ss.count())if(isEqual(ss.last(),l1->previous()->length(),METRIC_O*2)) return rpl;
 							}
 							rpl+=p11;
 							return rpl;
 						}
 					}
-					TMETRIC pr21=v12&v1e;
-					if((pr21>-TMETRIC_O)&&(pr21<lv1+TMETRIC_O))
+
+					RNUM pr21=v12&v1e;
+					if((pr21>-METRIC_O)&&(pr21<lv1+METRIC_O))
 					{
-						if((v12*v1e).length()<TMETRIC_O)
+						if((v12*v1e).length()<METRIC_O)
 						{
 							if(l2->previous())
 							{
 								if(l2->previous()==l1) return rpl;
-								List<TMETRIC> ss=l2->previous()->sIntersections(l1,false);
-								if(ss.count())if(isEqual(ss.last(),l2->previous()->length(),TMETRIC_O*2)) return rpl;
+								List<RNUM> ss=l2->previous()->sIntersections(l1,false);
+								if(ss.count())if(isEqual(ss.last(),l2->previous()->length(),METRIC_O*2)) return rpl;
 							}
 							rpl+=p21;
 							return rpl;
@@ -476,48 +462,52 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 				}
 				return rpl;
 			}
-			TMETRIC pr1=Vector(p11,c)&v1e;
-			TMETRIC pr2=Vector(p21,c)&v2e;
-			if(pr1>0&&pr1<lv1&&pr2>0&&pr2<lv2)rpl+=c;
+			RNUM pr1=Vector(p11,c)&v1e;
+			RNUM pr2=Vector(p21,c)&v2e;
+			if(pr1>METRIC_O&&pr1<lv1-METRIC_O&&pr2>METRIC_O&&pr2<lv2-METRIC_O) rpl+=c;
 			//return rpl;
-		} else if(lt2==LT_ARCLINE)
+
+		} else if(lt2==LT_ARCLINE) // прямая линия + дуга
 		{
 			AlArcline *arcl=(AlArcline*)l2;
 			Point pc=arcl->arcbas.O;
 			Basis b; b.SetOrtoBasis_ByOXY(l1->StartPoint(),l1->EndPoint(),pc);pc.SetBasis(&b);
-			TMETRIC pcy=pc.y();
-			TMETRIC pcx=pc.x();
-			// 			if(isEqual(pc.y(),arcl->r,TMETRIC_O))
-			// 			{
-			// 				Point rp(pc.x(),0,0,&b); rp.SetBasis(&arcl->arcbas);
-			// 				TAMETRIC a=arcl->arcbas.i.Angle(Vector(pc,rp));				
-			// 				if(pc.x()>=0&&pc.x()<=l1->length())
-			// 				{
-			// 					if((rp.y()>0&&(a<arcl->angle))||(rp.y()<0&&(2*PI-a)<arcl->angle)) rpl+=rp;
-			// 				}
-			// 			}else
-			if(pcy<=arcl->r)
+			RNUM pcy=pc.y();
+			RNUM pcx=pc.x();
+/*
+			if(isEqual(pc.y(),arcl->r,METRIC_O)) // Касание 
 			{
-				TMETRIC h=sqrt(arcl->r*arcl->r-pcy*pcy);
-				TMETRIC ll1=l1->length();
-				if((pcx-h)>=0&&(pcx-h)<=ll1)
+				Point rp(pc.x(),0,0,&b); rp.SetBasis(&arcl->arcbas);
+				RNUM a=arcl->arcbas.i.Angle(Vector(pc,rp));				
+				if(pc.x()>=0&&pc.x()<=l1->length())
+				{
+					if((rp.y()>0&&(a<arcl->angle))||(rp.y()<0&&(2*PI-a)<arcl->angle)) rpl+=rp;
+			 	}
+			}else//*/
+			if(pcy<arcl->r-METRIC_O)
+			{
+				RNUM h=sqrt(arcl->r*arcl->r-pcy*pcy);
+				RNUM ll1=l1->length();
+				if((pcx-h)>METRIC_O&&(pcx-h)<ll1-METRIC_O)
 				{
 					Point rp(pcx-h,0,0,&b); rp.SetBasis(&arcl->arcbas);
-					TAMETRIC a=arcl->arcbas.i.Angle(Vector(pc,rp));	
-					if((rp.y()>0&&(a<arcl->angle))||(rp.y()<0&&(2*PI-a)<arcl->angle)) rpl+=rp.inGlobalBasis();
+					RNUM a=arcl->arcbas.i.Angle(Vector(pc,rp));	
+					if((rp.y()>0&&(a<arcl->angle-METRIC_O))||(rp.y()<0&&(2*PI-a)<arcl->angle-METRIC_O)) rpl+=rp.inGlobalBasis();
 				}
-				if(h!=0)if((pcx+h)>=0&&(pcx+h)<=ll1)
+				/*if(h!=0)*/
+				if((pcx+h)>METRIC_O&&(pcx+h)<ll1-METRIC_O)
 				{
 					Point rp(pcx+h,0,0,&b); rp.SetBasis(&arcl->arcbas);
-					TAMETRIC a=arcl->arcbas.i.Angle(Vector(pc,rp));	
-					if((rp.y()>0&&(a<arcl->angle))||(rp.y()<0&&(2*PI-a)<arcl->angle))
+					RNUM a=arcl->arcbas.i.Angle(Vector(pc,rp));	
+					if((rp.y()>0&&(a<arcl->angle-METRIC_O))||(rp.y()<0&&(2*PI-a)<arcl->angle-METRIC_O))
 						rpl+=rp.inGlobalBasis();
 				}
 			}
+
 			if(rpl.count()<=1&&ContinuesMode)
 			{
 				CylCoord p11cyl=ToCylCoord_Arc(p11[arcl->arcbas]);
-				if(isEqual(p11cyl.r,arcl->r,TMETRIC_O))	if(p11cyl.a>TMETRIC_O&&p11cyl.a<arcl->angle+TMETRIC_O)
+				if(isEqual(p11cyl.r,arcl->r,METRIC_O))	if(p11cyl.a>METRIC_O&&p11cyl.a<arcl->angle+METRIC_O)
 				{
 					bool no=false;
 					if(l1->previous()) 
@@ -525,8 +515,8 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 						if(l1->previous()==l2) no=true;
 						else
 						{
-							List<TMETRIC> ss=l1->previous()->sIntersections(l2,false);
-							if(ss.count())if(isEqual(ss.last(),l1->previous()->length(),TMETRIC_O*2)){no=true;}						
+						//	List<RNUM> ss=l1->previous()->sIntersections(l2,false);
+						//	if(ss.count())if(isEqual(ss.last(),l1->previous()->length(),METRIC_O*2)){no=true;}						
 						}
 					}		
 					if(!no)rpl+=p11;
@@ -535,12 +525,12 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 				{
 					Vector v12(p11,p21);
 					Vector v1e(p11,p12);
-					TMETRIC lv1=v1e.length();
+					RNUM lv1=v1e.length();
 					v1e/=lv1;
-					TMETRIC pr21=v12&v1e;			
-					if((pr21>-TMETRIC_O)&&(pr21<lv1+TMETRIC_O))
+					RNUM pr21=v12&v1e;			
+					if((pr21>-METRIC_O)&&(pr21<lv1+METRIC_O))
 					{
-						if((v12*v1e).length()<TMETRIC_O)
+						if((v12*v1e).length()<METRIC_O)
 						{
 							bool no=false;
 							if(l2->previous())
@@ -548,11 +538,11 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 								if(l2->previous()==l1) no=true;
 								else
 								{
-									List<TMETRIC> ss=l2->previous()->sIntersections(l1,false);
-									if(ss.count())if(isEqual(ss.last(),l2->previous()->length(),TMETRIC_O*2)) no=true;
+								//	List<RNUM> ss=l2->previous()->sIntersections(l1,false);
+								//	if(ss.count())if(isEqual(ss.last(),l2->previous()->length(),METRIC_O*2)) no=true;
 								}
 							}
-							if(!no) rpl+=p11;
+							if(!no) rpl+=p21;
 							//return rpl;
 						}
 					}
@@ -577,18 +567,8 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 
 
 
-
-
-
-
-
-
-
-
-
 AlCircuit::AlCircuit():AbstractLine(LT_CIRCUIT)
 {
-	// WTF???
 	OutCircuits+=PhantomObject<AlPolylineCircuit>();
 	OutCircuits.last().Obj();
 	OutCircuits+=PhantomObject<AlPolylineCircuit>();
@@ -614,46 +594,273 @@ void AlCircuit::Clear()
 }
 
 
-
-struct IntersectVector
-{	
-	TMETRIC s1;
-	TMETRIC s2; //?
-	bool rigth12;
+struct IntersectionLineModel
+{
+    AlPolyline mash;
+    List<IntersectPoint*> iPoints;
 };
 
-// List<IntersectVector> LinesIntersectV(AbstractLine *al1, AbstractLine *al2)
-// {
-// 	List<TMETRIC> rl;
-// 	List<Point> inte=LinesIntersections(al1,al2,ContinuesMode);	
-// 	for(int i=0; i<inte.count(); i++)
-// 	{
-// 		TMETRIC s=SCoordinateFromPoint(inte[i]);
-// 		int j=0;
-// 		while(j<rl.count())
-// 		{
-// 			if(s<rl[j])break;
-// 			j++;
-// 		}
-// 		rl.Insert(j,s);
-// 	}
-// 
-// 	return rl;
-// }
-
-
-
+struct CircuitLineModel
+{
+    CircuitLineModel(int l=0, int dl=0, AbstractLine* pL=0, AbstractLine* nL=0)	:Level(l),dLevel(dl),preLine(pL),nextLine(nL)
+    {
+        skipMarker=false;
+        arrayIndex=0;
+    }
+    int Level;
+    int dLevel;
+    AbstractLine* preLine;
+    AbstractLine* nextLine;
+    bool skipMarker;
+    int arrayIndex;
+};
 
 void AlCircuit::operator +=(const AlPolyline &pl)
 {	
-	if(pl.Count()<2) return;	
+
+//	return;
+
+	if(pl.Count()<2) return;
+
 	OutCircuits+=PhantomObject<AlPolylineCircuit>();
 	OutCircuits.last().Create(pl);
+	OutCircuits.last().Obj().SetCircuitMode(true);
 	AlPolylineCircuit /*plc(pl);//*/&plc=OutCircuits.last().Obj();	
-	if(plc.StartPoint()!=plc.EndPoint()) plc+=&AlLine(plc.EndPoint(),plc.StartPoint());
+    if(plc.StartPoint()!=plc.EndPoint()) plc+=AlLine(plc.EndPoint(),plc.StartPoint());
 	plc.Last()->setNext(plc.First());
 
 //////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+//
+// Этап 1: поиск пересечений и разбивка
+//	* поиск пересечений
+//	* разбивка (создается отдельно => не влияет на поиск пересечений)
+//	* вычисление уровня (?)
+//	* связывание (?)
+//		* необходимо создавать однозначный контур (без ветвлений)
+//		*=> при наличии нескольких пересечений в одной точке необходимо создавать нулевые линии (длина=0)  
+//
+// Этап 2: создание контуров
+//	* неоходима проверка уровней при переходе по связке 
+//	*=> выбор связки с нужным уровнем при наличии нескольких пересечений в одной точке
+//
+
+//
+// Альтернатива:
+//	*Создать отдельный механизм связывания пересекающихся/совпадающих линий (?)
+//
+
+
+
+
+	ContainerModelMap<AlPolyline> mash; // разбивка
+    ContainerModelMap<List<IntersectPoint* > > iPoints; // точки пересечения
+	ContainerModelMap<CircuitLineModel> clm; // уровни и связи
+
+	List<List<IntersectPoint*> > iPointsCrit;
+	List<AbstractLine*> iPointsCritLine;
+
+
+	List<IntersectPoint> intrp; // контейнер для точек пересечения
+	List<AbstractLine*> circmash; // разбивка одним списком
+
+
+int minLevel=0;
+int curLevel=0;	
+
+// Этап 1: поиск пересечений и разбивка (+)
+	for(int i=0; i<plc.Count(); i++)
+	{
+		AbstractLine *plci=plc[i];
+// Поиск пересечений (+)
+		for(int j=i+1; j<plc.Count(); j++)
+		{
+			AbstractLine *plcj=plc[j];
+			const List<IntersectPoint> &intr=FindIntersectPoints(plci,plcj);
+			for(int zu=0; zu<intr.count(); zu++)
+			{							
+				intrp+=intr[zu];				
+				int ins=0;
+				//for(ins=0; ins<plc_intrp[i].count(); ins++) if( plc_intrp[i][ins]->S1(plci) > intr[zu].S1(plci) )  break;
+				//for(ins=0; ins<plc_intrp[j].count(); ins++) if( plc_intrp[j][ins]->S1(plcj) > intr[zu].S1(plcj) )  break;
+
+				for( ins=0; ins<iPoints[plci].count(); ins++) if( iPoints[plci][ins]->cS1(plci) > intr[zu].cS1(plci) )  break;
+				iPoints[plci].insert(ins,&intrp.last());
+				
+				for(ins=0; ins<iPoints[plcj].count(); ins++) if( iPoints[plcj][ins]->cS1(plcj) > intr[zu].cS1(plcj) )  break;
+				iPoints[plcj].insert(ins,&intrp.last());
+			}							
+		}
+
+////// Разбивка + вычисление относительных уровней (+)
+////// 
+		AbstractLine *pBAL=plci->clone();
+		RNUM s=0;
+			
+		if(iPoints[plci].count())
+		{				
+			mash[plci].TakeLine(pBAL->divideS(iPoints[plci][0]->cS1(plci)-s).PassObj());			
+			circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
+			clm[mash[plci].Last()].Level=curLevel;
+			curLevel+=iPoints[plci][0]->dLevel(plci);
+			if(curLevel<minLevel) minLevel=curLevel;
+			(iPoints[plci])[0]->AL11(plci)=mash[plci].Last();
+			s=iPoints[plci][0]->cS1(plci);			
+			int cj=iPoints[plci].count();
+
+			for(int j=1; j<cj; j++)
+			{			
+				mash[plci].TakeLine(pBAL->divideS(iPoints[plci][j]->cS1(plci)-s).PassObj());
+				circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
+				clm[mash[plci].Last()].Level=curLevel;
+				curLevel+=iPoints[plci][j]->dLevel(plci);
+				if(curLevel<minLevel) minLevel=curLevel;
+				(iPoints[plci])[j]->AL11(plci)=mash[plci].Last();
+				(iPoints[plci])[j-1]->AL12(plci)=mash[plci].Last();
+				s=iPoints[plci][j]->cS1(plci);				
+			}
+			mash[plci].TakeLine(pBAL);
+			circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
+			iPoints[plci].last()->AL12(plci)=mash[plci].Last();
+			clm[mash[plci].Last()].Level=curLevel;
+
+
+		
+			for(int j=0; j<cj-1; j++) // Поиск совпадающих точек пересечения /////////
+			{
+				Point pj(iPoints[plci][j]->p);
+				Point pjj(iPoints[plci][j+1]->p);
+
+				if(pj==pjj)
+				{
+					iPointsCrit+=List<IntersectPoint*>();
+					iPointsCritLine+=plci;
+					iPointsCrit.last()+=iPoints[plci][j];
+					iPointsCrit.last()+=iPoints[plci][j+1];
+					for(j=j+1; j<cj-1; j++)
+					{
+						if(iPoints[plci][j]->p==iPoints[plci][j+1]->p) iPointsCrit.last()+=iPoints[plci][j+1];
+						else break;
+					}
+					j--;
+				}
+			}
+
+		}else 
+		{
+			mash[plci].TakeLine(pBAL);
+			clm[mash[plci].Last()].Level=curLevel;
+            circmash+=mash[plci].Last();clm[circmash.last()].arrayIndex=circmash.count()-1;
+		}
+
+	}
+
+	
+//// Cвязывание (+)
+//// 
+	
+	for(int i=0; i<plc.Count(); i++)
+	{
+		AbstractLine *plci=plc[i];
+		List<IntersectPoint*> &ips=iPoints[plci];
+		int ck=ips.count();
+		for(int k=0; k<ck; k++)
+		{
+			clm[ips[k]->AL11(plci)].nextLine=ips[k]->AL22(plci);			
+			clm[ips[k]->AL21(plci)].nextLine=ips[k]->AL12(plci);
+
+			clm[ips[k]->AL22(plci)].preLine=ips[k]->AL11(plci); //
+			clm[ips[k]->AL12(plci)].preLine=ips[k]->AL21(plci);	//		
+		}
+	}
+
+	
+	for(int i=0; i<iPointsCrit.count(); i++)
+	{
+		List<IntersectPoint*> &ipc=iPointsCrit[i];
+		List<IntersectPoint*> ipcj;
+		for(int j=0; j<ipc.count(); j++) ipcj+=ipc[j];
+
+		AbstractLine *ipcl=iPointsCritLine[i];
+		for(int j=0; j<ipc.count(); j++)
+		{
+			for(int jj=0; jj<ipcj.count(); jj++)
+			{
+				if(clm[ipc[j]->AL11(ipcl)].Level==clm[ipcj[jj]->AL22(ipcl)].Level&&
+					clm[ipcj[jj]->AL21(ipcl)].Level==clm[ipc[j]->AL12(ipcl)].Level)
+				{
+				//	clm[clm[ipc[j]->AL12(ipcl)].preLine].nextLine=
+
+					clm[ipc[j]->AL11(ipcl)].nextLine=ipcj[jj]->AL22(ipcl);
+					clm[ipcj[jj]->AL21(ipcl)].nextLine=ipc[j]->AL12(ipcl);
+					ipc.removeAt(j);
+					ipcj.removeAt(jj);
+					j--;
+					break;					
+				}
+			}			
+		}
+	}
+
+
+	debugPoly.Clear();
+	dli.Clear();
+	for(int i=0; i<circmash.count(); i++)
+	{
+		debugPoly+=circmash[i];
+		dli[ debugPoly[i] ].Level=clm[circmash[i]].Level;//-minLevel;		
+		if(clm[circmash[i]].nextLine)dli[debugPoly[i]].nextLineIndex=clm[clm[circmash[i]].nextLine].arrayIndex;
+	}
+
+
+//// Этап 2. Создание контуров (-)
+
+	PhantomObject<AlPolylineCircuit> phCirc;
+
+	int ic=circmash.count();
+
+	for(int i=0; i<ic; i++)
+	{
+		AbstractLine *alm=circmash[i];
+		if(clm[alm].skipMarker) continue;
+		clm[alm].skipMarker=true;
+		if(clm[alm].Level!=minLevel) continue;
+		
+		phCirc.Create();
+		
+		AbstractLine *calm=alm;
+		//phCirc.Obj()+=calm;
+
+		RNUM circA=0;
+
+		for(int j=0; j<ic+1; j++)
+		{		
+			phCirc.Obj()+=calm;	
+			if(clm[calm].nextLine) calm=clm[calm].nextLine;
+			else calm=circmash.circElement(clm[calm].arrayIndex+1);
+			if(calm==alm) break;
+			clm[calm].skipMarker=true;					
+		}
+
+		if(phCirc.Obj().DirectionTurn()>0) 
+		{
+			OutCircuits+=PhantomObject<AlPolylineCircuit>();
+			OutCircuits.last().TakeAway(phCirc);
+		}else
+		{
+			InCircuits+=PhantomObject<AlPolylineCircuit>();
+			InCircuits.last().TakeAway(phCirc);
+		}
+	}
+
+	
+return;
+
+/* // ************************************************************************************************
+///////////////////////////////////////////
+	ALineCircuitModel *alcm=0;
+	ALineCircuitModel *alcm_=0;
 
 	struct  InderteminateIntersection
 	{
@@ -666,33 +873,46 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 	int i=0;
 	int CurLevel=0;
 
-	for(i=0;i<plc.Count();i++)
+	List<ALineCircuitModel> plcCModels;
+	ALineCircuitModel bufCModel;
+
+	for(int i=0; i<plc.Count(); i++)
 	{
-		List<TMETRIC> sints;//=2*plc[i]->length();
+		plcCModels+=bufCModel;
+		plc[i]->contents.SetModel(&plcCModels.last());
+	}
+	
+
+	for(i=0; i<plc.Count(); i++)
+	{
+		//List<RNUM> sints;//=2*plc[i]->length();
+		List<IntersectPoint> sints;
 		List<AbstractLine*> Lsints;
 		List<AbstractLine*> CriticalLines;
 		List<int> CriticalLinesI;
 		
 		for(int j=i+1; j<plc.Count(); j++)
 		{			
-			List<TMETRIC> si=plc[i]->sIntersections(plc[j]);
-		//	List<IntersectPoint> si=plc[i]
+		//	List<RNUM> si=plc[i]->sIntersections(plc[j]);
+			List<IntersectPoint> si=FindIntersectPoints(plc[i],plc[j]);
+
 			if(si.count())
 			{
-				if(plc[j]->previous()==plc[i])while(si.count()){if(isEqual(si.last(),plc[i]->length(),TMETRIC_O*3)) si.removeLast(); else break;}			
-				else if(plc[j]->next()==plc[i])while(si.count()){if(isEqual(si.first(),0,TMETRIC_O*3)) si.removeFirst(); else break;}			
+				if(plc[j]->previous()==plc[i])while(si.count()){if(isEqual(si.last().s1,plc[i]->length(),METRIC_O*3)) si.removeLast(); else break;}			
+				else if(plc[j]->next()==plc[i])while(si.count()){if(isEqual(si.first().s1,0,METRIC_O*3)) si.removeFirst(); else break;}			
 				bool crit=false;
-				TMETRIC s1=0;
-				TMETRIC s2=0;
+				RNUM s1=0;
+				RNUM s2=0;
+
 				for(int zu=0; zu<si.count(); zu++)
 				{
 					int zuzu=0;
-					while(zuzu<sints.count()){if(si[zu]<sints[zuzu]) break;	 zuzu++;}
+					while(zuzu<sints.count()){if(si[zu].s1<sints[zuzu].s1) break;	 zuzu++;}
 					sints.Insert(zuzu,si[zu]);
 					Lsints.Insert(zuzu,plc[j]);			
 					if(!crit&&si.count()>1)
 					{				
-						s2=plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(si[zu]));
+						s2=si[zu].s2;//plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(si[zu]));
 						if(s2<s1) crit=true;
 						s1=s2;
 					}
@@ -704,58 +924,93 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 				}
 			}			
 		}
-		TMETRIC s_=0;
+		RNUM s_=0;
 
+
+		alcm=CircModel(plc[i]);
+		
+		if(alcm->dLevel!=0)
+		{			
+			CurLevel+=alcm->dLevel;
+			alcm->dLevel=0;				
+		}
+		
+
+/* // ************************************************************************************************
 		if(plc[i]->preLine!=0)
 		{
-			if(Vector::isRightVectors(plc[i]->InDirection(),plc[i]->preLine->OutDirection()))
-			{				
-				CurLevel-=1;
-			}else
+			if(((ALineCircuitModel*)plc[i]->Content())->preLines)
 			{
-				CurLevel+=1;
-			}	
+				CurLevel=plc[i]->preLine->Level;
+	// 			if(Vector::isRightVectors(plc[i]->InDirection(),plc[i]->preLine->OutDirection()))
+	// 			{				
+	// 				CurLevel-=1;
+	// 			}else
+	// 			{
+	// 				CurLevel+=1;
+	// 			}	
+			}
 		}
-		plc[i]->Level=CurLevel;
-		int dl=plc[i]->Level;
-		if(dl<0)
-		{
-			for(int ii=0; ii<=i; ii++) plc[ii]->Level-=dl;
-			CurLevel-=dl;
-		}
+		//*/
+
+/* // ************************************************************************************************
+
+		alcm->Level=CurLevel; //plc[i]->Level=CurLevel;
+ 		int dl=alcm->Level;   //int dl=plc[i]->Level;
+// 		if(dl<0)
+// 		{
+// 			for(int ii=0; ii<=i; ii++) plc[ii]->Level-=dl;
+// 			CurLevel-=dl;
+// 		}
 		int i0=i;
 		for(int zu=0; zu<sints.count(); zu++)
 		{
 			AbstractLine *Ltr=Lsints[zu];
-			TMETRIC s1=sints[zu]-s_; s_+=s1;
-			TMETRIC s2=Ltr->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(s1));
-			if(s1<TMETRIC_O)
+			RNUM s1=sints[zu].s1-s_; s_+=s1;
+			RNUM s2=Ltr->SCoordinateFromPoint(sints[zu].p);//plc[i]->PointFromSCoordinate(s1));
+			if(s1<METRIC_O)
 			{
+				plc.Insert(i,AlPoint(plc[i]->InDirection(),plc[i]->InRCurvature());
+				plcCModels.Insert(i,bufCModel);
+				plc[i]->contents.SetModel(&plcCModels[i]);
+				i++;
+				//???
+				//???
+				//???
 			}
-// 			else if(s1>plc[i]->length()-TMETRIC_O)
+// 			else if(s1>plc[i]->length()-METRIC_O)
 // 			{
 // 				i++;
 // 				plc[i]->Level=CurLevel;			
 // 			}
 			else
 			{
-				plc.intersectS(i,s1);i++;
-				if(plc[i]->preLine!=0)
+				plc.intersectS(i,s1);
+				plcCModels.Insert(i,bufCModel);
+				plc[i]->contents.SetModel(&plcCModels[i]);
+				i++;
+			}	
+				alcm=CircModel(plc[i]);
+				alcm_=CircModel(plc[i-1]);
+				if(alcm->preLine!=0)
 				{
-					plc[i]->preLine->nextLine=plc[i-1];
-					plc[i-1]->preLine=plc[i]->preLine;	
-					plc[i]->preLine=0;
+					CircModel(alcm->preLine)->nextLine=plc[i-1];
+					alcm_->preLine=alcm->preLine;	
+					alcm->preLine=0;
 				}
-				plc[i-1]->Level=plc[i]->Level;
-			}
+				alcm_->Level=alcm->Level;
+			
 			
 			int j=plc.iLine(Ltr);
 			
 			bool crit=false;
-			if(s2<TMETRIC_O)
+			if(s2<METRIC_O)
 			{
+				//???
+				//???
+				//???
 			}
-// 			else if(s2>plc[j]->length()-TMETRIC_O)
+// 			else if(s2>plc[j]->length()-METRIC_O)
 // 			{
 // 				j++;
 // 			}
@@ -765,7 +1020,8 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 				{
 					if(Ltr==CriticalLines[cri])
 					{
-						/*if(!(Vector::isRightVectors(plc[i]->InDirection(),plc[j]->SDirection(s2))))*/ crit=true;
+						crit=true;
+						
 						CriticalLinesI[cri]--; 
 						if(CriticalLinesI[cri]==0){CriticalLines.removeAt(cri); CriticalLinesI.removeAt(cri);}
 						break;
@@ -802,7 +1058,8 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 			plc[i-1]->nextLine=plc[j];
 			plc[j]->preLine=plc[i-1];
 
-			if(Vector::isRightVectors(plc[i]->InDirection(),plc[j]->InDirection()))
+			//if(Vector::isRightVectors(plc[i]->InDirection(),plc[j]->InDirection()))
+			if(sints[zu].right12)
 			{				
 				CurLevel-=1;
 			}else
@@ -827,7 +1084,7 @@ void AlCircuit::operator +=(const AlPolyline &pl)
  		{
 			AbstractLine *Ltr=plc[i];
 			AbstractLine *CurLine=plc[i];
- 			TAMETRIC ACirc=0;
+ 			RNUM ACirc=0;
  			PhantomObject<AlPolylineCircuit> rCirc; rCirc.Create();
  			//rCirc.Obj()+=plc[i]; 			
 			int iBr=0;
@@ -842,7 +1099,7 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 					if(Ltr->nextLine!=0) Ltr=Ltr->nextLine;
 					else Ltr=plc.relativeLine(Ltr,+1);
 					if(Ltr==CurLine) break;
-				} while(Ltr->length()<TMETRIC_O);				
+				} while(Ltr->length()<METRIC_O);				
 				Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();				
 				ACirc+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 				
@@ -863,8 +1120,6 @@ void AlCircuit::operator +=(const AlPolyline &pl)
 			}
  		}
  	}
-
-
 //*//*
 return;
 //*/
@@ -885,12 +1140,12 @@ return;
 	{
 		for(int j=i+1; j<plc.Count(); j++)
 		{
-			List<TMETRIC> sint=plc[i]->sIntersections(plc[j]);
+			List<RNUM> sint=plc[i]->sIntersections(plc[j]);
 			if(sint.count())
 			{
 				//if(sint.)
-				TMETRIC si=sint.first();
-				TMETRIC sj=plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(si));
+				RNUM si=sint.first();
+				RNUM sj=plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(si));
 				if(Vector::isRightVectors(plc[i]->sDirection(si),plc[j]->sDirection(sj)))
 				{
 					CurStartLine=plc[i]; 						
@@ -929,7 +1184,7 @@ return;
 
 	for(int iii=0;;iii++)
 	{
-		TAMETRIC Atr=0;
+		RNUM Atr=0;
 		AbstractLine *Ltr=CurStartLine;
 		AbstractLine *Ltrtr=0;
 		int Itr=plc.iLine(CurStartLine);
@@ -947,7 +1202,7 @@ return;
 // 				rCirc.Obj()+=Ltr;
 // 				Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 // 				Vector v2=CurStartLine->StartPoint()&&CurStartLine->EndPoint();
-// 				Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+// 				Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 // 				break;
 			} else CurEndLineBR=false;
 			if(Ltr->markers[LM_NOINTERSECTIONS]||Ltr->markers[LM_TRAVERSE])
@@ -958,19 +1213,19 @@ return;
 				Itr=plc.iRelative(Itr,+1);
 				Ltr=plc[Itr];	
 				Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-				Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+				Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 				continue;
 			}
 
 			/// Ищем  пересечение //////////////////////////////
-			TMETRIC sint=Ltr->length()+TMETRIC_O;
+			RNUM sint=Ltr->length()+METRIC_O;
 			int sintI=-1;
 			for(int i=1; i<plc.Count(); i++)
 			{
 				int CsintI=plc.iRelative(Itr,i);
 				Ltrtr=plc[CsintI];
 				if(Ltrtr->markers[LM_NOINTERSECTIONS]||Ltrtr->markers[LM_TRAVERSE]) continue;
-				List<TMETRIC> trsint=Ltr->sIntersections(Ltrtr);
+				List<RNUM> trsint=Ltr->sIntersections(Ltrtr);
 				if(trsint.count())if(trsint.first()<sint)
 				{
 					sint=trsint.first();
@@ -983,8 +1238,8 @@ return;
 				if(sintI!=-1) //если таки нашли пересечение
 				{
 					Ltrtr=plc[sintI];
-					TMETRIC str=sint;
-					TMETRIC strtr=Ltrtr->SCoordinateFromPoint(Ltr->PointFromSCoordinate(str));
+					RNUM str=sint;
+					RNUM strtr=Ltrtr->SCoordinateFromPoint(Ltr->PointFromSCoordinate(str));
 					if(Vector::isRightVectors(Ltr->sDirection(str),Ltrtr->sDirection(strtr)))
 					{
 						//вот ведь незадача
@@ -1030,7 +1285,7 @@ return;
 						Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 						Ltr=Ltrtr;
 						Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 						Itr=plc.iLine(Ltr);
 					}												
 				}else // а если не нашли
@@ -1041,7 +1296,7 @@ return;
 						rCirc.Obj()+=Ltr;
 						Vector v1=Ltr->StartPoint()&&Ltr->EndPoint();
 						Vector v2=CurStartLine->StartPoint()&&CurStartLine->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 						break;
 					}else
 					{					
@@ -1051,7 +1306,7 @@ return;
 						Itr=plc.iRelative(Itr,+1);
 						Ltr=plc[Itr];	
 						Vector v2=Ltr->StartPoint()&&Ltr->EndPoint();
-						Atr+=Vector::Angle(v1,v2)*((V::isRightVectors(v1,v2))?(1):(-1));
+						Atr+=Vector::Angle(v1,v2)*((Vector::isRightVectors(v1,v2))?(1):(-1));
 					}
 				}
 		}
@@ -1084,13 +1339,13 @@ return;
 			i=plc.iRelative(i,+1);
 			if(plc[i]->markers[LM_TRAVERSE]) continue;
 			
-			List<TMETRIC> sints;//=2*plc[i]->length();
+			List<RNUM> sints;//=2*plc[i]->length();
 			List<int> Isints;
 			//int isint=-1;
 			for(int j=0; j<plc.Count(); j++)
 			{
 				if(plc[j]->markers[LM_TRAVERSE]||plc[j]->markers[LM_NOINTERSECTIONS]) continue;
-				List<TMETRIC> si=plc[i]->sIntersections(plc[j]);
+				List<RNUM> si=plc[i]->sIntersections(plc[j]);
 				for(int zu=0; zu<si.count(); zu++)
 				{
 					int zuzu=0;
@@ -1105,8 +1360,8 @@ return;
 				for(int zu=0; zu<sints.count(); zu++)
 				{
 					int j=Isints[zu];
-					TMETRIC s1=sints[zu];
-					TMETRIC s2=plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(s1));
+					RNUM s1=sints[zu];
+					RNUM s2=plc[j]->SCoordinateFromPoint(plc[i]->PointFromSCoordinate(s1));
 					if(Vector::isRightVectors(plc[i]->sDirection(s1),plc[j]->sDirection(s2)))
 					{
 						CurLevel-=1;
@@ -1170,7 +1425,7 @@ void AlCircuit::operator -=(AlPolyline &polycirc)
 
 bool PointInCircuit(Point p, List<Point> *ps, bool closed)
 {
-	TMETRIC a=0;
+	RNUM a=0;
 	Vector v(p,closed?ps->last():ps->first());
 	Vector nv;
 	Basis b;
@@ -1222,27 +1477,27 @@ List<Point> MaxCircuit(List<Point> *ps) // что это??
 }
 
 
-TMETRIC CircuitAreaABS(List<Point> &ps){return abs(CircuitArea(ps));}
-TMETRIC CircuitArea(List<Point> &ps)
+RNUM CircuitAreaABS(const List<Point> &ps){return abs(CircuitArea(ps));}
+RNUM CircuitArea(const List<Point> &ps)
 {
 	if(ps.count()<3) return 0;
-	TMETRIC A=0;
+	RNUM A=0;
 	Basis b;
 	for(int i=2; i<ps.count(); i++)
 	{
 		Vector v(ps[0],ps[i-1]);
 		b.SetOrtoBasis_InXY_ByI(v);
-		ps[i].SetBasis(&b);
-		A+=ps[i].y()*TMETRIC(0.5)*v.length();
+        //ps[i].SetBasis(&b);
+        A+=ps[i].ly(&b)*RNUM(0.5)*v.length();
 	}
 	return A;
 }
 
-TMETRIC APolylineCircuitAreaABS(AlPolyline &pl){return abs(APolylineCircuitArea(pl));}
+RNUM APolylineCircuitAreaABS(const AlPolyline &pl){return abs(APolylineCircuitArea(pl));}
 
-TMETRIC APolylineCircuitArea(AlPolyline &pl)
+RNUM APolylineCircuitArea(const AlPolyline &pl)
 {
-	TMETRIC A=0;
+	RNUM A=0;
 
 	Basis b;
 	if(pl.Count()>2)
@@ -1251,13 +1506,13 @@ TMETRIC APolylineCircuitArea(AlPolyline &pl)
 		{
 			Vector v(pl[0]->StartPoint(),pl[i-1]->StartPoint());//,pl[i]->StartPoint());
 			b.SetOrtoBasis_InXY_ByI(v);
-			A+=pl[i]->StartPoint().inBasis(&b).y()*TMETRIC(0.5)*v.length();
+			A+=pl[i]->StartPoint().inBasis(&b).y()*RNUM(0.5)*v.length();
 		}
 		if(pl.StartPoint()!=pl.EndPoint())
 		{	
 			Vector v(pl[0]->StartPoint(),pl[pl.Count()-2]->EndPoint());//,pl[i]->StartPoint());
 			b.SetOrtoBasis_InXY_ByI(v);
-			A+=pl.Last()->EndPoint().inBasis(&b).y()*TMETRIC(0.5)*v.length();
+			A+=pl.Last()->EndPoint().inBasis(&b).y()*RNUM(0.5)*v.length();
 		}
 	}	
 
@@ -1267,8 +1522,8 @@ TMETRIC APolylineCircuitArea(AlPolyline &pl)
 		else if(pl[i]->line_type==AL::LT_ARCLINE)
 		{
 			AlArcline *arc=(AlArcline*)pl[i];
-			b.SetOrtoBasis_InXY_ByI(V(arc->StartPoint(), arc->EndPoint()));
-			A+=(arc->r*arc->r*TMETRIC(0.5)*arc->angle)*signum(arc->MiddlePoint().inBasis(&b).y());
+			b.SetOrtoBasis_InXY_ByI(Vector(arc->StartPoint(), arc->EndPoint()));
+			A+=(arc->r*arc->r*RNUM(0.5)*arc->angle)*signum(arc->MiddlePoint().inBasis(&b).y());
 		}else if(pl[i]->line_type==AL::LT_POLYLINE)
 		{
 			A+=APolylineCircuitArea(*(AlPolyline*)pl[i]);
@@ -1276,7 +1531,7 @@ TMETRIC APolylineCircuitArea(AlPolyline &pl)
 		{
 			A+=CircuitArea(pl[i]->toPolyline());
 		}
-	}
+    }
 	return A;
 }
 
