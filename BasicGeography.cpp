@@ -152,11 +152,9 @@ Point PhiLam_to_PointE( const PhiLamHCoord &phi_lam_h )
 Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
 {
 	RNUM cosB=phi->cos();
-	RNUM sinB=phi->sin();//sin(phi);	
+	RNUM sinB=phi->sin();
 	RNUM cosL=lam->cos();
-	RNUM sinL=lam->sin();//sin(lam);
-	//if(lam<0) sinL=-sinL; 
-	//RNUM H=0;
+	RNUM sinL=lam->sin();
 	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
 	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
 

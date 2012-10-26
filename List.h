@@ -8,9 +8,11 @@ namespace CppBikes
 
 template<class T> class List : public std::vector<T*>
 {
-	typedef std::vector<T*> Container;
-    using Container::begin;
+	
 public:
+
+	typedef std::vector<T*> Container;
+	using Container::begin;
 
 	List(){}	
 	List(const List<T>& cnt){append(cnt);}
@@ -81,21 +83,17 @@ public:
 
 	void Take(T *pItm)
 	{
-		//if(pItm) 
 		Container::push_back(pItm);	
 	}
 
 	void Take(T *pItm,int i)
 	{
-		//if(pItm==0) return;
-		//if(i<0) i=0;
-		//else if(i>size()) i=size();
 		Container::insert(begin()+i,pItm);
 	}
 
 	T*	Pass(int i)
 	{
-		if(i>=size()||i<0)  return 0;
+	//	if(i>=size()||i<0)  return 0;
 		T* r=Container::operator[](i);
 		erase(begin()+i);
 		return r;
@@ -169,8 +167,6 @@ public:
 		return false;
 	}
 
-	//void Take
-	
 	void clear()
 	{
 		int c=size();

@@ -388,7 +388,7 @@ void TrAngle::operator+=( const TrAngleConst &ta )
 	_mdat&=MD_NTANCALC;	
 	if(_mdat&MD_RADCALC)
 	{		
-		if( (_mdat&MD_TRCALC) )
+		if( _mdat&MD_TRCALC )
 		{		
 			_rad+=ta.rad_val;	
 			RNUM c=cos();
@@ -597,18 +597,27 @@ bool TrAngle::operator>( TrAngle &ta )
 	{
 		if(_mdat&MD_COSM)
 		{
-			if(_mdat&MD_COSM)
+			if(ta._mdat&MD_COSM)
 			{
-				//if(_mdat&MD_SINM) return 
+				//....
+// 				if(_sin>0)
+// 				{
+// 					return _sin<ta._sin;
+// 				}else
+// 				{
+					//.....
+// 					return _sin<ta._sin;
+// 				}
+				//....
 			}else
 			{
-
+				return _sin>0;
 			}
 		}else
 		{
 			if(ta._mdat&MD_COSM)
 			{
-				//...
+				return ta._sin<0;
 			}else
 			{
 				return _sin>ta._sin;
