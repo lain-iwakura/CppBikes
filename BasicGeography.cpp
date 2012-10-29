@@ -1,5 +1,7 @@
 #include "BasicGeography.h"
 #include <CppBikes/TrigonometricAngle.h>
+#include <stdio.h>
+#include <string>
 
 
 
@@ -30,20 +32,50 @@ void DegMinSecAngle::setFromDeg( double a_deg )
 	min = d_m % 60;
 }
 
-double DegMinSecAngle::toRad()
+double DegMinSecAngle::toRad() const
 {
 	return DEG_to_RAD(toDeg());
 }
 
-double DegMinSecAngle::toDeg()
+double DegMinSecAngle::toDeg() const
 {	
 	return ((double)deg + (double)min/60.0 + (double)sec/3600.0)*( negative?(-1.0):(1.0) );
 }
 
-int DegMinSecAngle::sign()
+int DegMinSecAngle::sign() const
 {
 	return negative?(-1):(1);
 }
+
+std::string DegMinSecAngle::toString(bool print_sign, bool print_zero) const
+{
+	//std::string str;
+	char str_sign[2]={'\0','\0'};
+	char str_deg[50]="";
+	char str_min[5]="";
+	char str_sec[5]="";
+
+	char rstr[70]="";
+
+	if(print_sign&&negative) str_sign[0]='-';
+	
+	if(print_zero)
+	{
+		sprintf(str_deg,"%d°",deg);
+		sprintf(str_min,"%2d\'",int(min));
+		sprintf(str_sec,"%2d\"",int(sec));
+	}else
+	{
+		sprintf(str_deg,"%d°",deg);
+		if(min)sprintf(str_min,"%2d\'",int(min));
+		if(sec)sprintf(str_sec,"%2d\"",int(sec));
+	}
+	
+	sprintf(rstr,"%s%s%s%s",str_sign,str_deg,str_min,str_sec);
+	
+	return std::string(rstr);
+}
+
 
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////

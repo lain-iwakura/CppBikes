@@ -47,6 +47,15 @@ public:
 		return last();
 	}
 
+	T& operator ++ () 
+	{
+		Container::push_back(new T());
+		return last();
+	}
+	void operator --()
+	{
+
+	}
 	void operator += (const List<T> & other ){append(other);}
 	void operator += (const T & obj ){Container::push_back(new T(obj));}
 	void add(const T &a){Container::push_back(new T(obj));}
