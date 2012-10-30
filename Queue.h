@@ -39,16 +39,16 @@ namespace CppBikes
 	template<class T> class Queue
 	{
 	public:
-		Queue():head(0),tail(0)
+		Queue():_head(0),_tail(0)
 		{				
 		}
 
 		~Queue()
 		{
-			if(head)
+			if(_head)
 			{
-				QueueItem<T> *qi=head;
-				QueueItem<T> *nqi=head;
+				QueueItem<T> *qi=_head;
+				QueueItem<T> *nqi=_head;
 				while(nqi)
 				{
 					qi=nqi;
@@ -64,37 +64,53 @@ namespace CppBikes
 		{
 			QueueItem<T> *nqi=new QueueItem<T>(pObj);
 			
-			if(tail)
+			if(_tail)
 			{
-				tail->next=nqi;
-				tail=nqi;			
+				_tail->next=nqi;
+				_tail=nqi;			
 			}else
 			{
-				tail=nqi;
-				head=nqi;
+				_tail=nqi;
+				_head=nqi;
 			}						
 		}
 
-		T* get() const // возвращает первый элемент // не_безопасно в случае пустой очереди
+		void takeQueue(Queue<T> &q)
 		{
-			return head->data;
+			if(q.head)
+			{			
+				if(_tail) _tail->next=q.head;							
+				else _head=q.head;	
+				_tail=q.tail;
+				q.tail=0;
+				q.head=0;
+			}
 		}
 
-		void erase() // удаляет последний элемент // не_безопасно в случае пустой очереди  
+		T* head() const // возвращает первый элемент // не_безопасно в случае пустой очереди
 		{
-			QueueItem<T> *rqi=head;
-			head=head->next;
-			if(head==0) tail=0;
+			return _head->data;
+		}
+
+		T* tail() const // возвращает последний элемент // не_безопасно в случае пустой очереди
+		{
+			return _tail->data;
+		}
+
+		void erase() // удаляет первый элемент // не_безопасно в случае пустой очереди  
+		{
+			QueueItem<T> *rqi=_head;
+			_head=_head->next;
+			if(_head==0) _tail=0;
 			delete rqi;			
 		}
 
 
-
 		T* pass() // get()+ erase()
 		{
-			QueueItem<T> *rqi=head;			
-			head=head->next;
-			if(head==0) tail=0;
+			QueueItem<T> *rqi=_head;			
+			_head=_head->next;
+			if(_head==0) _tail=0;
 			T *r=rqi->data;
 			rqi->data=0;
 			delete rqi;
@@ -105,15 +121,15 @@ namespace CppBikes
 		bool isEmpty() const // потоко_не_безопасно в случае пустой очереди
 		{
 			//return head==0;//?
-			return tail==0;
+			return _tail==0;
 		}
 
 		int size() const // потоко_не_безопасно и медленно
 		{
-			if(head)
+			if(_head)
 			{		
 				int s=1;
-				QueueItem<T> *qi=head;
+				QueueItem<T> *qi=_head;
 				while(qi=qi->next) s++;
 				return s;
 			}
@@ -122,18 +138,18 @@ namespace CppBikes
 
 		void clear() // очищает очередь // потоко_не_безопасно
 		{
-			if(head)
+			if(_head)
 			{
-				QueueItem<T> *qi=head;
-				QueueItem<T> *nqi=head;
+				QueueItem<T> *qi=_head;
+				QueueItem<T> *nqi=_head;
 				while(nqi)
 				{
 					qi=nqi;
 					nqi=nqi->next;
 					delete qi;
 				}
-				head=0;
-				tail=0;
+				_head=0;
+				_tail=0;
 			}
 		}
 
@@ -142,8 +158,8 @@ namespace CppBikes
 		void operator +=(const T &obj){take(new T(obj));}
 
 	private:
-		QueueItem<T> *head;
-		QueueItem<T> *tail;
+		QueueItem<T> *_head;
+		QueueItem<T> *_tail;
 
 	};
 
