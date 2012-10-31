@@ -7,7 +7,7 @@ namespace CppBikes
 
 
 //Рудиментные типы:
-	typedef RNUM RNUM; 
-	typedef RNUM RNUM; 
+//	typedef RNUM TMETRIC; 
+//	typedef RNUM TAMETRIC; 
 }
 #endif

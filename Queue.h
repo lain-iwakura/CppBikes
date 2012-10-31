@@ -77,13 +77,13 @@ namespace CppBikes
 
 		void takeQueue(Queue<T> &q)
 		{
-			if(q.head)
+			if(q._head)
 			{			
-				if(_tail) _tail->next=q.head;							
-				else _head=q.head;	
-				_tail=q.tail;
-				q.tail=0;
-				q.head=0;
+				if(_tail) _tail->next=q._head;							
+				else _head=q._head;	
+				_tail=q._tail;
+				q._tail=0;
+				q._head=0;
 			}
 		}
 

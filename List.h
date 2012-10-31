@@ -84,8 +84,8 @@ public:
 	const T & beforeLast () const { return (*this)[size()-2]; }
 	T & beforeLast () { return (*this)[size()-2]; }
 
-	const T& at(int i) const { return (*this)[i];}
-	T& at(int i){ return (*this)[i]; }
+	const T& at(int i) const { return *(Container::operator[](i));}
+	T& at(int i){ return *(Container::operator[](i)); }
 
 	const T& operator[](int i) const { return *(Container::operator[](i));}	
 	T& operator[](int i) { return *(Container::operator[](i)); }
