@@ -1,6 +1,8 @@
 #ifndef BACKUPOBJECT_H
 #define BACKUPOBJECT_H
 
+namespace CppBikes
+{
 
 template<class T> class BackupObject
 {
@@ -88,5 +90,5 @@ public:
 	void operator /=(const T &val){if(autobackup)MakeBackup(); OBJ/=val;}
 };
 
-
+}
 #endif

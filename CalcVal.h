@@ -6,9 +6,11 @@
 
 #include "BasicMath.h"
 #include "PhantomObject.h"
-#include "ContainerInterface.h"
+#include "List.h"
 #include "Bikes.h"
 
+namespace CppBikes
+{
 
 
 
@@ -179,4 +181,5 @@ const T  CalcVal<T,TDEF,TMIN,TMAX,0>::val_def=(T)(TDEF);
 
 */
 
+}
 #endif

@@ -2,6 +2,10 @@
 #define DEPENDEDOBJECT_H
 #include "PhantomObject.h"
 
+
+namespace CppBikes
+{
+
 template<class T> class DependedObject
 {
 public:
@@ -200,39 +204,44 @@ private:
 
 
 template<class T> class DependedValue: public DependedObject<T>
-{	
+{
+    using DependedObject<T>::BeginModify;
+    using DependedObject<T>::EndModify;
+   // using DependedObject<T>::OBJ;
+    using DependedObject<T>::MastersInspection;
 public:
+ //   DependedValue(){}
 	TEMPLT_DEFALL(DependedValue,DependedObject,T)
 
 	void operator +=(const T& obj)
 	{
 		BeginModify();
-		OBJ+=obj;	
+        this->OBJ+=obj;
 		EndModify();
 	}
 	void operator -=(const T& obj)
 	{
 		BeginModify();
-		OBJ-=obj;
+        this->OBJ-=obj;
 		EndModify();
 	}
 	void operator *=(const T& obj)
 	{
 		BeginModify();
-		OBJ*=obj;
+        this->OBJ*=obj;
 		EndModify();
 	}
 	void operator /=(const T& obj)
 	{
 		BeginModify();
-		OBJ/=obj;
+        this->OBJ/=obj;
 		EndModify();
 	}
 
 	operator T() const
 	{
 		MastersInspection();
-		return OBJ;
+        return this->OBJ;
 	}
 
 protected:
@@ -249,25 +258,28 @@ protected:
 
 template<class T> class DependedLength: public DependedValue<T>
 {
+       // using DependedValue<T>::OBJ;        
 public:
+ //   DependedLength(){}
 	TEMPLT_DEFALL(DependedLength,DependedValue,T)
 private:
 	void MasterChanged(const T& MasterBackup,const T& MasterNow )
 	{
-		OBJ+=MasterNow-MasterBackup;
+        this->OBJ+=MasterNow-MasterBackup;
 	} 
 	void MasterDeleted(const T& MasterNow)
 	{
-		OBJ-=MasterNow;
+        this->OBJ-=MasterNow;
 	}
 	void MasterAdded(const T& MasterNow) //?
 	{
-		OBJ+=MasterNow;
+        this->OBJ+=MasterNow;
 	} 
 	void MasterRemoved(const T& MasterNow) //?
 	{
-		OBJ-=MasterNow;
+        this->OBJ-=MasterNow;
 	} 
 };
 
+}
 #endif

@@ -11,13 +11,14 @@
 #include "AbstractContainer.h"
 
 #define DEFARCPOLY_N 90
-class AbstractLine;
-typedef AbstractLine AL;
-typedef TransPhantomObject<AbstractLine> TransALine;
 
 
+namespace CppBikes
+{
 
-
+	class AbstractLine;
+	typedef AbstractLine AL;
+	typedef TransPhantomObject<AbstractLine> TransALine;
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// AbstractLine //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +40,7 @@ public:
 	};
 
 	LineType line_type;
-	DependedLength<TMETRIC> LEN;	
+	DependedLength<RNUM> LEN;	
 
 	AbstractLine(LineType lt=LT_NULL, AbstractLine *parentLine=0);
 	AbstractLine(const AbstractLine &al);
@@ -48,10 +49,10 @@ public:
 	virtual AbstractLine* clone() const;
 
 	virtual List<Point> toPolyline()const; 
-	virtual List<Point> toPolylineD(TMETRIC d)const; 
+	virtual List<Point> toPolylineD(RNUM d)const; 
 	virtual List<Point> toPolylineN(int n)const; 
 
-	virtual TMETRIC length() const;
+	virtual RNUM length() const;
 
 	virtual Point EndPoint() const;
 	virtual Point StartPoint() const;
@@ -60,27 +61,27 @@ public:
 	virtual Vector OutDirection()const;
 	virtual Vector InDirection()const;	
 	virtual Vector MiddleDirection()const; 
-	virtual Vector sDirection(TMETRIC s)const;
+	virtual Vector sDirection(RNUM s)const;
 	
 	virtual Vector InRCurvature()const;
 	virtual Vector OutRCurvature()const;
 	virtual Vector MiddleRCurvature() const;
-	virtual Vector sRCurvature(TMETRIC s)const;
+	virtual Vector sRCurvature(RNUM s)const;
 	
-	virtual TAMETRIC DirectionTurn()const;
+	virtual RNUM DirectionTurn()const;
 
-	virtual TMETRIC SCoordinateFromPoint(const Point &p)const;
-	virtual Point PointFromSCoordinate(TMETRIC s) const; //?
+	virtual RNUM SCoordinateFromPoint(const Point &p)const;
+	virtual Point PointFromSCoordinate(RNUM s) const; //?
 	virtual bool PointBelongToLine(const Point &p)const;	
 	
-	virtual TransALine divideS(TMETRIC s);
+	virtual TransALine divideS(RNUM s);
 	virtual void Invert();
 	
 	
 	//PlaneAnalysis (?) {
-	static bool isLinesCollapsed(AbstractLine *l1, AbstractLine *l2, TMETRIC epsilon=TMETRIC_O); //?
+	static bool isLinesCollapsed(AbstractLine *l1, AbstractLine *l2, RNUM epsilon=METRIC_O); //?
 	static List<Point> LinesIntersections(AbstractLine *l1, AbstractLine *l2, bool ContinuesMode=true);
-	List<TMETRIC> sIntersections(AbstractLine *al, bool ContinuesMode=true);
+	List<RNUM> sIntersections(AbstractLine *al, bool ContinuesMode=true);
 	// } PlaneAnalysis
 
 
@@ -140,9 +141,9 @@ class AlPoint: public AbstractLine // (?)
 		
 		List<Point> toPolyline()const;
 		List<Point> toPolylineN(int n) const;
-		List<Point> toPolylineD(TMETRIC d) const;
+		List<Point> toPolylineD(RNUM d) const;
 
-		TMETRIC length() const;
+		RNUM length() const;
 		Vector OutDirection()const;
 		Vector InDirection()const;
 		Vector MiddleDirection()const;
@@ -171,8 +172,8 @@ public:
 	List<Point> toPolyline() const;
 	List<Point> toPolylineN(int n) const;
 	void Invert();	
-	TransALine divideS(TMETRIC s);
-	Vector sDirection(TMETRIC s) const;
+	TransALine divideS(RNUM s);
+	Vector sDirection(RNUM s) const;
 };
 
 
@@ -186,8 +187,8 @@ class AlArcline : public AbstractLine
 {
 public:
 
-	void Set(const Basis &abas, TMETRIC ar, TAMETRIC aa);
-	AlArcline(const Basis &abas=Basis(), TMETRIC ar=0, TAMETRIC aa=0);
+	void Set(const Basis &abas, RNUM ar, RNUM aa);
+	AlArcline(const Basis &abas=Basis(), RNUM ar=0, RNUM aa=0);
 	AlArcline(const AlArcline &al);
 	AlArcline* clone() const {return new AlArcline(*this);}
 
@@ -196,34 +197,34 @@ public:
 
 	void Invert();
 
-	TMETRIC SCoordinateFromPoint(const Point &p) const;
-	Point PointFromSCoordinate(TMETRIC s) const;
+	RNUM SCoordinateFromPoint(const Point &p) const;
+	Point PointFromSCoordinate(RNUM s) const;
 
 	Vector InDirection() const;
 	Vector OutDirection() const;
 	Vector MiddleDirection() const;
-	Vector sDirection(TMETRIC s) const;
+	Vector sDirection(RNUM s) const;
 
-	TAMETRIC DirectionTurn() const;
+	RNUM DirectionTurn() const;
 
-	Vector sRCurvature(TMETRIC s) const;
+	Vector sRCurvature(RNUM s) const;
 	Vector InRCurvature() const;
 	Vector OutRCurvature() const;
 
-	TransALine divideS(TMETRIC s);
+	TransALine divideS(RNUM s);
 
 
 
 //////////////
-	void ArcConjugationBy2LinesAndRadius(AlLine &l1, AlLine &l2, TMETRIC arc_r, LinePointsType l1p=LP_END, bool RedefineLines=true, bool prolongation_l1=true);
-	void ArcConjugationBy2LinesAndRadiusOpt(AlLine &l1, AlLine &l2, TMETRIC arc_r, bool RedefineLines=true);
-	AlLine ArcTurnToPoint(AlLine l, Point p, TMETRIC arc_r, LinePointsType lp=LP_END ); //?
+	void ArcConjugationBy2LinesAndRadius(AlLine &l1, AlLine &l2, RNUM arc_r, LinePointsType l1p=LP_END, bool RedefineLines=true, bool prolongation_l1=true);
+	void ArcConjugationBy2LinesAndRadiusOpt(AlLine &l1, AlLine &l2, RNUM arc_r, bool RedefineLines=true);
+	AlLine ArcTurnToPoint(AlLine l, Point p, RNUM arc_r, LinePointsType lp=LP_END ); //?
 
 public:
 	Basis arcbas;
-	TAMETRIC angle;
-	TAMETRIC XYangle0;		
-	TMETRIC r;
+	RNUM angle;
+	RNUM XYangle0;		
+	RNUM r;
 	Point & pC();
 };
 
@@ -257,40 +258,45 @@ public:
 	
 	List<Point> toPolyline() const;
 	List<Point> toPolylineN(int n) const;
-	List<Point> toPolylineD(TMETRIC d) const;
+	List<Point> toPolylineD(RNUM d) const;
 	
 	Vector InDirection() const;
 	Vector OutDirection() const;
 	Vector MiddleDirection() const;
-	Vector sDirection(TMETRIC s) const;
+	Vector sDirection(RNUM s) const;
 
 	Point MiddlePoint() const;
 	Point StartPoint() const;
 	Point EndPoint() const;
 
-	Vector sRCurvature(TMETRIC s) const;
+	Vector sRCurvature(RNUM s) const;
 	Vector InRCurvature() const;
 	Vector OutRCurvature() const;
 
-	TMETRIC SCoordinateFromPoint(const Point &p) const;
-	Point PointFromSCoordinate(TMETRIC s) const;
+	RNUM SCoordinateFromPoint(const Point &p) const;
+	Point PointFromSCoordinate(RNUM s) const;
 
-	TAMETRIC DirectionTurn() const;	
+	RNUM DirectionTurn() const;	
 
 	void Invert();	
-	TransALine divideS(TMETRIC s);
+	TransALine divideS(RNUM s);
 
 ////////////////////
 	void operator =(const AlPolyline &pl);
 	void Clear();
-	void operator +=(AbstractLine* al);
+    void operator +=(const AbstractLine* al);
+    void operator +=(const AbstractLine &al);
 	void operator +=(AlPolyline pl);
 	AbstractLine * operator [](int i) ;
+    const AbstractLine * operator [](int i) const;
 	AbstractLine * First();
 	AbstractLine * Last();
+    const AbstractLine * First() const;
+    const AbstractLine * Last() const;
 	int Count() const;
 	AbstractLine * At(int index);
-	void Add(AbstractLine* al);
+    void Add(const AbstractLine* al);
+    void Add(const AbstractLine& al);
 	void Insert(int index, AbstractLine *al);
 	void Remove(int index, int len=1);
 	void RemoveFirst();
@@ -298,21 +304,21 @@ public:
 	TransALine PassLine(int index);
 	void TakeLine(int index, AbstractLine * al);
 	void TakeLine(AbstractLine * al);
-	AbstractLine * sLine(TMETRIC &s) const;
+	AbstractLine * sLine(RNUM &s) const;
 
-	TransObject<AlPolyline> SelectedPolyline(TMETRIC s1, TMETRIC s2) const;
-	void ArcConjugation2ParallelLines(AlLine &l1, AlLine &l2, TMETRIC r, bool l1p_end=true);	
-	void TurnFromDirectionToDirection(Vector dir1, Vector dir2, TMETRIC r); 
-	void TurnFromDirectionToDirectionAlt(Vector dir1, Vector dir2, TMETRIC r);
-	void AbstractConjugation(AbstractLine *al1, AbstractLine *al2, TMETRIC r);
-	void AbstractConjugationLong(AbstractLine *al1, AbstractLine *al2, TMETRIC r);
-	void TurnFromDirectionToPoint(Vector dir,Point p, TMETRIC r);
-	void TurnFromPointToDirection( Vector dir, Point p, TMETRIC r);
-	void TurnFromDirectionToDirection2(const Vector &dir1, const Vector &dir2, TMETRIC r);
+	TransObject<AlPolyline> SelectedPolyline(RNUM s1, RNUM s2) const;
+	void ArcConjugation2ParallelLines(AlLine &l1, AlLine &l2, RNUM r, bool l1p_end=true);	
+	void TurnFromDirectionToDirection(Vector dir1, Vector dir2, RNUM r); 
+	void TurnFromDirectionToDirectionAlt(Vector dir1, Vector dir2, RNUM r);
+	void AbstractConjugation(AbstractLine *al1, AbstractLine *al2, RNUM r);
+	void AbstractConjugationLong(AbstractLine *al1, AbstractLine *al2, RNUM r);
+	void TurnFromDirectionToPoint(Vector dir,Point p, RNUM r);
+	void TurnFromPointToDirection( Vector dir, Point p, RNUM r);
+	void TurnFromDirectionToDirection2(const Vector &dir1, const Vector &dir2, RNUM r);
 	void SetCircuitMode(bool on=true); //(?)
 	
-	void intersectS(TMETRIC s);
-	void intersectS(int iL, TMETRIC s, bool direct=true);
+	void intersectS(RNUM s);
+	void intersectS(int iL, RNUM s, bool direct=true);
 	
 	AlPolyline ClearSelfIntersections();
 	void ClearSelfIntersections_NeighborsOnly();
@@ -327,5 +333,5 @@ private:
 
 
 
-
+}
 #endif

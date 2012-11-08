@@ -1,6 +1,10 @@
-#pragma once
+#ifndef CPPBIKES_PLANEANALYSIS_H
+#define CPPBIKES_PLANEANALYSIS_H
+
 #include "AbstractLine.h"
 
+namespace CppBikes
+{
 
 // Правило заполнения:
 //		|***A
@@ -11,7 +15,7 @@
 
 struct IntersectPoint 	// (Plain analysis)
 {
-	IntersectPoint(AbstractLine *itAl1=0,AbstractLine *itAl2=0, const Point &itP=p_null, TMETRIC itS1=-1, TMETRIC itS2=-1, bool itRight12=false)
+	IntersectPoint(AbstractLine *itAl1=0,AbstractLine *itAl2=0, const Point &itP=p_null, RNUM itS1=-1, RNUM itS2=-1, bool itRight12=false)
 		:al1(itAl1),al2(itAl2),p(itP),s1(itS1),s2(itS2),right12(itRight12)
 	{
 		al11=0;
@@ -28,8 +32,8 @@ struct IntersectPoint 	// (Plain analysis)
 	AbstractLine *al22;
 
 	Point p;
-	TMETRIC s1;
-	TMETRIC s2;
+	RNUM s1;
+	RNUM s2;
 	bool right12; 
 
 	IntersectPoint Inverted()
@@ -42,25 +46,25 @@ struct IntersectPoint 	// (Plain analysis)
 		return r;
 	}
 	
-	TMETRIC cS1(AbstractLine *Al1=0) const 
+	RNUM cS1(AbstractLine *Al1=0) const 
 	{
 		if(Al1==0||Al1==al1) return s1;
 		return s2;	
 	}
 
- 	TMETRIC & S1(AbstractLine *Al1=0)
+ 	RNUM & S1(AbstractLine *Al1=0)
  	{
  		if(Al1==0||Al1==al1) return s1;
  		return s2;	
  	}
 
-	TMETRIC  cS2(AbstractLine *Al1=0) const 
+	RNUM  cS2(AbstractLine *Al1=0) const 
 	{
 		if(Al1==0||Al1==al1) return s2;
 		return s1;	
 	}
 
-	TMETRIC & S2(AbstractLine *Al1=0)
+	RNUM & S2(AbstractLine *Al1=0)
 	{
 		if(Al1==0||Al1==al1) return s2;
 		return s1;		
@@ -132,10 +136,10 @@ bool PointInCircuit(Point p, List<Point> *circuit, bool closed=true); // +
 List<int> MaxCircuit_i(List<Point> *ps); // -
 List<Point> MaxCircuit(List<Point> *ps); // ?
 
-TMETRIC CircuitArea(List<Point> &ps); // +
-TMETRIC CircuitAreaABS(List<Point> &ps); // +
-TMETRIC APolylineCircuitArea(AlPolyline &pl); // +
-TMETRIC APolylineCircuitAreaABS(AlPolyline &pl); // +
+RNUM CircuitArea(const List<Point> &ps); // +
+RNUM CircuitAreaABS(const List<Point> &ps); // +
+RNUM APolylineCircuitArea(const AlPolyline &pl); // +
+RNUM APolylineCircuitAreaABS(const AlPolyline &pl); // +
 
 
 class AlPolylineCircuit: public AlPolyline
@@ -225,3 +229,6 @@ public:
 	//void OptAdd(const AlPolyline &polycirc);
 	
 };
+
+}
+#endif

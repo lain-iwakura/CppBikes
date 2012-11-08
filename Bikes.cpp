@@ -1,6 +1,6 @@
 #include "Bikes.h"
 
-
+using namespace CppBikes;
 
 
 

@@ -2,17 +2,24 @@
 #define PHANTOMOBJECT_H
 
 
-#include "ContainerInterface.h"
+#include "List.h"
 #include "AdjacentObject.h"
-#define TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this():C_that(){} C_this(const C_this<T> &xo):C_that<T>(xo){} C_this(const T& o):C_that<T>(o){}
+#define TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this(){}; C_this(const C_this<T> &xo):C_that<T>(xo){} C_this(const T& o):C_that<T>(o){}
 #define TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T) void operator =(const T&  obj){C_that<T>::operator=(obj);} void operator=(C_this<T> & cobj){C_that<T>::operator=(cobj);}
 #define TEMPLT_DEFALL(C_this,C_that,T) TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T)
 
 #define PHANTOMOBJECT_CONSTRUCTOR_DEFALL(C_this,C_that,T) TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this(T *obj):C_that<T>(obj){}
 #define PHANTOMOBJECT_ASSIGMENTOPERATORS(C_this,C_that,T) TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T) void operator=(T* obj){C_that<T>::operator=(obj);}
-#define PHANTOMOBJECT_DEFALL(C_this,C_that,T) PHANTOMOBJECT_CONSTRUCTOR_DEFALL(C_this,C_that,T) PHANTOMOBJECT_ASSIGMENTOPERATORS(C_this,C_that,T)
+#define PHANTOMOBJECT_DEFALL(C_this,C_that,T) \
+    PHANTOMOBJECT_CONSTRUCTOR_DEFALL(C_this,C_that,T)\
+    PHANTOMOBJECT_ASSIGMENTOPERATORS(C_this,C_that,T)
+//     protected: using C_that<T>::OBJ;\
+//     public: using C_that<T>::Destroy;\
+//     using C_that<T>::Exist;
 
 
+namespace CppBikes
+{
 
 template<class T> class PhantomObject
 {
@@ -41,14 +48,14 @@ public:
 		Created();
 	}
 
-	void Take(T* pOBJ) // unsafe
+	void Take(T* pOBJ) 
 	{
 		Destroy(); 
 		OBJ=pOBJ;
 		if(pOBJ) Taked();
 	}
 
-	T* PassObj() // unsafe
+	T* PassObj() 
 	{		
 		T* rOBJ=OBJ;
 		OBJ=0;
@@ -74,7 +81,10 @@ public:
 		}
 	}
 	
-	bool Exist() const {return OBJ;}	
+    bool Exist() const
+    {
+        return OBJ!=0;
+    }
 		
 	T  Val() const {if(OBJ) return *OBJ; return T();}
 	T  Val(const T& defval) const {if(OBJ) return *OBJ; return defval;}
@@ -83,7 +93,7 @@ public:
 	T* pObj(){return OBJ;} 
 
 	operator T() const { if(OBJ) return *OBJ;  return T();}	
-// 	operator T*() const { return OBJ;}
+ 	operator T*() { return OBJ;}
 // 	operator const T*() const { return OBJ;}
 // 	operator T const *() const { return OBJ;}
 	T& operator =(const T &obj){Create(); *OBJ=obj; return *OBJ;}
@@ -91,6 +101,7 @@ public:
 	//PhantomObject<T>& operator =(const PhantomObject<T> &phantom){phantom.transObject(*this); return *this;}
 
 	T* operator -> () {return OBJ;}
+	const T* operator -> () const {return OBJ;}
 	T& operator *(){if(!OBJ) {OBJ=new T();Created();}  return *OBJ; }
 
 protected:
@@ -110,9 +121,12 @@ protected:
 
 
 
+
 #define TransObject TransPhantomObject
 template<class T>class TransPhantomObject: public PhantomObject<T>
 {	
+protected:
+    using PhantomObject<T>::OBJ;
  public:
 	TransPhantomObject(T *pobj=0):PhantomObject<T>(pobj),MustDestroy(new bool(true)){}
 	TransPhantomObject(const T &obj):PhantomObject<T>(obj),MustDestroy(new bool(true)){}
@@ -139,14 +153,21 @@ private:
 #define JointObject JointPhantomObject
 template<class T>class JointPhantomObject: public PhantomObject<T>, public AdjacentObject
 {
+protected:
+    using PhantomObject<T>::OBJ;
+	using PhantomObject<T>::Taked;
+	using PhantomObject<T>::Passed;
 public:
-	JointPhantomObject(T *pobj=0):PhantomObject(pobj){}
+	using PhantomObject<T>::Destroy;
+	
+
+    JointPhantomObject(T *pobj=0):PhantomObject<T>(pobj){}
 	JointPhantomObject(JointPhantomObject &jobg)
 	{
 		jobg.insertAsNext(*this);
 		OBJ=jobg.OBJ;
 	}
-	JointPhantomObject(const T & obj):PhantomObject(obj){}	
+    JointPhantomObject(const T & obj):PhantomObject<T>(obj){}
 	
 	~JointPhantomObject()
 	{
@@ -210,7 +231,8 @@ public:
 	void Take(T* pOBJ)
 	{
 		if(OBJ) delete OBJ;		
-		OBJ=pOBJ Taked();			
+        OBJ=pOBJ;
+        Taked();
 	}
 
 protected:	
@@ -234,7 +256,13 @@ protected:
 
 template<class T>class JointPhantomValue: public JointPhantomObject<T>
 {
+protected:
+      using JointPhantomObject<T>::OBJ;
 public:
+
+     using JointPhantomObject<T>::Exist;
+
+
 	PHANTOMOBJECT_DEFALL(JointPhantomValue,JointPhantomObject,T)
 	ADJACENTOBJECT_DEFFUNC(JointPhantomValue<T>)
 
@@ -249,7 +277,7 @@ public:
 	void operator *=(const JointPhantomValue<T> &jval){if(OBJ){ if(jval.OBJ) *OBJ*=*jval.OBJ;}}
 	T operator -(){if(OBJ) return -*OBJ; return -T(0);}
 	T operator +(){if(OBJ) return +*OBJ; return +T(0);}
-	bool operator ==(const JointPhantomValue<T> &jval) const{if(Exist()&&jval.Exist()) return *OBJ==*jval.OBJ; return false;}
+    bool operator ==(const JointPhantomValue<T> &jval) const{if(Exist()&&jval.Exist()) return *OBJ==*jval.OBJ; return false;}
 };
 
 
@@ -264,7 +292,11 @@ public:
 
 template<class T> class PhantomVal: public PhantomObject<T>   
 {
+protected:
+    using  PhantomObject<T>::OBJ;
 public:
+	using  PhantomObject<T>::Destroy;
+    using  PhantomObject<T>::Exist;
 	TEMPLT_DEFALL(PhantomVal,PhantomObject,T)
 
 	void Clear(){Destroy();}
@@ -288,7 +320,8 @@ public:
 	bool operator ==(const PhantomVal<T> &cval) const{if(Exist()&&cval.Exist()) return *OBJ==*cval.OBJ; return false;}	
 };
 
-// 
+
+
 // class Deleter // ?
 // {
 // public:
@@ -300,5 +333,6 @@ public:
 // 	void operator +=(void *delObj){if(delObj) delObjects+=delObj;}
 // 	List<void*> delObjects;
 // };
-
+}
 #endif
+

@@ -3,9 +3,11 @@
 
 
 
+namespace CppBikes
+{
 
 template<class T> class SetList
-{
+{    
 public:
 	SetList(){}
 	SetList(const SetList<T> &ml):phObjects(ml.phObjects){}
@@ -73,7 +75,7 @@ public:
 	int count() const {return phObjects.count();}
 	void clear() {phObjects.clear();}	
 protected:
-	List<PhantomObject<T>> phObjects;
+    List<PhantomObject<T> > phObjects;
 };
 
 class BoolMarkerList: public SetList<bool>
@@ -99,5 +101,5 @@ public:
 };
 
 
-
+}
 #endif
