@@ -8,9 +8,11 @@ namespace CppBikes
 
 template<class T> class List : public std::vector<T*>
 {
-	typedef std::vector<T*> Container;
-    using Container::begin;
+	
 public:
+
+	typedef std::vector<T*> Container;
+	using Container::begin;
 
 	List(){}	
 	List(const List<T>& cnt){append(cnt);}
@@ -45,6 +47,15 @@ public:
 		return last();
 	}
 
+	T& operator ++ () 
+	{
+		Container::push_back(new T());
+		return last();
+	}
+	void operator --()
+	{
+
+	}
 	void operator += (const List<T> & other ){append(other);}
 	void operator += (const T & obj ){Container::push_back(new T(obj));}
 	void add(const T &a){Container::push_back(new T(obj));}
@@ -73,29 +84,25 @@ public:
 	const T & beforeLast () const { return (*this)[size()-2]; }
 	T & beforeLast () { return (*this)[size()-2]; }
 
-	const T& at(int i) const { return (*this)[i];}
-	T& at(int i){ return (*this)[i]; }
+	const T& at(int i) const { return *(Container::operator[](i));}
+	T& at(int i){ return *(Container::operator[](i)); }
 
 	const T& operator[](int i) const { return *(Container::operator[](i));}	
 	T& operator[](int i) { return *(Container::operator[](i)); }
 
 	void Take(T *pItm)
 	{
-		//if(pItm) 
 		Container::push_back(pItm);	
 	}
 
 	void Take(T *pItm,int i)
 	{
-		//if(pItm==0) return;
-		//if(i<0) i=0;
-		//else if(i>size()) i=size();
 		Container::insert(begin()+i,pItm);
 	}
 
 	T*	Pass(int i)
 	{
-		if(i>=size()||i<0)  return 0;
+	//	if(i>=size()||i<0)  return 0;
 		T* r=Container::operator[](i);
 		erase(begin()+i);
 		return r;
@@ -169,8 +176,6 @@ public:
 		return false;
 	}
 
-	//void Take
-	
 	void clear()
 	{
 		int c=size();

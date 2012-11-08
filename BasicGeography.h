@@ -2,7 +2,10 @@
 #define BASICGEOGRAPHY_H
 #include "BasicMath.h"
 #include "BasicGeometry.h"
+
 //#include "TrigonometricAngle.h"
+
+//class string;
 
 namespace CppBikes
 {
@@ -29,15 +32,17 @@ struct DegMinSecAngle
 	DegMinSecAngle(int  d=0, char  m=0, char  s=0, bool neg=false);
 	DegMinSecAngle(double a_rad){setFromRad(a_rad);}	
 	void operator = (double a_rad){setFromRad(a_rad);}
-	operator double(){ return toRad();}
+	operator double() const { return toRad();}
 
 	void setFromRad(double a_rad);
 	void setFromDeg(double a_deg);
-	double toRad();
-	double toDeg();
+	double toRad() const;
+	double toDeg() const;
 		
+	std::string toString(bool print_sign=true, bool print_zero=false) const;
+	
 
-	int sign();
+	int sign() const;
 };
 
 

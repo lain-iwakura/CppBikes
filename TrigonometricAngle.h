@@ -9,11 +9,14 @@ namespace CppBikes
 
 	struct TrAngleConst
 	{
-		TrAngleConst(RNUM _rad_val=0,RNUM _sin_val=0, RNUM _cos_val=1, RNUM _tan_val=0):
-			rad_val(_rad_val),sin_val(_sin_val),cos_val(_cos_val),tan_val(_tan_val)
-		{
-		}
+		TrAngleConst();
+		TrAngleConst(RNUM _rad_val,RNUM _sin_val, RNUM _cos_val, RNUM _tan_val);
+		TrAngleConst(RNUM ang_rad);	
 
+		TrAngleConst& operator =(RNUM ang_rad);
+
+		operator RNUM () const;
+		
 		RNUM rad_val;
 		RNUM sin_val;
 		RNUM cos_val;
@@ -23,6 +26,7 @@ namespace CppBikes
 
 	class TrAngle
 	{
+
 	public:
 
 		enum MData
@@ -45,9 +49,10 @@ namespace CppBikes
 			MD_NCOSM	=	0xFF^MD_COSM,			
 			MD_NTRCALC	=	0xFF^MD_TRCALC,
 			MD_NRESERVED=	0xFF^MD_RESERVED,
-			
+
 			MD_ALLDEF	=	MD_SINCALC|MD_COSCALC|MD_TANCALC|MD_RADCALC|MD_TRCALC
 		};
+		
 
 
 		TrAngle(RNUM rad_val, RNUM sin_val, RNUM cos_val, RNUM tan_val, char mdat=MD_ALLDEF);
@@ -101,6 +106,7 @@ namespace CppBikes
 		RNUM sCos();
 
 		void trCalc();
+
 	private:
 
 		char _mdat;

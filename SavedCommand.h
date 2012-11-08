@@ -63,7 +63,7 @@ namespace CppBikes
 
 		void execCommand() // не_безопасно в случае пустой очереди
 		{
-			get()->exec();
+			head()->exec();
 			erase();
 		}
 

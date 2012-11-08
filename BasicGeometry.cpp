@@ -209,24 +209,41 @@ bool Point::operator !=(const Point &p) const
 }
 
 RNUM Point::lx(const Basis *b) const 
-{	//if(b){		
-		return (gx - b->O.gx)*(b->i.gx) + (gy - b->O.gy)*(b->i.gy) + (gz - b->O.gz)*(b->i.gz);
-//}return gx;
+{	
+	if(b)return (gx - b->O.gx)*(b->i.gx) + (gy - b->O.gy)*(b->i.gy) + (gz - b->O.gz)*(b->i.gz);
+	return gx;
 }
 
 RNUM Point::ly(const Basis *b) const
-{/*if(b) return (b->O&&*this)&b->j; return gy;*/
-	return (gx - b->O.gx)*(b->j.gx) + (gy - b->O.gy)*(b->j.gy) + (gz - b->O.gz)*(b->j.gz);
+{
+	if(b)return (gx - b->O.gx)*(b->j.gx) + (gy - b->O.gy)*(b->j.gy) + (gz - b->O.gz)*(b->j.gz);
+	return gy;
 }
 
 RNUM Point::lz(const Basis *b) const 
-{/*if(b) return (b->O&&*this)&b->k; return gz;*/
-	return (gx - b->O.gx)*(b->k.gx) + (gy - b->O.gy)*(b->k.gy) + (gz - b->O.gz)*(b->k.gz);
+{
+	if(b) return (gx - b->O.gx)*(b->k.gx) + (gy - b->O.gy)*(b->k.gy) + (gz - b->O.gz)*(b->k.gz);
+	return gz;
 }
 
-RNUM Point::x() const {if(basis) return lx(basis); return gx;}
-RNUM Point::y() const {if(basis) return ly(basis); return gy;}
-RNUM Point::z() const {if(basis) return lz(basis); return gz;}
+RNUM Point::lx(const Basis &b) const 
+{	
+	return (gx - b.O.gx)*(b.i.gx) + (gy - b.O.gy)*(b.i.gy) + (gz - b.O.gz)*(b.i.gz);	
+}
+
+RNUM Point::ly(const Basis &b) const
+{
+	return (gx - b.O.gx)*(b.j.gx) + (gy - b.O.gy)*(b.j.gy) + (gz - b.O.gz)*(b.j.gz);	
+}
+
+RNUM Point::lz(const Basis &b) const 
+{
+	return (gx - b.O.gx)*(b.k.gx) + (gy - b.O.gy)*(b.k.gy) + (gz - b.O.gz)*(b.k.gz);	
+}
+
+RNUM Point::x() const {return lx(basis);}
+RNUM Point::y() const {return ly(basis);}
+RNUM Point::z() const {return lz(basis);}
 
 Point& Point::Set(RNUM px, RNUM py,RNUM pz, const Basis *b)
 {
@@ -610,27 +627,37 @@ Vector& Vector::invert()
 }
 
 /// + + +
-RNUM Vector::x()const {if(basis) return lx(basis); return gx;}
-RNUM Vector::y()const {if(basis) return ly(basis); return gy;}
-RNUM Vector::z()const {if(basis) return lz(basis); return gz;}
+RNUM Vector::x()const {/*if(basis)*/ return lx(basis); /*return gx;*/}
+RNUM Vector::y()const {/*if(basis)*/ return ly(basis); /*return gy;*/}
+RNUM Vector::z()const {/*if(basis)*/ return lz(basis); /*return gz;*/}
 
 RNUM Vector::lx(const Basis *b) const
 {
-	//if(b)
-		return b->i&(*this);
-	//return gx;
+	if(b) return b->i&(*this);
+	return gx;
 }
 RNUM Vector::ly(const Basis *b) const
 {
-	//if(b)
-		return b->j&(*this);
-	//return gy;
+	if(b) return b->j&(*this);
+	return gy;
 }
 RNUM Vector::lz(const Basis *b) const
 {
-	//if(b)
-		return b->k&(*this);
-	//return gz;
+	if(b) return b->k&(*this);
+	return gz;
+}
+
+RNUM Vector::lx(const Basis &b) const
+{
+	return b.i&(*this);	
+}
+RNUM Vector::ly(const Basis &b) const
+{
+	return b.j&(*this);	
+}
+RNUM Vector::lz(const Basis &b) const
+{
+	return b.k&(*this);	
 }
 
 Vector& Vector::SetGlobal(RNUM vgx, RNUM vgy, RNUM vgz)

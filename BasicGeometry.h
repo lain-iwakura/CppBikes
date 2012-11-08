@@ -105,6 +105,9 @@ public:
 	RNUM lx(const Basis *b) const; // координата X в локальном базисе *b
 	RNUM ly(const Basis *b) const; // координата Y в локальном базисе *b
 	RNUM lz(const Basis *b) const; // координата Z в локальном базисе *b
+	RNUM lx(const Basis &b) const; // координата X в локальном базисе b
+	RNUM ly(const Basis &b) const; // координата Y в локальном базисе b
+	RNUM lz(const Basis &b) const; // координата Z в локальном базисе b
 	Point inGlobalBasis() const; // та же точка в глобальном базисе
 	Point inBasis(const Basis *b) const; // та же точка в базисе *b
 	Point inReplacedBasis(const Basis *b) const; // та же точка в замещенном базисе (аналог ReplaceBasis())
@@ -209,6 +212,9 @@ public:
 	RNUM lx(const Basis *b) const; // проекция на ось OX в локальном базисе *b
 	RNUM ly(const Basis *b) const; // проекция на ось OY в локальном базисе *b
 	RNUM lz(const Basis *b) const; // проекция на ось OZ в локальном базисе *b
+	RNUM lx(const Basis &b) const; // проекция на ось OX в локальном базисе b
+	RNUM ly(const Basis &b) const; // проекция на ось OY в локальном базисе b
+	RNUM lz(const Basis &b) const; // проекция на ось OZ в локальном базисе b
 	RNUM length() const; // длина вектора
 	Vector e() const; // единичный вектор соответсвующий данному вектору
 	Point destination() const; // точка на конце вектора

@@ -5,6 +5,43 @@ namespace CppBikes
 {
 
 
+TrAngleConst::TrAngleConst( RNUM ang_rad )
+{
+	TrAngle ang(ang_rad);
+	rad_val=ang_rad;
+	sin_val=ang.sin();
+	cos_val=ang.cos();
+	tan_val=ang.tan();
+}
+
+TrAngleConst::TrAngleConst( RNUM _rad_val/*=0*/,RNUM _sin_val/*=0*/, RNUM _cos_val/*=1*/, RNUM _tan_val/*=0*/ ) :
+rad_val(_rad_val),sin_val(_sin_val),cos_val(_cos_val),tan_val(_tan_val)
+{
+
+}
+
+TrAngleConst::TrAngleConst():
+rad_val(0),sin_val(0),cos_val(1),tan_val(0)
+{
+
+}
+
+
+TrAngleConst& TrAngleConst::operator=( RNUM ang_rad )
+{
+	TrAngle ang(ang_rad);
+	rad_val=ang_rad;
+	sin_val=ang.sin();
+	cos_val=ang.cos();
+	tan_val=ang.tan();
+	return *this;
+}
+
+TrAngleConst::operator RNUM () const
+{
+	return rad_val;
+}
+
 
 
 
@@ -351,7 +388,7 @@ void TrAngle::operator+=( const TrAngleConst &ta )
 	_mdat&=MD_NTANCALC;	
 	if(_mdat&MD_RADCALC)
 	{		
-		if( (_mdat&MD_TRCALC) )
+		if( _mdat&MD_TRCALC )
 		{		
 			_rad+=ta.rad_val;	
 			RNUM c=cos();
@@ -560,18 +597,27 @@ bool TrAngle::operator>( TrAngle &ta )
 	{
 		if(_mdat&MD_COSM)
 		{
-			if(_mdat&MD_COSM)
+			if(ta._mdat&MD_COSM)
 			{
-				//if(_mdat&MD_SINM) return 
+				//....
+// 				if(_sin>0)
+// 				{
+// 					return _sin<ta._sin;
+// 				}else
+// 				{
+					//.....
+// 					return _sin<ta._sin;
+// 				}
+				//....
 			}else
 			{
-
+				return _sin>0;
 			}
 		}else
 		{
 			if(ta._mdat&MD_COSM)
 			{
-				//...
+				return ta._sin<0;
 			}else
 			{
 				return _sin>ta._sin;
@@ -590,6 +636,15 @@ bool TrAngle::operator<( TrAngle &ta )
 {
 	return rad()<ta.rad();
 }
+
+RNUM TrAngle::ctg()
+{
+	return 1.0/not0(tg());
+}
+
+
+
+
 
 
 }
