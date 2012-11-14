@@ -387,7 +387,7 @@ Vector::Vector(bool NotNull, const Vector &v, bool notransient)
 	gx=v.gx;
 	gy=v.gy;
 	gz=v.gz;
-//	fulcrum=v.fulcrum;
+//	anchor=v.anchor;
 	basis=v.basis;
 	if(basis) basis->Add(this);
 }
@@ -407,7 +407,7 @@ Vector::Vector(const Point &p1, const Point &p2,const Basis *b, bool notransient
 	_transient=!notransient;
 	basis=0;
 	_null=false;
-//	fulcrum=p1; 
+//	anchor=p1; 
 	gx=p2.gx-p1.gx; 
 	gy=p2.gy-p1.gy; 
 	gz=p2.gz-p1.gz;
@@ -680,7 +680,7 @@ Vector& Vector::SetLocalX(RNUM localx)
 {
 	if(basis)
 	{	
-		//*this=Vector(localx,y(),z(),fulcrum,basis);
+		//*this=Vector(localx,y(),z(),anchor,basis);
 		*this+=basis->i*(localx-x());
 	}else gx=localx;
 	return *this;
@@ -690,7 +690,7 @@ Vector& Vector::SetLocalY(RNUM localy)
 {
 	if(basis)
 	{	
-		//*this=Vector(x(),localy,z(),fulcrum,basis);
+		//*this=Vector(x(),localy,z(),anchor,basis);
 		*this+=basis->j*(localy-y());
 	}else gy=localy;
 	return *this;
@@ -700,7 +700,7 @@ Vector& Vector::SetLocalZ(RNUM localz)
 {
 	if(basis)
 	{	
-		//*this=Vector(x(),y(),localz,fulcrum,basis);
+		//*this=Vector(x(),y(),localz,anchor,basis);
 		*this+=basis->k*(localz-z());
 	}else gz=localz;
 	return *this;
