@@ -358,9 +358,9 @@ List<Point> AbstractLine::LinesIntersections(AbstractLine *l1, AbstractLine *l2,
 				for(int i=0; i<arcp.count(); i++)
 				{
 					Point rp=arcp[i];
-					//RNUM a1=arcl1->arcbas.i.Angle(Vector(vo12.fulcrum,rp));
+					//RNUM a1=arcl1->arcbas.i.Angle(Vector(vo12.anchor,rp));
 					//RNUM a2=arcl2->arcbas.i.Angle(Vector(vo12.destination(),rp));
-					//TAngle a1=arcl1->arcbas.i.AngleA(Vector(vo12.fulcrum,rp));
+					//TAngle a1=arcl1->arcbas.i.AngleA(Vector(vo12.anchor,rp));
 					//TAngle a2=arcl2->arcbas.i.AngleA(Vector(vo12.destination(),rp));
 					//a1.Rad(); a2.Rad();
 					
