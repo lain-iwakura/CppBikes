@@ -52,10 +52,7 @@ public:
 		Container::push_back(new T());
 		return last();
 	}
-	void operator --()
-	{
-
-	}
+	
 	void operator += (const List<T> & other ){append(other);}
 	void operator += (const T & obj ){Container::push_back(new T(obj));}
 	void add(const T &a){Container::push_back(new T(obj));}
@@ -90,14 +87,16 @@ public:
 	const T& operator[](int i) const { return *(Container::operator[](i));}	
 	T& operator[](int i) { return *(Container::operator[](i)); }
 
-	void Take(T *pItm)
+	T& Take(T *pItm)
 	{
 		Container::push_back(pItm);	
+		return *pItm;
 	}
 
-	void Take(T *pItm,int i)
+	T& Take(T *pItm,int i)
 	{
 		Container::insert(begin()+i,pItm);
+		return *pItm;
 	}
 
 	T*	Pass(int i)
