@@ -168,11 +168,18 @@ public:
 		Container::insert(begin()+i,new T(o));
 	}
 
-	bool contains(const T& obj) const
+	bool contains(const T& itm) const
 	{
 		int c=size();
-		for(int i=0; i<c; i++) if((*this)[i]==obj){ return true;}
+		for(int i=0; i<c; i++) if((*this)[i]==itm){ return true;}
 		return false;
+	}
+
+	int find(const T &itm) const
+	{
+		int c=size();
+		for(int i=0; i<c; i++) if(*(Container::operator [](i))==itm) return i;
+		return -1;
 	}
 
 	void clear()
