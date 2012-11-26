@@ -103,10 +103,17 @@ public:
 	{
 	//	if(i>=size()||i<0)  return 0;
 		T* r=Container::operator[](i);
-		erase(begin()+i);
+		erase(Container::begin()+i);
 		return r;
 	}
 
+	T* Pass()
+	{
+		int i=Container::size()-1;
+		T* r=Container::operator[](i);
+		erase(Container::begin()+i);
+		return r;
+	}
 
 	const T& circElement(int i) const {return circElement(i);}
 	T& circElement(int i)
