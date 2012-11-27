@@ -99,6 +99,14 @@ public:
 		return *pItm;
 	}
 
+	void Take(List<T>& l)
+	{
+		Container *lc=&l;
+		int c=lc->size();
+		for(int i=0; i<c; i++)Container::push_back((*lc)[i]);
+		lc->clear();
+	}
+
 	T*	Pass(int i)
 	{
 	//	if(i>=size()||i<0)  return 0;
@@ -107,11 +115,18 @@ public:
 		return r;
 	}
 
-	T* Pass()
+	T* PassLast()
 	{
 		int i=Container::size()-1;
 		T* r=Container::operator[](i);
 		erase(Container::begin()+i);
+		return r;
+	}
+
+	T* PassFirst()
+	{
+		T* r=Container::operator[](0);
+		erase(Container::begin());
 		return r;
 	}
 
