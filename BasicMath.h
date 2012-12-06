@@ -46,6 +46,7 @@ bool isEqualAngle(RNUM a1, RNUM a2);
 RNUM not0(RNUM n, RNUM o=RNUM_O);
 void not0set(RNUM &n, RNUM o=RNUM_O);
 
+
 RNUM NormalDistribution(RNUM x);
 
 
@@ -70,6 +71,13 @@ T ABS(T val)
     return val;
 }
 
+template<class T>
+T inRange(T val, T val_min, T val_max)
+{
+	if(val<val_min) val=val_min;
+	else if(val>val_max) val=val_max;
+	return val;
+}
 
 
 
