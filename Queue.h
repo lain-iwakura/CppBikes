@@ -87,6 +87,26 @@ namespace CppBikes
 			}
 		}
 
+		void takeOneItem(Queue<T> &q) // берем один элемент из головы q и добавляем в конец
+		{
+// 			if(q._head)
+// 			{
+				if(_tail)
+				{
+					_tail->next=q._head;
+					_tail=q._head;			
+				}else
+				{
+					_tail=q._head;
+					_head=q._head;
+				}
+				//QueueItem<T> *nqi=q._head;
+				q._head=q._head->next;
+				if(q._head==0) q._tail=0;
+				_tail->next=0;				
+//			}
+		}
+
 		T* head() const // возвращает первый элемент // не_безопасно в случае пустой очереди
 		{
 			return _head->data;
@@ -116,6 +136,7 @@ namespace CppBikes
 			delete rqi;
 			return r;
 		}
+		
 
 		
 		bool isEmpty() const // потоко_не_безопасно в случае пустой очереди
