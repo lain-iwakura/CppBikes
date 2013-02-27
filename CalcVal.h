@@ -13,7 +13,47 @@ namespace CppBikes
 {
 
 
+	template<typename T>
+	class CalcVal
+	{
+	public:
+		CalcVal():val_(0),calc_(false){}
+		CalcVal(T v):val_(v),calc_(true){}
 
+		T val() const {return val_;}
+		T& rval(){calc_=true; return val_;} // (!)
+		bool isCalc() const {return calc_;}
+		void clear(){calc_=false;}
+		
+		operator T() const { return val_;}
+		operator T&() {calc_=true; return val_;}
+		operator const T&() const {return val_;}		
+		operator bool(){return calc_;}
+		bool operator !(){return !calc_;}
+
+		T& operator = (T v) {calc_=true; val_=v; return val_;}
+		T& operator += (T v) {val_+=v; return val_;}
+		T& operator -= (T v) {val_-=v; return val_;}
+		T& operator *= (T v) {val_*=v; return val_;}
+		T& operator /= (T v) {val_/=v; return val_;}
+		T& operator ++ () {val_++; return val_;}
+		T& operator -- () {val_--; return val_;}
+		bool operator == (T v) const {return val_==v;}
+		bool operator >= (T v) const {return val_>=v;}
+		bool operator <= (T v) const {return val_<=v;}
+		bool operator > (T v) const {return val_>v;}
+		bool operator < (T v) const {return val_<v;}
+
+		CalcVal<T>& operator = (const CalcVal<T> &cv) {val_=cv.val_; calc_=cv.calc_; return *this;}
+		
+
+	private:
+		T val_;
+		bool calc_;
+	};
+
+	typedef CalcVal<RNUM> CRNUM;
+/*
 template<class T>
 class CalcVal
 {
@@ -55,7 +95,7 @@ public:
 	unsigned char binfo;
 };
 
-
+*/
 
 /*
 template<class T, int TDEF=0, int TMIN=TMIN_DEF, int TMAX=TMAX_DEF, int TORDER=0>
