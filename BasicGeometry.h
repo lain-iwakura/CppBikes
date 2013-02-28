@@ -343,7 +343,7 @@ public:
 
 	//////// extra operators ///////
 	operator Basis*(){return this;}
-	Basis * operator ->(){return this;}
+	//Basis * operator ->(){return this;}
 	const Basis& operator << (Point &p) const;// {p.SetBasis(this);  return *this;}
 	const Basis& operator << (Vector &v) const;// {v.SetBasis(this);  return *this;}
 	Vector operator [] (Vector &v) const;// {return v.inBasis(this);}

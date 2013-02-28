@@ -139,45 +139,6 @@ bool CppBikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZo
 
 	return LineSegmentCrossScreenRect_ambiguous(p1,p1z,p2,p2z,scr);
 
-	
-/*
-	// 11 ->
-	 if(p1z.v==1&&p2z.h==1) // (/) ->
-	 {
-		 if(dy*(scr.x1-p1.x) > (-scr.y1+p1.y)*dx) return false;
-		 if(p1z.h=3&&p2z.v==3)
-		 {
-			 if(dy*(scr.x2-p1.x) < (-scr.y2+p1.y)*dx ) return false;
-			 return true;
-		 }
-		 return true;
-	 }
-	 if(p2z.v==1&&p1z.h==1) // (/) <-
-	 {
-		 if((p2.y-p1.y)*(scr.x1-p1.x) < (scr.y1-p1.y)*(p2.x-p1.x)) return false;
-
-		 if(p1z.v=3&&p2z.h==3) /////
-		 {
-			 if(dy*(scr.x2-p1.x) < (-scr.y2+p1.y)*dx ) return false; /////
-			 return true;
-		 }
-		 return true;
-	 }
-	 // <- 11
-
-	 // 13 ->
-	 if(p1z.v==1&&p2z.h==1) // (\) ->
-	 {
-	 }
-	 if(p2z.v==1&&p1z.h==1) // (/) <-
-	 {
-	 }
-	 // <- 13
-
-	// <- в неоднозначных областях
-
-	return true;
-*/
 }
 
 bool CppBikes::LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenPoint &p2, const ScreenRect &scr )

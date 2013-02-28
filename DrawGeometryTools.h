@@ -25,7 +25,7 @@ namespace CppBikes
 		ScreenPoint(RNUM x_=0, RNUM y_=0):x(x_),y(y_){}
 		RNUM x;
 		RNUM y;
-	};
+	}; 
 
 	struct ScreenRect
 	{
@@ -34,6 +34,7 @@ namespace CppBikes
 		RNUM x2; // права€ граница
 		RNUM y1; // верхн€€ граница 
 		RNUM y2; // нижн€€ граница 
+		// y2 > y1 (!)
 	};
 
 	struct ScreenZone
