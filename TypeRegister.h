@@ -1,26 +1,44 @@
 #ifndef TYPEREGISTER_H
 #define TYPEREGISTER_H
+#include <CppBikes/TypeCollector.h>
+
 
 namespace CppBikes
 {	
 
-	class BaseTypeRegister
+//================================================================
+	class GlobalTypeCollector: public TypeCollector<GlobalTypeCollector>
 	{
-	public:
-		static int typeCount();	
-	protected:
-		static int typeIter;
-	};	
-	
-	template<class T>
-	class TypeRegister: public BaseTypeRegister
-	{
-	public:
-		static const int typeId;
 	};
-
+//================================================================
+	typedef GlobalTypeCollector::TypeDataMap TypeDataMap;
+//================================================================
 	template<class T>
-	const int TypeRegister<T>::typeId=BaseTypeRegister::typeIter++;
+	class TypeDataArray: public GlobalTypeCollector::TypeDataArray<T>
+	{
+	};
+//================================================================
+	template<class T>
+	class TypeRegister: public GlobalTypeCollector::TypeRegister<T>
+	{
+	};
+//================================================================
+	template<int collectionId>
+	class TypeCollection: public GlobalTypeCollector::TypeCollection<collectionId>
+	{
+	};
+//================================================================
+	int typeCount();
+//================================================================
+	template<class T>
+	int typeId()
+	{
+		return TypeRegister<T>::typeId;
+	}
+//================================================================
 
 }
+
+
+
 #endif
