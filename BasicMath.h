@@ -47,6 +47,7 @@ RNUM not0(RNUM n, RNUM o=RNUM_O);
 void not0set(RNUM &n, RNUM o=RNUM_O);
 
 
+
 RNUM NormalDistribution(RNUM x);
 
 
@@ -79,7 +80,11 @@ T inRange(T val, T val_min, T val_max)
 	return val;
 }
 
-
+template<class T>
+T intPart(T val)
+{
+	return T(long long(val));
+}
 
 
 
