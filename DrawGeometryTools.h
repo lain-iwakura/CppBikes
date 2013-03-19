@@ -34,7 +34,8 @@ namespace CppBikes
 		RNUM x2; // права€ граница
 		RNUM y1; // верхн€€ граница 
 		RNUM y2; // нижн€€ граница 
-		// y2 > y1 (!)
+		// x2 > x1
+		// y2 > y1
 	};
 
 	struct ScreenZone
@@ -57,6 +58,25 @@ namespace CppBikes
 	bool LineSegmentCrossScreenRect(const ScreenPoint &p1, const ScreenZone &p1_zone, const ScreenPoint &p2, const ScreenZone &p2_zone, const ScreenRect &scrRect);
 
 	bool LineSegmentCrossScreenRect(const ScreenPoint &p1, const ScreenPoint &p2, const ScreenRect &scr);
+
+
+
+// (?) ->
+
+	bool LineSegmentCrossScreenRect(	const ScreenPoint &p1, 
+										const ScreenPoint &p2,
+										const ScreenRect &scr, 
+								List<ScreenPoint> &crossPoints);
+
+	bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,  
+										const ScreenZone &p1z, 
+										const ScreenPoint &p2,  
+										const ScreenZone &p2z, 
+										const ScreenRect &scr, 
+										List<ScreenPoint> &crossPoints);
+// <- (?)
+	
+//	List<ScreenPoint> FindLineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone &p1z, const ScreenPoint &p2, const ScreenZone &p2z, const ScreenRect &scr );
 	
 }
 #endif
