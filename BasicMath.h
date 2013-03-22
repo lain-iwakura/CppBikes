@@ -31,6 +31,10 @@ const RNUM PIdiv6=PI/RNUM(6);
 const RNUM PImult2=PI*RNUM(2);
 const RNUM PI3div2=PIdiv2*RNUM(3);
 
+const RNUM ANG_1DEG=DEG_IN_RAD;
+const RNUM ANG_1MIN=ANG_1DEG/60.0;
+const RNUM ANG_1SEC=ANG_1MIN/60.0;
+
 
 RNUM acosh(RNUM a);
 RNUM asinh(RNUM a);
@@ -45,6 +49,8 @@ bool isEqual(RNUM n1, RNUM n2, RNUM O=EQUAL_O);
 bool isEqualAngle(RNUM a1, RNUM a2);
 RNUM not0(RNUM n, RNUM o=RNUM_O);
 void not0set(RNUM &n, RNUM o=RNUM_O);
+
+
 
 RNUM NormalDistribution(RNUM x);
 
@@ -70,8 +76,19 @@ T ABS(T val)
     return val;
 }
 
+template<class T>
+T inRange(T val, T val_min, T val_max)
+{
+	if(val<val_min) val=val_min;
+	else if(val>val_max) val=val_max;
+	return val;
+}
 
-
+template<class T>
+T intPart(T val)
+{
+	return T(long long(val));
+}
 
 
 

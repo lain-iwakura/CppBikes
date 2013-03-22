@@ -52,10 +52,7 @@ public:
 		Container::push_back(new T());
 		return last();
 	}
-	void operator --()
-	{
-
-	}
+	
 	void operator += (const List<T> & other ){append(other);}
 	void operator += (const T & obj ){Container::push_back(new T(obj));}
 	void add(const T &a){Container::push_back(new T(obj));}
@@ -90,24 +87,48 @@ public:
 	const T& operator[](int i) const { return *(Container::operator[](i));}	
 	T& operator[](int i) { return *(Container::operator[](i)); }
 
-	void Take(T *pItm)
+	T& Take(T *pItm)
 	{
 		Container::push_back(pItm);	
+		return *pItm;
 	}
 
-	void Take(T *pItm,int i)
+	T& Take(T *pItm,int i)
 	{
 		Container::insert(begin()+i,pItm);
+		return *pItm;
+	}
+
+	void Take(List<T>& l)
+	{
+		Container *lc=&l;
+		int c=lc->size();
+		for(int i=0; i<c; i++)Container::push_back((*lc)[i]);
+		lc->clear();
 	}
 
 	T*	Pass(int i)
 	{
 	//	if(i>=size()||i<0)  return 0;
 		T* r=Container::operator[](i);
-		erase(begin()+i);
+		erase(Container::begin()+i);
 		return r;
 	}
 
+	T* PassLast()
+	{
+		int i=Container::size()-1;
+		T* r=Container::operator[](i);
+		erase(Container::begin()+i);
+		return r;
+	}
+
+	T* PassFirst()
+	{
+		T* r=Container::operator[](0);
+		erase(Container::begin());
+		return r;
+	}
 
 	const T& circElement(int i) const {return circElement(i);}
 	T& circElement(int i)
@@ -169,11 +190,18 @@ public:
 		Container::insert(begin()+i,new T(o));
 	}
 
-	bool contains(const T& obj) const
+	bool contains(const T& itm) const
 	{
 		int c=size();
-		for(int i=0; i<c; i++) if((*this)[i]==obj){ return true;}
+		for(int i=0; i<c; i++) if((*this)[i]==itm){ return true;}
 		return false;
+	}
+
+	int find(const T &itm) const
+	{
+		int c=size();
+		for(int i=0; i<c; i++) if(*(Container::operator [](i))==itm) return i;
+		return -1;
 	}
 
 	void clear()
