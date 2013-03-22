@@ -1,7 +1,7 @@
 #ifndef CPPBIKES_SIGNALS_H
 #define CPPBIKES_SIGNALS_H
 
-#include <CppBikes/List.h>
+#include <vector>
 
 
 namespace CppBikes
@@ -180,26 +180,29 @@ template<CT>\
 class Signal<TT>: public SignalConnectInterface, public BaseSignal\
 {\
 public:	\
-	void operator ()(TP){for(int i=0; i<slots_.count(); i++)slots_[i].call(PP);} \
+	Signal(){}\
+	Signal(const Signal<TT>& sig){}\
+	~Signal(){for(int i=0; i<slots_.size(); i++) delete slots_[i];}\
+	void operator ()(TP){for(int i=0; i<slots_.size(); i++)slots_[i]->call(PP);} \
 	template<class ObjectClass, class RT>\
 	void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))\
 	{\
-		for(int i=0; i<slots_.size(); i++)if(slots_[i].isSlotObject(obj,slot_func)) return;\
-		slots_.Take(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));\
+		for(int i=0; i<slots_.size(); i++)if(slots_[i]->isSlotObject(obj,slot_func)) return;\
+		slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));\
 	}\
 	template<class ObjectClass, class RT>\
 	void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))\
 	{\
 		for(int i=0; i<slots_.size(); i++)\
-			if(slots_[i].isSlotObject(obj,slot_func)){slots_.removeAt(i);return;}\
+			if(slots_[i]->isSlotObject(obj,slot_func)){delete slots_[i]; slots_.erase(slots_.begin()+i);return;}\
 	}\
 	void disconnectAll(void *pObj)\
 	{\
 		for(int i=0; i<slots_.size(); i++)\
-			if(slots_[i].pObj()==pObj){slots_.removeAt(i);i--;}\
+			if(slots_[i]->pObj()==pObj){delete slots_[i]; slots_.erase(slots_.begin()+i); i--;}\
 	}\
 private:\
-	List<AbstractSlot<TT> > slots_;\
+	std::vector<AbstractSlot<TT>* > slots_;\
 };
 //=====================================================================
 
