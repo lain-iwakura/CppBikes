@@ -31,6 +31,10 @@ const RNUM PIdiv6=PI/RNUM(6);
 const RNUM PImult2=PI*RNUM(2);
 const RNUM PI3div2=PIdiv2*RNUM(3);
 
+const RNUM ANG_1DEG=DEG_IN_RAD;
+const RNUM ANG_1MIN=ANG_1DEG/60.0;
+const RNUM ANG_1SEC=ANG_1MIN/60.0;
+
 
 RNUM acosh(RNUM a);
 RNUM asinh(RNUM a);

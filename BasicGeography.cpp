@@ -126,14 +126,14 @@ Point CppBikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
 	lam=NormAngle(lam);
 
 	RNUM cosB=cos(phi);
-	RNUM sinB=sqrt(1-cosB*cosB);//sin(phi);
-	if(phi<0) sinB=-sinB;
+	RNUM sinB=sqrt(1.0-cosB*cosB);//sin(phi);
+	if(phi<0.0) sinB=-sinB;
 	RNUM cosL=cos(lam);
-	RNUM sinL=sqrt(1-cosL*cosL);//sin(lam);
-	if(lam<0) sinL=-sinL; 
+	RNUM sinL=sqrt(1.0-cosL*cosL);//sin(lam);
+	if(lam<0.0) sinL=-sinL; 
 	//RNUM H=0;
-	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
-	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
+	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 }
 
 
@@ -149,8 +149,8 @@ Point CppBikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
 	RNUM sinL=sin(lam);
 	//if(lam<0) sinL=-sinL; 
 	//RNUM H=0;
-	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
-	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
+	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 }
 
 
@@ -158,7 +158,7 @@ PhiLamCoord CppBikes::Point_to_PhiLamE( const Point &p )
 {
 	RNUM D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;
-	return PhiLamCoord(atan(p.gz/not0((1-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
+	return PhiLamCoord(atan(p.gz/not0((1.0-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
 }
 
 Point PhiLam_to_PointE( RNUM phi, RNUM lam, RNUM h )
@@ -167,13 +167,13 @@ Point PhiLam_to_PointE( RNUM phi, RNUM lam, RNUM h )
 	lam=NormAngle(lam);
 
 	RNUM cosB=cos(phi);
-	RNUM sinB=sqrt(1-cosB*cosB);//sin(phi);
-	if(phi<0) sinB=-sinB;
+	RNUM sinB=sqrt(1.0-cosB*cosB);//sin(phi);
+	if(phi<0.0) sinB=-sinB;
 	RNUM cosL=cos(lam);	
-	RNUM sinL=sqrt(1-cosL*cosL);//sin(lam);
-	if(lam<0) sinL=-sinL; 
-	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
-	return Point((N+h)*cosB*cosL,(N+h)*cosB*sinL,((1-GEO_EE)*N+h)*sinB);
+	RNUM sinL=sqrt(1.0-cosL*cosL);//sin(lam);
+	if(lam<0.0) sinL=-sinL; 
+	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	return Point((N+h)*cosB*cosL,(N+h)*cosB*sinL,((1.0-GEO_EE)*N+h)*sinB);
 }
 
 Point PhiLam_to_PointE( const PhiLamHCoord &phi_lam_h )
@@ -187,23 +187,31 @@ Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
 	RNUM sinB=phi->sin();
 	RNUM cosL=lam->cos();
 	RNUM sinL=lam->sin();
-	RNUM N=GEO_A/sqrt(1-GEO_EE*sinB*sinB);
-	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1-GEO_EE)*N/*+H*/)*sinB);
+	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 
 }
 
 
-void CppBikes::MovePointToEllipsoidSurface(Point &p)
+void MovePointToEllipsoidSurface(Point &p)
 {
 	Vector vr(p);
 	vr.normalize();
-	static RNUM a=1/(GEO_A*GEO_A);
-	static RNUM b=1/(GEO_B*GEO_B);
+	static const RNUM a=1.0/(GEO_A*GEO_A);
+	static const RNUM b=1.0/(GEO_B*GEO_B);
 	RNUM sinA=vr&v_gk;
-	RNUM r=1/sqrt(sinA*sinA*(b-a)+a);
+	RNUM r=1.0/sqrt(sinA*sinA*(b-a)+a);
 	vr*=r;
 	p=vr.destination();
 }
 
-
+RNUM parallelR( RNUM phi )
+{
+	RNUM sinBsinB=sin(phi);
+	sinBsinB*=sinBsinB;		
+	return  GEO_A*sqrt((1.0-sinBsinB)/(1.0-GEO_EE*sinBsinB));
 }
+
+
+
+}//CppBikes
