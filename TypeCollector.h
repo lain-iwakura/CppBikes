@@ -17,30 +17,33 @@ namespace CppBikes
 		// Реестр типов
 		template<class T> 
 		class TypeRegister;
-
-		// 
+		//--------------------
 		template<class T> 
 		class TypeDataArray;
-
+		//--------------------
 		class TypeDataMap;
-
+		//--------------------
 		typedef TypeDataArray<Collector> TypeDataContainer;
-
+		//--------------------
 		template<int collectionId> 
 		class TypeCollection;
-
+		//--------------------
+		template<class T>
+		class TypeArray;
+		//--------------------
+		template<class T>
+		class TypePointerArray;
+		//--------------------
 		static int typeCount()
 		{
 			return typeIter;
 		}
-
+		//--------------------
 		template<class T>
 		static int typeId()
 		{
 			return TypeRegister<T>::typeId;
-		}
-
-		
+		}	
 		
 
 	private:
@@ -94,11 +97,71 @@ namespace CppBikes
 //================================================================
 
 
+//================================================================
+// TypeCollector<Collector>::TypeArray<T> ->
+//================================================================
+	template<class Collector> template<class T>
+	class TypeCollector<Collector>::TypeArray
+	{
+	public:
+		TypeArray():ar(typeCount()){}
+		TypeArray(const T& defVal):ar(typeCount(),defVal){}
+		T& operator[](int i){return ar[i];}
+		int size(){return ar.size();}
+		template<class TypeKey>
+		T& typeItem(){return ar[TypeRegister<TypeKey>::typeId];}
+	private:
+		std::vector<T> ar;
+	};
+//================================================================
+// <- TypeCollector<Collector>::TypeArray<T>
+//================================================================
+
+
+//================================================================
+// TypeCollector<Collector>::TypePointerArray<T> ->
+//================================================================
+	template<class Collector> template<class T>
+	class TypeCollector<Collector>::TypePointerArray
+	{
+	public:
+		TypePointerArray(bool createAll=true):ar(typeCount())
+		{
+			if(createAll)			
+				for(int i=0; i<ar.size(); i++)
+					ar[i]=new T();
+		}
+		TypePointerArray(const T& defVal):ar(typeCount())
+		{
+			for(int i=0; i<ar.size(); i++)
+				ar[i]=new T(defVal);
+		}
+		~TypePointerArray()
+		{
+			for(int i=0; i<ar.size(); i++)
+				if(ar[i]) delete ar[i];
+		}
+
+		(T*)& operator[](int i){return ar[i];}		
+
+		int size(){return ar.size();}
+		int count(){return ar.size();}
+
+		template<class TypeKey>
+		(T*)& typeItem(){return ar[TypeRegister<TypeKey>::typeId];}
+	private:
+		std::vector<T*> ar;
+	};
+//================================================================
+// <- TypeCollector<Collector>::TypePointerArray<T>
+//================================================================
+
+
 
 //================================================================
 // TypeCollector<Collector>::TypeDataArray<DataT> ->
 //================================================================
-	template<class Collector> template<class T>
+	template<class Collector> template<class T=Collector>
 	class TypeCollector<Collector>::TypeDataArray: public Private::AbstractTypeDataArray, public TypeCollector<T>
 	{
 	public:
@@ -148,6 +211,9 @@ namespace CppBikes
 			return td->d;
 		}
 
+	//	int size(){return d->size();}
+	//	operator []
+
 	private:
 		std::vector<Private::AbstractTypeData*> *d;
 	};
@@ -157,7 +223,7 @@ namespace CppBikes
 
 
 //================================================================
-// TypeCollector<Collector>::TypeDataContainer ->
+// TypeCollector<Collector>::TypeDataMap ->
 //================================================================
 	template<class Collector>
 	class TypeCollector<Collector>::TypeDataMap: public TypeCollector<Collector>
@@ -247,7 +313,7 @@ namespace CppBikes
 		std::vector<Private::AbstractTypeDataArray*> *d;			
 	};
 //================================================================
-// <- TypeCollector<Collector>::TypeDataContainer
+// <- TypeCollector<Collector>::TypeDataMap
 //================================================================
 
 
