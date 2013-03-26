@@ -8,21 +8,37 @@
 
 //==============================================================================================
 
-#define CPPBIKES_SIGNAL_CONNECTINTERFACE(signal)					signal##_connectInterface()
+#define CPPBIKES_CONNECTINTERFACE(signal)								signal##_connectInterface()
 
-#define CPPBIKES_SIGNAL_CONNECTINTERFACE_DECL(signal)				CppBikes::SignalConnectInterface*  CPPBIKES_SIGNAL_CONNECTINTERFACE(signal){return &signal;}
+#define CPPBIKES_CONNECTINTERFACE_DECL(signal)							CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
 
-#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)			emitter->CPPBIKES_SIGNAL_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
+#define CPPBIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter((EmitterType*)(this)); return &signal;}
 
-#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)	emitter->CPPBIKES_SIGNAL_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
+#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)				emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
 
-#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)		emitter->CPPBIKES_SIGNAL_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
+#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
+
+#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)			emitter->CPPBIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
 
 #define CPPBIKES_SIGNALS private
 
-#define CPPBIKES_CONNECTABLE_OBJECT \
-	public:\
-	CppBikes::ConnectableObject connectable_object;\
+#define CPPBIKES_CONNECTABLE_OBJECT																\
+	public:																						\
+	CppBikes::ConnectableObject connectable_object;												\
+	private:																					\
+	void* emitter()																				\
+	{																							\
+		if(connectable_object.emitter())														\
+			return connectable_object.emitter()->pObj();										\
+		return 0;																				\
+	}																							\
+	template<class EmitterClass>																\
+	EmitterClass* emitter_cast()																\
+	{																							\
+		if(connectable_object.emitter())														\
+			return connectable_object.emitter()->cast<EmitterClass>();							\
+		return 0;																				\
+	}
 
 //==============================================================================================
 
@@ -33,20 +49,104 @@ namespace CppBikes
 class BaseSignal;
 class ConnectableObject;
 class SignalConnectInterface;
+class BaseEmitter;
 //==============================================================================================
 class SignalNullType
 {
 };
 //==============================================================================================
+class BaseEmitter
+{
+public:
+	virtual ~ BaseEmitter(){}
+	virtual void* pObj() = 0;
+
+	template<class EmitterClass>
+	EmitterClass* cast()
+	{
+		if(Emitter<EmitterClass>*em=dynamic_cast<Emitter<EmitterClass>* >(this))
+		{
+			return em->obj;
+		}
+		return 0;
+	}
+};
+
+template<class EmitterClass>
+class Emitter:public BaseEmitter
+{
+public:
+	Emitter(EmitterClass *o): obj(o){}
+	void * pObj(){return obj;}
+private:
+	EmitterClass *obj;
+	friend class BaseEmitter;
+};
+// =============================================================================================
+class BaseSignal
+{
+public:
+	BaseSignal();
+	virtual ~BaseSignal();
+	virtual void disconnectAll(void *pObj) = 0;	
+	virtual void disconnectAll() = 0;
+	BaseEmitter* emitter() const;
+
+	template<class EmitterClass>
+	void setEmitter(EmitterClass* emtr)
+	{
+		if(emitter_) 
+		{		
+			if(emitter_->cast<EmitterClass>()!=emtr)
+			{	
+				delete emitter_;
+				emitter_=new Emitter<EmitterClass>(emtr);
+			}
+		}else
+		{
+			emitter_=new Emitter<EmitterClass>(emtr);			
+		}
+	}
+protected:
+	BaseEmitter *emitter_;
+	virtual void disconnectAll_(void *pObj) = 0;
+	friend class ConnectableObject;
+};
+//==============================================================================================
 class BaseSlot
 {
 public:
-	virtual ~BaseSlot(){}
+	BaseSlot();
+	virtual ~BaseSlot();
 	virtual void* pObj() = 0;
 	virtual void connect(BaseSignal *sig){}
 	virtual void disconnect(BaseSignal *sig){}
+	
 
 protected:
+
+	std::vector<BaseEmitter*> *emitters;
+
+	template<class ObjectClass>
+	void begin_emission(ObjectClass *obj, const BaseSignal* sig) const
+	{
+		emitters->push_back(obj->connectable_object.cur_emitter_);
+		obj->connectable_object.cur_emitter_=sig->emitter();
+	}
+
+	template<class ObjectClass>
+	void end_emission(ObjectClass *obj) const
+	{
+		if(emitters->size())
+		{
+			obj->connectable_object.cur_emitter_=emitters->back();
+			emitters->pop_back();
+		}else
+		{
+			obj->connectable_object.cur_emitter_=0;
+		}
+	}
+
 
 	template<class ObjectClass>
 	void connectConnectableObject(ObjectClass* obj, BaseSignal *sig)
@@ -79,23 +179,14 @@ class ConnectableObject
 public:
 	ConnectableObject();
 	~ConnectableObject();
+	BaseEmitter* emitter();
 protected:
 	void *parent_;	
+	BaseEmitter *cur_emitter_;
 	std::map<BaseSignal*,int> signals_counter;
 	friend class BaseSlot;
 };
-//==============================================================================================
-class BaseSignal
-{
-public:
-	virtual ~BaseSignal(){}
-	virtual void disconnectAll(void *pObj) = 0;	
-	virtual void disconnectAll() = 0;
 
-protected:
-	virtual void disconnectAll_(void *pObj) = 0;
-	friend class ConnectableObject;
-};
 //==============================================================================================
 
 template<MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class AbstractSlot;
@@ -162,7 +253,7 @@ class AbstractSlot<TT>: public BaseSlot															\
 {																								\
 public:																							\
 	virtual ~AbstractSlot(){}																	\
-	virtual void call(TP) = 0;																	\
+	virtual void call(TP COMMA const BaseSignal *sig) const = 0;								\
 	template<class ObjectClass,class RT>														\
 	bool isSlotObject(ObjectClass *pObg,RT(ObjectClass::*slot_func)(TT))						\
 	{																							\
@@ -180,7 +271,7 @@ public:																							\
 	virtual ~SlotObject(){}																		\
 	typedef RT (ObjectClass::*ObjFuncType)(TT);													\
 	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}								\
-	void call(TP){(pObj_->*f)(PP);}																\
+	virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}						\
 	void* pObj(){return pObj_;}																	\
 	ObjectClass *pObj_;																			\
 	ObjFuncType f;																				\
@@ -191,6 +282,13 @@ class SlotConnectableObject<ObjectClass,RT COMMA TT>: public SlotObject<ObjectCl
 {																								\
 public:																							\
 	SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): SlotObject(obj,fu){}				\
+																								\
+	void call(TP COMMA const BaseSignal *sig)	const													\
+	{																							\
+		begin_emission(pObj_,sig);																\
+		(pObj_->*f)(PP);																		\
+		end_emission(pObj_);																	\
+	}																							\
 																								\
 	void connect(BaseSignal *sig)																\
 	{																							\
@@ -212,24 +310,29 @@ public:																							\
 	Signal(const Signal<TT>& sig){}																\
 	~Signal()																					\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 		{																						\
 			slots_[i]->disconnect(this);														\
 			delete slots_[i];																	\
 		}																						\
 	}																							\
-	void operator ()(TP){for(int i=0; i<slots_.size(); i++)slots_[i]->call(PP);}				\
+	void operator ()(TP) const																	\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			slots_[i]->call(PP COMMA this);														\
+	}																							\
 	template<class ObjectClass, class RT>														\
 	void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)if(slots_[i]->isSlotObject(obj,slot_func)) return;	\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
 		slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
 	}																							\
 																								\
 	template<class ObjectClass, class RT>														\
 	void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 			if(slots_[i]->isSlotObject(obj,slot_func))											\
 			{																					\
 				if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
@@ -252,7 +355,7 @@ public:																							\
 	template<class ObjectClass, class RT>														\
 	void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 			if(slots_[i]->isSlotObject(obj,slot_func))											\
 			{																					\
 				slots_[i]->disconnect(this);													\
@@ -263,7 +366,7 @@ public:																							\
 	}																							\
 	void disconnectAll(void *pObj)																\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 			if(slots_[i]->pObj()==pObj)															\
 			{																					\
 				slots_[i]->disconnect(this);													\
@@ -274,7 +377,7 @@ public:																							\
 	}																							\
 	void disconnectAll()																		\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 		{																						\
 			slots_[i]->disconnect(this);														\
 			delete slots_[i];																	\
@@ -284,7 +387,7 @@ public:																							\
 private:																						\
 	void disconnectAll_(void *pObj)																\
 	{																							\
-		for(int i=0; i<slots_.size(); i++)														\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
 			if(slots_[i]->pObj()==pObj)															\
 			{																					\
 				delete slots_[i];																\
