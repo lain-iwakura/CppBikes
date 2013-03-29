@@ -1,243 +1,417 @@
-#ifndef CPPBIKES_SIGNALS_H
-#define CPPBIKES_SIGNALS_H
+#ifndef _CPPBIKES_SIGNALS_H_
+#define _CPPBIKES_SIGNALS_H_
 
+#include <CppBikes/MacrosBikes.h>
 #include <vector>
+#include <map>
+
+
+//==============================================================================================
+
+#define CPPBIKES_CONNECTINTERFACE(signal)								signal##_connectInterface()
+
+#define CPPBIKES_CONNECTINTERFACE_DECL(signal)							CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
+
+#define CPPBIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter((EmitterType*)(this)); return &signal;}
+
+#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)				emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
+
+#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
+
+#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)			emitter->CPPBIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
+
+#define CPPBIKES_SIGNALS private
+
+#define CPPBIKES_CONNECTABLE_OBJECT																\
+	public:																						\
+	CppBikes::ConnectableObject connectable_object;												\
+	private:																					\
+	void* emitter()																				\
+	{																							\
+		if(connectable_object.emitter())														\
+			return connectable_object.emitter()->pObj();										\
+		return 0;																				\
+	}																							\
+	template<class EmitterClass>																\
+	EmitterClass* emitter_cast()																\
+	{																							\
+		if(connectable_object.emitter())														\
+			return connectable_object.emitter()->cast<EmitterClass>();							\
+		return 0;																				\
+	}
+
+//==============================================================================================
 
 
 namespace CppBikes
 {
 
 class BaseSignal;
-class BaseConnectableObject;
+class ConnectableObject;
 class SignalConnectInterface;
-//=====================================================================
+class BaseEmitter;
+//==============================================================================================
 class SignalNullType
 {
 };
-//=====================================================================
-class BaseSlot
+//==============================================================================================
+class BaseEmitter
 {
 public:
-	virtual ~BaseSlot(){}
-	virtual void* pObj() =0;
+	virtual ~ BaseEmitter(){}
+	virtual void* pObj() = 0;
+
+	template<class EmitterClass>
+	EmitterClass* cast()
+	{
+		if(Emitter<EmitterClass>*em=dynamic_cast<Emitter<EmitterClass>* >(this))
+		{
+			return em->obj;
+		}
+		return 0;
+	}
 };
-//=====================================================================
-class BaseConnectableObject
+
+template<class EmitterClass>
+class Emitter:public BaseEmitter
 {
 public:
-	virtual ~BaseConnectableObject(){}
-protected:
-	void *parent_;
-	friend class BaseSignal;
+	Emitter(EmitterClass *o): obj(o){}
+	void * pObj(){return obj;}
+private:
+	EmitterClass *obj;
+	friend class BaseEmitter;
 };
-//=====================================================================
+// =============================================================================================
 class BaseSignal
 {
 public:
-	virtual ~BaseSignal(){}
-	virtual void disconnectAll(void *pObj) = 0;
-private:
-	void setParentForConnectableObject(BaseConnectableObject* bco, void *parent)
+	BaseSignal();
+	virtual ~BaseSignal();
+	virtual void disconnectAll(void *pObj) = 0;	
+	virtual void disconnectAll() = 0;
+	BaseEmitter* emitter() const;
+
+	template<class EmitterClass>
+	void setEmitter(EmitterClass* emtr)
 	{
-		bco->parent_=parent;
+		if(emitter_) 
+		{		
+			if(emitter_->cast<EmitterClass>()!=emtr)
+			{	
+				delete emitter_;
+				emitter_=new Emitter<EmitterClass>(emtr);
+			}
+		}else
+		{
+			emitter_=new Emitter<EmitterClass>(emtr);			
+		}
 	}
-	friend class SignalConnectInterface;
+protected:
+	BaseEmitter *emitter_;
+	virtual void disconnectAll_(void *pObj) = 0;
+	friend class ConnectableObject;
 };
-//=====================================================================
-#define CPPBIKES_TYPES_FOR_SIGNAL_TEMPLATECLASS_DECL class T1=SignalNullType,class T2=SignalNullType, class T3=SignalNullType, class T4=SignalNullType, class T5=SignalNullType, class T6=SignalNullType, class T7=SignalNullType , class T8=SignalNullType, class T9=SignalNullType , class T10=SignalNullType
-//=====================================================================
-template<CPPBIKES_TYPES_FOR_SIGNAL_TEMPLATECLASS_DECL> class AbstractSlot;
-//=====================================================================
-template<class ObjectClass, class RT, CPPBIKES_TYPES_FOR_SIGNAL_TEMPLATECLASS_DECL> class SlotObject;
-//=====================================================================
-template<CPPBIKES_TYPES_FOR_SIGNAL_TEMPLATECLASS_DECL> class Signal;
-//=====================================================================
-#define CPPBIKES_SIGNAL_CONNECTINTERFACE(signal) signal##_connectInterface()
-#define CPPBIKES_SIGNAL_CONNECTINTERFACE_DECL(signal) CppBikes::SignalConnectInterface&  CPPBIKES_SIGNAL_CONNECTINTERFACE(signal){return signal;}
-#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func) emitter.CPPBIKES_SIGNAL_CONNECTINTERFACE(signal).connect(&receiver,&slot_func)
-#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func) emitter.CPPBIKES_SIGNAL_CONNECTINTERFACE(signal).connect_unsafe(&receiver,&slot_func)
-#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func) emitter.CPPBIKES_SIGNAL_CONNECTINTERFACE(signal).disconnect(&receiver,&slot_func)
-#define CPPBIKES_SIGNALS private
-//=====================================================================
-#define CPPBIKES_COMMA ,
-#define CPPBIKES_NOTHING 
-#define CPPBIKES_CT1 class T1
-#define CPPBIKES_CT2 class T1, class T2
-#define CPPBIKES_CT3 class T1, class T2, class T3
-#define CPPBIKES_CT4 class T1, class T2, class T3, class T4
-#define CPPBIKES_CT5 class T1, class T2, class T3, class T4, class T5
-#define CPPBIKES_CT6 class T1, class T2, class T3, class T4, class T5, class T6
-#define CPPBIKES_CT7 class T1, class T2, class T3, class T4, class T5, class T6, class T7
-#define CPPBIKES_CT8 class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8
-#define CPPBIKES_CT9 class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9
-#define CPPBIKES_TT1 T1
-#define CPPBIKES_TT2 T1,T2
-#define CPPBIKES_TT3 T1,T2,T3
-#define CPPBIKES_TT4 T1,T2,T3,T4
-#define CPPBIKES_TT5 T1,T2,T3,T4,T5
-#define CPPBIKES_TT6 T1,T2,T3,T4,T5,T6
-#define CPPBIKES_TT7 T1,T2,T3,T4,T5,T6,T7
-#define CPPBIKES_TT8 T1,T2,T3,T4,T5,T6,T7,T8
-#define CPPBIKES_TT9 T1,T2,T3,T4,T5,T6,T7,T8,T9
-#define CPPBIKES_TP1 T1 par1
-#define CPPBIKES_TP2 T1 par1, T2 par2
-#define CPPBIKES_TP3 T1 par1, T2 par2, T3 par3
-#define CPPBIKES_TP4 T1 par1, T2 par2, T3 par3, T4 par4
-#define CPPBIKES_TP5 T1 par1, T2 par2, T3 par3, T4 par4, T5 par5
-#define CPPBIKES_TP6 T1 par1, T2 par2, T3 par3, T4 par4, T5 par5, T6 par6
-#define CPPBIKES_TP7 T1 par1, T2 par2, T3 par3, T4 par4, T5 par5, T6 par6, T7 par7
-#define CPPBIKES_TP8 T1 par1, T2 par2, T3 par3, T4 par4, T5 par5, T6 par6, T7 par7, T8 par8
-#define CPPBIKES_TP9 T1 par1, T2 par2, T3 par3, T4 par4, T5 par5, T6 par6, T7 par7, T8 par8, T9 par9
-#define CPPBIKES_PP1 par1
-#define CPPBIKES_PP2 par1,par2
-#define CPPBIKES_PP3 par1,par2,par3
-#define CPPBIKES_PP4 par1,par2,par3,par4
-#define CPPBIKES_PP5 par1,par2,par3,par4,par5
-#define CPPBIKES_PP6 par1,par2,par3,par4,par5,par6
-#define CPPBIKES_PP7 par1,par2,par3,par4,par5,par6,par7,
-#define CPPBIKES_PP8 par1,par2,par3,par4,par5,par6,par7,par8
-#define CPPBIKES_PP9 par1,par2,par3,par4,par5,par6,par7,par8,par9
+//==============================================================================================
+class BaseSlot
+{
+public:
+	BaseSlot();
+	virtual ~BaseSlot();
+	virtual void* pObj() = 0;
+	virtual void connect(BaseSignal *sig){}
+	virtual void disconnect(BaseSignal *sig){}
+	
 
-//=====================================================================
-#define CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CT,TT,COMMA)\
-template<class ObjectClass, class RT COMMA CT>\
-void connect(ObjectClass *obj, RT(ObjectClass::*f)(TT))\
-{\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))\
-	{\
-		s->connect(obj,f);	\
-		s->setParentForConnectableObject(&obj->connectable_object,obj);\
-		obj->CPPBIKES_SIGNAL_CONNECTINTERFACE(signal_deleted).connect_unsafe(s,&Signal<TT>::disconnectAll);\
-	}		\
-}\
-template<class ObjectClass, class RT COMMA CT>	\
-void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT))\
-{\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))\
-	{\
-		s->connect(obj,f);\
-	}\
-}\
-template<class ObjectClass, class RT COMMA CT>\
-void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT))\
-{\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))\
-	{\
-		s->disconnect(obj,f);\
-	}\
+protected:
+
+	std::vector<BaseEmitter*> *emitters;
+
+	template<class ObjectClass>
+	void begin_emission(ObjectClass *obj, const BaseSignal* sig) const
+	{
+		emitters->push_back(obj->connectable_object.cur_emitter_);
+		obj->connectable_object.cur_emitter_=sig->emitter();
+	}
+
+	template<class ObjectClass>
+	void end_emission(ObjectClass *obj) const
+	{
+		if(emitters->size())
+		{
+			obj->connectable_object.cur_emitter_=emitters->back();
+			emitters->pop_back();
+		}else
+		{
+			obj->connectable_object.cur_emitter_=0;
+		}
+	}
+
+
+	template<class ObjectClass>
+	void connectConnectableObject(ObjectClass* obj, BaseSignal *sig)
+	{
+		obj->connectable_object.parent_=obj;
+		if(obj->connectable_object.signals_counter.count(sig))
+		{
+			obj->connectable_object.signals_counter[sig]++;
+		}else
+		{
+			obj->connectable_object.signals_counter[sig]=1;
+		}
+
+	}
+
+	template<class ObjectClass>
+	void disconnectConnectableObject(ObjectClass* obj, BaseSignal *sig)
+	{		
+		if(obj->connectable_object.signals_counter.count(sig))
+		{
+			int& i=obj->connectable_object.signals_counter[sig];
+			i--;
+			if(i<=0) obj->connectable_object.signals_counter.erase(sig);
+		}
+	}
+};
+//==============================================================================================
+class ConnectableObject
+{
+public:
+	ConnectableObject();
+	~ConnectableObject();
+	BaseEmitter* emitter();
+protected:
+	void *parent_;	
+	BaseEmitter *cur_emitter_;
+	std::map<BaseSignal*,int> signals_counter;
+	friend class BaseSlot;
+};
+
+//==============================================================================================
+
+template<MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class AbstractSlot;
+
+template<class ObjectClass, class RT, MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class SlotObject;
+
+template<class ObjectClass, class RT, MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class SlotConnectableObject;
+
+template<MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class Signal;
+//==============================================================================================
+
+//==============================================================================================
+#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CT,TT,COMMA)							\
+template<class ObjectClass, class RT COMMA CT>													\
+void connect(ObjectClass *obj, RT(ObjectClass::*f)(TT))											\
+{																								\
+	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+	{																							\
+		s->connect(obj,f);																		\
+	}																							\
+}																								\
+template<class ObjectClass, class RT COMMA CT>													\
+void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT))									\
+{																								\
+	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+	{																							\
+		s->connect_unsafe(obj,f);																\
+	}																							\
+}																								\
+template<class ObjectClass, class RT COMMA CT>													\
+void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT))										\
+{																								\
+	if(Signal<TT>* s=dynamic_cast<Signal<TT>* >(this))											\
+	{																							\
+		s->disconnect(obj,f);																	\
+	}																							\
 }
-//=====================================================================
-
+//-----------------------------------------------------------------------------------------------
 class SignalConnectInterface
 {
 public:
 	virtual ~SignalConnectInterface(){}
 
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_NOTHING,CPPBIKES_NOTHING,CPPBIKES_NOTHING)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT1,CPPBIKES_TT1,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT2,CPPBIKES_TT2,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT3,CPPBIKES_TT3,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT4,CPPBIKES_TT4,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT5,CPPBIKES_TT5,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT6,CPPBIKES_TT6,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT7,CPPBIKES_TT7,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT8,CPPBIKES_TT8,CPPBIKES_COMMA)
-CPPBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CPPBIKES_CT9,CPPBIKES_TT9,CPPBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL( , , )
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_COMMA)
 
 };
+//==============================================================================================
 
 
 
-//=====================================================================
-#define CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CT,TT,TP,PP,COMMA)\
-template<CT>\
-class AbstractSlot<TT>: public BaseSlot\
-{\
-public:\
-	virtual ~AbstractSlot(){}\
-	virtual void call(TP) = 0;\
-	template<class ObjectClass,class RT>\
-	bool isSlotObject(ObjectClass *pObg,RT(ObjectClass::*slot_func)(TT))\
-	{\
+//==============================================================================================
+#define MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(CT,TT,TP,PP,COMMA)								\
+template<CT>																					\
+class AbstractSlot<TT>: public BaseSlot															\
+{																								\
+public:																							\
+	virtual ~AbstractSlot(){}																	\
+	virtual void call(TP COMMA const BaseSignal *sig) const = 0;								\
+	template<class ObjectClass,class RT>														\
+	bool isSlotObject(ObjectClass *pObg,RT(ObjectClass::*slot_func)(TT))						\
+	{																							\
 		if(SlotObject<ObjectClass,RT COMMA TT> *s=dynamic_cast<SlotObject<ObjectClass,RT COMMA TT>*>(this))\
-			return (s->pObj_==pObg)&&(s->f==slot_func);	\
-		return false;\
-	}\
-};\
-template<class ObjectClass, class RT COMMA CT>\
-class SlotObject<ObjectClass,RT COMMA TT>: public AbstractSlot<TT>\
-{\
-public:	\
-	typedef RT (ObjectClass::*ObjFuncType)(TT);\
-	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}\
-	void call(TP){(pObj_->*f)(PP);}\
-	void* pObj(){return pObj_;}\
-	ObjectClass *pObj_;\
-	ObjFuncType f;\
-};\
-\
-template<CT>\
-class Signal<TT>: public SignalConnectInterface, public BaseSignal\
-{\
-public:	\
-	Signal(){}\
-	Signal(const Signal<TT>& sig){}\
-	~Signal(){for(int i=0; i<slots_.size(); i++) delete slots_[i];}\
-	void operator ()(TP){for(int i=0; i<slots_.size(); i++)slots_[i]->call(PP);} \
-	template<class ObjectClass, class RT>\
-	void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))\
-	{\
-		for(int i=0; i<slots_.size(); i++)if(slots_[i]->isSlotObject(obj,slot_func)) return;\
-		slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));\
-	}\
-	template<class ObjectClass, class RT>\
-	void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))\
-	{\
-		for(int i=0; i<slots_.size(); i++)\
-			if(slots_[i]->isSlotObject(obj,slot_func)){delete slots_[i]; slots_.erase(slots_.begin()+i);return;}\
-	}\
-	void disconnectAll(void *pObj)\
-	{\
-		for(int i=0; i<slots_.size(); i++)\
-			if(slots_[i]->pObj()==pObj){delete slots_[i]; slots_.erase(slots_.begin()+i); i--;}\
-	}\
-private:\
-	std::vector<AbstractSlot<TT>* > slots_;\
+		{																						\
+			return (s->pObj_==pObg)&&(s->f==slot_func);											\
+		}																						\
+		return false;																			\
+	}																							\
+};																								\
+template<class ObjectClass, class RT COMMA CT>													\
+class SlotObject<ObjectClass,RT COMMA TT>: public AbstractSlot<TT>								\
+{																								\
+public:																							\
+	virtual ~SlotObject(){}																		\
+	typedef RT (ObjectClass::*ObjFuncType)(TT);													\
+	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}								\
+	virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}					\
+	void* pObj(){return pObj_;}																	\
+	ObjectClass *pObj_;																			\
+	ObjFuncType f;																				\
+};																								\
+																								\
+template<class ObjectClass, class RT COMMA CT>													\
+class SlotConnectableObject<ObjectClass,RT COMMA TT>: public SlotObject<ObjectClass,RT COMMA TT>\
+{																								\
+public:																							\
+	SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): SlotObject(obj,fu){}				\
+																								\
+	void call(TP COMMA const BaseSignal *sig)	const											\
+	{																							\
+		begin_emission(pObj_,sig);																\
+		(pObj_->*f)(PP);																		\
+		end_emission(pObj_);																	\
+	}																							\
+																								\
+	void connect(BaseSignal *sig)																\
+	{																							\
+		connectConnectableObject(pObj_,sig);													\
+	}																							\
+																								\
+	void disconnect(BaseSignal *sig)															\
+	{																							\
+		disconnectConnectableObject(pObj_,sig);													\
+	}																							\
+																								\
+};																								\
+																								\
+template<CT>																					\
+class Signal<TT>: public SignalConnectInterface, public BaseSignal								\
+{																								\
+public:																							\
+	Signal(){}																					\
+	Signal(const Signal<TT>& sig){}																\
+	~Signal()																					\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+		{																						\
+			slots_[i]->disconnect(this);														\
+			delete slots_[i];																	\
+		}																						\
+	}																							\
+	void operator ()(TP) const																	\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			slots_[i]->call(PP COMMA this);														\
+	}																							\
+	template<class ObjectClass, class RT>														\
+	void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
+		slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
+	}																							\
+																								\
+	template<class ObjectClass, class RT>														\
+	void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->isSlotObject(obj,slot_func))											\
+			{																					\
+				if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
+				{																				\
+					return;																		\
+				}else																			\
+				{																				\
+					slots_[i]->disconnect(this);												\
+					delete slots_[i];															\
+					slots_[i]=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+					slots_[i]->connect(this);													\
+					return;																		\
+				}																				\
+			}																					\
+		SlotConnectableObject<ObjectClass,RT COMMA TT> *s=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+		s->connect(this);																		\
+		slots_.push_back(s);																	\
+	}																							\
+																								\
+	template<class ObjectClass, class RT>														\
+	void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->isSlotObject(obj,slot_func))											\
+			{																					\
+				slots_[i]->disconnect(this);													\
+				delete slots_[i];																\
+				slots_.erase(slots_.begin()+i);													\
+				return;																			\
+			}																					\
+	}																							\
+	void disconnectAll(void *pObj)																\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->pObj()==pObj)															\
+			{																					\
+				slots_[i]->disconnect(this);													\
+				delete slots_[i];																\
+				slots_.erase(slots_.begin()+i);													\
+				i--;																			\
+			}																					\
+	}																							\
+	void disconnectAll()																		\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+		{																						\
+			slots_[i]->disconnect(this);														\
+			delete slots_[i];																	\
+		}																						\
+		slots_.clear();																			\
+	}																							\
+private:																						\
+	void disconnectAll_(void *pObj)																\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			if(slots_[i]->pObj()==pObj)															\
+			{																					\
+				delete slots_[i];																\
+				slots_.erase(slots_.begin()+i);													\
+				i--;																			\
+			}																					\
+	}																							\
+	std::vector<AbstractSlot<TT>* > slots_;														\
 };
-//=====================================================================
+//-----------------------------------------------------------------------------------------------
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL( , , , , )
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_TP1,MACROSBIKES_PP1,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_TP2,MACROSBIKES_PP2,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_TP3,MACROSBIKES_PP3,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_TP4,MACROSBIKES_PP4,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_TP5,MACROSBIKES_PP5,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_TP6,MACROSBIKES_PP6,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_TP7,MACROSBIKES_PP7,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_TP8,MACROSBIKES_PP8,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_TP9,MACROSBIKES_PP9,MACROSBIKES_COMMA)
 
-//CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_NOTHING,CPPBIKES_NOTHING,CPPBIKES_NOTHING,CPPBIKES_NOTHING,CPPBIKES_NOTHING)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT1,CPPBIKES_TT1,CPPBIKES_TP1,CPPBIKES_PP1,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT2,CPPBIKES_TT2,CPPBIKES_TP2,CPPBIKES_PP2,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT3,CPPBIKES_TT3,CPPBIKES_TP3,CPPBIKES_PP3,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT4,CPPBIKES_TT4,CPPBIKES_TP4,CPPBIKES_PP4,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT5,CPPBIKES_TT5,CPPBIKES_TP5,CPPBIKES_PP5,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT6,CPPBIKES_TT6,CPPBIKES_TP6,CPPBIKES_PP6,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT7,CPPBIKES_TT7,CPPBIKES_TP7,CPPBIKES_PP7,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT8,CPPBIKES_TT8,CPPBIKES_TP8,CPPBIKES_PP8,CPPBIKES_COMMA)
-CPPBIKES_SIGNAL_TEMPLATECLASS_DECL(CPPBIKES_CT9,CPPBIKES_TT9,CPPBIKES_TP2,CPPBIKES_PP9,CPPBIKES_COMMA)
+//==============================================================================================
 
-
-//=====================================================================
-class ConnectableObject: public BaseConnectableObject
-{	
-public:
-	ConnectableObject(){parent_=0;}
-	~ConnectableObject()
-	{
-		signal_deleted(parent_);
-	}
-	CPPBIKES_SIGNAL_CONNECTINTERFACE_DECL(signal_deleted)
-private:
-	Signal<void*> signal_deleted;
-};
-//=====================================================================
-#define CPPBIKES_CONNECTABLEOBJECT \
-public:\
-CppBikes::ConnectableObject connectable_object;\
-CppBikes::SignalConnectInterface& CPPBIKES_SIGNAL_CONNECTINTERFACE(signal_deleted){return connectable_object.CPPBIKES_SIGNAL_CONNECTINTERFACE(signal_deleted);}
-
-
+ 
 }// CppBikes
 
 #endif // CPPBIKES_SIGNALS_H

@@ -1,18 +1,17 @@
-#ifndef CPPBIKES_LIST_H
-#define CPPBIKES_LIST_H
+#ifndef _CPPBIKES_LIST_H_
+#define _CPPBIKES_LIST_H_
 #include <vector>
 #include <stdlib.h>
 
 namespace CppBikes
 {
 
-template<class T> class List : public std::vector<T*>
+template<class T> class List //: public std::vector<T*>
 {
-	
+	std::vector<T*> l_;
 public:
 
-	typedef std::vector<T*> Container;
-	using Container::begin;
+	std::vector<T*>& data(){return l_;}
 
 	List(){}	
 	List(const List<T>& cnt){append(cnt);}
@@ -20,14 +19,13 @@ public:
 	~List()
 	{
 		int c=size();
-		for(int i=0; i<c; i++) delete Container::operator [](i);
+		for(int i=0; i<c; i++) delete l_[i];
 	}
 	
-	int count() const {return size();}
-	using Container::size;
-	bool isEmpty() const {return empty();}
-	using Container::empty;
-	
+	int count() const {return l_.size();}	
+	int size() const {return l_.size();}
+	bool isEmpty() const {return l_.size()==0;}
+		
 	const List<T> & operator = (const List<T> & other ) 
 	{
 		clear();
@@ -37,35 +35,35 @@ public:
 
 	T& increase(int di)
 	{
-		for(int i=0; i<di; i++) Container::push_back(new T());
+		for(int i=0; i<di; i++) l_.push_back(new T());
 		return last();
 	}
 
 	T& increase()
 	{
-		Container::push_back(new T());
+		l_.push_back(new T());
 		return last();
 	}
 
 	T& operator ++ () 
 	{
-		Container::push_back(new T());
+		l_.push_back(new T());
 		return last();
 	}
 	
 	void operator += (const List<T> & other ){append(other);}
-	void operator += (const T & obj ){Container::push_back(new T(obj));}
-	void add(const T &a){Container::push_back(new T(obj));}
-	void append ( const T & obj ) { Container::push_back(new T(obj)); /*cnt++;*/}
+	void operator += (const T & obj ){l_.push_back(new T(obj));}
+	void add(const T &a){l_.push_back(new T(obj));}
+	void append ( const T & obj ) {l_.push_back(new T(obj)); /*cnt++;*/}
 	void append (const List<T> & other )
 	{
 		int c=other.size();
-		for(int i=0; i<c; i++) 	push_back(other[i]);
+		for(int i=0; i<c; i++) push_back(other[i]);
 	}
 
 	void push_back(const T& obj)
 	{
-		Container::push_back(new T(obj));
+		l_.push_back(new T(obj));
 	}
 	
 	const T & first () const { return (*this)[0];}
@@ -81,56 +79,55 @@ public:
 	const T & beforeLast () const { return (*this)[size()-2]; }
 	T & beforeLast () { return (*this)[size()-2]; }
 
-	const T& at(int i) const { return *(Container::operator[](i));}
-	T& at(int i){ return *(Container::operator[](i)); }
+	const T& at(int i) const { return *(l_[i]);}
+	T& at(int i){ return *(l_[i]); }
 
-	const T& operator[](int i) const { return *(Container::operator[](i));}	
-	T& operator[](int i) { return *(Container::operator[](i)); }
+	const T& operator[](int i) const { return *(l_[i]);}	
+	T& operator[](int i) { return *(l_[i]); }
 
 	T& Take(T *pItm)
 	{
-		Container::push_back(pItm);	
+		l_.push_back(pItm);	
 		return *pItm;
 	}
 
 	T& Take(T *pItm,int i)
 	{
-		Container::insert(begin()+i,pItm);
+		l_.insert(l_.begin()+i,pItm);
 		return *pItm;
 	}
 
 	void Take(List<T>& l)
-	{
-		Container *lc=&l;
-		int c=lc->size();
-		for(int i=0; i<c; i++)Container::push_back((*lc)[i]);
-		lc->clear();
+	{		
+		int c=l.size();
+		for(int i=0; i<c; i++)l_.push_back(l.l_[i]);
+		l.clear();
 	}
 
 	T*	Pass(int i)
 	{
 	//	if(i>=size()||i<0)  return 0;
-		T* r=Container::operator[](i);
-		erase(Container::begin()+i);
+		T* r=l_[i];
+		l_.erase(l_.begin()+i);
 		return r;
 	}
 
 	T* PassLast()
 	{
-		int i=Container::size()-1;
-		T* r=Container::operator[](i);
-		erase(Container::begin()+i);
+		int i=l_.size()-1;
+		T* r=l_[i];
+		l_.erase(l_.begin()+i);
 		return r;
 	}
 
 	T* PassFirst()
 	{
-		T* r=Container::operator[](0);
-		erase(Container::begin());
+		T* r=l_[0];
+		l_.erase(l_.begin());
 		return r;
 	}
 
-	const T& circElement(int i) const {return circElement(i);}
+/*
 	T& circElement(int i)
 	{
 		int c=size();
@@ -145,13 +142,14 @@ public:
 		}
 		//return 0;
 	}
+//*/
 
 	void removeAt(int i)
 	{
 		if(i>=0&&i<size())
 		{
-			delete Container::operator [](i);
-			erase(begin()+i);
+			delete l_[i];
+			l_.erase(l_.begin()+i);
 		}
 	}
 
@@ -159,8 +157,8 @@ public:
 	{
         if(i1>=0&&i1<size()&&i2>=0&&i2<size()&&i2>=i1)
 		{
-			for(int i=i1; i<=i2; i++) delete Container::operator [](i);
-			erase(begin()+i1,begin()+i2);
+			for(int i=i1; i<=i2; i++) delete l_[i];
+			l_.erase(l_.begin()+i1,l_.begin()+i2);
 		}
 	}
 
@@ -173,7 +171,7 @@ public:
 	bool removeThat(T *r)
 	{
 		int c=size();
-		for(int i=0; i<c; i++) if(Container::operator [](i)==r)
+		for(int i=0; i<c; i++) if(l_[i]==r)
 		{
 			removeAt(i);
 			return true;
@@ -187,7 +185,7 @@ public:
 	{
 		if(i<0) i=0;
 		else if(i>size()) i=size();
-		Container::insert(begin()+i,new T(o));
+		l_.insert(l_.begin()+i,new T(o));
 	}
 
 	bool contains(const T& itm) const
@@ -200,15 +198,15 @@ public:
 	int find(const T &itm) const
 	{
 		int c=size();
-		for(int i=0; i<c; i++) if(*(Container::operator [](i))==itm) return i;
+		for(int i=0; i<c; i++) if(*(l_[i])==itm) return i;
 		return -1;
 	}
 
 	void clear()
 	{
 		int c=size();
-		for(int i=0; i<c; i++) delete Container::operator [](i);
-		Container::clear();
+		for(int i=0; i<c; i++) delete l_[i];
+		l_.clear();
 	}	
 
 	void Invert()
@@ -219,9 +217,9 @@ public:
 		T *buf;
 		for(int i=0; i<c2; i++)
 		{
-			buf=Container::operator [](i);
-			Container::operator [](i)=Container::operator [](c_-i);
-			Container::operator [](c_-i)=buf;
+			buf=l_[i];
+			l_[i]=l_[c_-i];
+			l_[c_-i]=buf;
 		}
 	}
 
