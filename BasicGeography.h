@@ -3,9 +3,7 @@
 #include "BasicMath.h"
 #include "BasicGeometry.h"
 
-//#include "TrigonometricAngle.h"
 
-//class string;
 
 namespace CppBikes
 {
@@ -17,8 +15,6 @@ const double GEO_ALPHA=/*1.0/2.0;//*/(1.0/298.29974); // =(EE_A-EE_B)/EE_A
 const double GEO_B=(1.0-GEO_ALPHA)*GEO_A; // малая полуось [м]
 const double GEO_R=(GEO_A+GEO_B)/2.0; // средний радиус [м]
 const double GEO_EE=GEO_ALPHA*(2.0-GEO_ALPHA); // e^2
-
-
 
 
 struct DegMinSecAngle

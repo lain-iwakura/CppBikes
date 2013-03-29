@@ -271,7 +271,7 @@ public:																							\
 	virtual ~SlotObject(){}																		\
 	typedef RT (ObjectClass::*ObjFuncType)(TT);													\
 	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}								\
-	virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}						\
+	virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}					\
 	void* pObj(){return pObj_;}																	\
 	ObjectClass *pObj_;																			\
 	ObjFuncType f;																				\
@@ -283,7 +283,7 @@ class SlotConnectableObject<ObjectClass,RT COMMA TT>: public SlotObject<ObjectCl
 public:																							\
 	SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): SlotObject(obj,fu){}				\
 																								\
-	void call(TP COMMA const BaseSignal *sig)	const													\
+	void call(TP COMMA const BaseSignal *sig)	const											\
 	{																							\
 		begin_emission(pObj_,sig);																\
 		(pObj_->*f)(PP);																		\
