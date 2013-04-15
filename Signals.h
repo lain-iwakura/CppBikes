@@ -12,13 +12,13 @@
 
 #define CPPBIKES_CONNECTINTERFACE_DECL(signal)							CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
 
-#define CPPBIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter((EmitterType*)(this)); return &signal;}
+#define CPPBIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		CppBikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
 
-#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)				emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
+#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)				(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
 
-#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		emitter->CPPBIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
+#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
 
-#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)			emitter->CPPBIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
+#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)			(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
 
 #define CPPBIKES_SIGNALS private
 
@@ -317,6 +317,11 @@ public:																							\
 		}																						\
 	}																							\
 	void operator ()(TP) const																	\
+	{																							\
+		for(unsigned int i=0; i<slots_.size(); i++)												\
+			slots_[i]->call(PP COMMA this);														\
+	}																							\
+	void call(TP) const																			\
 	{																							\
 		for(unsigned int i=0; i<slots_.size(); i++)												\
 			slots_[i]->call(PP COMMA this);														\
