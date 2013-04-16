@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_TESTBIKES_H_
-#define _CPPBIKES_TESTBIKES_H_
+#ifndef _BIKES_TESTBIKES_H_
+#define _BIKES_TESTBIKES_H_
 
 namespace Bikes
 {

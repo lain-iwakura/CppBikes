@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_BYTESTREAM_H_
-#define _CPPBIKES_BYTESTREAM_H_
+#ifndef _BIKES_BYTESTREAM_H_
+#define _BIKES_BYTESTREAM_H_
 #include <Bikes/RawArray.h>
 
 

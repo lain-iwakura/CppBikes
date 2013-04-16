@@ -41,16 +41,16 @@ struct DegMinSecAngle
 };
 
 
-struct PhiLamCoord // географические координаты (phi,lambda)
+struct PhiLamPoint // географические координаты (phi,lambda)
 {
-	PhiLamCoord(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
+	PhiLamPoint(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
 	rnum phi;
 	rnum lam;
 };
 
-struct PhiLamHCoord // географические координаты (phi,lambda,h)
+struct PhiLamHPoint // географические координаты (phi,lambda,h)
 {
-	PhiLamHCoord(rnum Phi=0,rnum Lambda=0, rnum H=0):phi(Phi),lam(Lambda),h(H){}
+	PhiLamHPoint(rnum Phi=0,rnum Lambda=0, rnum H=0):phi(Phi),lam(Lambda),h(H){}
 	rnum phi;
 	rnum lam;
 	rnum h;
@@ -60,14 +60,14 @@ struct PhiLamHCoord // географические координаты (phi,lambda,h)
 
 // Для сферы:
 Point PhiLam_to_PointS(rnum phi, rnum lam);  // преобразовать (фи,лямда) в (x,y,z)
-PhiLamCoord Point_to_PhiLamS(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
+PhiLamPoint Point_to_PhiLamS(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 // Для эллипсоида:
 Point PhiLam_to_PointE(rnum phi, rnum lam); // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
 Point PhiLam_to_PointE(rnum phi, rnum lam, rnum h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
-Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
-Point PhiLam_to_PointE(const PhiLamHCoord &phi_lam_h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
-PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
+Point PhiLam_to_PointE(const PhiLamPoint &phi_lam);  // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
+Point PhiLam_to_PointE(const PhiLamHPoint &phi_lam_h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
+PhiLamPoint Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 
 Vector EllipsePhiTan(const Point &p); // единичный касательный вектор к меридиану

@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_RAWARRAY_H_
-#define _CPPBIKES_RAWARRAY_H_
+#ifndef _BIKES_RAWARRAY_H_
+#define _BIKES_RAWARRAY_H_
 
 namespace Bikes
 {

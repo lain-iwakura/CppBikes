@@ -14,8 +14,8 @@
 // Если базис уничтожается, все объекты, привязанные к данному базису, переводятся в глобальную СК.
 
 
-#ifndef CPPBYKES_BASICGEOMETRY_H
-#define CPPBYKES_BASICGEOMETRY_H
+#ifndef _BIKES_BASICGEOMETRY_H_
+#define _BIKES_BASICGEOMETRY_H_
 
 //#include "List.h"
 //#include "BasicMath.h"
@@ -23,9 +23,9 @@
 #include <Bikes/List.h>
 #include <Bikes/BasicMath.h>
 
-//#define CPPBIKES_USE_TRANGLE
+//#define BIKES_USE_TRANGLE
 
-#ifdef CPPBIKES_USE_TRANGLE
+#ifdef BIKES_USE_TRANGLE
 #include <Bikes/TrigonometricAngle.h>
 #endif
 
@@ -35,7 +35,7 @@ namespace Bikes
 class Basis; 
 class Vector;
 class Point;
-struct CylCoord;
+struct CylindricalPoint;
 
 //typedef double rnum; // тип для хранения линейных координат и длин отрезков 
 //const rnum METRIC_O=0.000001; // точность rnum (предполагаемая размерность километры => точность 1 мм)
@@ -82,26 +82,24 @@ public:
 	bool isNull() const; // Нулевая(несуществующая) точка?  
 	bool isTransient()const; // Временный объект? // *рудимент*
 	
-	Point& Set(rnum px, rnum py, rnum pz,const Basis *b=0); //Точка по координатам в базисе *b
-	Point& SetGlobal(rnum pgx, rnum pgy, rnum pgz); // Точка по координатам в глобальном базисе
-	Point& SetLocal(rnum localx,rnum localy, rnum localz); // Точка  по координатам в локальном базисе
-	Point& SetLocalX(rnum localx); // Изменить локальную координату X
-	Point& SetLocalY(rnum localy); // Изменить локальную координату Y
-	Point& SetLocalZ(rnum localz); // Изменить локальную координату Z
-	Point& SetBasis(const Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
-	Point& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
-	Point& ReplaceBasis(const Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
-	Point& ReplaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
-	Point& Rotate_W(const Vector &w,rnum a); // вращать точку по правилу буравчика относительно оси w на угол a
-	Point& Rotate_X(rnum a); //  вращать точку по правилу буравчика относительно оси OX(в локальном базисе) на угол a
-	Point& Rotate_Y(rnum a); //  вращать точку по правилу буравчика относительно оси OY(в локальном базисе) на угол a
-	Point& Rotate_Z(rnum a); //  вращать точку по правилу буравчика относительно оси OZ(в локальном базисе) на угол a
+	Point& set(rnum px, rnum py, rnum pz,const Basis *b=0); //Точка по координатам в базисе *b
+	Point& setGlobal(rnum pgx, rnum pgy, rnum pgz); // Точка по координатам в глобальном базисе
+	Point& setLocal(rnum localx,rnum localy, rnum localz); // Точка  по координатам в локальном базисе
+	Point& setLocalX(rnum localx); // Изменить локальную координату X
+	Point& setLocalY(rnum localy); // Изменить локальную координату Y
+	Point& setLocalZ(rnum localz); // Изменить локальную координату Z
+	Point& setBasis(const Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
+	Point& setGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
+	Point& replaceBasis(const Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
+	Point& replaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
+	Point& rotate_W(const Vector &w,rnum a); // вращать точку по правилу буравчика относительно оси w на угол a
+	Point& rotate_X(rnum a); //  вращать точку по правилу буравчика относительно оси OX(в локальном базисе) на угол a
+	Point& rotate_Y(rnum a); //  вращать точку по правилу буравчика относительно оси OY(в локальном базисе) на угол a
+	Point& rotate_Z(rnum a); //  вращать точку по правилу буравчика относительно оси OZ(в локальном базисе) на угол a
 	
 	rnum x() const; // координата X в локальном(!) базисе *basis
 	rnum y() const; // координата Y в локальном(!) базисе *basis
 	rnum z() const; // координата Z в локальном(!) базисе *basis
-	rnum PolarAlpha() const;
-	rnum PolarR() const;
 	rnum lx(const Basis *b) const; // координата X в локальном базисе *b
 	rnum ly(const Basis *b) const; // координата Y в локальном базисе *b
 	rnum lz(const Basis *b) const; // координата Z в локальном базисе *b
@@ -188,16 +186,16 @@ public:
 	bool isNull()const; // нулевой вектор?
 	bool isTransient() const; // временный объект? 
 		
-	Vector& Set(rnum vx, rnum vy, rnum vz,const Basis *b=0); //Вектор по проекциям в базисе *b
-	Vector& SetGlobal(rnum gx, rnum gy, rnum gz);  // Вектор по проекциям в глобальном базисе
-	Vector& SetLocal(rnum localx, rnum localy, rnum localz); // Вектор по проекциям в локальном базисе
-	Vector& SetLocalX(rnum localx); // Изменить локальную проекцию на ось OX
-	Vector& SetLocalY(rnum localy); // Изменить локальную проекцию на ось OY
-	Vector& SetLocalZ(rnum localz); // Изменить локальную проекцию на ось OZ
-	Vector& SetBasis(const Basis *b); // Привязка к базису *b
-	Vector& SetGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
-	Vector& ReplaceBasis(const Basis *b); // Изменить глобальные проекции вектора таким образом, чтобы при переходе в новый базис *b локальные проекции не изменились (а так же вызов anchor.ReplaceBasis(b))
-	Vector& ReplaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
+	Vector& set(rnum vx, rnum vy, rnum vz,const Basis *b=0); //Вектор по проекциям в базисе *b
+	Vector& setGlobal(rnum gx, rnum gy, rnum gz);  // Вектор по проекциям в глобальном базисе
+	Vector& setLocal(rnum localx, rnum localy, rnum localz); // Вектор по проекциям в локальном базисе
+	Vector& setLocalX(rnum localx); // Изменить локальную проекцию на ось OX
+	Vector& setLocalY(rnum localy); // Изменить локальную проекцию на ось OY
+	Vector& setLocalZ(rnum localz); // Изменить локальную проекцию на ось OZ
+	Vector& setBasis(const Basis *b); // Привязка к базису *b
+	Vector& setGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
+	Vector& replaceBasis(const Basis *b); // Изменить глобальные проекции вектора таким образом, чтобы при переходе в новый базис *b локальные проекции не изменились (а так же вызов anchor.ReplaceBasis(b))
+	Vector& replaceGBasis(const Basis *b); // Аналогично ReplaceBasis(Basis *b), но считаем, что переходим из глобального базиса (basis -  игнорируется и считается равным 0)
 	Vector& normalize(); // Превратить в единичный вектор (разделить вектор на его длину)
 	Vector& invert(); // Перевернуть вектор (поменять местами начало и конец)
 	Vector& rotate_W(const Vector &w, rnum a); // вращать вектор по правилу буравчика относительно оси w на угол a
@@ -224,26 +222,26 @@ public:
 
 
 
-#ifdef CPPBIKES_USE_TRANGLE	
-	TrAngle Angle(const Vector &v) const {return Angle(*this,v);}  // вероятно ненужная функция
+#ifdef BIKES_USE_TRANGLE	
+	TrAngle angle(const Vector &v) const {return angle(*this,v);}  // вероятно ненужная функция
 #else
-	rnum Angle(const Vector &v) const {return Angle(*this,v);} 
+	rnum angle(const Vector &v) const {return angle(*this,v);} 
 #endif
 	
-	Point Intersection(const Vector &v) const; // Пересечение двух векторов. 
-	Point RangeIntersection(const Vector &v) const; 
+	Point intersection(const Vector &v) const; // Пересечение двух векторов. 
+	Point rangeIntersection(const Vector &v) const; 
 	// Если вектора параллельны, то возвращается нулевая точка(p_null). 
 	// Если вектора скрещивающиеся, то точкой пересечения считается точка лежащая
 	// на векторе *this и являющаяся концом отрезка минимального расстояния до вектора v
 
-#ifdef CPPBIKES_USE_TRANGLE	
-	static TrAngle Angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
+#ifdef BIKES_USE_TRANGLE	
+	static TrAngle angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
 #else
-	static rnum Angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
+	static rnum angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
 #endif
 
 	static bool isParallel(const Vector &v1, const Vector &v2); // v1,v2  прарллельны?
-	static rnum ParallelDistance(const Vector &v1, const Vector &v2); // Найти расстояние между параллельными векторами. Если векторы не параллельны, то возвращается 0.
+	static rnum parallelDistance(const Vector &v1, const Vector &v2); // Найти расстояние между параллельными векторами. Если векторы не параллельны, то возвращается 0.
 	
 	static bool isRightVectors(Vector v1, Vector v2, Vector v3=Vector(0,0,1)); // правая тройка векторов?
 	
@@ -270,7 +268,7 @@ public:
 	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
 	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(anchor,p))
 
-#ifdef CPPBIKES_USE_TRANGLE
+#ifdef BIKES_USE_TRANGLE
 	TrAngle operator ^ (const Vector &v) const;// возвращает Angle(v)
 #else
 	rnum operator ^ (const Vector &v) const;// возвращает Angle(v)
@@ -283,12 +281,6 @@ public:
 	Vector operator !() const;// возвращает Vector(true,*this,false).invert()
 	bool operator > (const Vector &v) const;// возвращает length()>v.length()
 	bool operator < (const Vector &v) const;// возвращает length()<v.length()
-
-
-	// Phi & Lamda // (?)
-	rnum Phi();	
-	rnum Lamda();
-	rnum Lamda2PI();
 
 
 private:
@@ -325,21 +317,21 @@ public:
 	~Basis(); // Все привязанные объекты переводятся в глобальную СК
 	// ( vectors[i].basis=0; points[i].basis=0; ) 
 
-	Basis& SetOrtoBasis_ByIJ(const Vector &bi,const Vector &bj); // Ортонормированный правый базис,
+	Basis& setOrtoBasis_ByIJ(const Vector &bi,const Vector &bj); // Ортонормированный правый базис,
 	// в котором плоскость OXY задана векторами  bi,bj (bi задает направление i, bi*bj задает направление k, O=bi.anchor)
-	Basis& SetOrtoBasisL_ByIJ(const Vector &bi, const Vector &bj);	//То же что и SetOrtoBasis_ByIJ, но базис левый	
-	Basis& SetOrtoBasis_InXY_ByI(const Vector &bi); // Ортонормированный правый базис,
+	Basis& setOrtoBasisL_ByIJ(const Vector &bi, const Vector &bj);	//То же что и SetOrtoBasis_ByIJ, но базис левый	
+	Basis& setOrtoBasis_InXY_ByI(const Vector &bi); // Ортонормированный правый базис,
 	// в котором k=v_gk, k*bi задает направление j,  O=bi.anchor;  
-	Basis& SetOrtoBasis_InXY_ByI_l(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но k=-v_gk;
-	Basis& SetOrtoBasisL_InXY_ByI(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но базис левый; 
-	Basis& SetOrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);	// возвращает SetOrtoBasis_ByIJ(Vector(pO,pX),Vector(pO,pY));
-	Basis& SetO(const Point &pO); // Выбрать начало координат 
+	Basis& setOrtoBasis_InXY_ByI_l(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но k=-v_gk;
+	Basis& setOrtoBasisL_InXY_ByI(const Vector &bi); // то же что и	SetOrtoBasis_InXY_ByI, но базис левый; 
+	Basis& setOrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);	// возвращает SetOrtoBasis_ByIJ(Vector(pO,pX),Vector(pO,pY));
+	Basis& setO(const Point &pO); // Выбрать начало координат 
 
-	void Add(Point *p) const; //(?) Привязать точку 
-	void Add(Vector *v) const; //(?) Привязать вектор 
-	void Remove(Point *p) const; //(?) удалить привязку точки 
-	void Remove(Vector *v) const; //(?) удалить привязку вектора 
-	void RemoveAll() const; // удалить все привязки
+	void add(Point *p) const; //(?) Привязать точку 
+	void add(Vector *v) const; //(?) Привязать вектор 
+	void remove(Point *p) const; //(?) удалить привязку точки 
+	void remove(Vector *v) const; //(?) удалить привязку вектора 
+	void removeAll() const; // удалить все привязки
 
 	//////// extra operators ///////
 	operator Basis*(){return this;}
@@ -351,14 +343,15 @@ public:
 	////////////////////////////////
 };
 
+// AUX ->
 
-Basis OrtoBasis_ByIJ(const Vector &bi,const Vector &bj);	
-Basis OrtoBasisL_ByIJ(const Vector &bi,const Vector &bj);	
-Basis OrtoBasis_InXY_ByI(const Vector &bi);	
-Basis OrtoBasisL_InXY_ByI(const Vector &bi);
-Basis OrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);
+Basis ortoBasis_ByIJ(const Vector &bi,const Vector &bj);	
+Basis ortoBasisL_ByIJ(const Vector &bi,const Vector &bj);	
+Basis ortoBasis_InXY_ByI(const Vector &bi);	
+Basis ortoBasisL_InXY_ByI(const Vector &bi);
+Basis ortoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY);
 
-struct CylCoord
+struct CylindricalPoint
 {
 	rnum z;
 	rnum r;
@@ -366,11 +359,13 @@ struct CylCoord
 };
 
 
-CylCoord ToCylCoord(const Point &p);
-CylCoord ToCylCoord_Arc(const Point &p);
+CylindricalPoint toCylindricalPoint(const Point &p);
+CylindricalPoint toCylindricalPoint_Arc(const Point &p);
 
-Point FromCylCoord_Arc(rnum a, rnum r, rnum z=0, const Basis *b=0);
+Point fromCylindricalPoint_Arc(rnum a, rnum r, rnum z=0, const Basis *b=0);
 //Point FromCylCoord_Arc(TAngle a, rnum r, rnum z=0, const Basis *b=0);
+
+// <- AUX
 
 }
 #endif // BASICGEOMETRY_H

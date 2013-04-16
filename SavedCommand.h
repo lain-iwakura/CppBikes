@@ -98,7 +98,7 @@ namespace CppBikes
 		}
 
 
-		void QueueLock()
+		void queueLock()
 		{
 // 			int i=0;
 // 			while(!queueMutex.tryLock()) i++;
@@ -108,7 +108,7 @@ namespace CppBikes
 // 			}
 			queueMutex.lock();
 		}
-		void QueueUnlock(){queueMutex.unlock();}
+		void queueUnlock(){queueMutex.unlock();}
 
 		template<class RT> void takeCommandFunctor(const Loki::Functor<RT> &fu)
 		{

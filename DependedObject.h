@@ -10,7 +10,7 @@ template<class T> class DependedObject
 {
 public:
 	DependedObject(){changing=false;}	
-	DependedObject(const T& obj):OBJ(obj){changing=false;}
+	DependedObject(const T& obj_):OBJ(obj_){changing=false;}
 	DependedObject(const DependedObject<T> &dobj):OBJ(dobj.OBJ){changing=false;}
 	~DependedObject()
 	{
@@ -18,72 +18,72 @@ public:
 		{
 			slaves[i]->changingMasters.remove(this);
 			slaves[i]->masters.remove(this);
-			slaves[i]->BeginChanging();
-			slaves[i]->MasterChanged(phBackupOBJ.Val(OBJ),OBJ);
-			slaves[i]->MasterDeleted(OBJ);	
-			slaves[i]->EndChanging();
+			slaves[i]->beginChanging();
+			slaves[i]->masterChanged(phBackupOBJ.val(OBJ),OBJ);
+			slaves[i]->masterDeleted(OBJ);	
+			slaves[i]->endChanging();
 		}else for(int i=0; i<slaves.count(); i++)
 		{
 			slaves[i]->masters.remove(this);
-			slaves[i]->BeginModify();
-			slaves[i]->MasterDeleted(OBJ);
-			slaves[i]->EndModify();
+			slaves[i]->beginModify();
+			slaves[i]->masterDeleted(OBJ);
+			slaves[i]->endModify();
 		}
 		for(int i=0; i<masters.count(); i++) masters[i]->slaves.remove(this);
 	}
 
-	void operator =(const T& obj)
+	void operator =(const T& obj_)
 	{
-		if(!changing) Modify(OBJ,obj);
-		OBJ=obj;				
+		if(!changing) modify(OBJ,obj_);
+		OBJ=obj_;				
 	}
 	void operator=(const DependedObject<T> & dobj)
 	{
-		if(!changing) Modify(OBJ,dobj.OBJ);
+		if(!changing) modify(OBJ,dobj.OBJ);
 		OBJ=dobj.OBJ;				
 	}
 
-	void BeginChanging()
+	void beginChanging()
 	{
 		if(changing) return;
 		changing=true;
 		for(int i=0; i<slaves.count(); i++) 
 		{
 			slaves[i]->changingMasters+=this;
-			slaves[i]->BeginChanging();
+			slaves[i]->beginChanging();
 		}
-		phBackupOBJ.Create(OBJ);
+		phBackupOBJ.create(OBJ);
 	}
 
-	void EndChanging()
+	void endChanging()
 	{
 		if(!changing) return;
-		MastersInspection();
+		mastersInspection();
 		changing=false;
 		for(int i=0; i<slaves.count(); i++)
 		{
 			slaves[i]->changingMasters.remove(this);
-			ModifySlave(slaves[i]);			
+			modifySlave(slaves[i]);			
 		}
-		phBackupOBJ.Destroy();
+		phBackupOBJ.destroy();
 	}
 		
-	T& Obj() //?
+	T& obj() //?
 	{
-		MastersInspection();//?
-		BeginChanging();//?
+		mastersInspection();//?
+		beginChanging();//?
 		return OBJ;
 	}
 
 	operator T() const
 	{
-		MastersInspection();
+		mastersInspection();
 		return OBJ;
 	}
 
 	const T& cObj() const
 	{
-		MastersInspection();
+		mastersInspection();
 		return OBJ;
 	}
  	const T& cObjC() const //???
@@ -94,54 +94,54 @@ public:
 	bool isChanging() const {return changing;}
 	bool isMastersChanging() const {return changingMasters.count();}
 
-	bool MastersInspection() const
+	bool mastersInspection() const
 	{
 		if(changingMasters.count())
 		{
-			for(int i=0; i<changingMasters.count(); i++){changingMasters[i]->EndChanging();}
+			for(int i=0; i<changingMasters.count(); i++){changingMasters[i]->endChanging();}
 			return true;
 		}
 		return false;
 	}
 
-	void AddMaster(DependedObject<T> &m){AddMaster(&m);}
-	void AddMaster(DependedObject<T> *Master)
+	void addMaster(DependedObject<T> &m){addMaster(&m);}
+	void addMaster(DependedObject<T> *Master)
 	{
 		if(!Master->slaves.contains(this))
 		{
 			masters+=Master;
 			Master->slaves+=this;
-			MasterAdded(Master->OBJ);
+			masterAdded(Master->OBJ);
 		}
 	}
-	void AddSlave(DependedObject<T> &s){AddSlave(&s);}
-	void AddSlave(DependedObject<T> *Slave)
+	void addSlave(DependedObject<T> &s){addSlave(&s);}
+	void addSlave(DependedObject<T> *Slave)
 	{
 		if(!Slave->masters.contains(this))
 		{
 			slaves+=Slave;
 			Slave->masters+=this;
-			Slave->MasterAdded(OBJ);
+			Slave->masterAdded(OBJ);
 		}
 	}
-	void RemoveMaster(DependedObject<T> &m){RemoveMaster(&m);}
-	bool RemoveMaster(DependedObject<T> *Master)
+	void removeMaster(DependedObject<T> &m){removeMaster(&m);}
+	bool removeMaster(DependedObject<T> *Master)
 	{
 		if(masters.remove(Master))
 		{
 			Master->slaves.remove(this);
-			MasterRemoved(Master->OBJ);
+			masterRemoved(Master->OBJ);
 			return true;
 		}
 		return false;
 	}
-	void RemoveSlave(DependedObject<T> &s){RemoveSlave(&s);}
-	bool RemoveSlave(DependedObject<T> *Slave)
+	void removeSlave(DependedObject<T> &s){removeSlave(&s);}
+	bool removeSlave(DependedObject<T> *Slave)
 	{
 		if(slaves.remove(Slave))
 		{
 			Slave->masters.remove(this);
-			Slave->MasterRemoved(OBJ);
+			Slave->masterRemoved(OBJ);
 			return true;
 		}
 		return false;
@@ -153,45 +153,45 @@ protected:
 	T OBJ;
 	PhantomObject<T> phBackupOBJ;
 
-	virtual void MasterChanged(const T& MasterBackup,const T& MasterNow ){} //***
-	virtual void MasterDeleted(const T& MasterNow){} //***
-	virtual void MasterAdded(const T& MasterNow){} //***
-	virtual void MasterRemoved(const T& MasterNow){} //***
+	virtual void masterChanged(const T& MasterBackup,const T& MasterNow ){} //***
+	virtual void masterDeleted(const T& MasterNow){} //***
+	virtual void masterAdded(const T& MasterNow){} //***
+	virtual void masterRemoved(const T& MasterNow){} //***
 
-	void ModifySlave(DependedObject<T> *slave)
+	void modifySlave(DependedObject<T> *slave)
 	{
-			slave->BeginModify();
-			slave->MasterChanged(phBackupOBJ.Val(OBJ),OBJ);
-			slave->EndModify();
+			slave->beginModify();
+			slave->masterChanged(phBackupOBJ.val(OBJ),OBJ);
+			slave->endModify();
 	}
-	void ModifyAllSlaves()
+	void modifyAllSlaves()
 	{
-		if(phBackupOBJ.Exist())	for(int i=0; i<slaves.count(); i++)
+		if(phBackupOBJ.exist())	for(int i=0; i<slaves.count(); i++)
 		{			
-			slaves[i]->BeginModify();
-			slaves[i]->MasterChanged(phBackupOBJ.Obj(),OBJ);
-			slaves[i]->EndModify();
+			slaves[i]->beginModify();
+			slaves[i]->masterChanged(phBackupOBJ.obj(),OBJ);
+			slaves[i]->endModify();
 		}
 	}
-	void Modify(const T& MasterOld, const T& MasterNew)
+	void modify(const T& MasterOld, const T& MasterNew)
 	{
 		for(int i=0; i<slaves.count(); i++)
 		{
-			slaves[i]->BeginModify();
-			slaves[i]->MasterChanged(MasterOld,MasterNew);
-			slaves[i]->EndModify();
+			slaves[i]->beginModify();
+			slaves[i]->masterChanged(MasterOld,MasterNew);
+			slaves[i]->endModify();
 		}
 	}
-	void BeginModify()
+	void beginModify()
 	{
-		if(!changing)phBackupOBJ.Create(OBJ);
+		if(!changing)phBackupOBJ.create(OBJ);
 	}
-	void EndModify()
+	void endModify()
 	{
 		if(!changing)
 		{
-			ModifyAllSlaves();
-			phBackupOBJ.Destroy();
+			modifyAllSlaves();
+			phBackupOBJ.destroy();
 		}
 	}
 
@@ -205,50 +205,50 @@ private:
 
 template<class T> class DependedValue: public DependedObject<T>
 {
-    using DependedObject<T>::BeginModify;
-    using DependedObject<T>::EndModify;
+    using DependedObject<T>::beginModify;
+    using DependedObject<T>::endModify;
    // using DependedObject<T>::OBJ;
-    using DependedObject<T>::MastersInspection;
+    using DependedObject<T>::mastersInspection;
 public:
  //   DependedValue(){}
 	TEMPLT_DEFALL(DependedValue,DependedObject,T)
 
-	void operator +=(const T& obj)
+	void operator +=(const T& obj_)
 	{
-		BeginModify();
-        this->OBJ+=obj;
-		EndModify();
+		beginModify();
+        this->OBJ+=obj_;
+		endModify();
 	}
-	void operator -=(const T& obj)
+	void operator -=(const T& obj_)
 	{
-		BeginModify();
-        this->OBJ-=obj;
-		EndModify();
+		beginModify();
+        this->OBJ-=obj_;
+		endModify();
 	}
-	void operator *=(const T& obj)
+	void operator *=(const T& obj_)
 	{
-		BeginModify();
-        this->OBJ*=obj;
-		EndModify();
+		beginModify();
+        this->OBJ*=obj_;
+		endModify();
 	}
-	void operator /=(const T& obj)
+	void operator /=(const T& obj_)
 	{
-		BeginModify();
-        this->OBJ/=obj;
-		EndModify();
+		beginModify();
+        this->OBJ/=obj_;
+		endModify();
 	}
 
 	operator T() const
 	{
-		MastersInspection();
+		mastersInspection();
         return this->OBJ;
 	}
 
 protected:
-	virtual void MasterChanged(const T& MasterBackup,const T& MasterNow ){} //***
-	virtual void MasterDeleted(const T& MasterNow){} //***
-	virtual void MasterAdded(const T& MasterNow){} //***
-	virtual void MasterRemoved(const T& MasterNow){} //***
+	virtual void masterChanged(const T& MasterBackup,const T& MasterNow ){} //***
+	virtual void masterDeleted(const T& MasterNow){} //***
+	virtual void masterAdded(const T& MasterNow){} //***
+	virtual void masterRemoved(const T& MasterNow){} //***
 	
 };
 
@@ -263,19 +263,19 @@ public:
  //   DependedLength(){}
 	TEMPLT_DEFALL(DependedLength,DependedValue,T)
 private:
-	void MasterChanged(const T& MasterBackup,const T& MasterNow )
+	void masterChanged(const T& MasterBackup,const T& MasterNow )
 	{
         this->OBJ+=MasterNow-MasterBackup;
 	} 
-	void MasterDeleted(const T& MasterNow)
+	void masterDeleted(const T& MasterNow)
 	{
         this->OBJ-=MasterNow;
 	}
-	void MasterAdded(const T& MasterNow) //?
+	void masterAdded(const T& MasterNow) //?
 	{
         this->OBJ+=MasterNow;
 	} 
-	void MasterRemoved(const T& MasterNow) //?
+	void masterRemoved(const T& MasterNow) //?
 	{
         this->OBJ-=MasterNow;
 	} 

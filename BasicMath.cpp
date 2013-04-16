@@ -24,14 +24,14 @@ void Bikes::not0set(rnum &n, rnum o/* =RNUM_O */)
 	if(ABS(n)<o) n=(n<0)?(-o):(o);
 }
 
-rnum Bikes::NormAngle(rnum a)
+rnum Bikes::normAngle(rnum a)
 {
 	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
 	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
 	return a;
 }
 
-rnum Bikes::NormAngle_0_2PI(rnum a)
+rnum Bikes::normAngle_0_2PI(rnum a)
 {
 	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
 	if(a<0.0) a+=PImult2;
@@ -67,12 +67,12 @@ bool Bikes::isEqual(rnum n1, rnum n2, rnum O)
 
 bool Bikes::isEqualAngle(rnum a1, rnum a2)
 {
-	a1=NormAngle_0_2PI(a1);
-	a2=NormAngle_0_2PI(a2);
+	a1=normAngle_0_2PI(a1);
+	a2=normAngle_0_2PI(a2);
 	return isEqual(a1,a2,ANGLE_O);
 }
 
-rnum Bikes::NormalDistribution( rnum x )
+rnum Bikes::normalDistribution( rnum x )
 {
 	static const rnum m=1/sqrt(2*PI);
 	return m*pow(E,-x*x/2);
@@ -81,7 +81,7 @@ rnum Bikes::NormalDistribution( rnum x )
 
 
 
-rnum MathFunction::FindNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum Eps/*=RNUM_O*/, int MaxIter/*=10000*/, rnum dx/*=(x_max-x_min)/rnum(MaxIter) */ ) const
+rnum MathFunction::findNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum Eps/*=RNUM_O*/, int MaxIter/*=10000*/, rnum dx/*=(x_max-x_min)/rnum(MaxIter) */ ) const
 {
 	if(suc) *suc=false;
 	rnum roo=x_min;	
@@ -126,7 +126,7 @@ rnum MathFunction::FindNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum 
 
 
 
-MathFunctionResult MathFunction::Diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
+MathFunctionResult MathFunction::diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
 {
 	MathFunctionResult r;
 	MathFunctionResult fx1=f(x);

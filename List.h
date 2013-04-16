@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_LIST_H_
-#define _CPPBIKES_LIST_H_
+#ifndef _BIKES_LIST_H_
+#define _BIKES_LIST_H_
 #include <vector>
 #include <stdlib.h>
 
@@ -85,26 +85,26 @@ public:
 	const T& operator[](int i) const { return *(l_[i]);}	
 	T& operator[](int i) { return *(l_[i]); }
 
-	T& Take(T *pItm)
+	T& take(T *pItm)
 	{
 		l_.push_back(pItm);	
 		return *pItm;
 	}
 
-	T& Take(T *pItm,int i)
+	T& take(T *pItm,int i)
 	{
 		l_.insert(l_.begin()+i,pItm);
 		return *pItm;
 	}
 
-	void Take(List<T>& l)
+	void take(List<T>& l)
 	{		
 		int c=l.size();
 		for(int i=0; i<c; i++)l_.push_back(l.l_[i]);
 		l.clear();
 	}
 
-	T*	Pass(int i)
+	T*	pass(int i)
 	{
 	//	if(i>=size()||i<0)  return 0;
 		T* r=l_[i];
@@ -112,7 +112,7 @@ public:
 		return r;
 	}
 
-	T* PassLast()
+	T* passLast()
 	{
 		int i=l_.size()-1;
 		T* r=l_[i];
@@ -120,7 +120,7 @@ public:
 		return r;
 	}
 
-	T* PassFirst()
+	T* passFirst()
 	{
 		T* r=l_[0];
 		l_.erase(l_.begin());
@@ -209,7 +209,7 @@ public:
 		l_.clear();
 	}	
 
-	void Invert()
+	void invert()
 	{
 		int c=size();
 		int c_=c-1;

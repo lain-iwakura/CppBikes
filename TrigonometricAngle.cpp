@@ -77,7 +77,7 @@ void TrAngle::setRad(rnum rad)
 {
 	_mdat=MD_RADCALC;
 	_rad=rad;
-	rnum na=NormAngle(rad);
+	rnum na=normAngle(rad);
 	if(na<0)
 	{
 		_mdat|=MD_SINM;

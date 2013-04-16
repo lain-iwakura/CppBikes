@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_BIKESSTREAM_H_
-#define _CPPBIKES_BIKESSTREAM_H_
+#ifndef _BIKES_BIKESSTREAM_H_
+#define _BIKES_BIKESSTREAM_H_
 
 #include <Bikes/ObjectSream.h>
 

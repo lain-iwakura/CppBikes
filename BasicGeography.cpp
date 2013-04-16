@@ -108,13 +108,13 @@ inline Point Bikes::PhiLam_to_PointS( rnum phi, rnum lam )
 	return Point(GEO_R*cos(lam)*cos(phi),GEO_R*sin(lam)*cos(phi),GEO_R*sin(phi));
 }
 
-PhiLamCoord Bikes::Point_to_PhiLamS( const Point &p )
+PhiLamPoint Bikes::Point_to_PhiLamS( const Point &p )
 {
-	return PhiLamCoord(asin(p.gz/GEO_R),acos(p.gx/sqrt(p.gx*p.gx+p.gy*p.gy))*signum(p.gy));
+	return PhiLamPoint(asin(p.gz/GEO_R),acos(p.gx/sqrt(p.gx*p.gx+p.gy*p.gy))*signum(p.gy));
 }
 
 
-Point Bikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
+Point Bikes::PhiLam_to_PointE(const PhiLamPoint &phi_lam)
 {
 	return PhiLam_to_PointE(phi_lam.phi, phi_lam.lam);
 }
@@ -122,8 +122,8 @@ Point Bikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
 
 Point Bikes::PhiLam_to_PointE( rnum phi, rnum lam )
 {
-	phi=NormAngle(phi);
-	lam=NormAngle(lam);
+	phi=normAngle(phi);
+	lam=normAngle(lam);
 
 	rnum cosB=cos(phi);
 	rnum sinB=sqrt(1.0-cosB*cosB);//sin(phi);
@@ -154,17 +154,17 @@ Point Bikes::PhiLam_to_PointE_old( rnum phi, rnum lam )
 }
 
 
-PhiLamCoord Bikes::Point_to_PhiLamE( const Point &p )
+PhiLamPoint Bikes::Point_to_PhiLamE( const Point &p )
 {
 	rnum D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;
-	return PhiLamCoord(atan(p.gz/not0((1.0-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
+	return PhiLamPoint(atan(p.gz/not0((1.0-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
 }
 
 Point PhiLam_to_PointE( rnum phi, rnum lam, rnum h )
 {
-	phi=NormAngle(phi);
-	lam=NormAngle(lam);
+	phi=normAngle(phi);
+	lam=normAngle(lam);
 
 	rnum cosB=cos(phi);
 	rnum sinB=sqrt(1.0-cosB*cosB);//sin(phi);
@@ -176,7 +176,7 @@ Point PhiLam_to_PointE( rnum phi, rnum lam, rnum h )
 	return Point((N+h)*cosB*cosL,(N+h)*cosB*sinL,((1.0-GEO_EE)*N+h)*sinB);
 }
 
-Point PhiLam_to_PointE( const PhiLamHCoord &phi_lam_h )
+Point PhiLam_to_PointE( const PhiLamHPoint &phi_lam_h )
 {
 	return PhiLam_to_PointE(phi_lam_h.phi,phi_lam_h.lam,phi_lam_h.h);
 }

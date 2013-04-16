@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_ARRAYBIKES_H_
-#define _CPPBIKES_ARRAYBIKES_H_
+#ifndef _BIKES_ARRAYBIKES_H_
+#define _BIKES_ARRAYBIKES_H_
 
 namespace Bikes
 {

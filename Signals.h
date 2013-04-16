@@ -1,5 +1,5 @@
-#ifndef _CPPBIKES_SIGNALS_H_
-#define _CPPBIKES_SIGNALS_H_
+#ifndef _BIKES_SIGNALS_H_
+#define _BIKES_SIGNALS_H_
 
 #include <Bikes/MacrosBikes.h>
 #include <vector>
@@ -8,21 +8,21 @@
 
 //==============================================================================================
 
-#define CPPBIKES_CONNECTINTERFACE(signal)								signal##_connectInterface()
+#define BIKES_CONNECTINTERFACE(signal)								signal##_connectInterface()
 
-#define CPPBIKES_CONNECTINTERFACE_DECL(signal)							Bikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
+#define BIKES_CONNECTINTERFACE_DECL(signal)							Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
 
-#define CPPBIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		Bikes::SignalConnectInterface*  CPPBIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
+#define BIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
 
-#define CPPBIKES_CONNECT(emitter,signal,receiver,slot_func)				(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
+#define BIKES_CONNECT(emitter,signal,receiver,slot_func)				(emitter)->BIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
 
-#define CPPBIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
+#define BIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		(emitter)->BIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
 
-#define CPPBIKES_DISCONNECT(emitter,signal,receiver,slot_func)			(emitter)->CPPBIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
+#define BIKES_DISCONNECT(emitter,signal,receiver,slot_func)			(emitter)->BIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
 
-#define CPPBIKES_SIGNALS private
+#define BIKES_SIGNALS private
 
-#define CPPBIKES_CONNECTABLE_OBJECT																\
+#define BIKES_CONNECTABLE_OBJECT																\
 	public:																						\
 	Bikes::ConnectableObject connectable_object;												\
 	private:																					\
@@ -419,4 +419,4 @@ MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKE
  
 }// Bikes
 
-#endif // CPPBIKES_SIGNALS_H
+#endif // BIKES_SIGNALS_H

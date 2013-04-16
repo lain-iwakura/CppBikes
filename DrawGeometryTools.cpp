@@ -229,13 +229,13 @@ bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,
 		{
 			if( (crossPoints[0].x<crossPoints[1].x) != (p1.x<p2.x) )
 			{
-				crossPoints.Invert();
+				crossPoints.invert();
 			}
 		}else
 		{
 			if( (crossPoints[0].y<crossPoints[1].y) != (p1.y<p2.y) )
 			{
-				crossPoints.Invert();
+				crossPoints.invert();
 			}
 		}
 	}
