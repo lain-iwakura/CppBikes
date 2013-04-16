@@ -3,7 +3,22 @@
 
 namespace CppBikes
 {
+	
+	template<class T>
+	bool isPointer(const T&){return false;}
+
+	template<class T>
+	bool isPointer(const T*){return true;}
+
+namespace Test
+{
 	//TODO: добавить тесты
+
+	bool test_ByteStream();
+	bool test_RawArray();
+	bool test_BikesStream();
+	bool test_main();
+}	
 }
 
 #endif
