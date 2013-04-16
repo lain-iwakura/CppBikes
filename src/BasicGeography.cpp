@@ -1,6 +1,5 @@
-#include "BasicGeography.h"
+#include <Bikes/BasicGeography.h>
 #include <Bikes/TrigonometricAngle.h>
-#include <stdio.h>
 #include <string>
 
 

@@ -1,4 +1,4 @@
-#include "TypeRegister.h"
+#include <Bikes/TypeRegister.h>
 
 namespace Bikes
 {

@@ -1,56 +1,59 @@
-#include "BasicMath.h"
+#include <Bikes/BasicMath.h>
 
-using namespace Bikes;
+namespace Bikes
+{
 
-rnum Bikes::acosh(rnum a)
+
+
+rnum acosh(rnum a)
 {
 	if(ABS(a)<1) return 0;
 	return log(a+sqrt(a*a-1));
 }
 
-rnum Bikes::asinh(rnum a)
+rnum asinh(rnum a)
 {	
 	return log(a+sqrt(a*a+1));
 }
 
-rnum Bikes::not0(rnum n, rnum o/* =RNUM_O */)
+rnum not0(rnum n, rnum o/* =RNUM_O */)
 {
 	if(ABS(n)<o) return (n<0)?(-o):(o);
 	return n;
 }
 
-void Bikes::not0set(rnum &n, rnum o/* =RNUM_O */)
+void not0set(rnum &n, rnum o/* =RNUM_O */)
 {
 	if(ABS(n)<o) n=(n<0)?(-o):(o);
 }
 
-rnum Bikes::normAngle(rnum a)
+rnum normAngle(rnum a)
 {
 	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
 	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
 	return a;
 }
 
-rnum Bikes::normAngle_0_2PI(rnum a)
+rnum normAngle_0_2PI(rnum a)
 {
 	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
 	if(a<0.0) a+=PImult2;
 	return a;
 }
 
-rnum Bikes::signum(rnum n)
+rnum signum(rnum n)
 {
 	if(n<0.0) return -1.0;
 	return 1.0;
 }
 
-rnum Bikes::arccos(rnum n)
+rnum arccos(rnum n)
 {
 	if(n<=-1.0) return PI;
 	if(n>=1.0) return 0.0;
 	return acos(n);
 }
-rnum Bikes::arcsin(rnum n)
+rnum arcsin(rnum n)
 {
 	if(n<=-1.0) return -PIdiv2;
 	if(n>=1.0) return PIdiv2;
@@ -60,19 +63,19 @@ rnum Bikes::arcsin(rnum n)
 //inline rnum DEG_to_RAD(rnum deg){return deg*DEG_IN_RAD;}
 //inline rnum RAD_to_DEG(rnum rad){return rad*RAD_IN_DEG;}
 
-bool Bikes::isEqual(rnum n1, rnum n2, rnum O)
+bool isEqual(rnum n1, rnum n2, rnum O)
 {
 	return ABS(n1-n2)<O;
 }
 
-bool Bikes::isEqualAngle(rnum a1, rnum a2)
+bool isEqualAngle(rnum a1, rnum a2)
 {
 	a1=normAngle_0_2PI(a1);
 	a2=normAngle_0_2PI(a2);
 	return isEqual(a1,a2,ANGLE_O);
 }
 
-rnum Bikes::normalDistribution( rnum x )
+rnum normalDistribution( rnum x )
 {
 	static const rnum m=1/sqrt(2*PI);
 	return m*pow(E,-x*x/2);
@@ -164,6 +167,6 @@ MathFunctionResult MathFunction::diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
 	return r;
 }
 
-
+}// Bikes
 
 /////////////////////////////////////////////////////

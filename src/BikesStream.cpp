@@ -1,5 +1,5 @@
-#include "BikesStream.h"
-#include "BasicGeometry.h"
+#include <Bikes/BikesStream.h>
+#include <Bikes/BasicGeometry.h>
 
 
 namespace Bikes

@@ -1,8 +1,8 @@
-#include "TestBikes.h"
-#include "ByteStream.h"
-#include "RawArray.h"
-#include "BikesStream.h"
-#include "BasicGeometry.h"
+#include <Bikes/TestBikes.h>
+#include <Bikes/ByteStream.h>
+#include <Bikes/RawArray.h>
+#include <Bikes/BikesStream.h>
+#include <Bikes/BasicGeometry.h>
 //#include "InterpolationFunc.h"
 //#include "QuickArray.h"
 
