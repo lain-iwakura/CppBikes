@@ -1,7 +1,7 @@
 #ifndef CPPBYKES_TYPES_H
 #define CPPBYKES_TYPES_H
 
-namespace CppBikes
+namespace Bikes
 {
 	typedef double RNUM;
 

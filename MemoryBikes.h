@@ -3,7 +3,7 @@
 
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 template<class T> 

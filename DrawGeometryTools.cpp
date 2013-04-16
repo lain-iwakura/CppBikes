@@ -1,6 +1,6 @@
 #include "DrawGeometryTools.h"
 
-namespace CppBikes
+namespace Bikes
 {
 
 

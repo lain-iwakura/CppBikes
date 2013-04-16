@@ -1,9 +1,9 @@
 #ifndef _CPPBIKES_BYTESTREAM_H_
 #define _CPPBIKES_BYTESTREAM_H_
-#include <CppBikes/RawArray.h>
+#include <Bikes/RawArray.h>
 
 
-namespace CppBikes
+namespace Bikes
 {
 	class ByteStream
 	{

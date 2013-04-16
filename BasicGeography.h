@@ -5,7 +5,7 @@
 
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 

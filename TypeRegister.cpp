@@ -1,6 +1,6 @@
 #include "TypeRegister.h"
 
-namespace CppBikes
+namespace Bikes
 {
 	int typeCount()
 	{

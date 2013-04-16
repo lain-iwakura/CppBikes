@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdlib.h>
 
-namespace CppBikes
+namespace Bikes
 {
 
 template<class T> class List //: public std::vector<T*>

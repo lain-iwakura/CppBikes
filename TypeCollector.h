@@ -2,7 +2,7 @@
 #define TYPECOLLECTOR_H
 #include <vector>
 
-namespace CppBikes
+namespace Bikes
 {
 	
 
@@ -334,6 +334,6 @@ namespace CppBikes
 // 	class TypeCollector<Collector>::TypeDataContainer
 
 
-}//CppBikes
+}//Bikes
 
 #endif //TYPECOLLECTOR_H

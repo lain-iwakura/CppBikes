@@ -2,7 +2,7 @@
 #include "BasicGeometry.h"
 
 
-namespace CppBikes
+namespace Bikes
 {
 	
 
@@ -100,4 +100,4 @@ namespace CppBikes
 		bstr << b->k.gz;
 	}
 
-} //CppBikes
+} //Bikes

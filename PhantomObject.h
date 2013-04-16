@@ -18,7 +18,7 @@
 //     using C_that<T>::Exist;
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 template<class T> class PhantomObject

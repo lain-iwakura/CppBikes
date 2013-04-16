@@ -1,9 +1,9 @@
 #ifndef _CPPBIKES_OBJECTSTREAM_H_
 #define _CPPBIKES_OBJECTSTREAM_H_
 
-#include <CppBikes/ByteStream.h>
+#include <Bikes/ByteStream.h>
 
-namespace CppBikes
+namespace Bikes
 {
 	template<class T>
 	class AbstractObjectStreamer

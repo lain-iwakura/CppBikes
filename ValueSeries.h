@@ -4,7 +4,7 @@
 #include "List.h"
 #include "BasicMath.h"
 
-namespace CppBikes
+namespace Bikes
 {
 
 template<class T>

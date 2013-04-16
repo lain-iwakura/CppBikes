@@ -1,7 +1,7 @@
 #include "Signals.h"
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 

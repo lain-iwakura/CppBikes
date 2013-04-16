@@ -1,9 +1,9 @@
 #ifndef _CPPBIKES_BIKESSTREAM_H_
 #define _CPPBIKES_BIKESSTREAM_H_
 
-#include <CppBikes/ObjectSream.h>
+#include <Bikes/ObjectSream.h>
 
-namespace CppBikes
+namespace Bikes
 {
 	class Point;
 	class Vector;
@@ -52,6 +52,6 @@ namespace CppBikes
 	{
 	};
 
-} // CppBikes
+} // Bikes
 
 #endif

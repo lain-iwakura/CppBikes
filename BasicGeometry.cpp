@@ -1,6 +1,6 @@
 #include "BasicGeometry.h"
 
-namespace CppBikes
+namespace Bikes
 {
 
 
@@ -888,14 +888,14 @@ void Basis::RemoveAll() const
  	points->clear();
 }
 
-Basis CppBikes::OrtoBasis_ByIJ(const Vector &bi,const Vector &bj){Basis b; b.SetOrtoBasis_ByIJ(bi,bj); return b;}	
-Basis CppBikes::OrtoBasisL_ByIJ(const Vector &bi, const Vector &bj){Basis b; b.SetOrtoBasisL_ByIJ(bi,bj); return b;}	
-Basis CppBikes::OrtoBasis_InXY_ByI(const Vector &bi){Basis b; b.SetOrtoBasis_InXY_ByI(bi); return b;}		
-Basis CppBikes::OrtoBasisL_InXY_ByI(const Vector &bi){Basis b; b.SetOrtoBasisL_InXY_ByI(bi); return b;}	
-Basis CppBikes::OrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY){Basis b; b.SetOrtoBasis_ByOXY(pO,pX,pY); return b;}	
+Basis Bikes::OrtoBasis_ByIJ(const Vector &bi,const Vector &bj){Basis b; b.SetOrtoBasis_ByIJ(bi,bj); return b;}	
+Basis Bikes::OrtoBasisL_ByIJ(const Vector &bi, const Vector &bj){Basis b; b.SetOrtoBasisL_ByIJ(bi,bj); return b;}	
+Basis Bikes::OrtoBasis_InXY_ByI(const Vector &bi){Basis b; b.SetOrtoBasis_InXY_ByI(bi); return b;}		
+Basis Bikes::OrtoBasisL_InXY_ByI(const Vector &bi){Basis b; b.SetOrtoBasisL_InXY_ByI(bi); return b;}	
+Basis Bikes::OrtoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY){Basis b; b.SetOrtoBasis_ByOXY(pO,pX,pY); return b;}	
 
 
-CylCoord CppBikes::ToCylCoord(const Point &p)
+CylCoord Bikes::ToCylCoord(const Point &p)
 {
 	CylCoord r;
 	r.z=p.z();
@@ -906,14 +906,14 @@ CylCoord CppBikes::ToCylCoord(const Point &p)
 	return r;
 }
 
-CylCoord CppBikes::ToCylCoord_Arc(const Point &p)
+CylCoord Bikes::ToCylCoord_Arc(const Point &p)
 {
 	CylCoord cc=ToCylCoord(p);
 	if(cc.a<0) cc.a+=2*PI;
 	return cc;
 }
 
-Point CppBikes::FromCylCoord_Arc(RNUM a, RNUM r, RNUM z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+Point Bikes::FromCylCoord_Arc(RNUM a, RNUM r, RNUM z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
 //Point FromCylCoord_Arc(TAngle &a, RNUM r, RNUM z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
 
 }

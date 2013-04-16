@@ -7,9 +7,8 @@
 #include "BasicMath.h"
 #include "PhantomObject.h"
 #include "List.h"
-#include "Bikes.h"
 
-namespace CppBikes
+namespace Bikes
 {
 
 

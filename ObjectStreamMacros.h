@@ -1,6 +1,6 @@
 #ifndef _CPPBIKES_OBJECTSTREAMMACROS_H_
 #define _CPPBIKES_OBJECTSTREAMMACROS_H_
-#include <CppBikes/MacrosBikes.h>
+#include <Bikes/MacrosBikes.h>
 
 #define CPPBIKES_OBJECTSTREAMER(ObjClass) ObjClass##Streamer
 #define CPPBIKES_OBJECTSTREAMER_BASEDECL(ObjClass,ReadActions,WriteActions) \
@@ -16,7 +16,7 @@ public:\
 
 //												(x,y,z)
 #define CPPBIKES_OBJECTSTREAMER_DECL(ObjClass, ValNameList )\
-namespace CppBikes{
+namespace Bikes{
 namespace Aux{
 	class Aux##ObjClass##Streamer: public ObjClass\
 	{\
@@ -43,7 +43,7 @@ namespace Aux{
 
 CPPBIKES_OBJECTSTREAMER_BASEDECL(Point,CPPBIKES_OBJECTSTREAMER_READACTIONS_3(gx,gy,gz),CPPBIKES_OBJECTSTREAMER_READACTIONS_3(gx,gy,gz))
 
-namespace CppBikes
+namespace Bikes
 {
 namespace Aux
 {

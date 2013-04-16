@@ -1,8 +1,8 @@
 #ifndef BIKES_DRAWGEOMETRYTOOLS_H
 #define BIKES_DRAWGEOMETRYTOOLS_H
 
-#include <CppBikes/BasicMath.h>
-#include <CppBikes/BasicGeometry.h>
+#include <Bikes/BasicMath.h>
+#include <Bikes/BasicGeometry.h>
 
 /**********************************************************************************************//**
  
@@ -18,7 +18,7 @@ y2	---|------|---				y
 
  **************************************************************************************************/
 
-namespace CppBikes
+namespace Bikes
 {	
 	struct ScreenPoint
 	{

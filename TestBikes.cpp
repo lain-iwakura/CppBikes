@@ -6,7 +6,7 @@
 //#include "InterpolationFunc.h"
 //#include "QuickArray.h"
 
-namespace CppBikes
+namespace Bikes
 {
 
 namespace Test

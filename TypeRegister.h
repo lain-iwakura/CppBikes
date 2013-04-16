@@ -1,9 +1,9 @@
 #ifndef TYPEREGISTER_H
 #define TYPEREGISTER_H
-#include <CppBikes/TypeCollector.h>
+#include <Bikes/TypeCollector.h>
 
 
-namespace CppBikes
+namespace Bikes
 {	
 
 //================================================================

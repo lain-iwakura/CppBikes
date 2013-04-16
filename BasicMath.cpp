@@ -1,56 +1,56 @@
 #include "BasicMath.h"
 
-using namespace CppBikes;
+using namespace Bikes;
 
-RNUM CppBikes::acosh(RNUM a)
+RNUM Bikes::acosh(RNUM a)
 {
 	if(ABS(a)<1) return 0;
 	return log(a+sqrt(a*a-1));
 }
 
-RNUM CppBikes::asinh(RNUM a)
+RNUM Bikes::asinh(RNUM a)
 {	
 	return log(a+sqrt(a*a+1));
 }
 
-RNUM CppBikes::not0(RNUM n, RNUM o/* =RNUM_O */)
+RNUM Bikes::not0(RNUM n, RNUM o/* =RNUM_O */)
 {
 	if(ABS(n)<o) return (n<0)?(-o):(o);
 	return n;
 }
 
-void CppBikes::not0set(RNUM &n, RNUM o/* =RNUM_O */)
+void Bikes::not0set(RNUM &n, RNUM o/* =RNUM_O */)
 {
 	if(ABS(n)<o) n=(n<0)?(-o):(o);
 }
 
-RNUM CppBikes::NormAngle(RNUM a)
+RNUM Bikes::NormAngle(RNUM a)
 {
 	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
 	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
 	return a;
 }
 
-RNUM CppBikes::NormAngle_0_2PI(RNUM a)
+RNUM Bikes::NormAngle_0_2PI(RNUM a)
 {
 	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
 	if(a<0.0) a+=PImult2;
 	return a;
 }
 
-RNUM CppBikes::signum(RNUM n)
+RNUM Bikes::signum(RNUM n)
 {
 	if(n<0.0) return -1.0;
 	return 1.0;
 }
 
-RNUM CppBikes::arccos(RNUM n)
+RNUM Bikes::arccos(RNUM n)
 {
 	if(n<=-1.0) return PI;
 	if(n>=1.0) return 0.0;
 	return acos(n);
 }
-RNUM CppBikes::arcsin(RNUM n)
+RNUM Bikes::arcsin(RNUM n)
 {
 	if(n<=-1.0) return -PIdiv2;
 	if(n>=1.0) return PIdiv2;
@@ -60,19 +60,19 @@ RNUM CppBikes::arcsin(RNUM n)
 //inline RNUM DEG_to_RAD(RNUM deg){return deg*DEG_IN_RAD;}
 //inline RNUM RAD_to_DEG(RNUM rad){return rad*RAD_IN_DEG;}
 
-bool CppBikes::isEqual(RNUM n1, RNUM n2, RNUM O)
+bool Bikes::isEqual(RNUM n1, RNUM n2, RNUM O)
 {
 	return ABS(n1-n2)<O;
 }
 
-bool CppBikes::isEqualAngle(RNUM a1, RNUM a2)
+bool Bikes::isEqualAngle(RNUM a1, RNUM a2)
 {
 	a1=NormAngle_0_2PI(a1);
 	a2=NormAngle_0_2PI(a2);
 	return isEqual(a1,a2,ANGLE_O);
 }
 
-RNUM CppBikes::NormalDistribution( RNUM x )
+RNUM Bikes::NormalDistribution( RNUM x )
 {
 	static const RNUM m=1/sqrt(2*PI);
 	return m*pow(E,-x*x/2);

@@ -19,17 +19,17 @@
 
 //#include "List.h"
 //#include "BasicMath.h"
-#include <CppBikes/Types.h>
-#include <CppBikes/List.h>
-#include <CppBikes/BasicMath.h>
+#include <Bikes/Types.h>
+#include <Bikes/List.h>
+#include <Bikes/BasicMath.h>
 
 //#define CPPBIKES_USE_TRANGLE
 
 #ifdef CPPBIKES_USE_TRANGLE
-#include <CppBikes/TrigonometricAngle.h>
+#include <Bikes/TrigonometricAngle.h>
 #endif
 
-namespace CppBikes
+namespace Bikes
 {
 
 class Basis; 

@@ -1,11 +1,11 @@
 #include "BasicGeography.h"
-#include <CppBikes/TrigonometricAngle.h>
+#include <Bikes/TrigonometricAngle.h>
 #include <stdio.h>
 #include <string>
 
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 
@@ -84,12 +84,12 @@ std::string DegMinSecAngle::toString(bool print_sign, bool print_zero) const
 
 
 
-Vector CppBikes::EllipseLamTan(const Point &p)
+Vector Bikes::EllipseLamTan(const Point &p)
 {
 	return (v_gk*p.v().e()).e();
 }
 
-Vector CppBikes::EllipsePhiTan(const Point &p)
+Vector Bikes::EllipsePhiTan(const Point &p)
 {
 	if(p.gz==0) return Vector(0,0,1,p);
 	Vector vrx(p.gx,p.gy,0);
@@ -103,24 +103,24 @@ Vector CppBikes::EllipsePhiTan(const Point &p)
 	vt.normalize();
 	return vt;
 }
-inline Point CppBikes::PhiLam_to_PointS( RNUM phi, RNUM lam )
+inline Point Bikes::PhiLam_to_PointS( RNUM phi, RNUM lam )
 {
 	return Point(GEO_R*cos(lam)*cos(phi),GEO_R*sin(lam)*cos(phi),GEO_R*sin(phi));
 }
 
-PhiLamCoord CppBikes::Point_to_PhiLamS( const Point &p )
+PhiLamCoord Bikes::Point_to_PhiLamS( const Point &p )
 {
 	return PhiLamCoord(asin(p.gz/GEO_R),acos(p.gx/sqrt(p.gx*p.gx+p.gy*p.gy))*signum(p.gy));
 }
 
 
-Point CppBikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
+Point Bikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
 {
 	return PhiLam_to_PointE(phi_lam.phi, phi_lam.lam);
 }
 
 
-Point CppBikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
+Point Bikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
 {
 	phi=NormAngle(phi);
 	lam=NormAngle(lam);
@@ -137,7 +137,7 @@ Point CppBikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
 }
 
 
-Point CppBikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
+Point Bikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
 {
 	//phi=NormAngle(phi);
 	//lam=NormAngle(lam);
@@ -154,7 +154,7 @@ Point CppBikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
 }
 
 
-PhiLamCoord CppBikes::Point_to_PhiLamE( const Point &p )
+PhiLamCoord Bikes::Point_to_PhiLamE( const Point &p )
 {
 	RNUM D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;
@@ -214,4 +214,4 @@ RNUM parallelR( RNUM phi )
 
 
 
-}//CppBikes
+}//Bikes

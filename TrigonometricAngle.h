@@ -1,9 +1,9 @@
 #ifndef CPPBIKES_TRIGONOMETRICANGLE_H
 #define CPPBIKES_TRIGONOMETRICANGLE_H
 
-#include <CppBikes/BasicMath.h>
+#include <Bikes/BasicMath.h>
 
-namespace CppBikes
+namespace Bikes
 {
 
 

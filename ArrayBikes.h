@@ -1,7 +1,7 @@
 #ifndef _CPPBIKES_ARRAYBIKES_H_
 #define _CPPBIKES_ARRAYBIKES_H_
 
-namespace CppBikes
+namespace Bikes
 {
 	template<class ArrT, class ItmT>
 	bool array_find(const ArrT & arr, int start_index, int end_index, const ItmT& itm, int *index=0)

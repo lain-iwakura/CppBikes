@@ -2,13 +2,13 @@
 #define BASICMATH_H
 #include <math.h>
 //#include "List.h"
-#include <CppBikes/List.h>
-#include <CppBikes/Types.h>
+#include <Bikes/List.h>
+#include <Bikes/Types.h>
 
 #define CPPBIKES_CONST_PI  3.1415926535897932384626433832795  // (double) 3.1415926535897932
 #define CPPBIKES_CONST_E   2.7182818284590452353602874713527  // (double) 2.7182818284590452
 
-namespace CppBikes
+namespace Bikes
 {
 
 //typedef double RNUM;

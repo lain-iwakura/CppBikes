@@ -1,7 +1,7 @@
 #ifndef _CPPBIKES_RAWARRAY_H_
 #define _CPPBIKES_RAWARRAY_H_
 
-namespace CppBikes
+namespace Bikes
 {
 
 template<class T>

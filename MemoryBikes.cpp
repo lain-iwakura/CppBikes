@@ -1,6 +1,6 @@
 #include "MemoryBikes.h"
 
-using namespace CppBikes;
+using namespace Bikes;
 
 
 

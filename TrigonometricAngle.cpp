@@ -1,7 +1,7 @@
 #include "TrigonometricAngle.h"
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 
@@ -306,7 +306,7 @@ TrAngle TrAngle::operator+( const TrAngleConst &ta )
 	return r;	
 }
 
-CppBikes::TrAngle TrAngle::operator-( TrAngle &ta )
+Bikes::TrAngle TrAngle::operator-( TrAngle &ta )
 {
 	TrAngle r;
 	r._mdat=MD_NULL;	
