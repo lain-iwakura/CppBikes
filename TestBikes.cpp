@@ -126,10 +126,10 @@ int func(int x, int y, int z)
 		int i=TESTMACROS(1,(1,2,3));
 
 
-//		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<RNUM>(2,3));
+//		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<rnum>(2,3));
 
 
-//		RNUM y=(*apln)(2);
+//		rnum y=(*apln)(2);
 
 //		delete apln;
 		return true;

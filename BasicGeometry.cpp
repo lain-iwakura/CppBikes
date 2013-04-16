@@ -8,7 +8,7 @@ namespace Bikes
 ////////////////////////// POINT /////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-Point::Point(RNUM plx, RNUM ply, RNUM plz, const Basis *b, bool notransient)
+Point::Point(rnum plx, rnum ply, rnum plz, const Basis *b, bool notransient)
 {
 	_transient=!notransient;
 	basis=0;
@@ -168,7 +168,7 @@ Point Point::inReplacedBasis(const Basis *b) const
 
 
 
-Point&  Point::Rotate_W(const Vector &w,RNUM a)
+Point&  Point::Rotate_W(const Vector &w,rnum a)
 {	
 	if(w.anchor!=*this)
 	{	
@@ -179,17 +179,17 @@ Point&  Point::Rotate_W(const Vector &w,RNUM a)
 }
 
 
-Point& Point::Rotate_X(RNUM a)
+Point& Point::Rotate_X(rnum a)
 {
 	if(basis) return Rotate_W(basis->i,a);
 	return Rotate_W(v_gi,a);
 }
-Point& Point::Rotate_Y(RNUM a)
+Point& Point::Rotate_Y(rnum a)
 {
 	if(basis) return Rotate_W(basis->j,a);
 	return Rotate_W(v_gj,a);
 }
-Point& Point::Rotate_Z(RNUM a)
+Point& Point::Rotate_Z(rnum a)
 {
 	if(basis) return Rotate_W(basis->k,a);
 	return Rotate_W(v_gk,a);
@@ -208,60 +208,60 @@ bool Point::operator !=(const Point &p) const
 	return !(*this==p);
 }
 
-RNUM Point::lx(const Basis *b) const 
+rnum Point::lx(const Basis *b) const 
 {	
 	if(b)return (gx - b->O.gx)*(b->i.gx) + (gy - b->O.gy)*(b->i.gy) + (gz - b->O.gz)*(b->i.gz);
 	return gx;
 }
 
-RNUM Point::ly(const Basis *b) const
+rnum Point::ly(const Basis *b) const
 {
 	if(b)return (gx - b->O.gx)*(b->j.gx) + (gy - b->O.gy)*(b->j.gy) + (gz - b->O.gz)*(b->j.gz);
 	return gy;
 }
 
-RNUM Point::lz(const Basis *b) const 
+rnum Point::lz(const Basis *b) const 
 {
 	if(b) return (gx - b->O.gx)*(b->k.gx) + (gy - b->O.gy)*(b->k.gy) + (gz - b->O.gz)*(b->k.gz);
 	return gz;
 }
 
-RNUM Point::lx(const Basis &b) const 
+rnum Point::lx(const Basis &b) const 
 {	
 	return (gx - b.O.gx)*(b.i.gx) + (gy - b.O.gy)*(b.i.gy) + (gz - b.O.gz)*(b.i.gz);	
 }
 
-RNUM Point::ly(const Basis &b) const
+rnum Point::ly(const Basis &b) const
 {
 	return (gx - b.O.gx)*(b.j.gx) + (gy - b.O.gy)*(b.j.gy) + (gz - b.O.gz)*(b.j.gz);	
 }
 
-RNUM Point::lz(const Basis &b) const 
+rnum Point::lz(const Basis &b) const 
 {
 	return (gx - b.O.gx)*(b.k.gx) + (gy - b.O.gy)*(b.k.gy) + (gz - b.O.gz)*(b.k.gz);	
 }
 
-RNUM Point::x() const {return lx(basis);}
-RNUM Point::y() const {return ly(basis);}
-RNUM Point::z() const {return lz(basis);}
+rnum Point::x() const {return lx(basis);}
+rnum Point::y() const {return ly(basis);}
+rnum Point::z() const {return lz(basis);}
 
-Point& Point::Set(RNUM px, RNUM py,RNUM pz, const Basis *b)
+Point& Point::Set(rnum px, rnum py,rnum pz, const Basis *b)
 {
 	*this=Point(px,py,pz,b,true);
 	return *this;
 }
-Point& Point::SetGlobal(RNUM pgx, RNUM pgy, RNUM pgz)
+Point& Point::SetGlobal(rnum pgx, rnum pgy, rnum pgz)
 {
 	gx=pgx;gy=pgy;gz=pgz;
 	return *this;
 }
-Point& Point::SetLocal(RNUM localx, RNUM localy, RNUM localz)
+Point& Point::SetLocal(rnum localx, rnum localy, rnum localz)
 {
 	if(basis) *this=Point(localx,localy,localz,basis);	
 	else {gx=localx; gy=localy; gz=localz;}
 	return *this;
 }
-Point& Point::SetLocalX(RNUM localx)
+Point& Point::SetLocalX(rnum localx)
 {
 	if(basis)
 	{
@@ -270,7 +270,7 @@ Point& Point::SetLocalX(RNUM localx)
 	}else gx=localx;	
 	return *this;
 }
-Point& Point::SetLocalY(RNUM localy)
+Point& Point::SetLocalY(rnum localy)
 {
 	if(basis)
 	{
@@ -279,7 +279,7 @@ Point& Point::SetLocalY(RNUM localy)
 	}else gy=localy;
 	return *this;
 }
-Point& Point::SetLocalZ(RNUM localz)
+Point& Point::SetLocalZ(rnum localz)
 {
 	if(basis)
 	{
@@ -290,26 +290,26 @@ Point& Point::SetLocalZ(RNUM localz)
 }
 
 
-bool Point::isEqual(const Point &p1, const Point &p2, RNUM e)
+bool Point::isEqual(const Point &p1, const Point &p2, rnum e)
 {
 	if(e==0) return p1.gx==p2.gx&&p1.gy==p2.gy&&p1.gz==p2.gz;
 	return isEqual(p1.gx,p2.gx,e)&&isEqual(p1.gy,p2.gy,e)&&isEqual(p1.gz,p2.gz,e);
 }
 
 
-RNUM Point::PolarR() const
+rnum Point::PolarR() const
 {
-	RNUM px=x();
-	RNUM py=y();
+	rnum px=x();
+	rnum py=y();
 	return sqrt(px*px+py*py);
 }
 
-RNUM Point::PolarAlpha() const
+rnum Point::PolarAlpha() const
 {
-	RNUM px=x();
-	RNUM py=y();
-	RNUM l=sqrt(px*px+py*py);
-	RNUM a=arccos(px/l);
+	rnum px=x();
+	rnum py=y();
+	rnum l=sqrt(px*px+py*py);
+	rnum a=arccos(px/l);
 	if(py<0) a=2*PI-a;
 	return a;
 }
@@ -329,7 +329,7 @@ bool Point::isTransient() const
 //////////////////////////////////////////////////////////////////////////
 
 
-Vector::Vector(RNUM vx, RNUM vy, RNUM vz, const Point &fp,const Basis *b, bool notransient)
+Vector::Vector(rnum vx, rnum vy, rnum vz, const Point &fp,const Basis *b, bool notransient)
 :anchor(true,fp,notransient)
 {
 	_transient=!notransient;
@@ -424,12 +424,12 @@ Vector Vector::operator +(const Vector &v) const { return Vector(gx+v.gx,gy+v.gy
 Vector Vector::operator -(const Vector &v) const { return Vector(gx-v.gx,gy-v.gy,gz-v.gz,anchor,0,false);}
 void Vector::operator += (const Vector &v){ gx+=v.gx; gy+=v.gy; gz+=v.gz;}
 void Vector::operator -= (const Vector &v){ gx-=v.gx; gy-=v.gy; gz-=v.gz;}
-RNUM Vector::operator &(const Vector &v)const {return v.gx*gx+v.gy*gy+v.gz*gz;}
+rnum Vector::operator &(const Vector &v)const {return v.gx*gx+v.gy*gy+v.gz*gz;}
 Vector Vector::operator *(const Vector &v)const { return Vector(gy*v.gz-gz*v.gy,gz*v.gx-gx*v.gz,gx*v.gy-gy*v.gx,anchor,0,false);}
-Vector Vector::operator *(RNUM n)const {return Vector(gx*n,gy*n,gz*n,anchor,0,false);}
-Vector Vector::operator /(RNUM n)const {not0set(n); return Vector(gx/n,gy/n,gz/n,anchor,0,false);}
-void Vector::operator *=(RNUM n){gx*=n;gy*=n;gz*=n;}
-void Vector::operator /=(RNUM n){not0set(n); gx/=n; gy/=n; gz/=n;}
+Vector Vector::operator *(rnum n)const {return Vector(gx*n,gy*n,gz*n,anchor,0,false);}
+Vector Vector::operator /(rnum n)const {not0set(n); return Vector(gx/n,gy/n,gz/n,anchor,0,false);}
+void Vector::operator *=(rnum n){gx*=n;gy*=n;gz*=n;}
+void Vector::operator /=(rnum n){not0set(n); gx/=n; gy/=n; gz/=n;}
 bool Vector::operator ==(const Vector &v)const {return (ABS(v.gx-gx)<METRIC_O)&&(ABS(v.gy-gy)<METRIC_O)&&(ABS(v.gz-gz)<METRIC_O);}
 bool Vector::operator !=(const Vector &v)const {return !(*this==v);}
 Vector Vector::operator -() const {return (*this)*(-1);}
@@ -442,7 +442,7 @@ Basis Vector::operator && (const Point &p) const {return OrtoBasis_ByIJ(*this,Ve
 #ifdef CPPBIKES_USE_TRANGLE
 TrAngle Vector::operator ^ (const Vector &v) const {return Angle(*this,v);}
 #else
-RNUM Vector::operator ^ (const Vector &v) const {return Angle(*this,v);}
+rnum Vector::operator ^ (const Vector &v) const {return Angle(*this,v);}
 #endif
 Vector Vector::operator [] (const Basis &b) const {return inBasis(&b);}
 Vector Vector::operator [] (const Basis *b) const {return inBasis(b);}
@@ -455,7 +455,7 @@ bool Vector::operator < (const Vector &v) const {return length()<v.length();}
 
 Point Vector::destination() const {Point p(anchor.gx+gx,anchor.gy+gy,anchor.gz+gz,0,false); p.SetBasis(basis); return p;}
 Vector Vector::e() const {return Vector(true,(*this)/length(),false);}
-RNUM Vector::length() const {return sqrt(gx*gx+gy*gy+gz*gz);}
+rnum Vector::length() const {return sqrt(gx*gx+gy*gy+gz*gz);}
 Vector& Vector::normalize(){*this/=length(); return *this;}
 
 Vector& Vector::SetGlobalBasis()
@@ -511,19 +511,19 @@ Vector Vector::inGlobalBasis()const {Vector rv(true,*this,false);rv.SetGlobalBas
 Vector Vector::inReplacedBasis(const Basis *b)const {Vector rv(true,*this,false); rv.ReplaceBasis(b); return rv;}
 
 
-Vector& Vector::rotate_W(const Vector &w, RNUM a) //+?
+Vector& Vector::rotate_W(const Vector &w, rnum a) //+?
 {	
 	if(!isParallel(*this,w))
 	{
-		RNUM wl=w.length();
+		rnum wl=w.length();
 		Vector ew=w/wl;
-		RNUM l=length();		
-		RNUM zsh=ew&(*this);
-		RNUM rsh=sqrt(l*l-zsh*zsh);
+		rnum l=length();		
+		rnum zsh=ew&(*this);
+		rnum rsh=sqrt(l*l-zsh*zsh);
 		Vector vzsh=ew*zsh;
 		Vector vrsh=*this-vzsh;
 		a=NormAngle(a);
-		RNUM aa=ABS(a);
+		rnum aa=ABS(a);
 		int sa=a>0?1:-1;
 		aa=NormAngle(aa);
 		while(aa>=PI/2){aa-=PI/2;vrsh=ew*vrsh*sa;}
@@ -542,19 +542,19 @@ Vector& Vector::rotate_W(const Vector &w, RNUM a) //+?
 }
 
 
-Vector& Vector::rotateWithoutFulcrum_W(const Vector &w, RNUM a) //+?
+Vector& Vector::rotateWithoutFulcrum_W(const Vector &w, rnum a) //+?
 {	
 	if(!isParallel(*this,w))
 	{
-		RNUM wl=w.length();
+		rnum wl=w.length();
 		Vector ew=w/wl;
-		RNUM l=length();		
-		RNUM zsh=ew&(*this);
-		RNUM rsh=sqrt(l*l-zsh*zsh);
+		rnum l=length();		
+		rnum zsh=ew&(*this);
+		rnum rsh=sqrt(l*l-zsh*zsh);
 		Vector vzsh=ew*zsh;
 		Vector vrsh=*this-vzsh;
 		a=NormAngle(a);
-		RNUM aa=ABS(a);
+		rnum aa=ABS(a);
 		int sa=a>0?1:-1;
 		while(aa>=PI/2){aa-=PI/2;vrsh=ew*vrsh*sa;}
 		if(aa>PI/4){aa-=PI/4; vrsh=((ew*vrsh*sa)+vrsh).e()*rsh;}
@@ -566,17 +566,17 @@ Vector& Vector::rotateWithoutFulcrum_W(const Vector &w, RNUM a) //+?
 }
 
 
-Vector& Vector::rotate_X(RNUM a)
+Vector& Vector::rotate_X(rnum a)
 {
 	if(basis) return rotate_W(basis->i,a);
 	return rotate_W(Vector(1,0,0),a);
 }
-Vector& Vector::rotate_Y(RNUM a)
+Vector& Vector::rotate_Y(rnum a)
 {
 	if(basis) return rotate_W(basis->j,a);
 	return rotate_W(Vector(0,1,0),a);
 }
-Vector& Vector::rotate_Z(RNUM a)
+Vector& Vector::rotate_Z(rnum a)
 {
 	if(basis) return rotate_W(basis->k,a);
 	return rotate_W(Vector(0,0,1),a);
@@ -588,7 +588,7 @@ TrAngle Vector::Angle(const Vector &v1, const Vector &v2)
 	return TrAngle(v1.e()&v2.e());
 }
 #else
-RNUM Vector::Angle(const Vector &v1, const Vector &v2) 
+rnum Vector::Angle(const Vector &v1, const Vector &v2) 
 {
 	return arccos(v1.e()&v2.e());
 }
@@ -599,7 +599,7 @@ Point Vector::Intersection(const Vector &v) const//+?
 {
 	if(isParallel(*this,v))  return Point(false);
 	Basis b; b.SetOrtoBasis_ByIJ(*this,v);
-	RNUM a=Angle(v);
+	rnum a=Angle(v);
 	//v.SetBasis(&b); 		
 	Point rp(v.anchor.lx(&b)-v.anchor.ly(&b)/tan(a),0,0,&b,false); rp.SetGlobalBasis(); //!
 	return rp;
@@ -607,12 +607,12 @@ Point Vector::Intersection(const Vector &v) const//+?
 
 bool Vector::isParallel(const Vector &v1, const Vector &v2) // +
 {
-	RNUM v1v2=v1.e()&v2.e();
+	rnum v1v2=v1.e()&v2.e();
 	if(isEqual(ABS(v1v2),1,METRIC_O)) return true;
 	return false;
 }
 
-RNUM Vector::ParallelDistance(const Vector &v1, const Vector &v2) //+?
+rnum Vector::ParallelDistance(const Vector &v1, const Vector &v2) //+?
 {
 //	if(!isParallel(v1,v2)) return 0;
     Basis b(v1&&v2.anchor);
@@ -627,46 +627,46 @@ Vector& Vector::invert()
 }
 
 /// + + +
-RNUM Vector::x()const {/*if(basis)*/ return lx(basis); /*return gx;*/}
-RNUM Vector::y()const {/*if(basis)*/ return ly(basis); /*return gy;*/}
-RNUM Vector::z()const {/*if(basis)*/ return lz(basis); /*return gz;*/}
+rnum Vector::x()const {/*if(basis)*/ return lx(basis); /*return gx;*/}
+rnum Vector::y()const {/*if(basis)*/ return ly(basis); /*return gy;*/}
+rnum Vector::z()const {/*if(basis)*/ return lz(basis); /*return gz;*/}
 
-RNUM Vector::lx(const Basis *b) const
+rnum Vector::lx(const Basis *b) const
 {
 	if(b) return b->i&(*this);
 	return gx;
 }
-RNUM Vector::ly(const Basis *b) const
+rnum Vector::ly(const Basis *b) const
 {
 	if(b) return b->j&(*this);
 	return gy;
 }
-RNUM Vector::lz(const Basis *b) const
+rnum Vector::lz(const Basis *b) const
 {
 	if(b) return b->k&(*this);
 	return gz;
 }
 
-RNUM Vector::lx(const Basis &b) const
+rnum Vector::lx(const Basis &b) const
 {
 	return b.i&(*this);	
 }
-RNUM Vector::ly(const Basis &b) const
+rnum Vector::ly(const Basis &b) const
 {
 	return b.j&(*this);	
 }
-RNUM Vector::lz(const Basis &b) const
+rnum Vector::lz(const Basis &b) const
 {
 	return b.k&(*this);	
 }
 
-Vector& Vector::SetGlobal(RNUM vgx, RNUM vgy, RNUM vgz)
+Vector& Vector::SetGlobal(rnum vgx, rnum vgy, rnum vgz)
 {
 	gx=vgx; gy=vgy; gz=vgz;
 	return *this;
 }
 
-Vector& Vector::SetLocal(RNUM localx, RNUM localy, RNUM localz)
+Vector& Vector::SetLocal(rnum localx, rnum localy, rnum localz)
 {
 	if(basis)
 	{
@@ -676,7 +676,7 @@ Vector& Vector::SetLocal(RNUM localx, RNUM localy, RNUM localz)
 	return *this;
 }
 
-Vector& Vector::SetLocalX(RNUM localx)
+Vector& Vector::SetLocalX(rnum localx)
 {
 	if(basis)
 	{	
@@ -686,7 +686,7 @@ Vector& Vector::SetLocalX(RNUM localx)
 	return *this;
 }
 
-Vector& Vector::SetLocalY(RNUM localy)
+Vector& Vector::SetLocalY(rnum localy)
 {
 	if(basis)
 	{	
@@ -696,7 +696,7 @@ Vector& Vector::SetLocalY(RNUM localy)
 	return *this;
 }
 
-Vector& Vector::SetLocalZ(RNUM localz)
+Vector& Vector::SetLocalZ(rnum localz)
 {
 	if(basis)
 	{	
@@ -713,21 +713,21 @@ bool Vector::isRightVectors(Vector v1, Vector v2, Vector v3/* =Vector(0,0,1) */)
 }
 
 
-RNUM Vector::Lamda()
+rnum Vector::Lamda()
 {
-	RNUM xx=x();
-	RNUM yy=y();
+	rnum xx=x();
+	rnum yy=y();
 	return arccos(xx/(sqrt(xx*xx+yy*yy)))*signum(yy);
 }
 
-RNUM Vector::Lamda2PI()
+rnum Vector::Lamda2PI()
 {
-	RNUM xx=x();
-	RNUM yy=y();
+	rnum xx=x();
+	rnum yy=y();
 	return (yy>0) ? (arccos(xx/(sqrt(xx*xx+yy*yy)))) : (2*PI-arccos(xx/(sqrt(xx*xx+yy*yy))));
 }
 
-RNUM Vector::Phi()
+rnum Vector::Phi()
 {
 	return arcsin(z()/length());
 }
@@ -747,14 +747,14 @@ Point Vector::RangeIntersection( const Vector &v ) const
 	Point rp=Intersection(v);
 	if(rp.isNull()) return rp;
 	Vector v1(anchor,rp);
-	RNUM v1tv=v1&e();
+	rnum v1tv=v1&e();
 	if(v1tv<0||v1tv>this->length()) 
 	{
 		//rp._null=true;
 		return Point(false,rp);
 	}else
 	{
-		RNUM v1v=v1&v.e();
+		rnum v1v=v1&v.e();
 		if(v1v<0||v1v>v.length()) return Point(false,rp);
 	}
 	return rp;
@@ -899,7 +899,7 @@ CylCoord Bikes::ToCylCoord(const Point &p)
 {
 	CylCoord r;
 	r.z=p.z();
-	RNUM lx=p.x(), ly=p.y();
+	rnum lx=p.x(), ly=p.y();
 	r.r=sqrt(lx*lx+ly*ly);
 	r.a=arccos(lx/r.r);
 	if(ly<0) r.a*=-1;
@@ -913,7 +913,7 @@ CylCoord Bikes::ToCylCoord_Arc(const Point &p)
 	return cc;
 }
 
-Point Bikes::FromCylCoord_Arc(RNUM a, RNUM r, RNUM z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
-//Point FromCylCoord_Arc(TAngle &a, RNUM r, RNUM z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+Point Bikes::FromCylCoord_Arc(rnum a, rnum r, rnum z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+//Point FromCylCoord_Arc(TAngle &a, rnum r, rnum z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
 
 }

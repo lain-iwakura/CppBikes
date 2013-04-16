@@ -5,7 +5,7 @@ namespace Bikes
 {
 
 
-TrAngleConst::TrAngleConst( RNUM ang_rad )
+TrAngleConst::TrAngleConst( rnum ang_rad )
 {
 	TrAngle ang(ang_rad);
 	rad_val=ang_rad;
@@ -14,7 +14,7 @@ TrAngleConst::TrAngleConst( RNUM ang_rad )
 	tan_val=ang.tan();
 }
 
-TrAngleConst::TrAngleConst( RNUM _rad_val/*=0*/,RNUM _sin_val/*=0*/, RNUM _cos_val/*=1*/, RNUM _tan_val/*=0*/ ) :
+TrAngleConst::TrAngleConst( rnum _rad_val/*=0*/,rnum _sin_val/*=0*/, rnum _cos_val/*=1*/, rnum _tan_val/*=0*/ ) :
 rad_val(_rad_val),sin_val(_sin_val),cos_val(_cos_val),tan_val(_tan_val)
 {
 
@@ -27,7 +27,7 @@ rad_val(0),sin_val(0),cos_val(1),tan_val(0)
 }
 
 
-TrAngleConst& TrAngleConst::operator=( RNUM ang_rad )
+TrAngleConst& TrAngleConst::operator=( rnum ang_rad )
 {
 	TrAngle ang(ang_rad);
 	rad_val=ang_rad;
@@ -37,7 +37,7 @@ TrAngleConst& TrAngleConst::operator=( RNUM ang_rad )
 	return *this;
 }
 
-TrAngleConst::operator RNUM () const
+TrAngleConst::operator rnum () const
 {
 	return rad_val;
 }
@@ -45,12 +45,12 @@ TrAngleConst::operator RNUM () const
 
 
 
-TrAngle::TrAngle(RNUM cos_val, bool sin_negative)
+TrAngle::TrAngle(rnum cos_val, bool sin_negative)
 {
 	setCos(cos_val,sin_negative);
 }
 
-TrAngle::TrAngle( RNUM ang_rad )
+TrAngle::TrAngle( rnum ang_rad )
 {
 	setRad(ang_rad);
 }
@@ -60,7 +60,7 @@ TrAngle::TrAngle()
 	setCos(1.0,false);
 }
 
-TrAngle::TrAngle( RNUM rad_val, RNUM sin_val, RNUM cos_val, RNUM tan_val, char mdat ):
+TrAngle::TrAngle( rnum rad_val, rnum sin_val, rnum cos_val, rnum tan_val, char mdat ):
 _mdat(mdat),
 _sin(sin_val),
 _cos(cos_val),
@@ -73,11 +73,11 @@ _rad(rad_val)
 
 
 
-void TrAngle::setRad(RNUM rad)
+void TrAngle::setRad(rnum rad)
 {
 	_mdat=MD_RADCALC;
 	_rad=rad;
-	RNUM na=NormAngle(rad);
+	rnum na=NormAngle(rad);
 	if(na<0)
 	{
 		_mdat|=MD_SINM;
@@ -85,13 +85,13 @@ void TrAngle::setRad(RNUM rad)
 	}else if(na>PIdiv2) _mdat|=MD_COSM;	
 }
 
-void TrAngle::setDeg(RNUM deg)
+void TrAngle::setDeg(rnum deg)
 {
 	setRad(DEG_to_RAD(deg));
 }
 
 
-void TrAngle::setCos(RNUM cos_val, bool sin_negative)
+void TrAngle::setCos(rnum cos_val, bool sin_negative)
 {
 	_mdat=MD_COSCALC;
 	if(sin_negative)_mdat|=MD_SINM;
@@ -99,14 +99,14 @@ void TrAngle::setCos(RNUM cos_val, bool sin_negative)
 	_cos=cos_val;
 }
 
-void TrAngle::setSin(RNUM sin_val, bool cos_negative)
+void TrAngle::setSin(rnum sin_val, bool cos_negative)
 {
 	_mdat=MD_SINCALC;
 	if(cos_negative)_mdat|=MD_COSM;
 	if(sin_val<0) _mdat|=MD_SINM;
 	_sin=sin_val;
 }
-void TrAngle::setTan(RNUM tan_val, bool cos_negative)
+void TrAngle::setTan(rnum tan_val, bool cos_negative)
 {
 	_mdat=MD_TANCALC;
 	if(cos_negative) _mdat|=MD_COSM;
@@ -118,7 +118,7 @@ void TrAngle::setTan(RNUM tan_val, bool cos_negative)
 }
 
 
-RNUM TrAngle::sin()
+rnum TrAngle::sin()
 {
 	if(_mdat&MD_SINCALC) return _sin;
 	_mdat|=MD_SINCALC;
@@ -143,7 +143,7 @@ RNUM TrAngle::sin()
 	}
 	return _sin;
 }
-RNUM TrAngle::cos()
+rnum TrAngle::cos()
 {
 	if(_mdat&MD_COSCALC) return _cos;
 	_mdat|=MD_COSCALC;
@@ -168,14 +168,14 @@ RNUM TrAngle::cos()
 	}	
 	return _cos;
 }
-RNUM TrAngle::tg()
+rnum TrAngle::tg()
 {
 	if(_mdat&MD_TANCALC) return _tan;
 	_mdat|=MD_TANCALC;
 
 	if(_mdat&MD_TRCALC)
 	{		
-		RNUM co=cos();
+		rnum co=cos();
 		if(co==0) _tan=RNUM_INFINITY;
 		else _tan=sin()/co;
 		
@@ -189,7 +189,7 @@ RNUM TrAngle::tg()
 	_mdat|=MD_TRCALC;
 	return _tan;
 }
-RNUM TrAngle::rad()
+rnum TrAngle::rad()
 {
 	if(_mdat&MD_RADCALC) return _rad;
 	_mdat|=MD_RADCALC;
@@ -224,16 +224,16 @@ RNUM TrAngle::rad()
 	}
 	return _rad;
 }
-RNUM TrAngle::deg()
+rnum TrAngle::deg()
 {
 	return RAD_to_DEG(rad());
 }
 
-RNUM TrAngle::sSin()
+rnum TrAngle::sSin()
 {	
 	return (_mdat&MD_SINM)?(-1.0):(1.0);
 }
-RNUM TrAngle::sCos()
+rnum TrAngle::sCos()
 {
 	return (_mdat&MD_COSM)?(-1.0):(1.0);
 }
@@ -249,20 +249,20 @@ TrAngle TrAngle::operator+ (TrAngle &ta )
 		if((ta._mdat&_mdat&MD_TRCALC))
 		{
 			r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-			RNUM s=sin();
-			RNUM c=cos();
-			RNUM s_=ta.sin();
-			RNUM c_=ta.cos();
+			rnum s=sin();
+			rnum c=cos();
+			rnum s_=ta.sin();
+			rnum c_=ta.cos();
 			r._cos=c*c_-s*s_; //~?
 			r._sin=s*c_+c*s_; //~?			
 		}
 	}else
 	{
 		r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-		RNUM s=sin();
-		RNUM c=cos();
-		RNUM s_=ta.sin();
-		RNUM c_=ta.cos();
+		rnum s=sin();
+		rnum c=cos();
+		rnum s_=ta.sin();
+		rnum c_=ta.cos();
 		r._cos=c*c_-s*s_; //~?
 		r._sin=s*c_+c*s_; //~?	
 		if(r._cos<0)r._mdat|=MD_COSM;
@@ -283,20 +283,20 @@ TrAngle TrAngle::operator+( const TrAngleConst &ta )
 		if(_mdat&MD_TRCALC)
 		{
 			r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-			RNUM s=sin();
-			RNUM c=cos();
-			RNUM s_=ta.sin_val;
-			RNUM c_=ta.cos_val;
+			rnum s=sin();
+			rnum c=cos();
+			rnum s_=ta.sin_val;
+			rnum c_=ta.cos_val;
 			r._cos=c*c_-s*s_; //~?
 			r._sin=s*c_+c*s_; //~?	
 		}
 	}else
 	{
 		r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-		RNUM s=sin();
-		RNUM c=cos();
-		RNUM s_=ta.sin_val;
-		RNUM c_=ta.cos_val;
+		rnum s=sin();
+		rnum c=cos();
+		rnum s_=ta.sin_val;
+		rnum c_=ta.cos_val;
 		r._cos=c*c_-s*s_; //~?
 		r._sin=s*c_+c*s_; //~?	
 		if(r._cos<0)r._mdat|=MD_COSM;
@@ -316,20 +316,20 @@ Bikes::TrAngle TrAngle::operator-( TrAngle &ta )
 		if((ta._mdat&_mdat&MD_TRCALC))
 		{
 			r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-			RNUM s=sin();
-			RNUM c=cos();
-			RNUM s_=ta.sin();
-			RNUM c_=ta.cos();
+			rnum s=sin();
+			rnum c=cos();
+			rnum s_=ta.sin();
+			rnum c_=ta.cos();
 			r._cos=c*c_+s*s_; //~?
 			r._sin=s*c_-c*s_; //~?		
 		}
 	}else
 	{
 		r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-		RNUM s=sin();
-		RNUM c=cos();
-		RNUM s_=ta.sin();
-		RNUM c_=ta.cos();
+		rnum s=sin();
+		rnum c=cos();
+		rnum s_=ta.sin();
+		rnum c_=ta.cos();
 		r._cos=c*c_+s*s_; //~?
 		r._sin=s*c_-c*s_; //~?	
 		if(r._cos<0)r._mdat|=MD_COSM;
@@ -353,10 +353,10 @@ void TrAngle::operator+=( TrAngle &ta )
 		if(ta._mdat&_mdat&MD_TRCALC)
 		{			
 			_rad+=ta._rad;	
-			RNUM c=cos();
-			RNUM s=sin();
-			RNUM c_=ta.cos();
-			RNUM s_=ta.sin();
+			rnum c=cos();
+			rnum s=sin();
+			rnum c_=ta.cos();
+			rnum s_=ta.sin();
 			_cos=c*c_-s*s_; //~?
 			_sin=s*c_+c*s_; //~?
 			if(_cos<0)_mdat|=MD_COSM;
@@ -370,10 +370,10 @@ void TrAngle::operator+=( TrAngle &ta )
 	}else
 	{
 		_mdat&=MD_NRADCALC;
-		RNUM c=cos();
-		RNUM s=sin();
-		RNUM c_=ta.cos();
-		RNUM s_=ta.sin();
+		rnum c=cos();
+		rnum s=sin();
+		rnum c_=ta.cos();
+		rnum s_=ta.sin();
 		_cos=c*c_-s*s_; //~?
 		_sin=s*c_+c*s_; //~?
 		if(_cos<0)_mdat|=MD_COSM;
@@ -391,10 +391,10 @@ void TrAngle::operator+=( const TrAngleConst &ta )
 		if( _mdat&MD_TRCALC )
 		{		
 			_rad+=ta.rad_val;	
-			RNUM c=cos();
-			RNUM s=sin();
-			RNUM c_=ta.cos_val;
-			RNUM s_=ta.sin_val;
+			rnum c=cos();
+			rnum s=sin();
+			rnum c_=ta.cos_val;
+			rnum s_=ta.sin_val;
 			_cos=c*c_-s*s_; //~?
 			_sin=s*c_+c*s_; //~?
 			if(_cos<0)_mdat|=MD_COSM;
@@ -407,10 +407,10 @@ void TrAngle::operator+=( const TrAngleConst &ta )
 		}
 	}else
 	{
-		RNUM c=cos();
-		RNUM s=sin();
-		RNUM c_=ta.cos_val;
-		RNUM s_=ta.sin_val;
+		rnum c=cos();
+		rnum s=sin();
+		rnum c_=ta.cos_val;
+		rnum s_=ta.sin_val;
 		_cos=c*c_-s*s_; //~?
 		_sin=s*c_+c*s_; //~?
 		if(_cos<0)_mdat|=MD_COSM;
@@ -433,10 +433,10 @@ void TrAngle::operator-=( TrAngle &ta )
 		if(ta._mdat&_mdat&MD_TRCALC)
 		{	
 			_rad-=ta._rad;	
-			RNUM c=cos();
-			RNUM s=sin();
-			RNUM c_=ta.cos();
-			RNUM s_=ta.sin();
+			rnum c=cos();
+			rnum s=sin();
+			rnum c_=ta.cos();
+			rnum s_=ta.sin();
 			_cos=c*c_+s*s_; //~?
 			_sin=s*c_-c*s_; //~?
 			if(_cos<0)_mdat|=MD_COSM;
@@ -451,10 +451,10 @@ void TrAngle::operator-=( TrAngle &ta )
 	else
 	{
 		_mdat&=MD_NRADCALC;
-		RNUM c=cos();
-		RNUM s=sin();
-		RNUM c_=ta.cos();
-		RNUM s_=ta.sin();
+		rnum c=cos();
+		rnum s=sin();
+		rnum c_=ta.cos();
+		rnum s_=ta.sin();
 		_cos=c*c_+s*s_; //~?
 		_sin=s*c_-c*s_; //~?
 		if(_cos<0)_mdat|=MD_COSM;
@@ -473,10 +473,10 @@ void TrAngle::operator-=( const TrAngleConst &ta )
 		if(_mdat&MD_TRCALC)
 		{	
 			_rad-=ta.rad_val;	
-			RNUM c=cos();
-			RNUM s=sin();
-			RNUM c_=ta.cos_val;
-			RNUM s_=ta.sin_val;
+			rnum c=cos();
+			rnum s=sin();
+			rnum c_=ta.cos_val;
+			rnum s_=ta.sin_val;
 			_cos=c*c_+s*s_; //~?
 			_sin=s*c_-c*s_; //~?
 			if(_cos<0)_mdat|=MD_COSM;
@@ -491,10 +491,10 @@ void TrAngle::operator-=( const TrAngleConst &ta )
 	else
 	{
 		_mdat&=MD_NRADCALC;
-		RNUM c=cos();
-		RNUM s=sin();
-		RNUM c_=ta.cos_val;
-		RNUM s_=ta.sin_val;
+		rnum c=cos();
+		rnum s=sin();
+		rnum c_=ta.cos_val;
+		rnum s_=ta.sin_val;
 		_cos=c*c_+s*s_; //~?
 		_sin=s*c_-c*s_; //~?
 		if(_cos<0)_mdat|=MD_COSM;
@@ -514,20 +514,20 @@ TrAngle TrAngle::operator-( const TrAngleConst &ta )
 		if(_mdat&MD_TRCALC)
 		{
 			r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-			RNUM s=sin();
-			RNUM c=cos();
-			RNUM s_=ta.sin_val;
-			RNUM c_=ta.cos_val;
+			rnum s=sin();
+			rnum c=cos();
+			rnum s_=ta.sin_val;
+			rnum c_=ta.cos_val;
 			r._cos=c*c_+s*s_; //~?
 			r._sin=s*c_-c*s_; //~?		
 		}
 	}else
 	{
 		r._mdat|=MD_SINCALC|MD_COSCALC|MD_TRCALC;
-		RNUM s=sin();
-		RNUM c=cos();
-		RNUM s_=ta.sin_val;
-		RNUM c_=ta.cos_val;
+		rnum s=sin();
+		rnum c=cos();
+		rnum s_=ta.sin_val;
+		rnum c_=ta.cos_val;
 		r._cos=c*c_+s*s_; //~?
 		r._sin=s*c_-c*s_; //~?	
 		if(r._cos<0)r._mdat|=MD_COSM;
@@ -540,23 +540,23 @@ TrAngle TrAngle::operator-( const TrAngleConst &ta )
 
 
 
-bool TrAngle::operator<( RNUM ang_rad )
+bool TrAngle::operator<( rnum ang_rad )
 {
 	return rad()<ang_rad;
 }
 
-bool TrAngle::operator<=( RNUM ang_rad )
+bool TrAngle::operator<=( rnum ang_rad )
 {
 	return rad()<=ang_rad;
 }
 
-bool TrAngle::operator>( RNUM ang_rad )
+bool TrAngle::operator>( rnum ang_rad )
 {
 	return rad()>ang_rad;
 }
 
 
-bool TrAngle::operator>=( RNUM ang_rad )
+bool TrAngle::operator>=( rnum ang_rad )
 {
 	return rad()>=ang_rad;
 }
@@ -568,19 +568,19 @@ void TrAngle::trCalc()
 	tg();
 }
 
-RNUM TrAngle::tan()
+rnum TrAngle::tan()
 {
 	return tg();
 }
 
 
-void TrAngle::operator+=( RNUM ang_rad )
+void TrAngle::operator+=( rnum ang_rad )
 {
 	setRad(ang_rad+rad());
 }
 
 
-void TrAngle::operator-=( RNUM ang_rad )
+void TrAngle::operator-=( rnum ang_rad )
 {
 	setRad(rad()-ang_rad);
 }
@@ -637,7 +637,7 @@ bool TrAngle::operator<( TrAngle &ta )
 	return rad()<ta.rad();
 }
 
-RNUM TrAngle::ctg()
+rnum TrAngle::ctg()
 {
 	return 1.0/not0(tg());
 }

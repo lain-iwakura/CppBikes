@@ -51,7 +51,7 @@ namespace Bikes
 		bool calc_;
 	};
 
-	typedef CalcVal<RNUM> CRNUM;
+	typedef CalcVal<rnum> CRNUM;
 
 }
 #endif

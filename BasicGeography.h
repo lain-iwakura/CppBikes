@@ -44,27 +44,27 @@ struct DegMinSecAngle
 struct PhiLamCoord // географические координаты (phi,lambda)
 {
 	PhiLamCoord(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
-	RNUM phi;
-	RNUM lam;
+	rnum phi;
+	rnum lam;
 };
 
 struct PhiLamHCoord // географические координаты (phi,lambda,h)
 {
-	PhiLamHCoord(RNUM Phi=0,RNUM Lambda=0, RNUM H=0):phi(Phi),lam(Lambda),h(H){}
-	RNUM phi;
-	RNUM lam;
-	RNUM h;
+	PhiLamHCoord(rnum Phi=0,rnum Lambda=0, rnum H=0):phi(Phi),lam(Lambda),h(H){}
+	rnum phi;
+	rnum lam;
+	rnum h;
 };
 
 
 
 // Для сферы:
-Point PhiLam_to_PointS(RNUM phi, RNUM lam);  // преобразовать (фи,лямда) в (x,y,z)
+Point PhiLam_to_PointS(rnum phi, rnum lam);  // преобразовать (фи,лямда) в (x,y,z)
 PhiLamCoord Point_to_PhiLamS(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
 
 // Для эллипсоида:
-Point PhiLam_to_PointE(RNUM phi, RNUM lam); // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
-Point PhiLam_to_PointE(RNUM phi, RNUM lam, RNUM h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
+Point PhiLam_to_PointE(rnum phi, rnum lam); // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
+Point PhiLam_to_PointE(rnum phi, rnum lam, rnum h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
 Point PhiLam_to_PointE(const PhiLamCoord &phi_lam);  // преобразовывает географические координаты (phi,lambda) в геоцентрические (x,y,z) // h=0;
 Point PhiLam_to_PointE(const PhiLamHCoord &phi_lam_h); // преобразовывает географические координаты (phi,lambda,h) в геоцентрические (x,y,z)
 PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лямда)
@@ -72,14 +72,14 @@ PhiLamCoord Point_to_PhiLamE(const Point &p); // преобразовать (x,y,z) в (фи,лям
 
 Vector EllipsePhiTan(const Point &p); // единичный касательный вектор к меридиану
 Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
-RNUM parallelR(RNUM phi);
+rnum parallelR(rnum phi);
 
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
 
 class TrAngle;
 Point PhiLam_to_PointE(TrAngle *phi, TrAngle *lam);
-Point PhiLam_to_PointE_old( RNUM phi, RNUM lam );
+Point PhiLam_to_PointE_old( rnum phi, rnum lam );
 
 
 

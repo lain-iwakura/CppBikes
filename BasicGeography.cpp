@@ -93,9 +93,9 @@ Vector Bikes::EllipsePhiTan(const Point &p)
 {
 	if(p.gz==0) return Vector(0,0,1,p);
 	Vector vrx(p.gx,p.gy,0);
-	RNUM rx=sqrt(p.gx*p.gx+p.gy*p.gy);
+	rnum rx=sqrt(p.gx*p.gx+p.gy*p.gy);
 	vrx/=rx;
-	RNUM tan_zrx=GEO_B*rx/(GEO_A*GEO_A*sqrt(1-rx*rx/(GEO_A*GEO_A))); // +/-
+	rnum tan_zrx=GEO_B*rx/(GEO_A*GEO_A*sqrt(1-rx*rx/(GEO_A*GEO_A))); // +/-
 	Vector vz=v_gk*tan_zrx;
 	if(p.gz>0) vrx*=-1;
 	Vector vt=vrx+vz;
@@ -103,7 +103,7 @@ Vector Bikes::EllipsePhiTan(const Point &p)
 	vt.normalize();
 	return vt;
 }
-inline Point Bikes::PhiLam_to_PointS( RNUM phi, RNUM lam )
+inline Point Bikes::PhiLam_to_PointS( rnum phi, rnum lam )
 {
 	return Point(GEO_R*cos(lam)*cos(phi),GEO_R*sin(lam)*cos(phi),GEO_R*sin(phi));
 }
@@ -120,59 +120,59 @@ Point Bikes::PhiLam_to_PointE(const PhiLamCoord &phi_lam)
 }
 
 
-Point Bikes::PhiLam_to_PointE( RNUM phi, RNUM lam )
+Point Bikes::PhiLam_to_PointE( rnum phi, rnum lam )
 {
 	phi=NormAngle(phi);
 	lam=NormAngle(lam);
 
-	RNUM cosB=cos(phi);
-	RNUM sinB=sqrt(1.0-cosB*cosB);//sin(phi);
+	rnum cosB=cos(phi);
+	rnum sinB=sqrt(1.0-cosB*cosB);//sin(phi);
 	if(phi<0.0) sinB=-sinB;
-	RNUM cosL=cos(lam);
-	RNUM sinL=sqrt(1.0-cosL*cosL);//sin(lam);
+	rnum cosL=cos(lam);
+	rnum sinL=sqrt(1.0-cosL*cosL);//sin(lam);
 	if(lam<0.0) sinL=-sinL; 
-	//RNUM H=0;
-	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	//rnum H=0;
+	rnum N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
 	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 }
 
 
-Point Bikes::PhiLam_to_PointE_old( RNUM phi, RNUM lam )
+Point Bikes::PhiLam_to_PointE_old( rnum phi, rnum lam )
 {
 	//phi=NormAngle(phi);
 	//lam=NormAngle(lam);
 
-	RNUM cosB=cos(phi);
-	RNUM sinB=sin(phi);
+	rnum cosB=cos(phi);
+	rnum sinB=sin(phi);
 	//if(phi<0) sinB=-sinB;
-	RNUM cosL=cos(lam);
-	RNUM sinL=sin(lam);
+	rnum cosL=cos(lam);
+	rnum sinL=sin(lam);
 	//if(lam<0) sinL=-sinL; 
-	//RNUM H=0;
-	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	//rnum H=0;
+	rnum N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
 	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 }
 
 
 PhiLamCoord Bikes::Point_to_PhiLamE( const Point &p )
 {
-	RNUM D=sqrt(p.gx*p.gx+p.gy*p.gy);
+	rnum D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;
 	return PhiLamCoord(atan(p.gz/not0((1.0-GEO_EE)*D)),acos(p.gx/not0(D))*signum(p.gy));
 }
 
-Point PhiLam_to_PointE( RNUM phi, RNUM lam, RNUM h )
+Point PhiLam_to_PointE( rnum phi, rnum lam, rnum h )
 {
 	phi=NormAngle(phi);
 	lam=NormAngle(lam);
 
-	RNUM cosB=cos(phi);
-	RNUM sinB=sqrt(1.0-cosB*cosB);//sin(phi);
+	rnum cosB=cos(phi);
+	rnum sinB=sqrt(1.0-cosB*cosB);//sin(phi);
 	if(phi<0.0) sinB=-sinB;
-	RNUM cosL=cos(lam);	
-	RNUM sinL=sqrt(1.0-cosL*cosL);//sin(lam);
+	rnum cosL=cos(lam);	
+	rnum sinL=sqrt(1.0-cosL*cosL);//sin(lam);
 	if(lam<0.0) sinL=-sinL; 
-	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	rnum N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
 	return Point((N+h)*cosB*cosL,(N+h)*cosB*sinL,((1.0-GEO_EE)*N+h)*sinB);
 }
 
@@ -183,11 +183,11 @@ Point PhiLam_to_PointE( const PhiLamHCoord &phi_lam_h )
 
 Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
 {
-	RNUM cosB=phi->cos();
-	RNUM sinB=phi->sin();
-	RNUM cosL=lam->cos();
-	RNUM sinL=lam->sin();
-	RNUM N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
+	rnum cosB=phi->cos();
+	rnum sinB=phi->sin();
+	rnum cosL=lam->cos();
+	rnum sinL=lam->sin();
+	rnum N=GEO_A/sqrt(1.0-GEO_EE*sinB*sinB);
 	return Point((N/*+H*/)*cosB*cosL,(N/*+H*/)*cosB*sinL,((1.0-GEO_EE)*N/*+H*/)*sinB);
 
 }
@@ -197,17 +197,17 @@ void MovePointToEllipsoidSurface(Point &p)
 {
 	Vector vr(p);
 	vr.normalize();
-	static const RNUM a=1.0/(GEO_A*GEO_A);
-	static const RNUM b=1.0/(GEO_B*GEO_B);
-	RNUM sinA=vr&v_gk;
-	RNUM r=1.0/sqrt(sinA*sinA*(b-a)+a);
+	static const rnum a=1.0/(GEO_A*GEO_A);
+	static const rnum b=1.0/(GEO_B*GEO_B);
+	rnum sinA=vr&v_gk;
+	rnum r=1.0/sqrt(sinA*sinA*(b-a)+a);
 	vr*=r;
 	p=vr.destination();
 }
 
-RNUM parallelR( RNUM phi )
+rnum parallelR( rnum phi )
 {
-	RNUM sinBsinB=sin(phi);
+	rnum sinBsinB=sin(phi);
 	sinBsinB*=sinBsinB;		
 	return  GEO_A*sqrt((1.0-sinBsinB)/(1.0-GEO_EE*sinBsinB));
 }

@@ -22,18 +22,18 @@ namespace Bikes
 {	
 	struct ScreenPoint
 	{
-		ScreenPoint(RNUM x_=0, RNUM y_=0):x(x_),y(y_){}
-		RNUM x;
-		RNUM y;
+		ScreenPoint(rnum x_=0, rnum y_=0):x(x_),y(y_){}
+		rnum x;
+		rnum y;
 	}; 
 
 	struct ScreenRect
 	{
-		ScreenRect(RNUM x1_=0,RNUM x2_=0, RNUM y1_=0, RNUM y2_=0):x1(x1_),y1(y1_),x2(x2_),y2(y2_){}
-		RNUM x1; // лева€ граница
-		RNUM x2; // права€ граница
-		RNUM y1; // верхн€€ граница 
-		RNUM y2; // нижн€€ граница 
+		ScreenRect(rnum x1_=0,rnum x2_=0, rnum y1_=0, rnum y2_=0):x1(x1_),y1(y1_),x2(x2_),y2(y2_){}
+		rnum x1; // лева€ граница
+		rnum x2; // права€ граница
+		rnum y1; // верхн€€ граница 
+		rnum y2; // нижн€€ граница 
 		// x2 > x1
 		// y2 > y1
 	};

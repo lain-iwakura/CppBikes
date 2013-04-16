@@ -3,11 +3,11 @@
 
 namespace Bikes
 {
-	typedef double RNUM;
+	typedef double rnum;
 
 
 //Рудиментные типы:
-//	typedef RNUM TMETRIC; 
-//	typedef RNUM TAMETRIC; 
+//	typedef rnum TMETRIC; 
+//	typedef rnum TAMETRIC; 
 }
 #endif

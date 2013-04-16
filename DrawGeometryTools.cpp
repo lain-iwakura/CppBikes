@@ -64,14 +64,14 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	
 	// реализация только для направления  (p1)>-->(p2)
 	
-	RNUM dx=p2.x-p1.x;
+	rnum dx=p2.x-p1.x;
 
 	 if(p1z.v==1) 
 	 {
 		 if(p2z.h==1)
 		 {		 
 			 // 11 ->
-			 RNUM dy=-p2.y+p1.y;
+			 rnum dy=-p2.y+p1.y;
 			 if(dy*(scr.x1-p1.x) > (-scr.y1+p1.y)*dx) return false;
 			 if(p1z.h==3&&p2z.v==3)
 			 {
@@ -84,7 +84,7 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 		// ...
 		if(p2z.h==3)
 		{
-			RNUM dy=p2.y-p1.y;
+			rnum dy=p2.y-p1.y;
 			if(dx*(scr.y2-p1.y) < (scr.x1-p1.x)*dy ) return false;
 			if(p1z.h==1&&p2z.v==3)
 			{
@@ -99,14 +99,14 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	if(p1z.h==1) 
 	{
 		/*p2z.v==3*/
-		RNUM dy=p2.y-p1.y;
+		rnum dy=p2.y-p1.y;
 		return (dx*(scr.y1-p1.y) < (scr.x2-p1.x)*dy);
 	}
 	 // <- 13
 	 
 	 // 33 ->
 	/*(p1z.h==3&&p2z.v==3)*/
-	RNUM dy=-p2.y+p1.y;
+	rnum dy=-p2.y+p1.y;
 	 //...
 	 return  dy*(scr.x2-p1.x) > (p1.y-scr.y2)*dx;
 	 // <- 33
@@ -147,12 +147,12 @@ bool LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenPoint &p2, c
 	return LineSegmentCrossScreenRect(p1,ScreenZoneOfPoint(p1,scr),p2,ScreenZoneOfPoint(p2,scr),scr);
 }
 
-ScreenPoint findCrossH(const ScreenPoint &p1, const ScreenPoint &p2, RNUM hy)
+ScreenPoint findCrossH(const ScreenPoint &p1, const ScreenPoint &p2, rnum hy)
 {
 	return ScreenPoint( ((hy-p1.y)*p2.x+(p2.y-hy)*p1.x)/not0(p2.y-p1.y) , hy );
 }
 
-ScreenPoint findCrossV(const ScreenPoint &p1, const ScreenPoint &p2, RNUM hx)
+ScreenPoint findCrossV(const ScreenPoint &p1, const ScreenPoint &p2, rnum hx)
 {
 	return ScreenPoint( hx , ((hx-p1.x)*p2.y+(p2.x-hx)*p1.y)/not0(p2.x-p1.x) );
 }

@@ -10,17 +10,17 @@ namespace Bikes
 	struct TrAngleConst
 	{
 		TrAngleConst();
-		TrAngleConst(RNUM _rad_val,RNUM _sin_val, RNUM _cos_val, RNUM _tan_val);
-		TrAngleConst(RNUM ang_rad);	
+		TrAngleConst(rnum _rad_val,rnum _sin_val, rnum _cos_val, rnum _tan_val);
+		TrAngleConst(rnum ang_rad);	
 
-		TrAngleConst& operator =(RNUM ang_rad);
+		TrAngleConst& operator =(rnum ang_rad);
 
-		operator RNUM () const;
+		operator rnum () const;
 		
-		RNUM rad_val;
-		RNUM sin_val;
-		RNUM cos_val;
-		RNUM tan_val;
+		rnum rad_val;
+		rnum sin_val;
+		rnum cos_val;
+		rnum tan_val;
 	};
 
 
@@ -55,14 +55,14 @@ namespace Bikes
 		
 
 
-		TrAngle(RNUM rad_val, RNUM sin_val, RNUM cos_val, RNUM tan_val, char mdat=MD_ALLDEF);
-		TrAngle(RNUM cos_val, bool sin_negative);
-		TrAngle(RNUM rad_val);		
+		TrAngle(rnum rad_val, rnum sin_val, rnum cos_val, rnum tan_val, char mdat=MD_ALLDEF);
+		TrAngle(rnum cos_val, bool sin_negative);
+		TrAngle(rnum rad_val);		
 		TrAngle();
 
-		operator RNUM (){return rad();}
+		operator rnum (){return rad();}
 		operator TrAngle*(){return this;}
-		TrAngle & operator = (RNUM ang_rad) {setRad(ang_rad); return *this;}
+		TrAngle & operator = (rnum ang_rad) {setRad(ang_rad); return *this;}
 
 		void operator += (TrAngle &ta);
 		void operator -= (TrAngle &ta);
@@ -77,43 +77,43 @@ namespace Bikes
 		bool operator > (TrAngle &ta);  //-
 		bool operator < (TrAngle &ta);  //-
 
-		void operator += (RNUM ang_rad);
-		void operator -= (RNUM ang_rad);		
+		void operator += (rnum ang_rad);
+		void operator -= (rnum ang_rad);		
 
-		bool operator < (RNUM ang_rad);
-		bool operator <= (RNUM ang_rad);
-		bool operator > (RNUM ang_rad);
-		bool operator >= (RNUM ang_rad);
+		bool operator < (rnum ang_rad);
+		bool operator <= (rnum ang_rad);
+		bool operator > (rnum ang_rad);
+		bool operator >= (rnum ang_rad);
 
 
 
-		void setCos(RNUM cos_val, bool sin_negative=false);
-		void setSin(RNUM sin_val, bool cos_negative=false);
-		void setTan(RNUM tan_val, bool cos_negative=false);
-		void setRad(RNUM rad);
-		void setDeg(RNUM deg);
+		void setCos(rnum cos_val, bool sin_negative=false);
+		void setSin(rnum sin_val, bool cos_negative=false);
+		void setTan(rnum tan_val, bool cos_negative=false);
+		void setRad(rnum rad);
+		void setDeg(rnum deg);
 
 	
-		RNUM sin();
-		RNUM cos();
-		RNUM tg();
-		RNUM tan();
-		RNUM ctg();
-		RNUM rad();
-		RNUM deg();
+		rnum sin();
+		rnum cos();
+		rnum tg();
+		rnum tan();
+		rnum ctg();
+		rnum rad();
+		rnum deg();
 
-		RNUM sSin();
-		RNUM sCos();
+		rnum sSin();
+		rnum sCos();
 
 		void trCalc();
 
 	private:
 
 		char _mdat;
-		RNUM _sin;
-		RNUM _cos;
-		RNUM _tan;
-		RNUM _rad;
+		rnum _sin;
+		rnum _cos;
+		rnum _tan;
+		rnum _rad;
 	};
 
 
@@ -132,17 +132,17 @@ namespace Bikes
 	const TrAngleConst g_tr1SEC(DEG_IN_RAD/3600.0,sin(DEG_IN_RAD/3600.0),cos(DEG_IN_RAD/3600.0),tan(DEG_IN_RAD/3600.0));
 
 
-	inline RNUM sin(TrAngle &ta){return ta.sin();}
-	inline RNUM cos(TrAngle &ta){return ta.cos();}
-	inline RNUM tan(TrAngle &ta){return ta.tg();}
-	inline RNUM rad(TrAngle &ta){return ta.rad();}
-	inline RNUM deg(TrAngle &ta){return ta.deg();}
+	inline rnum sin(TrAngle &ta){return ta.sin();}
+	inline rnum cos(TrAngle &ta){return ta.cos();}
+	inline rnum tan(TrAngle &ta){return ta.tg();}
+	inline rnum rad(TrAngle &ta){return ta.rad();}
+	inline rnum deg(TrAngle &ta){return ta.deg();}
 
-	inline RNUM sin(TrAngleConst &tac){return tac.sin_val;}
-	inline RNUM cos(TrAngleConst &tac){return tac.cos_val;}
-	inline RNUM tan(TrAngleConst &tac){return tac.tan_val;}
-	inline RNUM rad(TrAngleConst &tac){return tac.rad_val;}
-	inline RNUM deg(TrAngleConst &tac){return RAD_to_DEG(tac.rad_val);}
+	inline rnum sin(TrAngleConst &tac){return tac.sin_val;}
+	inline rnum cos(TrAngleConst &tac){return tac.cos_val;}
+	inline rnum tan(TrAngleConst &tac){return tac.tan_val;}
+	inline rnum rad(TrAngleConst &tac){return tac.rad_val;}
+	inline rnum deg(TrAngleConst &tac){return RAD_to_DEG(tac.rad_val);}
 
 	using ::sin;
 	using ::cos;

@@ -2,90 +2,90 @@
 
 using namespace Bikes;
 
-RNUM Bikes::acosh(RNUM a)
+rnum Bikes::acosh(rnum a)
 {
 	if(ABS(a)<1) return 0;
 	return log(a+sqrt(a*a-1));
 }
 
-RNUM Bikes::asinh(RNUM a)
+rnum Bikes::asinh(rnum a)
 {	
 	return log(a+sqrt(a*a+1));
 }
 
-RNUM Bikes::not0(RNUM n, RNUM o/* =RNUM_O */)
+rnum Bikes::not0(rnum n, rnum o/* =RNUM_O */)
 {
 	if(ABS(n)<o) return (n<0)?(-o):(o);
 	return n;
 }
 
-void Bikes::not0set(RNUM &n, RNUM o/* =RNUM_O */)
+void Bikes::not0set(rnum &n, rnum o/* =RNUM_O */)
 {
 	if(ABS(n)<o) n=(n<0)?(-o):(o);
 }
 
-RNUM Bikes::NormAngle(RNUM a)
+rnum Bikes::NormAngle(rnum a)
 {
 	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
 	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
 	return a;
 }
 
-RNUM Bikes::NormAngle_0_2PI(RNUM a)
+rnum Bikes::NormAngle_0_2PI(rnum a)
 {
 	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
 	if(a<0.0) a+=PImult2;
 	return a;
 }
 
-RNUM Bikes::signum(RNUM n)
+rnum Bikes::signum(rnum n)
 {
 	if(n<0.0) return -1.0;
 	return 1.0;
 }
 
-RNUM Bikes::arccos(RNUM n)
+rnum Bikes::arccos(rnum n)
 {
 	if(n<=-1.0) return PI;
 	if(n>=1.0) return 0.0;
 	return acos(n);
 }
-RNUM Bikes::arcsin(RNUM n)
+rnum Bikes::arcsin(rnum n)
 {
 	if(n<=-1.0) return -PIdiv2;
 	if(n>=1.0) return PIdiv2;
 	return asin(n);
 }
 
-//inline RNUM DEG_to_RAD(RNUM deg){return deg*DEG_IN_RAD;}
-//inline RNUM RAD_to_DEG(RNUM rad){return rad*RAD_IN_DEG;}
+//inline rnum DEG_to_RAD(rnum deg){return deg*DEG_IN_RAD;}
+//inline rnum RAD_to_DEG(rnum rad){return rad*RAD_IN_DEG;}
 
-bool Bikes::isEqual(RNUM n1, RNUM n2, RNUM O)
+bool Bikes::isEqual(rnum n1, rnum n2, rnum O)
 {
 	return ABS(n1-n2)<O;
 }
 
-bool Bikes::isEqualAngle(RNUM a1, RNUM a2)
+bool Bikes::isEqualAngle(rnum a1, rnum a2)
 {
 	a1=NormAngle_0_2PI(a1);
 	a2=NormAngle_0_2PI(a2);
 	return isEqual(a1,a2,ANGLE_O);
 }
 
-RNUM Bikes::NormalDistribution( RNUM x )
+rnum Bikes::NormalDistribution( rnum x )
 {
-	static const RNUM m=1/sqrt(2*PI);
+	static const rnum m=1/sqrt(2*PI);
 	return m*pow(E,-x*x/2);
 }
 
 
 
 
-RNUM MathFunction::FindNewtonRoot(RNUM x_min, RNUM x_max, bool *suc/*=0*/, RNUM Eps/*=RNUM_O*/, int MaxIter/*=10000*/, RNUM dx/*=(x_max-x_min)/RNUM(MaxIter) */ ) const
+rnum MathFunction::FindNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum Eps/*=RNUM_O*/, int MaxIter/*=10000*/, rnum dx/*=(x_max-x_min)/rnum(MaxIter) */ ) const
 {
 	if(suc) *suc=false;
-	RNUM roo=x_min;	
-	RNUM x=x_min;
+	rnum roo=x_min;	
+	rnum x=x_min;
 	MathFunctionResult fx1;
 	MathFunctionResult fx2;
 	MathFunctionResult fxr;
@@ -96,7 +96,7 @@ RNUM MathFunction::FindNewtonRoot(RNUM x_min, RNUM x_max, bool *suc/*=0*/, RNUM 
 		fx2=f(x+dx);
 		if(fx2.mfrt!=MATHFUNC_NORMAL_RESULT){x+=2*dx; continue;}
 
-		RNUM dif=(fx2.r-fx1.r)/dx;
+		rnum dif=(fx2.r-fx1.r)/dx;
 		if(dif==0) {x+=dx; continue;}
 		roo=x-fx1.r/dif;
 		if((roo>x_min)&&(roo<x_max))
@@ -126,7 +126,7 @@ RNUM MathFunction::FindNewtonRoot(RNUM x_min, RNUM x_max, bool *suc/*=0*/, RNUM 
 
 
 
-MathFunctionResult MathFunction::Diff( RNUM x, RNUM dx/*=EQUAL_O*/ ) const
+MathFunctionResult MathFunction::Diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
 {
 	MathFunctionResult r;
 	MathFunctionResult fx1=f(x);

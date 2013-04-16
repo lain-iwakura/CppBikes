@@ -11,48 +11,48 @@
 namespace Bikes
 {
 
-//typedef double RNUM;
+//typedef double rnum;
 
-const RNUM PI=CPPBIKES_CONST_PI;
-const RNUM E=CPPBIKES_CONST_E;
-const RNUM RNUM_O=1E-30; //-35
-const RNUM RNUM_INFINITY=RNUM(1)/RNUM_O; 
-const RNUM EQUAL_O=1E-12;
-const RNUM ANGLE_O=1E-10;
-const RNUM RAD_IN_DEG=RNUM(180)/PI;
-const RNUM DEG_IN_RAD=PI/RNUM(180);
+const rnum PI=CPPBIKES_CONST_PI;
+const rnum E=CPPBIKES_CONST_E;
+const rnum RNUM_O=1E-30; //-35
+const rnum RNUM_INFINITY=rnum(1)/RNUM_O; 
+const rnum EQUAL_O=1E-12;
+const rnum ANGLE_O=1E-10;
+const rnum RAD_IN_DEG=rnum(180)/PI;
+const rnum DEG_IN_RAD=PI/rnum(180);
 
-const RNUM SQRT2=sqrt(RNUM(2));
-const RNUM SQRT3=sqrt(RNUM(3));
-const RNUM PIdiv2=PI/RNUM(2);
-const RNUM PIdiv3=PI/RNUM(3);
-const RNUM PIdiv4=PI/RNUM(4);
-const RNUM PIdiv6=PI/RNUM(6);
-const RNUM PImult2=PI*RNUM(2);
-const RNUM PI3div2=PIdiv2*RNUM(3);
+const rnum SQRT2=sqrt(rnum(2));
+const rnum SQRT3=sqrt(rnum(3));
+const rnum PIdiv2=PI/rnum(2);
+const rnum PIdiv3=PI/rnum(3);
+const rnum PIdiv4=PI/rnum(4);
+const rnum PIdiv6=PI/rnum(6);
+const rnum PImult2=PI*rnum(2);
+const rnum PI3div2=PIdiv2*rnum(3);
 
-const RNUM ANG_1DEG=DEG_IN_RAD;
-const RNUM ANG_1MIN=ANG_1DEG/60.0;
-const RNUM ANG_1SEC=ANG_1MIN/60.0;
-
-
-RNUM acosh(RNUM a);
-RNUM asinh(RNUM a);
-RNUM NormAngle(RNUM a);
-RNUM NormAngle_0_2PI(RNUM a);
-RNUM signum(RNUM n);
-RNUM arccos(RNUM n);
-RNUM arcsin(RNUM n);
-inline RNUM DEG_to_RAD(RNUM deg){return deg*DEG_IN_RAD;}
-inline RNUM RAD_to_DEG(RNUM rad){return rad*RAD_IN_DEG;}
-bool isEqual(RNUM n1, RNUM n2, RNUM O=EQUAL_O);
-bool isEqualAngle(RNUM a1, RNUM a2);
-RNUM not0(RNUM n, RNUM o=RNUM_O);
-void not0set(RNUM &n, RNUM o=RNUM_O);
+const rnum ANG_1DEG=DEG_IN_RAD;
+const rnum ANG_1MIN=ANG_1DEG/60.0;
+const rnum ANG_1SEC=ANG_1MIN/60.0;
 
 
+rnum acosh(rnum a);
+rnum asinh(rnum a);
+rnum NormAngle(rnum a);
+rnum NormAngle_0_2PI(rnum a);
+rnum signum(rnum n);
+rnum arccos(rnum n);
+rnum arcsin(rnum n);
+inline rnum DEG_to_RAD(rnum deg){return deg*DEG_IN_RAD;}
+inline rnum RAD_to_DEG(rnum rad){return rad*RAD_IN_DEG;}
+bool isEqual(rnum n1, rnum n2, rnum O=EQUAL_O);
+bool isEqualAngle(rnum a1, rnum a2);
+rnum not0(rnum n, rnum o=RNUM_O);
+void not0set(rnum &n, rnum o=RNUM_O);
 
-RNUM NormalDistribution(RNUM x);
+
+
+rnum NormalDistribution(rnum x);
 
 
 template<class T> 
@@ -106,8 +106,8 @@ enum MathFunctionResultType
 
 struct MathFunctionResult
 {
-	MathFunctionResult(RNUM r_=0, MathFunctionResultType mfrt_=MATHFUNC_NO_RESULT):r(r_),mfrt(mfrt_){}
-	RNUM r;
+	MathFunctionResult(rnum r_=0, MathFunctionResultType mfrt_=MATHFUNC_NO_RESULT):r(r_),mfrt(mfrt_){}
+	rnum r;
 	MathFunctionResultType mfrt;
 };
 
@@ -115,10 +115,10 @@ class MathFunction
 {
 public:
 
-	virtual MathFunctionResult f(RNUM x) const =0;
+	virtual MathFunctionResult f(rnum x) const =0;
 
-	MathFunctionResult Diff(RNUM x, RNUM dx=EQUAL_O) const;
-	RNUM FindNewtonRoot(RNUM x_min, RNUM x_max, bool *suc=0, RNUM Eps=EQUAL_O, int MaxIter=10000, RNUM dx=EQUAL_O*10 ) const;
+	MathFunctionResult Diff(rnum x, rnum dx=EQUAL_O) const;
+	rnum FindNewtonRoot(rnum x_min, rnum x_max, bool *suc=0, rnum Eps=EQUAL_O, int MaxIter=10000, rnum dx=EQUAL_O*10 ) const;
 };
 
 }
