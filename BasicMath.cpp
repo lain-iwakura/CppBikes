@@ -33,28 +33,27 @@ RNUM CppBikes::NormAngle(RNUM a)
 
 RNUM CppBikes::NormAngle_0_2PI(RNUM a)
 {
-	if(ABS(a)>2*PI)	a-=((long)(a/(PImult2)))*PImult2;
-	if(a<0) a+=PImult2;
+	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
+	if(a<0.0) a+=PImult2;
 	return a;
 }
 
 RNUM CppBikes::signum(RNUM n)
 {
-	if(n>0) return 1;
-	if(n<0) return -1;
-	return 0;
+	if(n<0.0) return -1.0;
+	return 1.0;
 }
 
 RNUM CppBikes::arccos(RNUM n)
 {
-	if(n<=-1) return PI;
-	if(n>=1) return 0;
+	if(n<=-1.0) return PI;
+	if(n>=1.0) return 0.0;
 	return acos(n);
 }
 RNUM CppBikes::arcsin(RNUM n)
 {
-	if(n<=-1) return -PIdiv2;
-	if(n>=1) return PIdiv2;
+	if(n<=-1.0) return -PIdiv2;
+	if(n>=1.0) return PIdiv2;
 	return asin(n);
 }
 
