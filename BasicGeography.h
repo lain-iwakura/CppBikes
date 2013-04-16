@@ -20,11 +20,11 @@ const double GEO_EE=GEO_ALPHA*(2.0-GEO_ALPHA); // e^2
 struct DegMinSecAngle
 {
 	int deg;
-	char min;
-	char sec;
+	short min;
+	short sec;
 	bool negative;
 
-	DegMinSecAngle(int  d=0, char  m=0, char  s=0, bool neg=false);
+	DegMinSecAngle(int  d=0, short  m=0, short  s=0, bool neg=false);
 	DegMinSecAngle(double a_rad){setFromRad(a_rad);}	
 	void operator = (double a_rad){setFromRad(a_rad);}
 	operator double() const { return toRad();}

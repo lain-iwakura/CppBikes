@@ -10,7 +10,7 @@ namespace CppBikes
 
 
 
-DegMinSecAngle::DegMinSecAngle(int  d/*=0*/, char  m/*=0*/, char  s/*=0*/, bool neg/*=false*/) 
+DegMinSecAngle::DegMinSecAngle(int  d/*=0*/, short  m/*=0*/, short  s/*=0*/, bool neg/*=false*/) 
 :deg(d),min(m),sec(s),negative(neg)
 {
 
