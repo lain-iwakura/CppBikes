@@ -3,8 +3,8 @@
 #include "RawArray.h"
 #include "BikesStream.h"
 #include "BasicGeometry.h"
-#include "InterpolationFunc.h"
-#include "QuickArray.h"
+//#include "InterpolationFunc.h"
+//#include "QuickArray.h"
 
 namespace CppBikes
 {
@@ -126,12 +126,12 @@ int func(int x, int y, int z)
 		int i=TESTMACROS(1,(1,2,3));
 
 
-		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<RNUM>(2,3));
+//		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<RNUM>(2,3));
 
 
-		RNUM y=(*apln)(2);
+//		RNUM y=(*apln)(2);
 
-		delete apln;
+//		delete apln;
 		return true;
 	}
 

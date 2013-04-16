@@ -7,14 +7,14 @@ namespace CppBikes
 	
 
 
-	void PointStreamer::read( ByteStream &bstr, Point* p )
+	void PointStreamer::read(Point* p )
 	{
-		read_(byteStream_(),p);
+		read(byteStream_(),p);
 	}
 
-	void PointStreamer::write( ByteStream &bstr, const Point* p )
+	void PointStreamer::write(const Point* p )
 	{
-		write_(byteStream_(),p);
+		write(byteStream_(),p);
 	}
 
 	void PointStreamer::read( ByteStream &bstr, Point* p )
@@ -32,27 +32,27 @@ namespace CppBikes
 	}
 
 
-	void VectorStreamer::read( ByteStream &bstr, Vector* v )
+	void VectorStreamer::read( Vector* v )
 	{
 		read(byteStream_(),v);
 	}
 
 	void VectorStreamer::read( ByteStream &bstr, Vector *v )
 	{
-		PointStreamer::read(bstr,v->anchor);
+		PointStreamer::read(bstr,&v->anchor);
 		bstr >> v->gx;
 		bstr >> v->gy;
 		bstr >> v->gz;
 	}
 
-	void VectorStreamer::write( ByteStream &bstr, const Vector* v )
+	void VectorStreamer::write( const Vector* v )
 	{
 		write(byteStream_(),v);
 	}
 
 	void VectorStreamer::write( ByteStream &bstr, const Vector *v )
 	{
-		PointStreamer::write(bstr,v->anchor);
+		PointStreamer::write(bstr,&v->anchor);
 		bstr << v->gx;
 		bstr << v->gy;
 		bstr << v->gz;
@@ -66,7 +66,7 @@ namespace CppBikes
 
 	void BasisStreamer::read( ByteStream &bstr, Basis *b )
 	{
-		PointStreamer::read(bstr,b->O);
+		PointStreamer::read(bstr,&b->O);
 		b->i.anchor=b->O;
 		b->j.anchor=b->O;
 		b->k.anchor=b->O;
@@ -88,7 +88,7 @@ namespace CppBikes
 
 	void BasisStreamer::write( ByteStream &bstr, const Basis *b )
 	{
-		PointStreamer::write(bstr,b->O);		
+		PointStreamer::write(bstr,&b->O);		
 		bstr << b->i.gx;
 		bstr << b->i.gy;
 		bstr << b->i.gz;
