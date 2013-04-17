@@ -2,8 +2,8 @@
 #define PHANTOMOBJECT_H
 
 
-#include "List.h"
-#include "AdjacentObject.h"
+#include <Bikes/List.h>
+#include <Bikes/AdjacentObject.h>
 #define TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this(){}; C_this(const C_this<T> &xo):C_that<T>(xo){} C_this(const T& o):C_that<T>(o){}
 #define TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T) void operator =(const T&  obj_){C_that<T>::operator=(obj_);} void operator=(C_this<T> & cobj){C_that<T>::operator=(cobj);}
 #define TEMPLT_DEFALL(C_this,C_that,T) TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T)

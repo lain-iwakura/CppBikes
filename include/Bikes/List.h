@@ -127,22 +127,6 @@ public:
 		return r;
 	}
 
-/*
-	T& circElement(int i)
-	{
-		int c=size();
-		//if(c==0) return T();
-        if(abs(i)%c==0) return *Container::operator[](0);
-		else if(i<0)
-		{			
-			return *Container::operator[]( c-((-i)%c) );
-		}else
-		{
-			return *Container::operator[]( i%c );
-		}
-		//return 0;
-	}
-//*/
 
 	void removeAt(int i)
 	{
@@ -223,8 +207,6 @@ public:
 		}
 	}
 
-///////////////////////////
-	
 
 };
 

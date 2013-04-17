@@ -1,8 +1,8 @@
 #ifndef MYCPP_VALUESERIES_H
 #define MYCPP_VALUESERIES_H
 
-#include "List.h"
-#include "BasicMath.h"
+#include <Bikes/List.h>
+#include <Bikes/BasicMath.h>
 
 namespace Bikes
 {

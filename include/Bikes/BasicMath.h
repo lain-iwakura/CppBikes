@@ -1,7 +1,6 @@
 #ifndef BASICMATH_H
 #define BASICMATH_H
 #include <math.h>
-//#include "List.h"
 #include <Bikes/List.h>
 #include <Bikes/Types.h>
 
@@ -103,7 +102,6 @@ enum MathFunctionResultType
 	MATHFUNC_INFINITY_RESULT
 };
 
-
 struct MathFunctionResult
 {
 	MathFunctionResult(rnum r_=0, MathFunctionResultType mfrt_=MATHFUNC_NO_RESULT):r(r_),mfrt(mfrt_){}
@@ -119,6 +117,7 @@ public:
 
 	MathFunctionResult diff(rnum x, rnum dx=EQUAL_O) const;
 	rnum findNewtonRoot(rnum x_min, rnum x_max, bool *suc=0, rnum Eps=EQUAL_O, int MaxIter=10000, rnum dx=EQUAL_O*10 ) const;
+	
 };
 
 }

@@ -3,6 +3,7 @@
 #include <Bikes/RawArray.h>
 #include <Bikes/BikesStream.h>
 #include <Bikes/BasicGeometry.h>
+#include <Bikes/TypeRegister.h>
 //#include "InterpolationFunc.h"
 //#include "QuickArray.h"
 
@@ -117,13 +118,54 @@ int func(int x, int y, int z)
 	return x+y+z;
 }
 
-#define MCR(X,Y,Z) func(X,Y,Z)
 
-#define TESTMACROS(NUL,PAR) MCR PAR; NUL;
+
+
+//=====================================================================
+//=====================================================================
+//=====================================================================
+//*
+template<class T> class TypeWrapper;
+
+class BaseTypeWrapper
+{
+public:
+	virtual ~BaseTypeWrapper(){}
+
+	virtual void* pObj(){return 0;}
+
+	template<class T>
+	T* cast_d()
+	{
+		if(TypeWrapper<T>* tw=dynamic_cast<TypeWrapper<T>*>(this))
+			return tw->obj;
+		return 0;
+		//---
+		//castobj->fcast()
+	}
+
+	template<class T>
+	T* cast_s()
+	{
+		return (static_cast<TypeWrapper<T>*>(this))->obj;
+	}
+
+};
+
+template<class T> 
+class TypeWrapper: public BaseTypeWrapper
+{
+public:
+	void* pObj(){return obj;}
+	T *obj;
+
+};
+
 
 	bool test_main()
 	{
-		int i=TESTMACROS(1,(1,2,3));
+
+
 
 
 //		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<rnum>(2,3));
@@ -134,6 +176,10 @@ int func(int x, int y, int z)
 //		delete apln;
 		return true;
 	}
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
 
 }
 }

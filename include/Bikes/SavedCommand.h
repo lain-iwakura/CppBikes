@@ -3,11 +3,11 @@
 #ifndef SAVEDCOMMAND_H
 #define SAVEDCOMMAND_H
 
-#include "loki/Functor.h"
+#include <loki/Functor.h>
 //#include "loki/Function.h"
-#include "loki/TypelistMacros.h"
+#include <loki/TypelistMacros.h>
 
-#include "Queue.h"
+#include <Bikes/Queue.h>
 
 #define SCMD_THREADSLEEP_MICROSECONDS 10
 

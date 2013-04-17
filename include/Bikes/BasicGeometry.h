@@ -17,8 +17,6 @@
 #ifndef _BIKES_BASICGEOMETRY_H_
 #define _BIKES_BASICGEOMETRY_H_
 
-//#include "List.h"
-//#include "BasicMath.h"
 #include <Bikes/Types.h>
 #include <Bikes/List.h>
 #include <Bikes/BasicMath.h>

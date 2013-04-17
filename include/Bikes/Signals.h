@@ -14,7 +14,7 @@
 
 #define BIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
 
-#define BIKES_CONNECT(emitter,signal,receiver,slot_func)				(emitter)->BIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
+#define BIKES_CONNECT(emitter,signal,receiver,slot_func)			(emitter)->BIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
 
 #define BIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		(emitter)->BIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
 
