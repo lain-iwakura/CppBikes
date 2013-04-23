@@ -2,65 +2,169 @@
 #define _BIKES_OBJECTSTREAMMACROS_H_
 #include <Bikes/MacrosBikes.h>
 
-#define BIKES_OBJECTSTREAMER(ObjClass) ObjClass##Streamer
-#define BIKES_OBJECTSTREAMER_BASEDECL(ObjClass,ReadActions,WriteActions) \
-class BIKES_OBJECTSTREAMER(ObjClass): public AbstractObjectStreamer<ObjClass> \
-{\
-public:\
-	virtual ~ BIKES_OBJECTSTREAMER(ObjClass){}\
-	void read(ByteStream &bstr, ObjClass* p){ReadActions;}\
-	void write(ByteStream &bstr,const ObjClass* p){WriteActions;}\
-};
+
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_0(handlerFunc,parPrefix) 
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_1(handlerFunc,parPrefix) handlerFunc(parPrefix##1);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_2(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_3(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_4(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_5(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4); handlerFunc(parPrefix##5);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_6(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4); handlerFunc(parPrefix##5); handlerFunc(parPrefix##6);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_7(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4); handlerFunc(parPrefix##5); handlerFunc(parPrefix##6); handlerFunc(parPrefix##7);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_8(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4); handlerFunc(parPrefix##5); handlerFunc(parPrefix##6); handlerFunc(parPrefix##7); handlerFunc(parPrefix##8);
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_9(handlerFunc,parPrefix) handlerFunc(parPrefix##1); handlerFunc(parPrefix##2); handlerFunc(parPrefix##3); handlerFunc(parPrefix##4); handlerFunc(parPrefix##5); handlerFunc(parPrefix##6); handlerFunc(parPrefix##7); handlerFunc(parPrefix##8); handlerFunc(parPrefix##9);
 
 
 
-//												(x,y,z)
-#define BIKES_OBJECTSTREAMER_DECL(ObjClass, ValNameList )\
-namespace Bikes{
-namespace Aux{
-	class Aux##ObjClass##Streamer: public ObjClass\
-	{\
-	public:\
-		void aux_read(){ XX(ObjClass).XXX(x,y,z);}\
-	};\
-	const Aux##ObjClass##Streamer aux##ObjClass##Streamer;\
-}
-}
 
+#define MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,N)\
+	template<MACROSBIKES_CT##N>                                            \
+	void exec(MACROSBIKES_##TPREFIX##N)                                    \
+	{                                                                      \
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_##N(hObj->handlerFunc,par)   \
+	}
+	
 
-#define BIKES_OBJECTSTREAMER_READACTIONS_1(V1) bstr <<p->V1;
-#define BIKES_OBJECTSTREAMER_READACTIONS_2(V1,V2) bstr <<p->V1<<p->V2;
-#define BIKES_OBJECTSTREAMER_READACTIONS_3(V1,V2,V3) bstr <<p->V1<<p->V2<<p->V3;
-#define BIKES_OBJECTSTREAMER_READACTIONS_4(V1,V2,V3,V4) bstr <<p->V1<<p->V2<<p->V3<<p->V4;
-#define BIKES_OBJECTSTREAMER_READACTIONS_5(V1,V2,V3,V4,V5) bstr <<p->V1<<p->V2<<p->V3<<p->V4<<p->V5;
+#define MACROSBIKES_HANDLER_MANYPARFUNC_TO_ONEPARFUNC_DECL(HandlerName,HandlerClass,handlerFunc,TPREFIX)\
+	class HandlerName                                                      \
+	{                                                                      \
+	public:                                                                \
+		HandlerName(HandlerClass * obj): hObj(obj){}                       \
+		void exec(){}                                                      \
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,1)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,2)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,3)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,4)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,5)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,6)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,7)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,8)\
+		MACROSBIKES_MANYPARFUNC_TO_ONEPARFUNC_DECL_N(handlerFunc,TPREFIX,9)\
+		HandlerClass *hObj;                                                \
+	};
 
-#define BIKES_OBJECTSTREAMER_WRITEACTIONS_1(V1) bstr >>p->V1;
-#define BIKES_OBJECTSTREAMER_WRITEACTIONS_2(V1,V2) bstr >>p->V1>>p->V2;
-#define BIKES_OBJECTSTREAMER_WRITEACTIONS_3(V1,V2,V3) bstr >>p->V1>>p->V2>>p->V3;
-#define BIKES_OBJECTSTREAMER_WRITEACTIONS_4(V1,V2,V3,V4) bstr >>p->V1>>p->V2>>p->V3>>p->V4;
-#define BIKES_OBJECTSTREAMER_WRITEACTIONS_5(V1,V2,V3,V4,V5) bstr >>p->V1>>p->V2>>p->V3>>vV4>>p->V5;
-
-
-BIKES_OBJECTSTREAMER_BASEDECL(Point,BIKES_OBJECTSTREAMER_READACTIONS_3(gx,gy,gz),BIKES_OBJECTSTREAMER_READACTIONS_3(gx,gy,gz))
 
 namespace Bikes
 {
 namespace Aux
 {
-	class AuxObjectStreamerDefType{};
-
-	template<MACROSBIKES_CT10_DEFTYPE(AuxObjectStreamerDefType)> class AuxObjectStreamer; 
-
-#define AUXBIKES_OBJECTSTREAMER(CT,TT,TP,PP, TCLP, TCLP_DECL)
-	template<CT>
-	class AuxObjectStreamer<TT>
-	{
-	public:
-		AuxObjectStreamer(TCLP)
-
-	private:
-		TCLP_DECL
-	};
+	MACROSBIKES_HANDLER_MANYPARFUNC_TO_ONEPARFUNC_DECL(byteStream_readManyHandler,ByteStream,read,TTRP)
+	MACROSBIKES_HANDLER_MANYPARFUNC_TO_ONEPARFUNC_DECL(byteStream_readManyStreamersHandler,ByteStream,read,TTCRP)
+	MACROSBIKES_HANDLER_MANYPARFUNC_TO_ONEPARFUNC_DECL(byteStream_writeManyHandler,ByteStream,write,TTCRP)	
 }
-}
+}	
+
+
+#define BIKES_OBJECTSTREAMER_DECL(ObjectStreamerName, ObjClass)\
+class ObjClass;\
+class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>   \
+{                                                                          \
+public:                                                                    \
+	ObjectStreamerName(ObjClass *obj);\
+	ObjectStreamerName(const ObjClass *obj);\
+	void read(Bikes::ByteStream &bstr) const;                                      \
+	static void read(Bikes::ByteStream &bstr, ObjClass* p);                        \
+	void write(Bikes::ByteStream &bstr) const;                                     \
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p);                 \
+};
+
+
+#define BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList, PostReadAction)\
+	ObjectStreamerName::ObjectStreamerName(ObjClass *obj):Bikes::AbstractObjectStreamer<ObjClass>(obj){}\
+	ObjectStreamerName::ObjectStreamerName(const ObjClass *obj):Bikes::AbstractObjectStreamer<ObjClass>(obj){}\
+	void ObjectStreamerName::read(Bikes::ByteStream &bstr) const					\
+	{																		\
+		read(bstr,obj_r);													\
+	}																		\
+																			\
+	void ObjectStreamerName::read(Bikes::ByteStream &bstr, ObjClass* p)			\
+	{																		\
+		Bikes::Aux::byteStream_readManyHandler h(&bstr);					\
+		Bikes::Aux::byteStream_readManyStreamersHandler hs(&bstr);			\
+		h.exec ValAccessList ;												\
+		hs.exec StreamersAccessList ;										\
+	}																		\
+	void ObjectStreamerName::write(Bikes::ByteStream &bstr) const					\
+	{																		\
+		write(bstr,obj_w);													\
+	}																		\
+	void ObjectStreamerName::write(Bikes::ByteStream &bstr, const ObjClass* p)		\
+	{																		\
+		Bikes::Aux::byteStream_writeManyHandler h(&bstr);					\
+		h.exec ValAccessList ;												\
+		h.exec StreamersAccessList ;										\
+	}																		
+
+
+#define BIKES_OBJECTSTREAMER_DEF(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList)\
+	BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList,)
+
+
+
+#define BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList, PostReadAction )\
+class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>   \
+{                                                                          \
+public:                                                                    \
+	ObjectStreamerName(ObjClass *obj):AbstractObjectStreamer<ObjClass>(obj){}\
+	ObjectStreamerName(const ObjClass *obj):AbstractObjectStreamer<ObjClass>(obj){}\
+	void read(Bikes::ByteStream &bstr) const                               \
+	{                                                                      \
+		read(bstr,obj_r);                                                  \
+	}                                                                      \
+	static void read(Bikes::ByteStream &bstr, ObjClass* p)                 \
+	{                                                                      \
+		Bikes::Aux::byteStream_readManyHandler h(&bstr);                   \
+		Bikes::Aux::byteStream_readManyStreamersHandler hs(&bstr);         \
+		h.exec ValAccessList ;                                             \
+		hs.exec StreamersAccessList ;                                      \
+		PostReadAction ;                                                   \
+	}                                                                      \
+	void write(Bikes::ByteStream &bstr) const                              \
+	{                                                                      \
+		write(bstr,obj_w);                                                 \
+	}                                                                      \
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p)          \
+	{                                                                      \
+		Bikes::Aux::byteStream_writeManyHandler h(&bstr);                  \
+		h.exec ValAccessList ;                                             \
+		h.exec StreamersAccessList ;                                       \
+	}                                                                      \
+};
+
+
+//																(p->x,p->y,p->z)
+#define BIKES_OBJECTSTREAMER_DECLDEF(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList)\
+class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
+{																			\
+public:																		\
+																			\
+	ObjectStreamerName(ObjClass *obj):AbstractObjectStreamer<ObjClass>(obj){}\
+	ObjectStreamerName(const ObjClass *obj):AbstractObjectStreamer<ObjClass>(obj){}\
+																			\
+	void read(Bikes::ByteStream &bstr) const								\
+	{																		\
+		read(bstr,obj_r);													\
+	}																		\
+																			\
+	static void read(Bikes::ByteStream &bstr, ObjClass* p)					\
+	{																		\
+		Bikes::Aux::byteStream_readManyHandler h(&bstr);					\
+		Bikes::Aux::byteStream_readManyStreamersHandler hs(&bstr);			\
+		h.exec ValAccessList ;												\
+		hs.exec StreamersAccessList ;										\
+	}																		\
+																			\
+	void write(Bikes::ByteStream &bstr) const								\
+	{																		\
+		write(bstr,obj_w);													\
+	}																		\
+																			\
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p)			\
+{																			\
+	Bikes::Aux::byteStream_writeManyHandler h(&bstr);						\
+	h.exec ValAccessList ;													\
+	h.exec StreamersAccessList ;											\
+}																			\
+};
+
 #endif

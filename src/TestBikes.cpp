@@ -1,14 +1,21 @@
 #include <Bikes/TestBikes.h>
-#include <Bikes/ByteStream.h>
+//#include <Bikes/ByteStream.h>
 #include <Bikes/RawArray.h>
 #include <Bikes/BikesStream.h>
 #include <Bikes/BasicGeometry.h>
 #include <Bikes/TypeRegister.h>
 //#include "InterpolationFunc.h"
-//#include "QuickArray.h"
+#include "QuickArray.h"
+#include "ObjectStream.h"
+#include "BikesStream.h"
+
+
+Bikes::Aux::byteStream_readManyHandler h(0);
 
 namespace Bikes
 {
+
+
 
 namespace Test
 {
@@ -27,9 +34,62 @@ namespace Test
 		ByteStream *bs;
 		float c;
 	};
+
+
+	template<class T>
+	std::vector<T> quick_std_vector_val(T e1, T e2, T e3)
+	{
+		std::vector<T> v(3);
+		v[0]=e1; v[1]=e2; v[2]=e3;
+		return v;
+	}
+
 	bool Test::test_ByteStream()
 	{
-	/*	std::vector<char> ba;
+
+		int i=11;
+		float f=22.22;
+		double d=33.33;
+		//const std::vector<StreamVal>& svs=quick_vector_val<StreamConstVal>(i,f,d);
+
+		Point p(1,22,333);		
+		Vector ve(0.1,0.2,0.3,p);
+		Basis b; b.setOrtoBasis_InXY_ByI(ve); b.setO(p);
+
+		RawArray<char> ra;
+		ByteStream bs(&ra);
+	//	bs << quick_vector_val<StreamConstVal>(i,f,d);
+		bs << i << f <<d;
+		bs << PointStreamer(&p);
+		bs << VectorStreamer(&ve);
+		bs << BasisStreamer(&b);
+		
+		//bs << i << f << d;
+
+		std::vector<char> v; 
+		ra.toVector(v);
+		
+
+
+		int i_;
+		float f_;
+		double d_;
+		Point p_;
+		Vector v_;
+		Basis b_;
+		
+
+		bs >>i_ >>f_ >> d_;
+		//bs >> quick_vector_val<StreamVal>(i_,f_,d_);
+		bs >> PointStreamer(&p_);
+		bs >> VectorStreamer(&v_);
+		bs >> BasisStreamer(&b_);
+
+		
+
+
+	/*	
+		std::vector<char> ba;
 		ByteStream bs;
 		bs.setByteArray(&ba);
 
@@ -38,7 +98,8 @@ namespace Test
 		int v1=10;
 		float v2=20.20;
 		double v3=50.50;
-		bs <<v1 <<v2 <<v3;
+
+		//bs.multiWrite(quick_std_vector<StreamConstVal>(v1,v2,v3));
 
 		{
 			TestStruct str;
@@ -161,19 +222,26 @@ public:
 
 };
 
+template<class T> 
+int tfunc(const T& v)
+{
+	//v=3;
+	int a=1;
+	return v+5;
+}
 
 	bool test_main()
-	{
+	{		
+//		AClass *ac=new BClass();
+//		int i= ac->vfunc();
+//		BClass b;
+//		TClass t(ac);
 
+		double v=0.1;
+		const double &cv=v;
+		int i=tfunc(double(5));
 
-
-
-//		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<rnum>(2,3));
-
-
-//		rnum y=(*apln)(2);
-
-//		delete apln;
+		test_ByteStream();
 		return true;
 	}
 //////////////////////////////////////////////////////////////////////////
