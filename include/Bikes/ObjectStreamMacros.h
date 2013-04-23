@@ -69,26 +69,26 @@ public:                                                                    \
 };
 
 
-#define BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, StreamersAccessList, PostReadAction)\
-	ObjectStreamerName::ObjectStreamerName(ObjClass *obj):Bikes::AbstractObjectStreamer<ObjClass>(obj){}\
-	ObjectStreamerName::ObjectStreamerName(const ObjClass *obj):Bikes::AbstractObjectStreamer<ObjClass>(obj){}\
-	void ObjectStreamerName::read(Bikes::ByteStream &bstr) const					\
+#define BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ValAccessList, StreamersAccessList, PostReadAction)\
+	ObjectStreamerName::ObjectStreamerName(StreamerType *obj):Bikes::AbstractObjectStreamer<StreamerType>(obj){}\
+	ObjectStreamerName::ObjectStreamerName(const StreamerType *obj):Bikes::AbstractObjectStreamer<StreamerType>(obj){}\
+	void ObjectStreamerName::read(Bikes::ByteStream &bstr) const			\
 	{																		\
 		read(bstr,obj_r);													\
 	}																		\
 																			\
-	void ObjectStreamerName::read(Bikes::ByteStream &bstr, ObjClass* p)			\
+	void ObjectStreamerName::read(Bikes::ByteStream &bstr, StreamerType* p)		\
 	{																		\
 		Bikes::Aux::byteStream_readManyHandler h(&bstr);					\
 		Bikes::Aux::byteStream_readManyStreamersHandler hs(&bstr);			\
 		h.exec ValAccessList ;												\
 		hs.exec StreamersAccessList ;										\
 	}																		\
-	void ObjectStreamerName::write(Bikes::ByteStream &bstr) const					\
+	void ObjectStreamerName::write(Bikes::ByteStream &bstr) const			\
 	{																		\
 		write(bstr,obj_w);													\
 	}																		\
-	void ObjectStreamerName::write(Bikes::ByteStream &bstr, const ObjClass* p)		\
+	void ObjectStreamerName::write(Bikes::ByteStream &bstr, const StreamerType* p)\
 	{																		\
 		Bikes::Aux::byteStream_writeManyHandler h(&bstr);					\
 		h.exec ValAccessList ;												\
@@ -166,5 +166,21 @@ public:																		\
 	h.exec StreamersAccessList ;											\
 }																			\
 };
+
+//=========================================================================
+
+//#define BIKES_ARRAYSTREAMER_DECL(ArrayStreamerName, ArrayTClass, Obj)\
+class ObjClass;\
+class ArrayStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>   \
+{                                                                          \
+public:                                                                    \
+	ArrayStreamerName(ObjClass *obj);\
+	ArrayStreamerName(const ObjClass *obj);\
+	void read(Bikes::ByteStream &bstr) const;                                      \
+	static void read(Bikes::ByteStream &bstr, ObjClass* p);                        \
+	void write(Bikes::ByteStream &bstr) const;                                     \
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p);                 \
+};
+
 
 #endif

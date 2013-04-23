@@ -4,6 +4,7 @@
 #include <Bikes/BikesStream.h>
 #include <Bikes/BasicGeometry.h>
 #include <Bikes/TypeRegister.h>
+#include <Bikes/List.h>
 //#include "InterpolationFunc.h"
 #include "QuickArray.h"
 #include "ObjectStream.h"
@@ -58,11 +59,17 @@ namespace Test
 
 		RawArray<char> ra;
 		ByteStream bs(&ra);
+
+		List<Point> ps;
+		ps+=Point(1,11,111);
+		ps+=Point(2,22,222);
+		ps+=Point(3,33,333);
 	//	bs << quick_vector_val<StreamConstVal>(i,f,d);
 		bs << i << f <<d;
 		bs << PointStreamer(&p);
 		bs << VectorStreamer(&ve);
 		bs << BasisStreamer(&b);
+		bs << arrayStreamer<PointStreamer>(&ps);
 		
 		//bs << i << f << d;
 
@@ -77,6 +84,7 @@ namespace Test
 		Point p_;
 		Vector v_;
 		Basis b_;
+		List<Point> ps_;
 		
 
 		bs >>i_ >>f_ >> d_;
@@ -84,6 +92,8 @@ namespace Test
 		bs >> PointStreamer(&p_);
 		bs >> VectorStreamer(&v_);
 		bs >> BasisStreamer(&b_);
+		bs >> arrayStreamer<PointStreamer>(&ps_);
+
 
 		
 
