@@ -9,7 +9,9 @@
 #include "QuickArray.h"
 #include "ObjectStream.h"
 #include "BikesStream.h"
-
+#include "TypeCollector.h"
+#include <vector>
+#include "AbstractRegistrableType.h"
 
 Bikes::Aux::byteStream_readManyHandler h(0);
 
@@ -20,30 +22,6 @@ namespace Bikes
 
 namespace Test
 {
-	struct TestStruct
-	{
-		~TestStruct()
-		{
-			int abc=1;
-		}
-		double func()
-		{
-			return a+b;
-		}
-		int a;
-		double b;
-		ByteStream *bs;
-		float c;
-	};
-
-
-	template<class T>
-	std::vector<T> quick_std_vector_val(T e1, T e2, T e3)
-	{
-		std::vector<T> v(3);
-		v[0]=e1; v[1]=e2; v[2]=e3;
-		return v;
-	}
 
 	bool Test::test_ByteStream()
 	{
@@ -64,7 +42,6 @@ namespace Test
 		ps+=Point(1,11,111);
 		ps+=Point(2,22,222);
 		ps+=Point(3,33,333);
-	//	bs << quick_vector_val<StreamConstVal>(i,f,d);
 		bs << i << f <<d;
 		bs << PointStreamer(&p);
 		bs << VectorStreamer(&ve);
@@ -74,8 +51,7 @@ namespace Test
 		//bs << i << f << d;
 
 		std::vector<char> v; 
-		ra.toVector(v);
-		
+		ra.toVector(v);	
 
 
 		int i_;
@@ -88,169 +64,118 @@ namespace Test
 		
 
 		bs >>i_ >>f_ >> d_;
-		//bs >> quick_vector_val<StreamVal>(i_,f_,d_);
 		bs >> PointStreamer(&p_);
 		bs >> VectorStreamer(&v_);
 		bs >> BasisStreamer(&b_);
 		bs >> arrayStreamer<PointStreamer>(&ps_);
 
-
 		
-
-
-	/*	
-		std::vector<char> ba;
-		ByteStream bs;
-		bs.setByteArray(&ba);
-
-		
-
-		int v1=10;
-		float v2=20.20;
-		double v3=50.50;
-
-		//bs.multiWrite(quick_std_vector<StreamConstVal>(v1,v2,v3));
-
-		{
-			TestStruct str;
-			str.a=111;
-			str.b=222.222;
-			str.c=333.333;
-			str.bs=&bs;
-			bs <<str;
-			str.a=0;
-			str.b=0;
-		}
-
-
-		int v1_=0;
-		float v2_=0;
-		double v3_=0;
-		TestStruct str_;
-		bs.setByteArray(&ba);
-		bs>>v1_;
-		bs>>v2_;		
-		bs>>v3_;
-		bs>>str_;
-
-		double d=str_.func();
-
-
-		int stop_=0;
-		return v1_==v1&&v2==v2_&&v3==v3_;
-		//*/
 		return true;
 	}
 
 
 	bool test_RawArray()
 	{
-// 		{		
-// 			RawArray<TestStruct> rar;
-// 			rar.resize(3);
-// 			rar[0].a=1;
-// 			rar[1].a=2;
-// 			rar[2].a=3;
-// 			rar.resize(5);
-// 			rar[3].a=4;
-// 			rar[4].a=5;			
-// 		}
+		return true;
+	}	
+
+
+class AClass: public AbstractRegistrableType<AClass>
+{
+public:
+	virtual~AClass(){}
+	virtual int vfunc(){return 42;}
+};
+
+class XClass: public AClass
+{
+public:
+	BIKES_REGISTRABLETYPE_DECL(XClass)
+	XClass():a(2),b(3){}
+	int vfunc(){ return a+b;}
+	int a;
+	int b;
+};
+
+class YClass: public AClass
+{
+public:
+	BIKES_REGISTRABLETYPE_DECL(YClass)
+	YClass():c(10){}
+	int vfunc(){return c;}
+	int c;
+	static const XClass xc;
+};
+
+const XClass YClass::xc;
+
+BIKES_OBJECTSTREAMER_DECLDEF(XClassStreamer,XClass,(p->a,p->b),())
+BIKES_OBJECTSTREAMER_DECLDEF(YClassStreamer,YClass,(p->c),())
+
+
+BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass,std::tr1::shared_ptr<AClass>)
+
+BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
+							add<XClassStreamer>();
+							add<YClassStreamer>()
+								)
+
+
+	bool test_AbstractTypeStreamer()
+	{
+		ByteArray ba;
+		ByteStream bs(&ba);
+
+		std::tr1::shared_ptr<AClass> xc(new XClass());
+		std::tr1::shared_ptr<AClass> yc(new YClass());
+		int xc_a=((YClass*)yc.get())->xc.a;
+	
+		AbstractTypeStreamer<AClass, std::tr1::shared_ptr<AClass> > ats;
+		ats.add<XClassStreamer>();
+		ats.add<YClassStreamer>();
+		
+	//	AClassStreamer ats2;
+
+		int i1=111;
+		int i2=222;
+		bs << i1;
+		//ats.setObject(&xc);
+		bs << AClassStreamer(&xc);
+		//ats.setObject(&yc);
+		bs << AClassStreamer(&yc);
+		bs << i2;
+
+
+		std::tr1::shared_ptr<AClass> ac1;
+		std::tr1::shared_ptr<AClass> ac2;
+
+		int i1_;
+		int i2_;
+
+		bs >> i1_;
+		//ats.setObject(&ac1);
+		bs >> AClassStreamer(&ac1);
+		//ats.setObject(&ac2);
+		bs >> AClassStreamer(&ac2);
+		bs >> i2_;
+		
+
+
 		return true;
 	}
 
-	bool test_BikesStream()
-	{
-/*		
-		RawArray<char> bs;		
-		BikesStream bstr;
-		bstr.setByteArray(&bs);
-		Point p1(1,11,111);
-		Point p2(2,22,222);
-		int np=2;
-		bstr << np;
-		bstr << p1;
-		bstr << p2;
 
-		Point p1_;
-		Point p2_;
-		int np_=0;
-		bstr >> np_;
-		bstr >> p1_;
-		bstr >> p2_;
-
-		int stp=1;
-		//*/
-		return true;
-
-	}
-
-int func(int x, int y, int z)
-{
-	return x+y+z;
-}
-
-
-
-
-//=====================================================================
-//=====================================================================
-//=====================================================================
-//*
-template<class T> class TypeWrapper;
-
-class BaseTypeWrapper
-{
-public:
-	virtual ~BaseTypeWrapper(){}
-
-	virtual void* pObj(){return 0;}
-
-	template<class T>
-	T* cast_d()
-	{
-		if(TypeWrapper<T>* tw=dynamic_cast<TypeWrapper<T>*>(this))
-			return tw->obj;
-		return 0;
-		//---
-		//castobj->fcast()
-	}
-
-	template<class T>
-	T* cast_s()
-	{
-		return (static_cast<TypeWrapper<T>*>(this))->obj;
-	}
-
-};
-
-template<class T> 
-class TypeWrapper: public BaseTypeWrapper
-{
-public:
-	void* pObj(){return obj;}
-	T *obj;
-
-};
-
-template<class T> 
-int tfunc(const T& v)
-{
-	//v=3;
-	int a=1;
-	return v+5;
-}
+#define MMM(X) X;
 
 	bool test_main()
 	{		
-//		AClass *ac=new BClass();
-//		int i= ac->vfunc();
-//		BClass b;
-//		TClass t(ac);
+		int v1=3;
+		int v2=2;
+		int v3=0;
+		MMM(v3=v1+v2;v1++)
 
-		double v=0.1;
-		const double &cv=v;
-		int i=tfunc(double(5));
 
+		test_AbstractTypeStreamer();
 		test_ByteStream();
 		return true;
 	}
@@ -259,5 +184,5 @@ int tfunc(const T& v)
 //////////////////////////////////////////////////////////////////////////
 
 
-}
-}
+}//Test
+}// Bikes
