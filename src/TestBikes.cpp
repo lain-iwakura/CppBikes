@@ -13,7 +13,7 @@
 #include <vector>
 #include "AbstractRegistrableType.h"
 
-Bikes::Aux::byteStream_readManyHandler h(0);
+
 
 namespace Bikes
 {
@@ -109,11 +109,15 @@ public:
 
 const XClass YClass::xc;
 
-BIKES_OBJECTSTREAMER_DECLDEF(XClassStreamer,XClass,(p->a,p->b),())
-BIKES_OBJECTSTREAMER_DECLDEF(YClassStreamer,YClass,(p->c),())
+BIKES_OBJECTSTREAMER_DECL(XClassStreamer,XClass)
+BIKES_OBJECTSTREAMER_DECL(YClassStreamer,YClass)
+
+BIKES_OBJECTSTREAMER_DEF(XClassStreamer,add(p->a);add(p->b))
+BIKES_OBJECTSTREAMER_DEF(YClassStreamer,add(p->c))
 
 
-BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass,std::tr1::shared_ptr<AClass>)
+
+BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass, std::tr1::shared_ptr<AClass>)
 
 BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 							add<XClassStreamer>();

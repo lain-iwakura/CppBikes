@@ -4,6 +4,9 @@
 
 namespace Bikes
 {
+	class Point;
+	class Vector;
+	class Basis;
 
 	BIKES_OBJECTSTREAMER_DECL(PointStreamer,	Point)
 	BIKES_OBJECTSTREAMER_DECL(VectorStreamer,	Vector)
