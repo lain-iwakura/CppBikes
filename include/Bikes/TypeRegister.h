@@ -2,6 +2,7 @@
 #define TYPEREGISTER_H
 #include <Bikes/TypeCollector.h>
 
+// сдюкхрэ (?)
 
 namespace Bikes
 {	

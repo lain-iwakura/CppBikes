@@ -1,0 +1,30 @@
+cmake_minimum_required (VERSION 2.8)
+
+project(BikesTest)
+
+set(CMAKE_USE_RELATIVE_PATHS true)
+
+include_directories(${BIKES_SOURCE_DIR}/include)
+
+
+
+if(MSVC)
+	add_definitions(/W3)
+	add_definitions(/MP /wd4068 /wd4355 /wd4800 /wd4290 /wd4996)
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+	add_definitions(-Wall -pedantic -Wno-long-long)
+else()
+	message("Unknown compiler")
+endif()
+
+file(GLOB BIKESTEST_SOURSEFILES "src/*.cpp"
+								"src/*.h")
+
+add_executable(BikesTest ${BIKESTEST_SOURSEFILES})
+
+set_target_properties(BikesTest PROPERTIES DEBUG_POSTFIX "_d")
+
+target_link_libraries(BikesTest
+	Bikes)
+								
+

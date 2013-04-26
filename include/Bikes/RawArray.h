@@ -1,5 +1,6 @@
 #ifndef _BIKES_RAWARRAY_H_
 #define _BIKES_RAWARRAY_H_
+#include <vector>
 
 namespace Bikes
 {
@@ -151,11 +152,22 @@ public:
 	{
 		s=0;
 		l=0;
+		T* r=arr;
 		arr=0;
+		return r;
+	}
+
+	void toVector(std::vector<T>& v)
+	{
+		for(int i=0; i<l; i++)
+			v.push_back(arr[i]);
 	}
 
 	T& operator [](int i){return arr[i];}
 	const T& operator [](int i) const {return arr[i];}
+
+	//operator T*(){return arr;} //?
+	//operator const T*(){return arr;} //?
 
 	T& at(int i){return arr[i];}
 	const T& at(int i)const{return arr[i];}

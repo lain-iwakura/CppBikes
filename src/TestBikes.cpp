@@ -1,179 +1,187 @@
 #include <Bikes/TestBikes.h>
-#include <Bikes/ByteStream.h>
+//#include <Bikes/ByteStream.h>
 #include <Bikes/RawArray.h>
 #include <Bikes/BikesStream.h>
 #include <Bikes/BasicGeometry.h>
 #include <Bikes/TypeRegister.h>
+#include <Bikes/List.h>
 //#include "InterpolationFunc.h"
-//#include "QuickArray.h"
+#include "QuickArray.h"
+#include "ObjectStreamer.h"
+#include "BikesStream.h"
+#include "TypeCollector.h"
+#include <vector>
+#include "AbstractRegistrableType.h"
+
+
 
 namespace Bikes
 {
 
+
+
 namespace Test
 {
-	struct TestStruct
-	{
-		~TestStruct()
-		{
-			int abc=1;
-		}
-		double func()
-		{
-			return a+b;
-		}
-		int a;
-		double b;
-		ByteStream *bs;
-		float c;
-	};
+
 	bool Test::test_ByteStream()
 	{
-	/*	std::vector<char> ba;
-		ByteStream bs;
-		bs.setByteArray(&ba);
 
+		int i=11;
+		float f=22.22;
+		double d=33.33;
+		//const std::vector<StreamVal>& svs=quick_vector_val<StreamConstVal>(i,f,d);
+
+		Point p(1,22,333);		
+		Vector ve(0.1,0.2,0.3,p);
+		Basis b; b.setOrtoBasis_InXY_ByI(ve); b.setO(p);
+
+		RawArray<char> ra;
+		ByteStream bs(&ra);
+
+		List<Point> ps;
+		ps+=Point(1,11,111);
+		ps+=Point(2,22,222);
+		ps+=Point(3,33,333);
+		bs << i << f <<d;
+		bs << PointStreamer(&p);
+		bs << VectorStreamer(&ve);
+		bs << BasisStreamer(&b);
+		bs << arrayStreamer<PointStreamer>(&ps);
+		
+		//bs << i << f << d;
+
+		std::vector<char> v; 
+		ra.toVector(v);	
+
+
+		int i_;
+		float f_;
+		double d_;
+		Point p_;
+		Vector v_;
+		Basis b_;
+		List<Point> ps_;
 		
 
-		int v1=10;
-		float v2=20.20;
-		double v3=50.50;
-		bs <<v1 <<v2 <<v3;
+		bs >>i_ >>f_ >> d_;
+		bs >> PointStreamer(&p_);
+		bs >> VectorStreamer(&v_);
+		bs >> BasisStreamer(&b_);
+		bs >> arrayStreamer<PointStreamer>(&ps_);
 
-		{
-			TestStruct str;
-			str.a=111;
-			str.b=222.222;
-			str.c=333.333;
-			str.bs=&bs;
-			bs <<str;
-			str.a=0;
-			str.b=0;
-		}
-
-
-		int v1_=0;
-		float v2_=0;
-		double v3_=0;
-		TestStruct str_;
-		bs.setByteArray(&ba);
-		bs>>v1_;
-		bs>>v2_;		
-		bs>>v3_;
-		bs>>str_;
-
-		double d=str_.func();
-
-
-		int stop_=0;
-		return v1_==v1&&v2==v2_&&v3==v3_;
-		//*/
+		
 		return true;
 	}
 
 
 	bool test_RawArray()
 	{
-// 		{		
-// 			RawArray<TestStruct> rar;
-// 			rar.resize(3);
-// 			rar[0].a=1;
-// 			rar[1].a=2;
-// 			rar[2].a=3;
-// 			rar.resize(5);
-// 			rar[3].a=4;
-// 			rar[4].a=5;			
-// 		}
+		return true;
+	}	
+
+
+class AClass: public AbstractRegistrableType<AClass>
+{
+public:
+	virtual~AClass(){}
+	BIKES_REGISTRABLETYPE_DECL(AClass)
+	virtual int vfunc(){return 42;}
+};
+
+class XClass: public AClass
+{
+public:
+	BIKES_REGISTRABLETYPE_DECL(XClass)
+	XClass():a(2),b(3){}
+	int vfunc(){ return a+b;}
+	int a;
+	int b;
+};
+
+class YClass: public AClass
+{
+public:
+	BIKES_REGISTRABLETYPE_DECL(YClass)
+	YClass():c(10){}
+	int vfunc(){return c;}
+	int c;
+	static const XClass xc;
+};
+
+const XClass YClass::xc;
+
+BIKES_OBJECTSTREAMER_DECL(XClassStreamer,XClass)
+BIKES_OBJECTSTREAMER_DECL(YClassStreamer,YClass)
+
+BIKES_OBJECTSTREAMER_DEF(XClassStreamer,add(p->a);add(p->b))
+BIKES_OBJECTSTREAMER_DEF(YClassStreamer,add(p->c))
+
+
+
+BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass, std::tr1::shared_ptr<AClass>)
+
+BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
+							add<XClassStreamer>();
+							add<YClassStreamer>()
+								)
+
+
+	bool test_AbstractTypeStreamer()
+	{
+		ByteArray ba;
+		ByteStream bs(&ba);
+
+		std::tr1::shared_ptr<AClass> xc(new XClass());
+		std::tr1::shared_ptr<AClass> yc(new YClass());
+		int xc_a=((YClass*)yc.get())->xc.a;
+	
+		AbstractTypeStreamer<AClass, std::tr1::shared_ptr<AClass> > ats;
+		ats.add<XClassStreamer>();
+		ats.add<YClassStreamer>();
+		
+	//	AClassStreamer ats2;
+
+		int i1=111;
+		int i2=222;
+		bs << i1;
+		//ats.setObject(&xc);
+		bs << AClassStreamer(&xc);
+		//ats.setObject(&yc);
+		bs << AClassStreamer(&yc);
+		bs << i2;
+
+
+		std::tr1::shared_ptr<AClass> ac1;
+		std::tr1::shared_ptr<AClass> ac2;
+
+		int i1_;
+		int i2_;
+
+		bs >> i1_;
+		//ats.setObject(&ac1);
+		bs >> AClassStreamer(&ac1);
+		//ats.setObject(&ac2);
+		bs >> AClassStreamer(&ac2);
+		bs >> i2_;
+		
+
+
 		return true;
 	}
 
-	bool test_BikesStream()
-	{
-/*		
-		RawArray<char> bs;		
-		BikesStream bstr;
-		bstr.setByteArray(&bs);
-		Point p1(1,11,111);
-		Point p2(2,22,222);
-		int np=2;
-		bstr << np;
-		bstr << p1;
-		bstr << p2;
 
-		Point p1_;
-		Point p2_;
-		int np_=0;
-		bstr >> np_;
-		bstr >> p1_;
-		bstr >> p2_;
-
-		int stp=1;
-		//*/
-		return true;
-
-	}
-
-int func(int x, int y, int z)
-{
-	return x+y+z;
-}
-
-
-
-
-//=====================================================================
-//=====================================================================
-//=====================================================================
-//*
-template<class T> class TypeWrapper;
-
-class BaseTypeWrapper
-{
-public:
-	virtual ~BaseTypeWrapper(){}
-
-	virtual void* pObj(){return 0;}
-
-	template<class T>
-	T* cast_d()
-	{
-		if(TypeWrapper<T>* tw=dynamic_cast<TypeWrapper<T>*>(this))
-			return tw->obj;
-		return 0;
-		//---
-		//castobj->fcast()
-	}
-
-	template<class T>
-	T* cast_s()
-	{
-		return (static_cast<TypeWrapper<T>*>(this))->obj;
-	}
-
-};
-
-template<class T> 
-class TypeWrapper: public BaseTypeWrapper
-{
-public:
-	void* pObj(){return obj;}
-	T *obj;
-
-};
-
+#define MMM(X) X;
 
 	bool test_main()
-	{
+	{		
+		int v1=3;
+		int v2=2;
+		int v3=0;
+		MMM(v3=v1+v2;v1++)
 
 
-
-
-//		AbstractPolynomial *apln=new StaticPolynomial<1>(quick_array<rnum>(2,3));
-
-
-//		rnum y=(*apln)(2);
-
-//		delete apln;
+		test_AbstractTypeStreamer();
+		test_ByteStream();
 		return true;
 	}
 //////////////////////////////////////////////////////////////////////////
@@ -181,5 +189,5 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-}
-}
+}//Test
+}// Bikes
