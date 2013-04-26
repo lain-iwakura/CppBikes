@@ -1,8 +1,8 @@
-#ifndef _BIKES_OBJECTSTREAM_H_
-#define _BIKES_OBJECTSTREAM_H_
+#ifndef _BIKES_OBJECTSTREAMER_H_
+#define _BIKES_OBJECTSTREAMER_H_
 
 #include <Bikes/ByteStream.h>
-#include <Bikes/ObjectStreamMacros.h>
+#include <Bikes/ObjectStreamerMacros.h>
 #include <Bikes/TypeCollector.h>
 #include <vector>
 #include <memory>
@@ -95,6 +95,27 @@ public:
 	}
 	
 };
+
+// template<class ValueType>
+// class ValueStreamer: AbstractObjectStreamer<ValueType>
+// {
+// public:
+// 	ValueStreamer(const ValueType * val):AbstractObjectStreamer<ValueType>(val){}
+// 	ValueStreamer(ValueType * val):AbstractObjectStreamer<ValueType>(val){}
+// 
+// 	void read(ByteStream& bs) const
+// 	{
+// 	}
+// 	void write(ByteStream& bs) const
+// 	{
+// 	}
+// 
+// 	static void read(ByteStream& bs, ValueType *val)
+// 	{
+// 	}
+// 
+// 	static void write(ByteStream& bs, )
+// }
 //-------------------------------------------------------------------------
 template<class ElementStreamerClass, class ArrayClass>
 ArrayStreamer<ElementStreamerClass,ArrayClass> arrayStreamer(ArrayClass *arr)
@@ -218,6 +239,26 @@ template<class AbstractRegitrableType, class AbstractRegitrableTypePtr, class Co
 std::vector<std::tr1::shared_ptr<TypeAbstractStreamer<AbstractRegitrableType> > > AbstractTypeStreamer<AbstractRegitrableType,AbstractRegitrableTypePtr,Collector>::streamers(AbstractRegitrableType::typesCount());
 
 //=========================================================================
+
+
+class MultiTypeStreamer: public AbstractStreamer
+{
+public:
+	MultiTypeStreamer(){}
+
+	void read(ByteStream &bs) const
+	{
+		if(curStr) curStr->read(bs);
+	}
+
+	void write(ByteStream &bs) const
+	{
+		if(curStr) curStr->write(bs);
+	}
+
+private:
+	AbstractStreamer *curStr;
+};
 
 
 // AbstractTypeStreamer<AbstractRegitrableType>

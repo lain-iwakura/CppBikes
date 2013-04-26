@@ -7,7 +7,7 @@
 #include <Bikes/List.h>
 //#include "InterpolationFunc.h"
 #include "QuickArray.h"
-#include "ObjectStream.h"
+#include "ObjectStreamer.h"
 #include "BikesStream.h"
 #include "TypeCollector.h"
 #include <vector>
@@ -84,6 +84,7 @@ class AClass: public AbstractRegistrableType<AClass>
 {
 public:
 	virtual~AClass(){}
+	BIKES_REGISTRABLETYPE_DECL(AClass)
 	virtual int vfunc(){return 42;}
 };
 

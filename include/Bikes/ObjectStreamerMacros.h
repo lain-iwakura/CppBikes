@@ -6,7 +6,6 @@
 //=========================================================================
 
 #define BIKES_OBJECTSTREAMER_DECL(ObjectStreamerName, ObjClass)				\
-																			\
 class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
 {																			\
 private:																	\
@@ -14,13 +13,13 @@ struct AuxReader															\
 {																			\
 	template<class T>void add(T &var){bs->read(var);}						\
 	void read(ObjClass *p);													\
-	ByteStream *bs;															\
+	Bikes::ByteStream *bs;													\
 };																			\
 struct AuxWriter															\
 {																			\
-template<class T>void add(const T &var){bs->write(var);}					\
-void write(const ObjClass *p);												\
-ByteStream *bs;																\
+	template<class T>void add(const T &var){bs->write(var);}				\
+	void write(const ObjClass *p);											\
+	Bikes::ByteStream *bs;													\
 };																			\
 public:																		\
 	ObjectStreamerName(ObjClass *obj=0);									\
@@ -69,6 +68,76 @@ public:																		\
 #define BIKES_OBJECTSTREAMER_DEF(ObjectStreamerName, ValAccessList)			\
 	BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ValAccessList, )
 
+//-------------------------------------------------------------------------
+
+#define BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, PostReadAction)\
+class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
+{																			\
+private:																	\
+struct AuxReader															\
+{																			\
+	template<class T>void add(T &var){bs->read(var);}						\
+	void read(ObjClass *p){ValAccessList;}									\
+	Bikes::ByteStream *bs;													\
+};																			\
+struct AuxWriter															\
+{																			\
+	template<class T>void add(const T &var){bs->write(var);}				\
+	void write(const ObjClass *p){ValAccessList;}							\
+	Bikes::ByteStream *bs;													\
+};																			\
+public:																		\
+	ObjectStreamerName(ObjClass *obj=0){setObject(obj);}					\
+	ObjectStreamerName(const ObjClass *obj){setObject(obj);}				\
+	void read(Bikes::ByteStream &bstr) const{read(bstr,obj_r);}				\
+	void write(Bikes::ByteStream &bstr) const{write(bstr,obj_w);}			\
+	static void read(Bikes::ByteStream &bstr, ObjClass* p)					\
+	{																		\
+		AuxReader r;r.bs=&bstr;												\
+		r.read(p);															\
+		PostReadAction;														\
+	}																		\
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p)			\
+	{																		\
+		AuxWriter w; w.bs=&bstr;											\
+		w.write(p);															\
+	}																		\
+};
+
+//-------------------------------------------------------------------------
+
+#define BIKES_OBJECTSTREAMER_DECLDEF(ObjectStreamerName, ObjClass, ValAccessList)\
+class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
+{																			\
+private:																	\
+struct AuxReader															\
+{																			\
+	template<class T>void add(T &var){bs->read(var);}						\
+	void read(ObjClass *p){ValAccessList;}									\
+	Bikes::ByteStream *bs;													\
+};																			\
+struct AuxWriter															\
+{																			\
+	template<class T>void add(const T &var){bs->write(var);}				\
+	void write(const ObjClass *p){ValAccessList;}							\
+	Bikes::ByteStream *bs;													\
+};																			\
+public:																		\
+	ObjectStreamerName(ObjClass *obj=0){setObject(obj);}					\
+	ObjectStreamerName(const ObjClass *obj){setObject(obj);}				\
+	void read(Bikes::ByteStream &bstr) const{read(bstr,obj_r);}				\
+	void write(Bikes::ByteStream &bstr) const{write(bstr,obj_w);}			\
+	static void read(Bikes::ByteStream &bstr, ObjClass* p)					\
+	{																		\
+		AuxReader r;r.bs=&bstr;												\
+		r.read(p);															\
+	}																		\
+	static void write(Bikes::ByteStream &bstr, const ObjClass* p)			\
+	{																		\
+		AuxWriter w; w.bs=&bstr;											\
+		w.write(p);															\
+	}																		\
+};
 
 //=========================================================================
 
