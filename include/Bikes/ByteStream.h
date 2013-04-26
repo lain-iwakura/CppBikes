@@ -142,7 +142,7 @@ namespace Bikes
 		void write(double val)				{writeValue(val);}
 
 		template<class T>
-		void writeValue(T val)
+		void writeValue(const T val)
 		{
 			int s0=b->size();
 			int ds=sizeof(T);

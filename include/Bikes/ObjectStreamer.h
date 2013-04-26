@@ -46,7 +46,7 @@ public:
 	virtual void read(ByteStream& bs) const = 0;
 	virtual void write(ByteStream& bs) const = 0;	
 
-	void read(ByteStream& bs, T *obj) {obj_r=obj; read(bs);}
+	void read(ByteStream& bs, T *obj) {obj_r=obj; obj_w=obj; read(bs);}
 	void write(ByteStream& bs, const T *obj) {obj_w=obj; write(bs);}
 
 protected:
@@ -95,27 +95,6 @@ public:
 	}
 	
 };
-
-// template<class ValueType>
-// class ValueStreamer: AbstractObjectStreamer<ValueType>
-// {
-// public:
-// 	ValueStreamer(const ValueType * val):AbstractObjectStreamer<ValueType>(val){}
-// 	ValueStreamer(ValueType * val):AbstractObjectStreamer<ValueType>(val){}
-// 
-// 	void read(ByteStream& bs) const
-// 	{
-// 	}
-// 	void write(ByteStream& bs) const
-// 	{
-// 	}
-// 
-// 	static void read(ByteStream& bs, ValueType *val)
-// 	{
-// 	}
-// 
-// 	static void write(ByteStream& bs, )
-// }
 //-------------------------------------------------------------------------
 template<class ElementStreamerClass, class ArrayClass>
 ArrayStreamer<ElementStreamerClass,ArrayClass> arrayStreamer(ArrayClass *arr)
@@ -127,6 +106,31 @@ template<class ElementStreamerClass, class ArrayClass>
 ArrayStreamer<ElementStreamerClass,ArrayClass> arrayStreamer(const ArrayClass *arr)
 {
 	return ArrayStreamer<ElementStreamerClass,ArrayClass>(arr);
+}
+//=========================================================================
+template<class ValueType>
+class ValueStreamer: public AbstractObjectStreamer<ValueType>
+{
+public:
+	ValueStreamer(const ValueType * val):AbstractObjectStreamer<ValueType>(val){}
+	ValueStreamer(ValueType * val):AbstractObjectStreamer<ValueType>(val){}
+
+	void read(ByteStream& bs) const{read(bs,obj_r);}
+	void write(ByteStream& bs) const{write(bs,obj_w);}
+	static void read(ByteStream& bs, ValueType *val){bs.readValue(*val);}
+	static void write(ByteStream& bs, const ValueType *val){bs.writeValue(*val);}
+};
+//-------------------------------------------------------------------------
+template<class ValueType>
+ValueStreamer<ValueType> valueStreamer(ValueType *val)
+{
+	return ValueStreamer<ValueType>(val);
+}
+
+template<class ValueType>
+ValueStreamer<ValueType> valueStreamer(const ValueType *val)
+{
+	return ValueStreamer<ValueType>(val);
 }
 //=========================================================================
 
@@ -170,7 +174,9 @@ public:
 		return new ChildTypeStreamer::StreamerType();
 	}
 };
+
 //=========================================================================
+
 template<class AbstractRegitrableType, class AbstractRegitrableTypePtr = AbstractRegitrableType*, class Collector=AbstractRegitrableType >
 class AbstractTypeStreamer: public AbstractObjectStreamer<AbstractRegitrableTypePtr>
 {
@@ -240,30 +246,176 @@ std::vector<std::tr1::shared_ptr<TypeAbstractStreamer<AbstractRegitrableType> > 
 
 //=========================================================================
 
+template<class T> class OneTypeStreamerCreator;
 
+class AbstractOneTypeStreamerCreator
+{
+public:
+	virtual~AbstractOneTypeStreamerCreator(){}
+
+	template<class T>
+	AbstractObjectStreamer<T>* newObjectStreamer(T *obj)
+	{	
+		OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
+		if(ots==0){	/*TODO: exaption*/	}
+		return ots->newObjectStreamer(obj);
+	}
+
+	template<class T>
+	AbstractObjectStreamer<T>* newObjectStreamer(const T *obj)
+	{	
+		OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
+		if(ots==0){	/*TODO: exaption*/ }
+		return ots->newObjectStreamer(obj);
+	}
+};
+//-------------------------------------------------------------------------
+template<class T>
+class OneTypeStreamerCreator: public AbstractOneTypeStreamerCreator
+{
+public:
+	virtual ~OneTypeStreamerCreator(){}
+	virtual AbstractObjectStreamer<T>* newObjectStreamer(T *obj) = 0;
+	virtual AbstractObjectStreamer<T>* newObjectStreamer(const T *obj) = 0;
+};
+//-------------------------------------------------------------------------
+template<class ObjectStreamer>
+class OneTypeObjectStreamerCreator: public OneTypeStreamerCreator<typename ObjectStreamer::StreamerType>
+{
+public:
+	AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(typename ObjectStreamer::StreamerType *obj)
+	{
+		return new ObjectStreamer(obj);
+	}
+	AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(const typename ObjectStreamer::StreamerType *obj)
+	{
+		return new ObjectStreamer(obj);
+	}
+};
+//-------------------------------------------------------------------------
+// class BaseMultiTypeStreamer
+// {
+// public:
+// 	virtual~BaseMultiTypeStreamer(){}
+// };
+
+
+template<class TypesCollection>
 class MultiTypeStreamer: public AbstractStreamer
 {
 public:
+
 	MultiTypeStreamer(){}
+
+	template<class T>
+	MultiTypeStreamer(T* obj){setObject(obj);}
+
+	template<class T>
+	MultiTypeStreamer(const T* obj){setObject(obj);}
+
+	
+	template<class ObjectStreamer>
+	static void add()
+	{
+		int it=TypesCollection::typeId<typename ObjectStreamer::StreamerType>();
+		if(it>=strCreators.size()) strCreators.resize(it+1);
+		strCreators[it].reset(new OneTypeObjectStreamerCreator<ObjectStreamer>());
+	}
+
+// 	template<class OtherMultiTypeStreamer>
+// 	static void addMulti()
+// 	{
+// 		const std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> >&strCr OtherMultiTypeStreamer::streamerCreators();
+// 
+// 		for(int i=0; i<strCr.size(); i++)
+// 		{	
+// 			if(strCr[i])
+// 			{		
+// 				int it=TypesCollection::typeId<ObjectStreamer::StreamerType>();
+// 				if(it>=strCreators.size()) strCreators.resize(it+1);
+// 				strCreators[it].reset(new OneTypeObjectStreamerCreator<ObjectStreamer>());
+// 			}
+// 		}
+// 	}
+
+	template<class T>
+	void setObject(T *obj)
+	{
+		int it=TypesCollection::typeId<T>();
+		if((it<strCreators.size())&&(strCreators[it].get()))
+		{
+			curStr.reset(strCreators[it]->newObjectStreamer(obj));
+		}else
+		{
+			//TODO: exaption
+		}		
+	}
+
+	template<class T>
+	void setObject(const T *obj)
+	{
+		int it=TypesCollection::typeId<T>();
+		if((it<strCreators.size())&&(strCreators[it].get()))
+		{
+			curStr.reset(strCreators[it]->newObjectStreamer(obj));
+		}else
+		{
+			//TODO: exaption
+		}
+	}
 
 	void read(ByteStream &bs) const
 	{
-		if(curStr) curStr->read(bs);
+		if(curStr.get())
+		{
+			curStr->read(bs);
+		}else
+		{
+			//TODO: exaption
+		}
 	}
 
 	void write(ByteStream &bs) const
 	{
-		if(curStr) curStr->write(bs);
+		if(curStr.get()) 
+		{
+			curStr->write(bs);
+		}else
+		{
+			//TODO: exaption
+		}
 	}
 
+// 	static const std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> >& streamerCreators()
+// 	{
+// 		return strCreators;
+// 	}
+
 private:
-	AbstractStreamer *curStr;
+	std::auto_ptr<AbstractStreamer> curStr;
+	static std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> > strCreators;
 };
 
 
-// AbstractTypeStreamer<AbstractRegitrableType>
+template<class TypesCollection>
+std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> >  MultiTypeStreamer<TypesCollection>::strCreators(TypesCollection::typeCount());
 
 
+//=========================================================================
+
+BIKES_MULTITYPESTREAMER_DECLDEF(ValueMultiTypeStreamer,
+								add<ValueStreamer<bool> >();
+								add<ValueStreamer<char> >();
+								add<ValueStreamer<short> >();
+								add<ValueStreamer<unsigned short> >();
+								add<ValueStreamer<int> >();
+								add<ValueStreamer<unsigned int> >();
+								add<ValueStreamer<long> >();
+								add<ValueStreamer<unsigned long> >();
+								add<ValueStreamer<unsigned long long> >();
+								add<ValueStreamer<float> >();
+								add<ValueStreamer<double> >();
+								)
 
 } // Bikes
 

@@ -158,8 +158,10 @@ static void Init();															\
 #define BIKES_ABSTRACTTYPESTREAMER_DEF(AbstractTypeStreamerName, addObjectStreamer_list )\
 void AbstractTypeStreamerName::Init()										\
 {																			\
-	if(streamersCount()==0)													\
+	static bool inited=false;												\
+	if(!inited)																\
 	{																		\
+		inited=true;														\
 		addObjectStreamer_list;												\
 	}																		\
 }																			\
@@ -175,6 +177,40 @@ AbstractTypeStreamerName::AbstractTypeStreamerName(const ART_PtrClass* ptr)	\
 }	
 
 //=========================================================================
+
+
+#define BIKES_MULTITYPESTREAMER_DECLDEF(MultiTypeStreamerName, addObjectStreamer_list)\
+class MultiTypeStreamerName: public MultiTypeStreamer<TypeCollector<MultiTypeStreamerName> >\
+{																			\
+public:																		\
+	MultiTypeStreamerName()													\
+	{																		\
+		Init();																\
+	}																		\
+	template<class T>														\
+	MultiTypeStreamerName(T* obj)											\
+	{																		\
+		Init();																\
+		setObject(obj);														\
+	}																		\
+	template<class T>														\
+	MultiTypeStreamerName(const T* obj)										\
+	{																		\
+		Init();																\
+		setObject(obj);														\
+	}																		\
+private:																	\
+	static void Init()														\
+	{																		\
+		static bool inited=false;											\
+		if(!inited)															\
+		{																	\
+			inited=true;													\
+			addObjectStreamer_list;											\
+		}																	\
+	}																		\
+};
+
 
 
 

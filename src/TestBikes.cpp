@@ -43,9 +43,9 @@ namespace Test
 		ps+=Point(2,22,222);
 		ps+=Point(3,33,333);
 		bs << i << f <<d;
-		bs << PointStreamer(&p);
-		bs << VectorStreamer(&ve);
-		bs << BasisStreamer(&b);
+		bs << BikesMultiTypeStreamer(&p);
+		bs << BikesMultiTypeStreamer(&ve);
+		bs << BikesMultiTypeStreamer(&b);
 		bs << arrayStreamer<PointStreamer>(&ps);
 		
 		//bs << i << f << d;
@@ -64,9 +64,9 @@ namespace Test
 		
 
 		bs >>i_ >>f_ >> d_;
-		bs >> PointStreamer(&p_);
-		bs >> VectorStreamer(&v_);
-		bs >> BasisStreamer(&b_);
+		bs >> BikesMultiTypeStreamer(&p_);
+		bs >> BikesMultiTypeStreamer(&v_);
+		bs >> BikesMultiTypeStreamer(&b_);
 		bs >> arrayStreamer<PointStreamer>(&ps_);
 
 		
@@ -164,8 +164,6 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		bs >> AClassStreamer(&ac2);
 		bs >> i2_;
 		
-
-
 		return true;
 	}
 
