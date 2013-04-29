@@ -1,9 +1,31 @@
 #ifndef TYPECOLLECTOR_H
 #define TYPECOLLECTOR_H
+
+#include <Bikes/MacrosBikes.h>
 #include <vector>
 
 namespace Bikes
 {
+
+
+	class BaseTypeGlobalRegister
+	{
+		static int typeCount();
+	protected:
+		static int tc;
+	};
+
+
+
+	template<class T>
+	class TypeGlobalRegister: public BaseTypeGlobalRegister
+	{
+	public:
+		static const int typeId;
+	};
+
+	template<class T>
+	const int TypeGlobalRegister<T>::typeId = BaseTypeGlobalRegister::tc++;
 	
 
 //================================================================
@@ -34,20 +56,25 @@ namespace Bikes
 		template<class T>
 		class TypePointerArray;
 		//--------------------
-		static int typeCount()
-		{
-			return typeIter;
-		}
+		static int typeCount(){	return typeIter;}
 		//--------------------
+
 		template<class T>
 		static int typeId()
-		{
+		{				
 			return TypeRegister<T>::typeId;
 		}	
+
+// 		template<class T>
+// 		static int typeGlobalId()
+// 		{			
+// 			return TypeGlobalRegister<T>::typeId;
+// 		}
 		
 
 	private:
-		static  int typeIter;		
+		static  int typeIter;	
+
 	};
 //--------
 	template<class Collector>
@@ -87,11 +114,13 @@ namespace Bikes
 	class TypeCollector<Collector>::TypeRegister
 	{
 	public:
-		static const int typeId;
+		static const int typeId;		
 	};
 //--------------	
+
 	template<class Collector> template<class T>
 	const int TypeCollector<Collector>::TypeRegister<T>::typeId=TypeCollector<Collector>::typeIter++;
+
 //================================================================
 // <- TypeCollector<Collector>::TypeRegister<T>
 //================================================================

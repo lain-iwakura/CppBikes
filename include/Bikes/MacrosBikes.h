@@ -115,5 +115,6 @@
 #define MACROSBIKES_PP9 par1,par2,par3,par4,par5,par6,par7,par8,par9
 
 
+#define MACROSBIKES_TOCONSTCHARARRAY(X) #X
 
 #endif

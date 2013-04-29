@@ -185,10 +185,10 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		int id22=TypeCollector<char>::typeId<int>();
 		int id23=TypeCollector<char>::typeId<double>();
 
-		int id12_=TypeCollector<int>::typeGlobalId<float>();
-		int id21_=TypeCollector<char>::typeGlobalId<float>();
-		int id11_=TypeCollector<int>::typeGlobalId<int>();
-		int id22_=TypeCollector<char>::typeGlobalId<int>();
+// 		int id12_=TypeCollector<int>::typeGlobalId<float>();
+// 		int id21_=TypeCollector<char>::typeGlobalId<float>();
+// 		int id11_=TypeCollector<int>::typeGlobalId<int>();
+// 		int id22_=TypeCollector<char>::typeGlobalId<int>();
 
 
 		return true;
