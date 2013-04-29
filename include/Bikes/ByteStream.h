@@ -77,7 +77,8 @@ namespace Bikes
 				as->read(*this);
 			}else
 			{	
-				readValue(val);
+				//readValue(val);
+				//TODO: exaption
 			}
 		}
 
@@ -90,6 +91,7 @@ namespace Bikes
 			}else
 			{
 				//?
+				//TODO: exaption
 			}
 		}
 
@@ -124,7 +126,8 @@ namespace Bikes
 				as->write(*this);
 			}else
 			{
-				writeValue(val);
+			//	writeValue(val);
+				//TODO: exaption
 			}
 		}
 
@@ -142,7 +145,7 @@ namespace Bikes
 		void write(double val)				{writeValue(val);}
 
 		template<class T>
-		void writeValue(const T val)
+		void writeValue(T val)
 		{
 			int s0=b->size();
 			int ds=sizeof(T);

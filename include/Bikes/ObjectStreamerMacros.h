@@ -212,6 +212,19 @@ private:																	\
 };
 
 
+#define BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER							\
+	add<ValueStreamer<bool> >();											\
+	add<ValueStreamer<char> >();											\
+	add<ValueStreamer<short> >();											\
+	add<ValueStreamer<unsigned short> >();									\
+	add<ValueStreamer<int> >();												\
+	add<ValueStreamer<unsigned int> >();									\
+	add<ValueStreamer<long> >();											\
+	add<ValueStreamer<unsigned long> >();									\
+	add<ValueStreamer<unsigned long long> >();								\
+	add<ValueStreamer<float> >();											\
+	add<ValueStreamer<double> >();
+
 
 
 #endif

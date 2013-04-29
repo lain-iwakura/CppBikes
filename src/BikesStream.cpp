@@ -1,4 +1,4 @@
-#include <Bikes/BikesStream.h>
+#include <Bikes/BikeStreamer.h>
 #include <Bikes/BasicGeometry.h>
 
 

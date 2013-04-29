@@ -4,8 +4,9 @@
 #include <Bikes/ByteStream.h>
 #include <Bikes/ObjectStreamerMacros.h>
 #include <Bikes/TypeCollector.h>
+#include <Bikes/SmartPtr.h>
 #include <vector>
-#include <memory>
+
 
 namespace Bikes
 {
@@ -238,11 +239,11 @@ private:
 	template<>
 	static AbstractRegitrableType * getP(const AbstractRegitrableTypeP* ptr){return *ptr;}
 
-	static std::vector<std::tr1::shared_ptr<TypeAbstractStreamer<AbstractRegitrableType> > > streamers; 
+	static std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegitrableType> >::Shared > streamers; 
 };
 
 template<class AbstractRegitrableType, class AbstractRegitrableTypePtr, class Collector> 
-std::vector<std::tr1::shared_ptr<TypeAbstractStreamer<AbstractRegitrableType> > > AbstractTypeStreamer<AbstractRegitrableType,AbstractRegitrableTypePtr,Collector>::streamers(AbstractRegitrableType::typesCount());
+std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegitrableType> >::Shared > AbstractTypeStreamer<AbstractRegitrableType,AbstractRegitrableTypePtr,Collector>::streamers(AbstractRegitrableType::typesCount());
 
 //=========================================================================
 
@@ -386,36 +387,19 @@ public:
 		}
 	}
 
-// 	static const std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> >& streamerCreators()
-// 	{
-// 		return strCreators;
-// 	}
-
 private:
-	std::auto_ptr<AbstractStreamer> curStr;
-	static std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> > strCreators;
+	Ptr<AbstractStreamer>::Auto curStr;
+	static std::vector<Ptr<AbstractOneTypeStreamerCreator>::Shared > strCreators;
 };
 
 
 template<class TypesCollection>
-std::vector<std::tr1::shared_ptr<AbstractOneTypeStreamerCreator> >  MultiTypeStreamer<TypesCollection>::strCreators(TypesCollection::typeCount());
+std::vector<Ptr<AbstractOneTypeStreamerCreator>::Shared >  MultiTypeStreamer<TypesCollection>::strCreators(TypesCollection::typeCount());
 
 
 //=========================================================================
+ 
 
-BIKES_MULTITYPESTREAMER_DECLDEF(ValueMultiTypeStreamer,
-								add<ValueStreamer<bool> >();
-								add<ValueStreamer<char> >();
-								add<ValueStreamer<short> >();
-								add<ValueStreamer<unsigned short> >();
-								add<ValueStreamer<int> >();
-								add<ValueStreamer<unsigned int> >();
-								add<ValueStreamer<long> >();
-								add<ValueStreamer<unsigned long> >();
-								add<ValueStreamer<unsigned long long> >();
-								add<ValueStreamer<float> >();
-								add<ValueStreamer<double> >();
-								)
 
 } // Bikes
 

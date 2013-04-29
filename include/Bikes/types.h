@@ -1,13 +1,8 @@
-#ifndef CPPBYKES_TYPES_H
-#define CPPBYKES_TYPES_H
+#ifndef _BIKES_TYPES_H_
+#define _BIKES_TYPES_H_
 
 namespace Bikes
 {
 	typedef double rnum;
-
-
-//Рудиментные типы:
-//	typedef rnum TMETRIC; 
-//	typedef rnum TAMETRIC; 
 }
 #endif

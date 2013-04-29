@@ -1,14 +1,14 @@
 #include <Bikes/TestBikes.h>
 //#include <Bikes/ByteStream.h>
 #include <Bikes/RawArray.h>
-#include <Bikes/BikesStream.h>
+#include <Bikes/BikeStreamer.h>
 #include <Bikes/BasicGeometry.h>
 #include <Bikes/TypeRegister.h>
 #include <Bikes/List.h>
 //#include "InterpolationFunc.h"
 #include "QuickArray.h"
 #include "ObjectStreamer.h"
-#include "BikesStream.h"
+#include "BikeStreamer.h"
 #include "TypeCollector.h"
 #include <vector>
 #include "AbstractRegistrableType.h"
@@ -43,9 +43,9 @@ namespace Test
 		ps+=Point(2,22,222);
 		ps+=Point(3,33,333);
 		bs << i << f <<d;
-		bs << BikesMultiTypeStreamer(&p);
-		bs << BikesMultiTypeStreamer(&ve);
-		bs << BikesMultiTypeStreamer(&b);
+		bs << MultiBikeStreamer(&p);
+		bs << MultiBikeStreamer(&ve);
+		bs << MultiBikeStreamer(&b);
 		bs << arrayStreamer<PointStreamer>(&ps);
 		
 		//bs << i << f << d;
@@ -63,10 +63,12 @@ namespace Test
 		List<Point> ps_;
 		
 
-		bs >>i_ >>f_ >> d_;
-		bs >> BikesMultiTypeStreamer(&p_);
-		bs >> BikesMultiTypeStreamer(&v_);
-		bs >> BikesMultiTypeStreamer(&b_);
+		bs >> MultiBikeStreamer(&i_);
+		bs >> MultiBikeStreamer(&f_);
+		bs >> MultiBikeStreamer(&d_);
+		bs >> MultiBikeStreamer(&p_);
+		bs >> MultiBikeStreamer(&v_);
+		bs >> MultiBikeStreamer(&b_);
 		bs >> arrayStreamer<PointStreamer>(&ps_);
 
 		
@@ -118,7 +120,7 @@ BIKES_OBJECTSTREAMER_DEF(YClassStreamer,add(p->c))
 
 
 
-BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass, std::tr1::shared_ptr<AClass>)
+BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass, Ptr<AClass>::Shared)
 
 BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 							add<XClassStreamer>();
@@ -131,11 +133,11 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		ByteArray ba;
 		ByteStream bs(&ba);
 
-		std::tr1::shared_ptr<AClass> xc(new XClass());
-		std::tr1::shared_ptr<AClass> yc(new YClass());
+		Ptr<AClass>::Shared xc(new XClass());
+		Ptr<AClass>::Shared yc(new YClass());
 		int xc_a=((YClass*)yc.get())->xc.a;
 	
-		AbstractTypeStreamer<AClass, std::tr1::shared_ptr<AClass> > ats;
+		AbstractTypeStreamer<AClass, Ptr<AClass>::Shared > ats;
 		ats.add<XClassStreamer>();
 		ats.add<YClassStreamer>();
 		
@@ -151,8 +153,8 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		bs << i2;
 
 
-		std::tr1::shared_ptr<AClass> ac1;
-		std::tr1::shared_ptr<AClass> ac2;
+		Ptr<AClass>::Shared ac1;
+		Ptr<AClass>::Shared ac2;
 
 		int i1_;
 		int i2_;
@@ -168,6 +170,30 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 	}
 
 
+	bool test_TypeCollector()
+	{
+		//int gid1=TypeGlobalRegister<int>::typeId;
+		//int gid2=TypeGlobalRegister<float>::typeId;
+
+		int ic1=TypeCollector<int>::typeCount();
+		int id11=TypeCollector<int>::typeId<int>();
+		int id12=TypeCollector<int>::typeId<float>();
+		int id13=TypeCollector<int>::typeId<double>();
+
+		int ic2=TypeCollector<char>::typeCount();
+		int id21=TypeCollector<char>::typeId<float>();
+		int id22=TypeCollector<char>::typeId<int>();
+		int id23=TypeCollector<char>::typeId<double>();
+
+		int id12_=TypeCollector<int>::typeGlobalId<float>();
+		int id21_=TypeCollector<char>::typeGlobalId<float>();
+		int id11_=TypeCollector<int>::typeGlobalId<int>();
+		int id22_=TypeCollector<char>::typeGlobalId<int>();
+
+
+		return true;
+	}
+
 #define MMM(X) X;
 
 	bool test_main()
@@ -177,7 +203,7 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		int v3=0;
 		MMM(v3=v1+v2;v1++)
 
-
+		test_TypeCollector();
 		test_AbstractTypeStreamer();
 		test_ByteStream();
 		return true;
