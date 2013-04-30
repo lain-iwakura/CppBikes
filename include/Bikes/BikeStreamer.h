@@ -17,17 +17,22 @@ namespace Bikes
 	BIKES_OBJECTSTREAMER_DECL(PhiLamPointStreamer,		PhiLamPoint		)
 	BIKES_OBJECTSTREAMER_DECL(PhiLamHPointStreamer,		PhiLamHPoint	)
 
+	
+ 	BIKES_MULTITYPESTREAMER_DECLDEF(MultiValueStreamer,
+ 						BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER
+ 						)
 
-	BIKES_MULTITYPESTREAMER_DECLDEF(MultiValueStreamer,
-		BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER
-		)
+ 	BIKES_MULTITYPESTREAMER_DECLDEF(MultiBikeStreamer,	
+ 		add<PointStreamer>();
+ 		add<VectorStreamer>();
+ 		add<BasisStreamer>();			
+ 		BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER
+ 		)
 
-	BIKES_MULTITYPESTREAMER_DECLDEF(MultiBikeStreamer,	
-		add<PointStreamer>();
-		add<VectorStreamer>();
-		add<BasisStreamer>();			
-		BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER
-		)
+
+	
+
+
 
 } // Bikes
 

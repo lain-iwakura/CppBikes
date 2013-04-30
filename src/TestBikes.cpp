@@ -3,7 +3,6 @@
 #include <Bikes/RawArray.h>
 #include <Bikes/BikeStreamer.h>
 #include <Bikes/BasicGeometry.h>
-#include <Bikes/TypeRegister.h>
 #include <Bikes/List.h>
 //#include "InterpolationFunc.h"
 #include "QuickArray.h"
@@ -35,8 +34,8 @@ namespace Test
 		Vector ve(0.1,0.2,0.3,p);
 		Basis b; b.setOrtoBasis_InXY_ByI(ve); b.setO(p);
 
-		RawArray<char> ra;
-		ByteStream bs(&ra);
+		ByteArray ba;
+		ByteStream bs(&ba);
 
 		List<Point> ps;
 		ps+=Point(1,11,111);
@@ -51,7 +50,7 @@ namespace Test
 		//bs << i << f << d;
 
 		std::vector<char> v; 
-		ra.toVector(v);	
+		ba.toVector(v);	
 
 
 		int i_;
@@ -72,7 +71,16 @@ namespace Test
 		bs >> arrayStreamer<PointStreamer>(&ps_);
 
 		
-		return true;
+		return (i==i_)&&
+			(f==f_)&&
+			(d==d_)&&
+			(p==p_)&&
+			(v_==ve)&&
+			(v_.anchor==ve.anchor)&&
+			(b.i==b_.i)&&
+			(b.j==b_.j)&&
+			(b.k==b_.k)&&
+			(b.O==b.O);
 	}
 
 
@@ -136,10 +144,17 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		Ptr<AClass>::Shared xc(new XClass());
 		Ptr<AClass>::Shared yc(new YClass());
 		int xc_a=((YClass*)yc.get())->xc.a;
+
+		std::vector<Ptr<AClass>::Shared > aarr;
+		aarr.push_back(xc);
+		aarr.push_back(yc);
+
 	
-		AbstractTypeStreamer<AClass, Ptr<AClass>::Shared > ats;
-		ats.add<XClassStreamer>();
-		ats.add<YClassStreamer>();
+// 		AbstractTypeStreamer<AClass, Ptr<AClass>::Shared > ats;
+// 		ats.add<XClassStreamer>();
+// 		ats.add<YClassStreamer>();
+
+
 		
 	//	AClassStreamer ats2;
 
@@ -147,23 +162,25 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 		int i2=222;
 		bs << i1;
 		//ats.setObject(&xc);
-		bs << AClassStreamer(&xc);
+		bs << arrayStreamer<AClassStreamer>(&aarr);
 		//ats.setObject(&yc);
-		bs << AClassStreamer(&yc);
+		//bs << AClassStreamer(&yc);
 		bs << i2;
 
 
 		Ptr<AClass>::Shared ac1;
 		Ptr<AClass>::Shared ac2;
 
+		std::vector<Ptr<AClass>::Shared > aarr_;
 		int i1_;
 		int i2_;
 
 		bs >> i1_;
+		bs >> arrayStreamer<AClassStreamer>(&aarr_);
 		//ats.setObject(&ac1);
-		bs >> AClassStreamer(&ac1);
+		//bs >> AClassStreamer(&ac1);
 		//ats.setObject(&ac2);
-		bs >> AClassStreamer(&ac2);
+		//bs >> AClassStreamer(&ac2);
 		bs >> i2_;
 		
 		return true;

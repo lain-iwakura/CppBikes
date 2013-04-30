@@ -55,7 +55,7 @@ protected:
 	T* obj_r;
 };
 //=========================================================================
-template<class ElementStreamerClass,class ArrayClass>
+template<class ElementStreamer,class ArrayClass>
 class ArrayStreamer: public AbstractObjectStreamer<ArrayClass> 
 {
 public:
@@ -78,8 +78,8 @@ public:
 		obj->clear();
 		int sz;		
 		bs >> sz;
-		ElementStreamerClass::StreamerType el;
-		ElementStreamerClass es(&el);
+		ElementStreamer::StreamerType el;
+		ElementStreamer es(&el);
 		for(int i=0; i<sz; i++)
 		{			
 			bs >> es;
@@ -89,24 +89,24 @@ public:
 
 	static void write(ByteStream& bs, const StreamerType *obj)
 	{
-		bs.byteArray()->setCapacity(bs.byteArray()->capacity()+obj->size()+sizeof(int));
+		bs.prepareForWrite(obj->size()+sizeof(int));
 		bs << int(obj->size());
 		for(int i=0; i<obj->size(); i++)
-			bs << ElementStreamerClass(&((*obj)[i]));		
+			bs << ElementStreamer(&((*obj)[i]));		
 	}
 	
 };
 //-------------------------------------------------------------------------
-template<class ElementStreamerClass, class ArrayClass>
-ArrayStreamer<ElementStreamerClass,ArrayClass> arrayStreamer(ArrayClass *arr)
+template<class ElementStreamer, class ArrayClass>
+ArrayStreamer<ElementStreamer,ArrayClass> arrayStreamer(ArrayClass *arr)
 {
-	return ArrayStreamer<ElementStreamerClass,ArrayClass>(arr);
+	return ArrayStreamer<ElementStreamer,ArrayClass>(arr);
 }
 
-template<class ElementStreamerClass, class ArrayClass>
-ArrayStreamer<ElementStreamerClass,ArrayClass> arrayStreamer(const ArrayClass *arr)
+template<class ElementStreamer, class ArrayClass>
+ArrayStreamer<ElementStreamer,ArrayClass> arrayStreamer(const ArrayClass *arr)
 {
-	return ArrayStreamer<ElementStreamerClass,ArrayClass>(arr);
+	return ArrayStreamer<ElementStreamer,ArrayClass>(arr);
 }
 //=========================================================================
 template<class ValueType>
@@ -178,8 +178,8 @@ public:
 
 //=========================================================================
 
-template<class AbstractRegitrableType, class AbstractRegitrableTypePtr = AbstractRegitrableType*, class Collector=AbstractRegitrableType >
-class AbstractTypeStreamer: public AbstractObjectStreamer<AbstractRegitrableTypePtr>
+template<class AbstractRegistrableType, class AbstractRegistrableTypePtr = AbstractRegistrableType*, class Collector=AbstractRegistrableType >
+class AbstractTypeStreamer: public AbstractObjectStreamer<AbstractRegistrableTypePtr>
 {
 public:
 
@@ -193,16 +193,16 @@ public:
 	{
 		int ti=ObjectStreamer::StreamerType::typeId();
 		if(streamers.size()<=ti) streamers.resize(ti+1);
-		streamers[ti].reset(new TypeStreamer<AbstractRegitrableType,ObjectStreamer>());
+		streamers[ti].reset(new TypeStreamer<AbstractRegistrableType,ObjectStreamer>());
 	}
 
-	static void read(ByteStream& bs, AbstractRegitrableTypePtr * ppAObj)
+	static void read(ByteStream& bs, AbstractRegistrableTypePtr * ppAObj)
 	{		
 		int ti=0;
 		bs >> ti;
 		if( (ti>=0) && (ti<streamers.size()) && (streamers[ti].get()) )
 		{		
-			(*ppAObj)=AbstractRegitrableTypePtr(streamers[ti]->newObject());
+			(*ppAObj)=AbstractRegistrableTypePtr(streamers[ti]->newObject());
 			streamers[ti]->read(bs,getP(ppAObj));
 			//// Проверка совместимости(?):  должно быть сравнение имен типов(?)
 		}else
@@ -211,7 +211,7 @@ public:
 		}		
 	}
 
-	static void write(ByteStream& bs, const AbstractRegitrableTypePtr* ppAObj)
+	static void write(ByteStream& bs, const AbstractRegistrableTypePtr* ppAObj)
 	{
 		if(ppAObj&&(getP(ppAObj)))
 		{		
@@ -231,19 +231,19 @@ public:
 	static int streamersCount(){return streamers.size();}
 
 private:
-	typedef AbstractRegitrableType* AbstractRegitrableTypeP;
+	typedef AbstractRegistrableType* AbstractRegitrableTypeP;
 
 	template<class TPtr>
-	static AbstractRegitrableType * getP(const TPtr* ptr){return ptr->get();}	
+	static AbstractRegistrableType * getP(const TPtr* ptr){return ptr->get();}	
 	
 	template<>
-	static AbstractRegitrableType * getP(const AbstractRegitrableTypeP* ptr){return *ptr;}
+	static AbstractRegistrableType * getP(const AbstractRegitrableTypeP* ptr){return *ptr;}
 
-	static std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegitrableType> >::Shared > streamers; 
+	static std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > streamers; 
 };
 
-template<class AbstractRegitrableType, class AbstractRegitrableTypePtr, class Collector> 
-std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegitrableType> >::Shared > AbstractTypeStreamer<AbstractRegitrableType,AbstractRegitrableTypePtr,Collector>::streamers(AbstractRegitrableType::typesCount());
+template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector> 
+std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers(AbstractRegistrableType::typesCount());
 
 //=========================================================================
 

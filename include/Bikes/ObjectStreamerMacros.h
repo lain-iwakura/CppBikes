@@ -143,7 +143,7 @@ public:																		\
 
 
 #define BIKES_ABSTRACTTYPESTREAMER_DECL(AbstractTypeStreamerName, AbstractRegistrableTypeClass, AbstractRegistrableTypePtrClass)\
-class AbstractTypeStreamerName: public AbstractTypeStreamer<AbstractRegistrableTypeClass,AbstractRegistrableTypePtrClass,AbstractTypeStreamerName>\
+class AbstractTypeStreamerName: public Bikes::AbstractTypeStreamer<AbstractRegistrableTypeClass,AbstractRegistrableTypePtrClass,AbstractTypeStreamerName>\
 {																			\
 public:																		\
 AbstractTypeStreamerName(AbstractRegistrableTypePtrClass* ptr);				\
@@ -180,7 +180,7 @@ AbstractTypeStreamerName::AbstractTypeStreamerName(const ART_PtrClass* ptr)	\
 
 
 #define BIKES_MULTITYPESTREAMER_DECLDEF(MultiTypeStreamerName, addObjectStreamer_list)\
-class MultiTypeStreamerName: public MultiTypeStreamer<TypeCollector<MultiTypeStreamerName> >\
+class MultiTypeStreamerName: public Bikes::MultiTypeStreamer<Bikes::TypeCollector<MultiTypeStreamerName> >\
 {																			\
 public:																		\
 	MultiTypeStreamerName()													\
@@ -213,17 +213,17 @@ private:																	\
 
 
 #define BIKES_MULTITYPESTREAMER_ADDVALUESTREAMER							\
-	add<ValueStreamer<bool> >();											\
-	add<ValueStreamer<char> >();											\
-	add<ValueStreamer<short> >();											\
-	add<ValueStreamer<unsigned short> >();									\
-	add<ValueStreamer<int> >();												\
-	add<ValueStreamer<unsigned int> >();									\
-	add<ValueStreamer<long> >();											\
-	add<ValueStreamer<unsigned long> >();									\
-	add<ValueStreamer<unsigned long long> >();								\
-	add<ValueStreamer<float> >();											\
-	add<ValueStreamer<double> >();
+	add<Bikes::ValueStreamer<bool> >();										\
+	add<Bikes::ValueStreamer<char> >();										\
+	add<Bikes::ValueStreamer<short> >();									\
+	add<Bikes::ValueStreamer<unsigned short> >();							\
+	add<Bikes::ValueStreamer<int> >();										\
+	add<Bikes::ValueStreamer<unsigned int> >();								\
+	add<Bikes::ValueStreamer<long> >();										\
+	add<Bikes::ValueStreamer<unsigned long> >();							\
+	add<Bikes::ValueStreamer<unsigned long long> >();						\
+	add<Bikes::ValueStreamer<float> >();									\
+	add<Bikes::ValueStreamer<double> >();
 
 
 

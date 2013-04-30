@@ -2,14 +2,48 @@
 #define _BIKES_BYTESTREAM_H_
 #include <Bikes/RawArray.h>
 #include <vector>
+#include <Bikes/types.h>
 
 namespace Bikes
 {
 
 
-	typedef RawArray<char> ByteArray;
+	//typedef RawArray<char> ByteArray;
 
 	
+	class InOutInterface
+	{
+	public:
+		virtual ~InOutInterface(){}
+		virtual void readBytes(char *bt, llnum btSize) = 0;
+		virtual void writeBytes(const char *bt, llnum btSize) = 0;
+		virtual void prepareForWrite(llnum byteCapacity){}
+		//virtual bool atEnd() 
+		//... 
+	};
+
+	class ByteArray: public InOutInterface, public RawArray<char>
+	{
+	public:
+		ByteArray();
+		ByteArray(int cap, int dcap=1, int sz=0);
+		ByteArray(const ByteArray& ba);
+		ByteArray(const char *bt, llnum btSize);
+
+		void readBytes(char *bt, llnum btSize);
+		void writeBytes(const char *bt, llnum btSize);
+		void prepareForWrite(llnum byteCapacity);
+		int writeIndex() const;
+		int readIndex() const;
+		void setWriteIndex(int i);
+		void setReadIndex(int i);
+
+	private:
+		int ri;
+		int wi;		
+	};
+
+
 
 //=========================================================================
 // 	class StreamVal
@@ -39,17 +73,16 @@ namespace Bikes
 
 
 //=========================================================================
-	class ByteStream
+	class ByteStream: public InOutInterface
 	{
 	public:
 
-		ByteStream():b(0){}
-		ByteStream(ByteArray* bytes);
+		ByteStream();
+		ByteStream(InOutInterface* io);
 
-		void setByteArray(ByteArray* bytes);
-		ByteArray* byteArray();
-
-		char* data() const;
+		void setIO(InOutInterface* io);		
+		InOutInterface* getIO() const;
+		
 
 		template<class T>
 		ByteStream& operator << (const T& val){write(val); return *this;}
@@ -60,13 +93,7 @@ namespace Bikes
 		template<class T>
 		ByteStream& operator >> (const T& val){read(val);	return *this;}
 
-		int size() const;
-		int remainderReadSize() const;
-
-		int readPosition() const;
-		int writePosition() const;
-		
-
+	
 		//void read(ByteArray& out_bytes, int n);	
 
 		template<class T>
@@ -77,7 +104,7 @@ namespace Bikes
 				as->read(*this);
 			}else
 			{	
-				//readValue(val);
+				readValue(val);
 				//TODO: exaption
 			}
 		}
@@ -112,9 +139,7 @@ namespace Bikes
 		template<class T>
 		void readValue(T& val)
 		{
-			char *ch=reinterpret_cast<char*>(&val);			
-			for(int i=0; (i<sizeof(T))&&(ri<b->size()); i++, ri++)
-				ch[i]=b->at(ri);			
+			readBytes(reinterpret_cast<char*>(&val),sizeof(T));			
 		}
 
 	
@@ -126,7 +151,7 @@ namespace Bikes
 				as->write(*this);
 			}else
 			{
-			//	writeValue(val);
+				writeValue(val);
 				//TODO: exaption
 			}
 		}
@@ -145,50 +170,18 @@ namespace Bikes
 		void write(double val)				{writeValue(val);}
 
 		template<class T>
-		void writeValue(T val)
+		void writeValue(const T& val)
 		{
-			int s0=b->size();
-			int ds=sizeof(T);
-			if(wi+ds>s0) b->setSize(wi+ds);
-
-			const char* ch=reinterpret_cast<const char*>(&val);
-			for(int i=0; i<ds; i++,wi++)			
-				b->at(wi)=ch[i];			
+			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
-//-------------------------------------------------------------------------
+		void readBytes(char *bt, llnum btSize);
+		void writeBytes(const char *bt, llnum btSize);
+		void prepareForWrite(llnum byteCapacity);
 
-// 		void read(std::vector<StreamVal>& valArr) //?
-// 		{
-// 			for(int i=0; (i<valArr.size())&&(ri<b->size()); i++)
-// 			{
-// 				for(int j=0; (j<valArr[i].s)&&(ri<b->size()); j++, ri++)
-// 					valArr[i].bArr[j]=b->at(ri);
-// 			}
-// 		}
-// 
-// 		void write(const std::vector<StreamConstVal>& valArr) //?
-// 		{
-// 			int s0=b->size();
-// 			int ds=0;
-// 			for(int i=0; i<valArr.size(); i++)
-// 				ds+=valArr[i].s;
-// 			if(wi+ds>s0) b->setSize(wi+ds);  
-// 
-// 			for(int i=0; i<valArr.size(); i++)
-// 			{
-// 				for(int j=0; j<valArr[i].s; j++, wi++)
-// 					b->at(wi)=valArr[i].bArr[j];
-// 			}
-// 		}
 
-		//void write(const ByteArray &bArr); 
-
-//-------------------------------------------------------------------------
 	private:
-		ByteArray *b;
-		int ri;
-		int wi;
+		InOutInterface *io_;
 	};
 
 

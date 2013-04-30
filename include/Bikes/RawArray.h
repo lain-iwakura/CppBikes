@@ -65,7 +65,20 @@ public:
 		}
 	}
 
-	~RawArray()
+	RawArray(const T* buf, int sz)
+	{
+		if(sz>0)
+		{
+			arr=new T[sz];
+			for(int i=0; i<sz; i++)
+				arr[i]=buf[i];			
+		}else
+		{
+			arr=0;
+		}
+	}
+
+	virtual ~RawArray()
 	{
 		if(arr) delete [] arr;
 	}
@@ -173,7 +186,7 @@ public:
 	const T& at(int i)const{return arr[i];}
 
 
-private:
+protected:
 	T *arr;
 	int s;	
 	int l;
