@@ -7,7 +7,7 @@ namespace Bikes
 {
 
 template<class T> 
-void swap(T& obj1, T& obj2)
+void swap_(T& obj1, T& obj2)
 {
 	T b(obj1);
 	obj1=obj2;

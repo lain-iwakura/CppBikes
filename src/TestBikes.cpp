@@ -21,6 +21,12 @@ namespace Bikes
 
 namespace Test
 {
+// 
+// 	test_GlobalObjectClass::test_GlobalObjectClass()
+// 	{
+// 		int a=0;
+// 		a++;
+// 	}
 
 	bool Test::test_ByteStream()
 	{
@@ -90,14 +96,6 @@ namespace Test
 	}	
 
 
-class AClass: public AbstractRegistrableType<AClass>
-{
-public:
-	virtual~AClass(){}
-	BIKES_REGISTRABLETYPE_DECL(AClass)
-	virtual int vfunc(){return 42;}
-};
-
 class XClass: public AClass
 {
 public:
@@ -120,20 +118,20 @@ public:
 
 const XClass YClass::xc;
 
-BIKES_OBJECTSTREAMER_DECL(XClassStreamer,XClass)
-BIKES_OBJECTSTREAMER_DECL(YClassStreamer,YClass)
+
 
 BIKES_OBJECTSTREAMER_DEF(XClassStreamer,add(p->a);add(p->b))
 BIKES_OBJECTSTREAMER_DEF(YClassStreamer,add(p->c))
 
 
 
-BIKES_ABSTRACTTYPESTREAMER_DECL(AClassStreamer,	AClass, Ptr<AClass>::Shared)
+
 
 BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 							add<XClassStreamer>();
 							add<YClassStreamer>()
 								)
+
 
 
 	bool test_AbstractTypeStreamer()
@@ -154,6 +152,7 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 // 		ats.add<XClassStreamer>();
 // 		ats.add<YClassStreamer>();
 
+		AClassStreamer ats(&xc);
 
 		
 	//	AClassStreamer ats2;

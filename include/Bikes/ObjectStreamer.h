@@ -245,6 +245,26 @@ private:
 template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector> 
 std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers(AbstractRegistrableType::typesCount());
 
+//-------------------------------------------------------------------------
+
+namespace Aux
+{
+	template<class AbstractTypeStreamerClass, class AddStreamerClass>
+	class AbstractTypeStreamerInitor
+	{
+	public:
+		AbstractTypeStreamerInitor()
+		{
+			static bool i=false;
+			if(!i)
+			{
+				i=true;
+				AbstractTypeStreamerClass::add<AddStreamerClass>();
+			}
+		}
+	};
+}
+
 //=========================================================================
 
 template<class T> class OneTypeStreamerCreator;
