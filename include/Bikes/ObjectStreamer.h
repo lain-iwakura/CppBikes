@@ -6,6 +6,7 @@
 #include <Bikes/TypeCollector.h>
 #include <Bikes/SmartPtr.h>
 #include <vector>
+#include <map>
 
 
 namespace Bikes
@@ -191,13 +192,15 @@ public:
 	template<class ObjectStreamer>
 	static void add()
 	{
-		int ti=ObjectStreamer::StreamerType::typeId();
-		if(streamers.size()<=ti) streamers.resize(ti+1);
-		streamers[ti].reset(new TypeStreamer<AbstractRegistrableType,ObjectStreamer>());
+		//int ti=ObjectStreamer::StreamerType::typeId();
+		//if(streamers.size()<=ti) streamers.resize(ti+1);
+		//streamers[ti].reset(new TypeStreamer<AbstractRegistrableType,ObjectStreamer>());
+		streamers[ObjectStreamer::StreamerType::typeName()].reset(new TypeStreamer<AbstractRegistrableType,ObjectStreamer>());
 	}
 
 	static void read(ByteStream& bs, AbstractRegistrableTypePtr * ppAObj)
-	{		
+	{
+		/*
 		int ti=0;
 		bs >> ti;
 		if( (ti>=0) && (ti<streamers.size()) && (streamers[ti].get()) )
@@ -208,11 +211,47 @@ public:
 		}else
 		{
 			//TODO: exaption
-		}		
+		}
+		*/
+		ByteArray bastr(50,10);
+		ByteStream bstr(&bastr);
+		char ch;
+		while(!bs.getIO()->atEnd())
+		{	
+			bs >> ch;
+			bstr << ch;
+			if(ch=='\0') break;
+		}
+		if(ch=='\0')
+		{
+			const char *str=bastr.data();
+			std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared >::iterator pItr;
+			typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared stre;
+
+			for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
+				if(bastr==pItr->first)
+				{
+					stre=pItr->second;
+					break;
+				}
+
+			if(stre.get())
+			{					
+				(*ppAObj)=AbstractRegistrableTypePtr(stre->newObject());
+				stre->read(bs,getP(ppAObj));
+			}else
+			{
+				// TODO: exaption
+			}
+		}else
+		{
+			// TODO: exaption
+		}
 	}
 
 	static void write(ByteStream& bs, const AbstractRegistrableTypePtr* ppAObj)
 	{
+		/*
 		if(ppAObj&&(getP(ppAObj)))
 		{		
 			int ti=(*ppAObj)->getTypeId();		
@@ -220,11 +259,40 @@ public:
 			if( (ti>=0) && (ti<streamers.size()) && (streamers[ti].get()) )
 			{
 				bs << ti;
-				streamers[ti]->write(bs,getP(ppAObj));
+				
+
 			}else
 			{
 				//TODO: exaption
 			}
+		}
+		*/
+
+		if(ppAObj&&(getP(ppAObj)))
+		{
+			ByteArray bastr((*ppAObj)->getTypeName());
+			
+			std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared >::iterator pItr;
+			typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared stre;
+
+			for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
+				if(bastr==pItr->first)
+				{
+					stre=pItr->second;
+					break;
+				}
+
+			if(stre.get())
+			{
+				bs.writeBytes(bastr.data(),bastr.size());
+				stre->write(bs,getP(ppAObj));
+			}else
+			{
+				//TODO: exaption
+			}
+		}else
+		{
+			//TODO: exaption
 		}
 	}
 
@@ -239,11 +307,11 @@ private:
 	template<>
 	static AbstractRegistrableType * getP(const AbstractRegitrableTypeP* ptr){return *ptr;}
 
-	static std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > streamers; 
+	static std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > streamers; 
 };
 
 template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector> 
-std::vector<typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers(AbstractRegistrableType::typesCount());
+std::map<const char*, typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers;
 
 //-------------------------------------------------------------------------
 

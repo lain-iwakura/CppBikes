@@ -1,5 +1,6 @@
 #include <Bikes/ByteStream.h>
 #include <Bikes/BasicMath.h>
+#include <string.h>
 
 
 namespace Bikes
@@ -28,6 +29,14 @@ namespace Bikes
 		ri=0;
 		wi=l;
 	}
+
+	ByteArray::ByteArray(const char *bt ):RawArray<char>(bt,strlen(bt)+1)
+	{
+		ri=0;
+		wi=l;
+	}
+
+	
 
 
 	void ByteArray::readBytes( char *bt, llnum btSize )
@@ -69,6 +78,43 @@ namespace Bikes
 	void ByteArray::prepareForWrite( llnum byteCapacity )
 	{
 		if(wi+byteCapacity>s) this->setCapacity(wi+byteCapacity);
+	}
+
+	ByteArray& ByteArray::operator=( const ByteArray& ba )
+	{
+		setCapacity(ba.capacity());
+		setSize(ba.size());
+		for(int i=0; i<size(); i++) arr[i]=ba[i];
+		return *this;
+	}
+
+	ByteArray& ByteArray::operator=( const char *bt )
+	{
+		setSize(strlen(bt)+1);
+		for(int i=0; i<size(); i++) arr[i]=bt[i];
+		return *this;
+	}
+
+	bool ByteArray::operator==( const ByteArray& ba ) const
+	{
+		if(ba.size()!=size()) return false;
+		for(int i=0; i<size(); i++)
+			if(arr[i]!=ba[i]) return false;
+		return true;
+	}
+
+	bool ByteArray::operator==( const char *str ) const
+	{
+		int strl=strlen(str);
+		if(strl!=size()-1) return false;
+		for(int i=0;i<size();i++)
+			if(str[i]!=arr[i]) return false;
+		return true;
+	}
+
+	bool ByteArray::atEnd() const
+	{
+		return ri>=size();
 	}
 
 //=========================================================================

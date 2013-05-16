@@ -71,10 +71,16 @@ public:
 		{
 			arr=new T[sz];
 			for(int i=0; i<sz; i++)
-				arr[i]=buf[i];			
+				arr[i]=buf[i];	
+			l=sz;
+			s=sz;
+			ds=1;
 		}else
 		{
+			ds=1;
 			arr=0;
+			l=0;
+			s=0;
 		}
 	}
 
@@ -137,8 +143,8 @@ public:
 		setSize(0);
 	}
 
-	int size(){return l;}
-	int capacity(){return s;}
+	int size()const{return l;}
+	int capacity()const{return s;}
 	T* data(){return arr;}
 	const T* data() const{return arr;}
 

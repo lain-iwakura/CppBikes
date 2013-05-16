@@ -11,7 +11,8 @@ namespace Bikes
 #define BIKES_REGISTRABLETYPE_DECL(ThisType)\
 	virtual int getTypeId() const {return typeIdFor<ThisType>();}\
 	static int typeId(){return typeIdFor<ThisType>();}\
-	virtual const char* getTypeName() const{static const char* tn=#ThisType; return tn;}
+	virtual const char* getTypeName() const{return typeName();}\
+	static const char* typeName() {static const char* tn=#ThisType; return tn;}
 
 
 template<class ACollectorClass>

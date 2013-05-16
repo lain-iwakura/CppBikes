@@ -18,7 +18,7 @@ namespace Bikes
 		virtual void readBytes(char *bt, llnum btSize) = 0;
 		virtual void writeBytes(const char *bt, llnum btSize) = 0;
 		virtual void prepareForWrite(llnum byteCapacity){}
-		//virtual bool atEnd() 
+		virtual bool atEnd() const{return false;};
 		//... 
 	};
 
@@ -29,10 +29,20 @@ namespace Bikes
 		ByteArray(int cap, int dcap=1, int sz=0);
 		ByteArray(const ByteArray& ba);
 		ByteArray(const char *bt, llnum btSize);
+		ByteArray(const char *str);
+
+		ByteArray& operator=(const ByteArray& ba);
+		ByteArray& operator=(const char *str);
+
+		bool operator ==(const ByteArray& ba) const;
+		bool operator ==(const char *str) const;
+
 
 		void readBytes(char *bt, llnum btSize);
 		void writeBytes(const char *bt, llnum btSize);
 		void prepareForWrite(llnum byteCapacity);
+		bool atEnd() const;
+
 		int writeIndex() const;
 		int readIndex() const;
 		void setWriteIndex(int i);
@@ -43,6 +53,7 @@ namespace Bikes
 		int wi;		
 	};
 
+	
 
 
 //=========================================================================
