@@ -213,7 +213,7 @@ public:
 			//TODO: exaption
 		}
 		*/
-		ByteArray bastr(50,10);
+		ByteArray bastr(100,10);
 		ByteStream bstr(&bastr);
 		char ch;
 		while(!bs.getIO()->atEnd())
