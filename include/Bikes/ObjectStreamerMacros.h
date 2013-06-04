@@ -46,7 +46,6 @@ public:																		\
 	{																		\
 		AuxReader r;r.bs=&bstr;												\
 		r.read(p);															\
-		PostReadAction;														\
 	}																		\
 	void ObjectStreamerName::write(Bikes::ByteStream &bstr) const			\
 	{																		\
@@ -60,6 +59,7 @@ public:																		\
 	void ObjectStreamerName::AuxReader::read(ObjType* p)				\
 	{																		\
 		ValAccessList;														\
+		PostReadAction;														\
 	}																		\
 	void ObjectStreamerName::AuxWriter::write(const ObjType* p)		\
 	{																		\
