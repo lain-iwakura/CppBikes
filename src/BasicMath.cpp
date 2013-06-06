@@ -60,8 +60,8 @@ rnum arcsin(rnum n)
 	return asin(n);
 }
 
-//inline rnum DEG_to_RAD(rnum deg){return deg*DEG_IN_RAD;}
-//inline rnum RAD_to_DEG(rnum rad){return rad*RAD_IN_DEG;}
+//inline rnum DEG_to_RAD(rnum deg){return deg*RAD_PER_DEG;}
+//inline rnum RAD_to_DEG(rnum rad){return rad*DEG_PER_RAD;}
 
 bool isEqual(rnum n1, rnum n2, rnum O)
 {

@@ -127,9 +127,9 @@ namespace Bikes
 	const TrAngleConst g_trPIdiv4(	PIdiv4,	1./SQRT2,1./SQRT2,1.);
 	const TrAngleConst g_trPIdiv6(	PIdiv6,	0.5,SQRT3/2,	1.0/SQRT3);
 
-	const TrAngleConst g_tr1DEG(DEG_IN_RAD,sin(DEG_IN_RAD),cos(DEG_IN_RAD),tan(DEG_IN_RAD));
-	const TrAngleConst g_tr1MIN(DEG_IN_RAD/60.0,sin(DEG_IN_RAD/60.0),cos(DEG_IN_RAD/60.0),tan(DEG_IN_RAD/60.0));
-	const TrAngleConst g_tr1SEC(DEG_IN_RAD/3600.0,sin(DEG_IN_RAD/3600.0),cos(DEG_IN_RAD/3600.0),tan(DEG_IN_RAD/3600.0));
+	const TrAngleConst g_tr1DEG(RAD_PER_DEG,sin(RAD_PER_DEG),cos(RAD_PER_DEG),tan(RAD_PER_DEG));
+	const TrAngleConst g_tr1MIN(RAD_PER_DEG/60.0,sin(RAD_PER_DEG/60.0),cos(RAD_PER_DEG/60.0),tan(RAD_PER_DEG/60.0));
+	const TrAngleConst g_tr1SEC(RAD_PER_DEG/3600.0,sin(RAD_PER_DEG/3600.0),cos(RAD_PER_DEG/3600.0),tan(RAD_PER_DEG/3600.0));
 
 
 	inline rnum sin(TrAngle &ta){return ta.sin();}

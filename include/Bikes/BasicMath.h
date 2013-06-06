@@ -18,8 +18,8 @@ const rnum RNUM_O=1E-30; //-35
 const rnum RNUM_INFINITY=rnum(1)/RNUM_O; 
 const rnum EQUAL_O=1E-12;
 const rnum ANGLE_O=1E-10;
-const rnum RAD_IN_DEG=rnum(180)/PI;
-const rnum DEG_IN_RAD=PI/rnum(180);
+const rnum DEG_PER_RAD=rnum(180)/PI;
+const rnum RAD_PER_DEG=PI/rnum(180);
 
 const rnum SQRT2=sqrt(rnum(2));
 const rnum SQRT3=sqrt(rnum(3));
@@ -30,7 +30,7 @@ const rnum PIdiv6=PI/rnum(6);
 const rnum PImult2=PI*rnum(2);
 const rnum PI3div2=PIdiv2*rnum(3);
 
-const rnum ANG_1DEG=DEG_IN_RAD;
+const rnum ANG_1DEG=RAD_PER_DEG;
 const rnum ANG_1MIN=ANG_1DEG/60.0;
 const rnum ANG_1SEC=ANG_1MIN/60.0;
 
@@ -42,8 +42,8 @@ rnum normAngle_0_2PI(rnum a);
 rnum signum(rnum n);
 rnum arccos(rnum n);
 rnum arcsin(rnum n);
-inline rnum DEG_to_RAD(rnum deg){return deg*DEG_IN_RAD;}
-inline rnum RAD_to_DEG(rnum rad){return rad*RAD_IN_DEG;}
+inline rnum DEG_to_RAD(rnum deg){return deg*RAD_PER_DEG;}
+inline rnum RAD_to_DEG(rnum rad){return rad*DEG_PER_RAD;}
 bool isEqual(rnum n1, rnum n2, rnum O=EQUAL_O);
 bool isEqualAngle(rnum a1, rnum a2);
 rnum not0(rnum n, rnum o=RNUM_O);
