@@ -28,6 +28,7 @@ struct DegMinSecAngle
 	DegMinSecAngle(double a_rad){setFromRad(a_rad);}	
 	void operator = (double a_rad){setFromRad(a_rad);}
 	operator double() const { return toRad();}
+	DegMinSecAngle operator -(){return DegMinSecAngle(deg,min,sec,!negative);}
 
 	void setFromRad(double a_rad);
 	void setFromDeg(double a_deg);
