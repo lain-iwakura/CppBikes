@@ -10,17 +10,19 @@
 
 #define BIKES_CONNECTINTERFACE(signal)								signal##_connectInterface()
 
-#define BIKES_CONNECTINTERFACE_DECL(signal)							Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
+#define BIKES_CONNECTINTERFACE_DECL(signal)							Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal);
+#define BIKES_CONNECTINTERFACE_DEF(ClassName,signal)				Bikes::SignalConnectInterface*  ClassName::BIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
+#define BIKES_CONNECTINTERFACE_DECLDEF(signal)						Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(this); return &signal;}
 
-#define BIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)		Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
+#define BIKES_EMITTER_CONNECTINTERFACE_DECL(EmitterType,signal)				Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal);
+#define BIKES_EMITTER_CONNECTINTERFACE_DEF(ClassName,EmitterType,signal)	Bikes::SignalConnectInterface*  ClassName::BIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
+#define BIKES_EMITTER_CONNECTINTERFACE_DECLDEF(EmitterType,signal)			Bikes::SignalConnectInterface*  BIKES_CONNECTINTERFACE(signal){signal.setEmitter(static_cast<EmitterType*>(this)); return &signal;}
 
 #define BIKES_CONNECT(emitter,signal,receiver,slot_func)			(emitter)->BIKES_CONNECTINTERFACE(signal)->connect(receiver,&slot_func)
-
 #define BIKES_CONNECT_UNSAFE(emitter,signal,receiver,slot_func)		(emitter)->BIKES_CONNECTINTERFACE(signal)->connect_unsafe(receiver,&slot_func)
 
 #define BIKES_DISCONNECT(emitter,signal,receiver,slot_func)			(emitter)->BIKES_CONNECTINTERFACE(signal)->disconnect(receiver,&slot_func)
 
-#define BIKES_SIGNALS private
 
 #define BIKES_CONNECTABLE_OBJECT																\
 	public:																						\
