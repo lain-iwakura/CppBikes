@@ -7,4 +7,5 @@ namespace Bikes
 	typedef long long llnum;
 	typedef unsigned long long ullnum;	
 }
+
 #endif

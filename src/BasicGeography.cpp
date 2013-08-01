@@ -1,7 +1,7 @@
 #include <Bikes/BasicGeography.h>
 #include <Bikes/TrigonometricAngle.h>
 #include <string>
-
+#include <cstdio>
 
 
 namespace Bikes
@@ -83,12 +83,12 @@ std::string DegMinSecAngle::toString(bool print_sign, bool print_zero) const
 
 
 
-Vector Bikes::EllipseLamTan(const Point &p)
+Vector EllipseLamTan(const Point &p)
 {
 	return (v_gk*p.v().e()).e();
 }
 
-Vector Bikes::EllipsePhiTan(const Point &p)
+Vector EllipsePhiTan(const Point &p)
 {
 	if(p.gz==0) return Vector(0,0,1,p);
 	Vector vrx(p.gx,p.gy,0);
@@ -102,24 +102,24 @@ Vector Bikes::EllipsePhiTan(const Point &p)
 	vt.normalize();
 	return vt;
 }
-inline Point Bikes::PhiLam_to_PointS( rnum phi, rnum lam )
+inline Point PhiLam_to_PointS( rnum phi, rnum lam )
 {
 	return Point(GEO_R*cos(lam)*cos(phi),GEO_R*sin(lam)*cos(phi),GEO_R*sin(phi));
 }
 
-PhiLamPoint Bikes::Point_to_PhiLamS( const Point &p )
+PhiLamPoint Point_to_PhiLamS( const Point &p )
 {
 	return PhiLamPoint(asin(p.gz/GEO_R),acos(p.gx/sqrt(p.gx*p.gx+p.gy*p.gy))*signum(p.gy));
 }
 
 
-Point Bikes::PhiLam_to_PointE(const PhiLamPoint &phi_lam)
+Point PhiLam_to_PointE(const PhiLamPoint &phi_lam)
 {
 	return PhiLam_to_PointE(phi_lam.phi, phi_lam.lam);
 }
 
 
-Point Bikes::PhiLam_to_PointE( rnum phi, rnum lam )
+Point PhiLam_to_PointE( rnum phi, rnum lam )
 {
 	phi=normAngle(phi);
 	lam=normAngle(lam);
@@ -136,7 +136,7 @@ Point Bikes::PhiLam_to_PointE( rnum phi, rnum lam )
 }
 
 
-Point Bikes::PhiLam_to_PointE_old( rnum phi, rnum lam )
+Point PhiLam_to_PointE_old( rnum phi, rnum lam )
 {
 	//phi=NormAngle(phi);
 	//lam=NormAngle(lam);
@@ -153,7 +153,7 @@ Point Bikes::PhiLam_to_PointE_old( rnum phi, rnum lam )
 }
 
 
-PhiLamPoint Bikes::Point_to_PhiLamE( const Point &p )
+PhiLamPoint Point_to_PhiLamE( const Point &p )
 {
 	rnum D=sqrt(p.gx*p.gx+p.gy*p.gy);
 	//if(D==0) D=METRIC_O;

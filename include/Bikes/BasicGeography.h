@@ -2,7 +2,7 @@
 #define BASICGEOGRAPHY_H
 #include <Bikes/BasicMath.h>
 #include <Bikes/BasicGeometry.h>
-
+#include <string>
 
 
 namespace Bikes

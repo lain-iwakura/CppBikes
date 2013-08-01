@@ -57,6 +57,8 @@ class SignalNullType
 {
 };
 //==============================================================================================
+template <typename> class Emitter;
+
 class BaseEmitter
 {
 public:
@@ -201,36 +203,24 @@ template<MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class Signal;
 //==============================================================================================
 
 //==============================================================================================
+
+
+
+//==============================================================================================
 #define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CT,TT,COMMA)							\
 template<class ObjectClass, class RT COMMA CT>													\
-void connect(ObjectClass *obj, RT(ObjectClass::*f)(TT))											\
-{																								\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
-	{																							\
-		s->connect(obj,f);																		\
-	}																							\
-}																								\
+void connect(ObjectClass *obj, RT(ObjectClass::*f)(TT));										\
+                                                                                                \
 template<class ObjectClass, class RT COMMA CT>													\
-void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT))									\
-{																								\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
-	{																							\
-		s->connect_unsafe(obj,f);																\
-	}																							\
-}																								\
+void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT));									\
+                                                                                                \
 template<class ObjectClass, class RT COMMA CT>													\
-void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT))										\
-{																								\
-	if(Signal<TT>* s=dynamic_cast<Signal<TT>* >(this))											\
-	{																							\
-		s->disconnect(obj,f);																	\
-	}																							\
-}
+void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT));
 //-----------------------------------------------------------------------------------------------
 class SignalConnectInterface
 {
 public:
-	virtual ~SignalConnectInterface(){}
+    virtual ~SignalConnectInterface(){}
 
 MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL( , , )
 MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_COMMA)
@@ -244,10 +234,6 @@ MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,
 MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_COMMA)
 
 };
-//==============================================================================================
-
-
-
 //==============================================================================================
 #define MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(CT,TT,TP,PP,COMMA)								\
 template<CT>																					\
@@ -273,7 +259,7 @@ public:																							\
 	virtual ~SlotObject(){}																		\
 	typedef RT (ObjectClass::*ObjFuncType)(TT);													\
 	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}								\
-	virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}					\
+    virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}                  \
 	void* pObj(){return pObj_;}																	\
 	ObjectClass *pObj_;																			\
 	ObjFuncType f;																				\
@@ -282,127 +268,129 @@ public:																							\
 template<class ObjectClass, class RT COMMA CT>													\
 class SlotConnectableObject<ObjectClass,RT COMMA TT>: public SlotObject<ObjectClass,RT COMMA TT>\
 {																								\
+    typedef SlotObject<ObjectClass,RT COMMA TT> Base;                                           \
+    typedef typename Base::ObjFuncType ObjFuncType;                                             \
 public:																							\
-	SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): SlotObject(obj,fu){}				\
+    SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): Base(obj,fu){}                      \
 																								\
 	void call(TP COMMA const BaseSignal *sig)	const											\
 	{																							\
-		begin_emission(pObj_,sig);																\
-		(pObj_->*f)(PP);																		\
-		end_emission(pObj_);																	\
+        begin_emission(this->pObj_,sig);														\
+        ((this->pObj_)->*(this->f))(PP);														\
+        end_emission(this->pObj_);																\
 	}																							\
 																								\
 	void connect(BaseSignal *sig)																\
 	{																							\
-		connectConnectableObject(pObj_,sig);													\
+        connectConnectableObject(this->pObj_,sig);												\
 	}																							\
 																								\
 	void disconnect(BaseSignal *sig)															\
 	{																							\
-		disconnectConnectableObject(pObj_,sig);													\
+        disconnectConnectableObject(this->pObj_,sig);											\
 	}																							\
 																								\
 };																								\
-																								\
+                                                                                                \
 template<CT>																					\
 class Signal<TT>: public SignalConnectInterface, public BaseSignal								\
 {																								\
 public:																							\
-	Signal(){}																					\
-	Signal(const Signal<TT>& sig){}																\
-	~Signal()																					\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-		{																						\
-			slots_[i]->disconnect(this);														\
-			delete slots_[i];																	\
-		}																						\
-	}																							\
-	void operator ()(TP) const																	\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			slots_[i]->call(PP COMMA this);														\
-	}																							\
-	void call(TP) const																			\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			slots_[i]->call(PP COMMA this);														\
-	}																							\
-	template<class ObjectClass, class RT>														\
-	void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
-		slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
-	}																							\
-																								\
-	template<class ObjectClass, class RT>														\
-	void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			if(slots_[i]->isSlotObject(obj,slot_func))											\
-			{																					\
-				if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
-				{																				\
-					return;																		\
-				}else																			\
-				{																				\
-					slots_[i]->disconnect(this);												\
-					delete slots_[i];															\
-					slots_[i]=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
-					slots_[i]->connect(this);													\
-					return;																		\
-				}																				\
-			}																					\
-		SlotConnectableObject<ObjectClass,RT COMMA TT> *s=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
-		s->connect(this);																		\
-		slots_.push_back(s);																	\
-	}																							\
-																								\
-	template<class ObjectClass, class RT>														\
-	void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			if(slots_[i]->isSlotObject(obj,slot_func))											\
-			{																					\
-				slots_[i]->disconnect(this);													\
-				delete slots_[i];																\
-				slots_.erase(slots_.begin()+i);													\
-				return;																			\
-			}																					\
-	}																							\
-	void disconnectAll(void *pObj)																\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			if(slots_[i]->pObj()==pObj)															\
-			{																					\
-				slots_[i]->disconnect(this);													\
-				delete slots_[i];																\
-				slots_.erase(slots_.begin()+i);													\
-				i--;																			\
-			}																					\
-	}																							\
-	void disconnectAll()																		\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-		{																						\
-			slots_[i]->disconnect(this);														\
-			delete slots_[i];																	\
-		}																						\
-		slots_.clear();																			\
-	}																							\
+    Signal(){}																					\
+    Signal(const Signal<TT>& sig){}																\
+    ~Signal()																					\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+        {																						\
+            slots_[i]->disconnect(this);														\
+            delete slots_[i];																	\
+        }																						\
+    }																							\
+    void operator ()(TP) const																	\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            slots_[i]->call(PP COMMA this);														\
+    }																							\
+    void call(TP) const																			\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            slots_[i]->call(PP COMMA this);														\
+    }																							\
+    template<class ObjectClass, class RT>														\
+    void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
+        slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
+    }																							\
+                                                                                                \
+    template<class ObjectClass, class RT>														\
+    void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            if(slots_[i]->isSlotObject(obj,slot_func))											\
+            {																					\
+                if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
+                {																				\
+                    return;																		\
+                }else																			\
+                {																				\
+                    slots_[i]->disconnect(this);												\
+                    delete slots_[i];															\
+                    slots_[i]=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+                    slots_[i]->connect(this);													\
+                    return;																		\
+                }																				\
+            }																					\
+        SlotConnectableObject<ObjectClass,RT COMMA TT> *s=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+        s->connect(this);																		\
+        slots_.push_back(s);																	\
+    }																							\
+                                                                                                \
+    template<class ObjectClass, class RT>														\
+    void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            if(slots_[i]->isSlotObject(obj,slot_func))											\
+            {																					\
+                slots_[i]->disconnect(this);													\
+                delete slots_[i];																\
+                slots_.erase(slots_.begin()+i);													\
+                return;																			\
+            }																					\
+    }																							\
+    void disconnectAll(void *pObj)																\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            if(slots_[i]->pObj()==pObj)															\
+            {																					\
+                slots_[i]->disconnect(this);													\
+                delete slots_[i];																\
+                slots_.erase(slots_.begin()+i);													\
+                i--;																			\
+            }																					\
+    }																							\
+    void disconnectAll()																		\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+        {																						\
+            slots_[i]->disconnect(this);														\
+            delete slots_[i];																	\
+        }																						\
+        slots_.clear();																			\
+    }																							\
 private:																						\
-	void disconnectAll_(void *pObj)																\
-	{																							\
-		for(unsigned int i=0; i<slots_.size(); i++)												\
-			if(slots_[i]->pObj()==pObj)															\
-			{																					\
-				delete slots_[i];																\
-				slots_.erase(slots_.begin()+i);													\
-				i--;																			\
-			}																					\
-	}																							\
-	std::vector<AbstractSlot<TT>* > slots_;														\
+    void disconnectAll_(void *pObj)																\
+    {																							\
+        for(unsigned int i=0; i<slots_.size(); i++)												\
+            if(slots_[i]->pObj()==pObj)															\
+            {																					\
+                delete slots_[i];																\
+                slots_.erase(slots_.begin()+i);													\
+                i--;																			\
+            }																					\
+    }																							\
+    std::vector<AbstractSlot<TT>* > slots_;														\
 };
 //-----------------------------------------------------------------------------------------------
 MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL( , , , , )
@@ -415,10 +403,45 @@ MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKE
 MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_TTP7,MACROSBIKES_PP7,MACROSBIKES_COMMA)
 MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_TTP8,MACROSBIKES_PP8,MACROSBIKES_COMMA)
 MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_TTP9,MACROSBIKES_PP9,MACROSBIKES_COMMA)
-
 //==============================================================================================
 
- 
+#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(CT,TT,COMMA)                             \
+template<class ObjectClass, class RT COMMA CT>													\
+void SignalConnectInterface::connect(ObjectClass *obj, RT(ObjectClass::*f)(TT))					\
+{																								\
+    if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+    {																							\
+        s->connect(obj,f);																		\
+    }																							\
+}																								\
+template<class ObjectClass, class RT COMMA CT>													\
+void SignalConnectInterface::connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT))			\
+{																								\
+    if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+    {																							\
+        s->connect_unsafe(obj,f);																\
+    }																							\
+}																								\
+template<class ObjectClass, class RT COMMA CT>													\
+void SignalConnectInterface::disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT))				\
+{																								\
+    if(Signal<TT>* s=dynamic_cast<Signal<TT>* >(this))											\
+    {																							\
+        s->disconnect(obj,f);																	\
+    }																							\
+}
+
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF( , , )
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_COMMA)
+MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_COMMA)
+
 }// Bikes
 
 #endif // BIKES_SIGNALS_H

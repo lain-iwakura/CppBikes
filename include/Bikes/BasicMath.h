@@ -86,7 +86,7 @@ T inRange(T val, T val_min, T val_max)
 template<class T>
 T intPart(T val)
 {
-	return long long(val);
+	return static_cast<long long>(val);
 }
 
 

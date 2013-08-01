@@ -110,7 +110,7 @@
 #define MACROSBIKES_PP4 par1,par2,par3,par4
 #define MACROSBIKES_PP5 par1,par2,par3,par4,par5
 #define MACROSBIKES_PP6 par1,par2,par3,par4,par5,par6
-#define MACROSBIKES_PP7 par1,par2,par3,par4,par5,par6,par7,
+#define MACROSBIKES_PP7 par1,par2,par3,par4,par5,par6,par7
 #define MACROSBIKES_PP8 par1,par2,par3,par4,par5,par6,par7,par8
 #define MACROSBIKES_PP9 par1,par2,par3,par4,par5,par6,par7,par8,par9
 

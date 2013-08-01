@@ -18,7 +18,7 @@ namespace Bikes
 template<class ACollectorClass>
 class AbstractRegistrableType
 {
-	typedef typename TypeCollector<AbstractRegistrableType<ACollectorClass> >/*::TypeCollection<1>*/ TypesCollection;
+    typedef /*typename*/ TypeCollector<AbstractRegistrableType<ACollectorClass> >/*::TypeCollection<1>*/ TypesCollection;
 //	typedef typename TypeCollector<AbstractRegistrableType<ACollectorClass> >::TypeCollection<2> CollectorCollection;
 public:
 
@@ -52,7 +52,7 @@ public:
 protected:
 
 	template<class ThisType> 
-	static int typeIdFor(){return TypesCollection::typeId<ThisType>();}
+    static int typeIdFor(){return TypesCollection::template typeId<ThisType>();}
 
 //private:
 // [TCollectorClass_id][ObjectType_id] typeIdForCollector

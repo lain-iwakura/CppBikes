@@ -47,7 +47,7 @@ namespace Bikes
 
 	
 template<class TL, class TR>
-typename Ptr<TL>::Shared dynamic_ptr_cast(typename const Ptr<TR>::Shared & r)
+typename Ptr<TL>::Shared dynamic_ptr_cast(const typename Ptr<TR>::Shared & r)
 {
 	return boost::dynamic_pointer_cast<TL>(r);
 }

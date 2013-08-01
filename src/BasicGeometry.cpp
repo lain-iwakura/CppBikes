@@ -852,14 +852,14 @@ void Basis::removeAll() const
  	points->clear();
 }
 
-Basis Bikes::ortoBasis_ByIJ(const Vector &bi,const Vector &bj){Basis b; b.setOrtoBasis_ByIJ(bi,bj); return b;}	
-Basis Bikes::ortoBasisL_ByIJ(const Vector &bi, const Vector &bj){Basis b; b.setOrtoBasisL_ByIJ(bi,bj); return b;}	
-Basis Bikes::ortoBasis_InXY_ByI(const Vector &bi){Basis b; b.setOrtoBasis_InXY_ByI(bi); return b;}		
-Basis Bikes::ortoBasisL_InXY_ByI(const Vector &bi){Basis b; b.setOrtoBasisL_InXY_ByI(bi); return b;}	
-Basis Bikes::ortoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY){Basis b; b.setOrtoBasis_ByOXY(pO,pX,pY); return b;}	
+Basis ortoBasis_ByIJ(const Vector &bi,const Vector &bj){Basis b; b.setOrtoBasis_ByIJ(bi,bj); return b;}
+Basis ortoBasisL_ByIJ(const Vector &bi, const Vector &bj){Basis b; b.setOrtoBasisL_ByIJ(bi,bj); return b;}
+Basis ortoBasis_InXY_ByI(const Vector &bi){Basis b; b.setOrtoBasis_InXY_ByI(bi); return b;}
+Basis ortoBasisL_InXY_ByI(const Vector &bi){Basis b; b.setOrtoBasisL_InXY_ByI(bi); return b;}
+Basis ortoBasis_ByOXY(const Point &pO, const Point &pX, const Point &pY){Basis b; b.setOrtoBasis_ByOXY(pO,pX,pY); return b;}
 
 
-CylindricalPoint Bikes::toCylindricalPoint(const Point &p)
+CylindricalPoint toCylindricalPoint(const Point &p)
 {
 	CylindricalPoint r;
 	r.z=p.z();
@@ -870,14 +870,14 @@ CylindricalPoint Bikes::toCylindricalPoint(const Point &p)
 	return r;
 }
 
-CylindricalPoint Bikes::toCylindricalPoint_Arc(const Point &p)
+CylindricalPoint toCylindricalPoint_Arc(const Point &p)
 {
 	CylindricalPoint cc=toCylindricalPoint(p);
 	if(cc.a<0) cc.a+=2*PI;
 	return cc;
 }
 
-Point Bikes::fromCylindricalPoint_Arc(rnum a, rnum r, rnum z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
+Point fromCylindricalPoint_Arc(rnum a, rnum r, rnum z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
 //Point FromCylCoord_Arc(TAngle &a, rnum r, rnum z,const Basis *b){return Point(r*cos(a),r*sin(a),z,b);}
 
 }

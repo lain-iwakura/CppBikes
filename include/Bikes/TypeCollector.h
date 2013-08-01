@@ -171,13 +171,13 @@ namespace Bikes
 				if(ar[i]) delete ar[i];
 		}
 
-		(T*)& operator[](int i){return ar[i];}		
+		T*& operator[](int i){return ar[i];}		
 
 		int size(){return ar.size();}
 		int count(){return ar.size();}
 
 		template<class TypeKey>
-		(T*)& typeItem(){return ar[TypeRegister<TypeKey>::typeId];}
+		T*& typeItem(){return ar[TypeRegister<TypeKey>::typeId];}
 	private:
 		std::vector<T*> ar;
 	};
@@ -190,7 +190,7 @@ namespace Bikes
 //================================================================
 // TypeCollector<Collector>::TypeDataArray<DataT> ->
 //================================================================
-	template<class Collector> template<class T=Collector>
+	template<class Collector> template<class T>
 	class TypeCollector<Collector>::TypeDataArray: public Private::AbstractTypeDataArray, public TypeCollector<T>
 	{
 	public:

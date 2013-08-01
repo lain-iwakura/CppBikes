@@ -28,7 +28,7 @@ namespace Test
 // 		a++;
 // 	}
 
-	bool Test::test_ByteStream()
+    bool test_ByteStream()
 	{
 
 		int i=11;

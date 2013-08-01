@@ -5,6 +5,7 @@
 #include <Bikes/ObjectStreamerMacros.h>
 #include <Bikes/TypeCollector.h>
 #include <Bikes/SmartPtr.h>
+#include <Bikes/AbstractStreamer.h>
 #include <vector>
 #include <map>
 
@@ -12,13 +13,7 @@
 namespace Bikes
 {
 
-class AbstractStreamer
-{
-public:
-	virtual ~AbstractStreamer(){}
-	virtual void read(ByteStream& bs) const = 0;
-	virtual void write(ByteStream& bs) const = 0;
-};
+
 //=========================================================================
 template<class T>
 class AbstractObjectStreamer: public AbstractStreamer
@@ -59,6 +54,7 @@ protected:
 template<class ElementStreamer,class ArrayClass>
 class ArrayStreamer: public AbstractObjectStreamer<ArrayClass> 
 {
+    typedef typename AbstractObjectStreamer<ArrayClass>::StreamerType StreamerType;
 public:
 	ArrayStreamer(StreamerType *obj): AbstractObjectStreamer<StreamerType>(obj){}
 	ArrayStreamer(const StreamerType *obj): AbstractObjectStreamer<StreamerType>(obj){}
@@ -66,12 +62,12 @@ public:
 
 	void read(ByteStream& bs) const
 	{
-		read(bs,obj_r);
+        read(bs,this->obj_r);
 	}
 
 	void write(ByteStream& bs) const
 	{
-		write(bs,obj_w);
+        write(bs,this->obj_w);
 	}
 
 	static void read(ByteStream& bs, StreamerType *obj)
@@ -79,7 +75,7 @@ public:
 		obj->clear();
 		int sz;		
 		bs >> sz;
-		ElementStreamer::StreamerType el;
+        typename ElementStreamer::StreamerType el;
 		ElementStreamer es(&el);
 		for(int i=0; i<sz; i++)
 		{			
@@ -117,8 +113,8 @@ public:
 	ValueStreamer(const ValueType * val):AbstractObjectStreamer<ValueType>(val){}
 	ValueStreamer(ValueType * val):AbstractObjectStreamer<ValueType>(val){}
 
-	void read(ByteStream& bs) const{read(bs,obj_r);}
-	void write(ByteStream& bs) const{write(bs,obj_w);}
+    void read(ByteStream& bs) const{read(bs,this->obj_r);}
+    void write(ByteStream& bs) const{write(bs,this->obj_w);}
 	static void read(ByteStream& bs, ValueType *val){bs.readValue(*val);}
 	static void write(ByteStream& bs, const ValueType *val){bs.writeValue(*val);}
 };
@@ -153,7 +149,7 @@ class TypeStreamer: public TypeAbstractStreamer<AbstractType>
 public:
 	void read(ByteStream &bs, AbstractType* aobj) const
 	{
-		if(ChildTypeStreamer::StreamerType *obj=dynamic_cast<ChildTypeStreamer::StreamerType *>(aobj))
+        if(typename ChildTypeStreamer::StreamerType *obj=dynamic_cast<typename ChildTypeStreamer::StreamerType *>(aobj))
 		{
 			ChildTypeStreamer::read(bs,obj);
 		}else
@@ -163,7 +159,7 @@ public:
 	}
 	void write(ByteStream &bs,const AbstractType* aobj) const
 	{
-		if(const ChildTypeStreamer::StreamerType *obj=dynamic_cast<const ChildTypeStreamer::StreamerType *>(aobj))
+        if(const typename ChildTypeStreamer::StreamerType *obj=dynamic_cast<const typename ChildTypeStreamer::StreamerType *>(aobj))
 		{
 			ChildTypeStreamer::write(bs,obj);
 		}else
@@ -173,7 +169,7 @@ public:
 	}
 	AbstractType* newObject() const
 	{
-		return new ChildTypeStreamer::StreamerType();
+        return new typename ChildTypeStreamer::StreamerType();
 	}
 };
 
@@ -186,8 +182,8 @@ public:
 
 	virtual ~AbstractTypeStreamer(){}
 
-	void read(ByteStream& bs) const{read(bs,obj_r);}
-	void write(ByteStream& bs) const{write(bs,obj_w);}
+    void read(ByteStream& bs) const{read(bs,this->obj_r);}
+    void write(ByteStream& bs) const{write(bs,this->obj_w);}
 
 	template<class ObjectStreamer>
 	static void add()
@@ -225,7 +221,7 @@ public:
 		if(ch=='\0')
 		{
 			const char *str=bastr.data();
-			std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared >::iterator pItr;
+            typename std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > ::iterator pItr;
 			typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared stre;
 
 			for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
@@ -272,7 +268,7 @@ public:
 		{
 			ByteArray bastr((*ppAObj)->getTypeName());
 			
-			std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared >::iterator pItr;
+            typename std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared >::iterator pItr;
 			typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared stre;
 
 			for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
@@ -299,16 +295,18 @@ public:
 	static int streamersCount(){return streamers.size();}
 
 private:
-	typedef AbstractRegistrableType* AbstractRegitrableTypeP;
+    typedef AbstractRegistrableType* AbstractRegistrableTypeP;
 
 	template<class TPtr>
-	static AbstractRegistrableType * getP(const TPtr* ptr){return ptr->get();}	
+    static AbstractRegistrableType * getP(const TPtr* ptr){return Ptr<AbstractRegistrableType>::get(*ptr);}
 	
-	template<>
-	static AbstractRegistrableType * getP(const AbstractRegitrableTypeP* ptr){return *ptr;}
-
 	static std::map<const char*,typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > streamers; 
 };
+
+//template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector>
+//template<>
+//AbstractRegistrableType *AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::getP<>( AbstractRegistrableType *const *ptr)
+//{return *ptr;}
 
 template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector> 
 std::map<const char*, typename Ptr<TypeAbstractStreamer<AbstractRegistrableType> >::Shared > AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers;
@@ -327,7 +325,7 @@ namespace Aux
 			if(!i)
 			{
 				i=true;
-				AbstractTypeStreamerClass::add<AddStreamerClass>();
+                AbstractTypeStreamerClass::template add<AddStreamerClass>();
 			}
 		}
 	};
@@ -406,7 +404,7 @@ public:
 	template<class ObjectStreamer>
 	static void add()
 	{
-		int it=TypesCollection::typeId<typename ObjectStreamer::StreamerType>();
+        int it=TypesCollection::template typeId<typename ObjectStreamer::StreamerType>();
 		if(it>=strCreators.size()) strCreators.resize(it+1);
 		strCreators[it].reset(new OneTypeObjectStreamerCreator<ObjectStreamer>());
 	}
@@ -430,7 +428,7 @@ public:
 	template<class T>
 	void setObject(T *obj)
 	{
-		int it=TypesCollection::typeId<T>();
+        int it=TypesCollection::template typeId<T>();
 		if((it<strCreators.size())&&(strCreators[it].get()))
 		{
 			curStr.reset(strCreators[it]->newObjectStreamer(obj));
@@ -443,7 +441,7 @@ public:
 	template<class T>
 	void setObject(const T *obj)
 	{
-		int it=TypesCollection::typeId<T>();
+        int it=TypesCollection::template typeId<T>();
 		if((it<strCreators.size())&&(strCreators[it].get()))
 		{
 			curStr.reset(strCreators[it]->newObjectStreamer(obj));

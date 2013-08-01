@@ -2,7 +2,8 @@
 #define _BIKES_BYTESTREAM_H_
 #include <Bikes/RawArray.h>
 #include <vector>
-#include <Bikes/types.h>
+#include <Bikes/Types.h>
+#include <Bikes/AbstractStreamer.h>
 
 namespace Bikes
 {

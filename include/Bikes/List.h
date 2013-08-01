@@ -53,7 +53,7 @@ public:
 	
 	void operator += (const List<T> & other ){append(other);}
 	void operator += (const T & obj ){l_.push_back(new T(obj));}
-	void add(const T &a){l_.push_back(new T(obj));}
+	void add(const T &obj){l_.push_back(new T(obj));}
 	void append ( const T & obj ) {l_.push_back(new T(obj)); /*cnt++;*/}
 	void append (const List<T> & other )
 	{

@@ -12,9 +12,10 @@ class EXP ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>\
 private:																	\
 struct AuxReader															\
 {																			\
-	template<class T>void add(T &var){bs->read(var);}						\
-	void read(ObjClass *p);													\
-	Bikes::ByteStream *bs;													\
+    template<class T>void add(T &var){bs->read(var);}						\
+    void add(const AbstractStreamer& str){bs->read(str);}                   \
+    void read(ObjClass *p);													\
+    Bikes::ByteStream *bs;													\
 };																			\
 struct AuxWriter															\
 {																			\
@@ -115,7 +116,8 @@ class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
 private:																	\
 struct AuxReader															\
 {																			\
-	template<class T>void add(T &var){bs->read(var);}						\
+    template<class T>void add(T &var){bs->read(var);}						\
+    void add(const AbstractStreamer &s){bs->read(s);}						\
 	void read(ObjClass *p){ValAccessList;}									\
 	Bikes::ByteStream *bs;													\
 };																			\
