@@ -275,19 +275,19 @@ public:																							\
 																								\
 	void call(TP COMMA const BaseSignal *sig)	const											\
 	{																							\
-        begin_emission(this->pObj_,sig);														\
+        this->begin_emission(this->pObj_,sig);														\
         ((this->pObj_)->*(this->f))(PP);														\
-        end_emission(this->pObj_);																\
+        this->end_emission(this->pObj_);																\
 	}																							\
 																								\
 	void connect(BaseSignal *sig)																\
 	{																							\
-        connectConnectableObject(this->pObj_,sig);												\
+        this->connectConnectableObject(this->pObj_,sig);												\
 	}																							\
 																								\
 	void disconnect(BaseSignal *sig)															\
 	{																							\
-        disconnectConnectableObject(this->pObj_,sig);											\
+        this->disconnectConnectableObject(this->pObj_,sig);											\
 	}																							\
 																								\
 };																								\
