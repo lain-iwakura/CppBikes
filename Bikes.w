@@ -8,7 +8,7 @@ def configure(ctx):
 def build(ctx):
     src_glob = ctx.path.find_dir('src').ant_glob
 
-    ctx.scattered_lib(
+    ctx.static_lib(
         use='BOOST',
         includes=[
             'include',
