@@ -13,6 +13,7 @@ def build(ctx):
 
     ctx.static_lib(
         use = 'BOOST',
+        cxxflags = ctx.env['CXXFLAGS_cxxshlib'],
         includes = [inc_node, inc_node.find_dir('Bikes')],
         source = src_glob('*.cpp'),
         other_files = inc_glob('Bikes/*.h'),
