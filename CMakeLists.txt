@@ -26,8 +26,13 @@ set_target_properties(Bikes PROPERTIES DEBUG_POSTFIX "_d")
 include_directories(${BIKES_SOURCE_DIR})
 
 #-------------------------------------------
+
+option(BIKES_SAMPLES "GlobeViewer samples" ON)
+if(BIKES_SAMPLES)
 add_subdirectory(samples/BikesTest)
+set_property(TARGET BikesTest PROPERTY FOLDER "samples")
+endif()
 
 #set_property (GLOBAL PROPERTY USE_FOLDERS ON)
-set_property(TARGET BikesTest PROPERTY FOLDER "samples")
+
 
