@@ -60,12 +60,12 @@ std::string DegMinSecAngle::toString(bool print_sign, bool print_zero) const
 	
 	if(print_zero)
 	{
-		sprintf(str_deg,"%d°",deg);
+		sprintf(str_deg,"%dÂ°",deg);
 		sprintf(str_min,"%2d\'",int(min));
 		sprintf(str_sec,"%2d\"",int(sec));
 	}else
 	{
-		sprintf(str_deg,"%d°",deg);
+		sprintf(str_deg,"%dÂ°",deg);
 		if(min)sprintf(str_min,"%2d\'",int(min));
 		if(sec)sprintf(str_sec,"%2d\"",int(sec));
 	}

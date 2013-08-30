@@ -61,7 +61,7 @@ namespace CppBikes
 		}
 
 
-		void execCommand() // не_безопасно в случае пустой очереди
+		void execCommand() // РЅРµ_Р±РµР·РѕРїР°СЃРЅРѕ РІ СЃР»СѓС‡Р°Рµ РїСѓСЃС‚РѕР№ РѕС‡РµСЂРµРґРё
 		{
 			head()->exec();
 			erase();
@@ -177,7 +177,7 @@ namespace CppBikes
 			}
 		}
 
-		bool isAllCommandsExec() // все команды исполнены?
+		bool isAllCommandsExec() // РІСЃРµ РєРѕРјР°РЅРґС‹ РёСЃРїРѕР»РЅРµРЅС‹?
 		{
 			if(ThreadClass::isRunning())
 			{
@@ -189,7 +189,7 @@ namespace CppBikes
 			return SavedCommandsQueue::isEmpty();
 		}
 		
-		bool isProcessing() // идет исполнение команд?
+		bool isProcessing() // РёРґРµС‚ РёСЃРїРѕР»РЅРµРЅРёРµ РєРѕРјР°РЅРґ?
 		{
 			if(ThreadClass::isRunning())
 			{
@@ -201,7 +201,7 @@ namespace CppBikes
 			return false;
 		}
 		
-		void clearAndRestart() // очищает очередь, возвращает управление после очистки
+		void clearAndRestart() // РѕС‡РёС‰Р°РµС‚ РѕС‡РµСЂРµРґСЊ, РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРїСЂР°РІР»РµРЅРёРµ РїРѕСЃР»Рµ РѕС‡РёСЃС‚РєРё
 		{			
 			QMutex mu;
 			mu.lock();
@@ -212,7 +212,7 @@ namespace CppBikes
 			//if(!ThreadClass::isRunning()) startCommandsExec();
 		}
 		
-		void waitForComplete() // возвращает управление после того как все команды будут исполнены или поток будет остановлен
+		void waitForComplete() // РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРїСЂР°РІР»РµРЅРёРµ РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє РІСЃРµ РєРѕРјР°РЅРґС‹ Р±СѓРґСѓС‚ РёСЃРїРѕР»РЅРµРЅС‹ РёР»Рё РїРѕС‚РѕРє Р±СѓРґРµС‚ РѕСЃС‚Р°РЅРѕРІР»РµРЅ
 		{  
 			QMutex mu;
 			mu.lock();

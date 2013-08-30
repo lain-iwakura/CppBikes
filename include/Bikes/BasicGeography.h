@@ -9,11 +9,11 @@ namespace Bikes
 {
 
 
-// Êîíñòàíòû ýëëèïñîèäà çåìëè:
-const double GEO_A=6378245; // áîëüøàÿ ïîëóîñü [ì]
+// ÐšÐ¾Ð½ÑÑ‚Ð°Ð½Ñ‚Ñ‹ ÑÐ»Ð»Ð¸Ð¿ÑÐ¾Ð¸Ð´Ð° Ð·ÐµÐ¼Ð»Ð¸:
+const double GEO_A=6378245; // Ð±Ð¾Ð»ÑŒÑˆÐ°Ñ Ð¿Ð¾Ð»ÑƒÐ¾ÑÑŒ [Ð¼]
 const double GEO_ALPHA=/*1.0/2.0;//*/(1.0/298.29974); // =(EE_A-EE_B)/EE_A
-const double GEO_B=(1.0-GEO_ALPHA)*GEO_A; // ìàëàÿ ïîëóîñü [ì]
-const double GEO_R=(GEO_A+GEO_B)/2.0; // ñðåäíèé ðàäèóñ [ì]
+const double GEO_B=(1.0-GEO_ALPHA)*GEO_A; // Ð¼Ð°Ð»Ð°Ñ Ð¿Ð¾Ð»ÑƒÐ¾ÑÑŒ [Ð¼]
+const double GEO_R=(GEO_A+GEO_B)/2.0; // ÑÑ€ÐµÐ´Ð½Ð¸Ð¹ Ñ€Ð°Ð´Ð¸ÑƒÑ [Ð¼]
 const double GEO_EE=GEO_ALPHA*(2.0-GEO_ALPHA); // e^2
 
 
@@ -42,14 +42,14 @@ struct DegMinSecAngle
 };
 
 
-struct PhiLamPoint // ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda)
+struct PhiLamPoint // Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda)
 {
 	PhiLamPoint(double Phi=0,double Lamda=0):phi(Phi),lam(Lamda){}
 	rnum phi;
 	rnum lam;
 };
 
-struct PhiLamHPoint // ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda,h)
+struct PhiLamHPoint // Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda,h)
 {
 	PhiLamHPoint(rnum Phi=0,rnum Lambda=0, rnum H=0):phi(Phi),lam(Lambda),h(H){}
 	rnum phi;
@@ -59,23 +59,23 @@ struct PhiLamHPoint // ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda,h)
 
 
 
-// Äëÿ ñôåðû:
-Point PhiLam_to_PointS(rnum phi, rnum lam);  // ïðåîáðàçîâàòü (ôè,ëÿìäà) â (x,y,z)
-PhiLamPoint Point_to_PhiLamS(const Point &p); // ïðåîáðàçîâàòü (x,y,z) â (ôè,ëÿìäà)
+// Ð”Ð»Ñ ÑÑ„ÐµÑ€Ñ‹:
+Point PhiLam_to_PointS(rnum phi, rnum lam);  // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ñ‚ÑŒ (Ñ„Ð¸,Ð»ÑÐ¼Ð´Ð°) Ð² (x,y,z)
+PhiLamPoint Point_to_PhiLamS(const Point &p); // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ñ‚ÑŒ (x,y,z) Ð² (Ñ„Ð¸,Ð»ÑÐ¼Ð´Ð°)
 
-// Äëÿ ýëëèïñîèäà:
-Point PhiLam_to_PointE(rnum phi, rnum lam); // ïðåîáðàçîâûâàåò ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda) â ãåîöåíòðè÷åñêèå (x,y,z) // h=0;
-Point PhiLam_to_PointE(rnum phi, rnum lam, rnum h); // ïðåîáðàçîâûâàåò ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda,h) â ãåîöåíòðè÷åñêèå (x,y,z)
-Point PhiLam_to_PointE(const PhiLamPoint &phi_lam);  // ïðåîáðàçîâûâàåò ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda) â ãåîöåíòðè÷åñêèå (x,y,z) // h=0;
-Point PhiLam_to_PointE(const PhiLamHPoint &phi_lam_h); // ïðåîáðàçîâûâàåò ãåîãðàôè÷åñêèå êîîðäèíàòû (phi,lambda,h) â ãåîöåíòðè÷åñêèå (x,y,z)
-PhiLamPoint Point_to_PhiLamE(const Point &p); // ïðåîáðàçîâàòü (x,y,z) â (ôè,ëÿìäà)
+// Ð”Ð»Ñ ÑÐ»Ð»Ð¸Ð¿ÑÐ¾Ð¸Ð´Ð°:
+Point PhiLam_to_PointE(rnum phi, rnum lam); // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda) Ð² Ð³ÐµÐ¾Ñ†ÐµÐ½Ñ‚Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ (x,y,z) // h=0;
+Point PhiLam_to_PointE(rnum phi, rnum lam, rnum h); // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda,h) Ð² Ð³ÐµÐ¾Ñ†ÐµÐ½Ñ‚Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ (x,y,z)
+Point PhiLam_to_PointE(const PhiLamPoint &phi_lam);  // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda) Ð² Ð³ÐµÐ¾Ñ†ÐµÐ½Ñ‚Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ (x,y,z) // h=0;
+Point PhiLam_to_PointE(const PhiLamHPoint &phi_lam_h); // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ Ð³ÐµÐ¾Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (phi,lambda,h) Ð² Ð³ÐµÐ¾Ñ†ÐµÐ½Ñ‚Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ (x,y,z)
+PhiLamPoint Point_to_PhiLamE(const Point &p); // Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ñ‚ÑŒ (x,y,z) Ð² (Ñ„Ð¸,Ð»ÑÐ¼Ð´Ð°)
 
 
-Vector EllipsePhiTan(const Point &p); // åäèíè÷íûé êàñàòåëüíûé âåêòîð ê ìåðèäèàíó
-Vector EllipseLamTan(const Point &p); // åäèíè÷íûé êàñàòåëüíûé âåêòîð ê ïàðàëåëå
+Vector EllipsePhiTan(const Point &p); // ÐµÐ´Ð¸Ð½Ð¸Ñ‡Ð½Ñ‹Ð¹ ÐºÐ°ÑÐ°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¹ Ð²ÐµÐºÑ‚Ð¾Ñ€ Ðº Ð¼ÐµÑ€Ð¸Ð´Ð¸Ð°Ð½Ñƒ
+Vector EllipseLamTan(const Point &p); // ÐµÐ´Ð¸Ð½Ð¸Ñ‡Ð½Ñ‹Ð¹ ÐºÐ°ÑÐ°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¹ Ð²ÐµÐºÑ‚Ð¾Ñ€ Ðº Ð¿Ð°Ñ€Ð°Ð»ÐµÐ»Ðµ
 rnum parallelR(rnum phi);
 
-void MovePointToEllipsoidSurface(Point &p); // ïåðåìåñòèòü òî÷êó íà ïîâåðõíîñòü ýëëèïñîèäà 
+void MovePointToEllipsoidSurface(Point &p); // Ð¿ÐµÑ€ÐµÐ¼ÐµÑÑ‚Ð¸Ñ‚ÑŒ Ñ‚Ð¾Ñ‡ÐºÑƒ Ð½Ð° Ð¿Ð¾Ð²ÐµÑ€Ñ…Ð½Ð¾ÑÑ‚ÑŒ ÑÐ»Ð»Ð¸Ð¿ÑÐ¾Ð¸Ð´Ð° 
 
 
 class TrAngle;
@@ -87,10 +87,10 @@ Point PhiLam_to_PointE_old( rnum phi, rnum lam );
 }
 #endif
 
-// åñëè ðàçáèòü âåñü øàð ïî ñåêóíäàì ïîëó÷èòñÿ  839 808 000 000 òî÷åê
+// ÐµÑÐ»Ð¸ Ñ€Ð°Ð·Ð±Ð¸Ñ‚ÑŒ Ð²ÐµÑÑŒ ÑˆÐ°Ñ€ Ð¿Ð¾ ÑÐµÐºÑƒÐ½Ð´Ð°Ð¼ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑÑ  839 808 000 000 Ñ‚Ð¾Ñ‡ÐµÐº
 //												  
 
-// Äëèíà ìåðèäèàíà ->
+// Ð”Ð»Ð¸Ð½Ð° Ð¼ÐµÑ€Ð¸Ð´Ð¸Ð°Ð½Ð° ->
 /*
 	Meters a = ellipsoid->A();  
 	Units e2 = ellipsoid->E2();
@@ -103,9 +103,9 @@ Point PhiLam_to_PointE_old( rnum phi, rnum lam );
 
 	return a*(1-e2)*(p[0]*B-p[1]/2.*sin(2*B)+p[2]/4.*sin(4*B)-p[3]/6.*sin(6*B));
 */
-// <- äëèíà ìåðèäèàíà
+// <- Ð´Ð»Ð¸Ð½Ð° Ð¼ÐµÑ€Ð¸Ð´Ð¸Ð°Ð½Ð°
 
 
-// ðàäèóñ ïàðàëëåëè ->
+// Ñ€Ð°Ð´Ð¸ÑƒÑ Ð¿Ð°Ñ€Ð°Ð»Ð»ÐµÐ»Ð¸ ->
 // N*cos(B);
 // <-

@@ -36,7 +36,7 @@ namespace Bikes
 	{
 	public:
 
-		// Реестр типов
+		// Р РµРµСЃС‚СЂ С‚РёРїРѕРІ
 		template<class T> 
 		class TypeRegister;
 		//--------------------

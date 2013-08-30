@@ -203,7 +203,7 @@ public:
 		{		
 			(*ppAObj)=AbstractRegistrableTypePtr(streamers[ti]->newObject());
 			streamers[ti]->read(bs,getP(ppAObj));
-			//// Проверка совместимости(?):  должно быть сравнение имен типов(?)
+			//// РџСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё(?):  РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЃСЂР°РІРЅРµРЅРёРµ РёРјРµРЅ С‚РёРїРѕРІ(?)
 		}else
 		{
 			//TODO: exaption

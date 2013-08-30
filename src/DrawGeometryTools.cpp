@@ -62,7 +62,7 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 	
 	if(p1.x>p2.x) return LineSegmentCrossScreenRect_ambiguous(p2,p2z,p1,p1z,scr);
 	
-	// ğåàëèçàöèÿ òîëüêî äëÿ íàïğàâëåíèÿ  (p1)>-->(p2)
+	// Ñ€ĞµĞ°Ğ»Ğ¸Ğ·Ğ°Ñ†Ğ¸Ñ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ğ½Ğ°Ğ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ñ  (p1)>-->(p2)
 	
 	rnum dx=p2.x-p1.x;
 
@@ -116,26 +116,26 @@ bool LineSegmentCrossScreenRect_ambiguous( const ScreenPoint &p1, const ScreenZo
 
 bool LineSegmentCrossScreenRect( const ScreenPoint &p1, const ScreenZone &p1z, const ScreenPoint &p2, const ScreenZone &p2z, const ScreenRect &scr )
 {
-	if(p1z.v==p2z.v) // â îäíîé âåğòèêàëå 
+	if(p1z.v==p2z.v) // Ğ² Ğ¾Ğ´Ğ½Ğ¾Ğ¹ Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»Ğµ 
 	{
-		if(p1z.v==2) // â öåíòğàëüíîé âåğòèêàëå
+		if(p1z.v==2) // Ğ² Ñ†ĞµĞ½Ñ‚Ñ€Ğ°Ğ»ÑŒĞ½Ğ¾Ğ¹ Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»Ğµ
 		{
-			return !(p1z.h==p2z.h&&p1z.h!=2);  // â ïåğèôåğèéíûõ ãîğèçîíòàëÿõ | â âèäèìîé îáëàñòè			
+			return !(p1z.h==p2z.h&&p1z.h!=2);  // Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¹Ğ½Ñ‹Ñ… Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»ÑÑ… | Ğ² Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾Ğ¹ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚Ğ¸			
 		}
-		return false; // â ïåğèôåğèéíûõ âåğòèêàëÿõ
+		return false; // Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¹Ğ½Ñ‹Ñ… Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»ÑÑ…
 	}
 
-	if(p1z.h==p2z.h) // â îäíîé ãîğèçîíòàëå 
+	if(p1z.h==p2z.h) // Ğ² Ğ¾Ğ´Ğ½Ğ¾Ğ¹ Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»Ğµ 
 	{
-		return (p1z.h==2); // â âèäèìîé îáëàñòè | â ïåğèôåğèè		
+		return (p1z.h==2); // Ğ² Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾Ğ¹ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚Ğ¸ | Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¸		
 	}
 
-	if((p1z.h==2&&p1z.v==2)||(p2z.h==2&&p2z.v==2)) return true; // â äèàãîíàëå (â âèäèìîé îáëàñòè)
+	if((p1z.h==2&&p1z.v==2)||(p2z.h==2&&p2z.v==2)) return true; // Ğ² Ğ´Ğ¸Ğ°Ğ³Ğ¾Ğ½Ğ°Ğ»Ğµ (Ğ² Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾Ğ¹ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚Ğ¸)
 
 
 	// * * * * * * * * * * * * * * * * * * * * 
 	 
-	// â íåîäíîçíà÷íûõ îáëàñòÿõ (ğåäêèé ñëó÷àé) ->
+	// Ğ² Ğ½ĞµĞ¾Ğ´Ğ½Ğ¾Ğ·Ğ½Ğ°Ñ‡Ğ½Ñ‹Ñ… Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑÑ… (Ñ€ĞµĞ´ĞºĞ¸Ğ¹ ÑĞ»ÑƒÑ‡Ğ°Ğ¹) ->
 
 
 	return LineSegmentCrossScreenRect_ambiguous(p1,p1z,p2,p2z,scr);
@@ -244,7 +244,7 @@ bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,
 
 // 	if(p1.x>p2.x)
 // 	{
-// 		//TODO: ïåğåâåğíóòü
+// 		//TODO: Ğ¿ĞµÑ€ĞµĞ²ĞµÑ€Ğ½ÑƒÑ‚ÑŒ
 // 	}
 
 	/*
@@ -294,17 +294,17 @@ bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,
 	}
 //*/
 /*
-	if(p1z.v==p2z.v) // â îäíîé âåğòèêàëå 
+	if(p1z.v==p2z.v) // Ğ² Ğ¾Ğ´Ğ½Ğ¾Ğ¹ Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»Ğµ 
 	{
-		if(p1z.v==2) // â öåíòğàëüíîé âåğòèêàëå
+		if(p1z.v==2) // Ğ² Ñ†ĞµĞ½Ñ‚Ñ€Ğ°Ğ»ÑŒĞ½Ğ¾Ğ¹ Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»Ğµ
 		{
-// 			if(p1z.h==p2z.h&&p1z.h!=2)  // â ïåğèôåğèéíûõ ãîğèçîíòàëÿõ 
+// 			if(p1z.h==p2z.h&&p1z.h!=2)  // Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¹Ğ½Ñ‹Ñ… Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»ÑÑ… 
 // 			{
 // 				return false;
 // 			}else //
-			if(p1z.h!=p2z.h) // â ğàçíûõ ãîğèçîíòàëÿõ
+			if(p1z.h!=p2z.h) // Ğ² Ñ€Ğ°Ğ·Ğ½Ñ‹Ñ… Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»ÑÑ…
 			{
-				// TODO: èùåì ïåğåñå÷åíèÿ
+				// TODO: Ğ¸Ñ‰ĞµĞ¼ Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ñ
 				if(p1z.h==1||p2z.h==1)
 				{
 					CrossPoints+=findCrossH(p1,p2,scr.y1);				
@@ -319,12 +319,12 @@ bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,
 				return p1z.h==2;
 			}
 		}
-		return false; // â ïåğèôåğèéíûõ âåğòèêàëÿõ
+		return false; // Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¹Ğ½Ñ‹Ñ… Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»ÑÑ…
 	}
 
-	if(p1z.h==p2z.h) // â îäíîé ãîğèçîíòàëå 
+	if(p1z.h==p2z.h) // Ğ² Ğ¾Ğ´Ğ½Ğ¾Ğ¹ Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»Ğµ 
 	{
-		//return (p1z.h==2); // â âèäèìîé îáëàñòè | â ïåğèôåğèè		
+		//return (p1z.h==2); // Ğ² Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾Ğ¹ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚Ğ¸ | Ğ² Ğ¿ĞµÑ€Ğ¸Ñ„ĞµÑ€Ğ¸Ğ¸		
 		if(p1z.h==2)
 		{
 			if(p1z.v==1||p2z.v==1)
@@ -342,12 +342,12 @@ bool LineSegmentCrossScreenRect(	const ScreenPoint &p1,
 		}
 	}
 
-	if((p1z.h==2&&p1z.v==2)||(p2z.h==2&&p2z.v==2)) return true; // â äèàãîíàëå (â âèäèìîé îáëàñòè)
+	if((p1z.h==2&&p1z.v==2)||(p2z.h==2&&p2z.v==2)) return true; // Ğ² Ğ´Ğ¸Ğ°Ğ³Ğ¾Ğ½Ğ°Ğ»Ğµ (Ğ² Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾Ğ¹ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚Ğ¸)
 
 
 	// * * * * * * * * * * * * * * * * * * * * 
 
-	// â íåîäíîçíà÷íûõ îáëàñòÿõ (ğåäêèé ñëó÷àé) ->
+	// Ğ² Ğ½ĞµĞ¾Ğ´Ğ½Ğ¾Ğ·Ğ½Ğ°Ñ‡Ğ½Ñ‹Ñ… Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑÑ… (Ñ€ĞµĞ´ĞºĞ¸Ğ¹ ÑĞ»ÑƒÑ‡Ğ°Ğ¹) ->
 //*/
 //	return false;
 }

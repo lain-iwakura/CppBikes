@@ -15,7 +15,7 @@ namespace Bikes
 
 namespace Test
 {
-	//TODO: добавить тесты
+	//TODO: РґРѕР±Р°РІРёС‚СЊ С‚РµСЃС‚С‹
 
 
 	class AClass: public AbstractRegistrableType<AClass>
