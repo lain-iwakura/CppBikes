@@ -58,6 +58,18 @@ struct PhiLamHPoint // географические координаты (phi,la
 };
 
 
+struct PhiLamRectangle
+{
+    PhiLamRectangle(const PhiLamPoint& p1, const PhiLamPoint& p2);    
+    PhiLamRectangle(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
+    void set(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
+
+    PhiLamPoint anchor;
+    rnum dPhi;
+    rnum dLam;
+
+};
+
 
 // Для сферы:
 Point PhiLam_to_PointS(rnum phi, rnum lam);  // преобразовать (фи,лямда) в (x,y,z)

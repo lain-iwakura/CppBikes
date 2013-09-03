@@ -1,5 +1,6 @@
 #include <Bikes/BasicGeography.h>
 #include <Bikes/TrigonometricAngle.h>
+#include <Bikes/MemoryBikes.h>
 #include <string>
 #include <cstdio>
 
@@ -211,6 +212,34 @@ rnum parallelR( rnum phi )
 	return  GEO_A*sqrt((1.0-sinBsinB)/(1.0-GEO_EE*sinBsinB));
 }
 
+
+
+
+PhiLamRectangel::PhiLamRectangel( const PhiLamPoint& p1, const PhiLamPoint& p2 )
+{
+    set(p1.phi,p2.phi,p1.lam,p2.lam);
+}
+
+PhiLamRectangel::PhiLamRectangel( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
+{
+    set(phi_1,phi_2,lam_1,lam_2);
+}
+
+void PhiLamRectangel::set( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
+{
+    if(phi_1>phi_2)
+        swap_(phi_1,phi_2);
+
+    anchor.phi=phi_1;
+    anchor.lam=lam_1;
+
+    dPhi=phi_2-phi_1;
+    dLam=lam_2-lam_1;
+    if(dLam<0)
+    {
+        dLam=PImult2-dLam;
+    }
+}
 
 
 }//Bikes
