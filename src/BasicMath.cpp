@@ -29,15 +29,15 @@ void not0set(rnum &n, rnum o/* =RNUM_O */)
 
 rnum normAngle(rnum a)
 {
-	if(a>PI)  return a-(int(a/PImult2+0.5))*PImult2;
-	if(a<-PI) return a-(int(a/PImult2-0.5))*PImult2;
+	if(a>PI)  return a-(int(a/PIm2+0.5))*PIm2;
+	if(a<-PI) return a-(int(a/PIm2-0.5))*PIm2;
 	return a;
 }
 
 rnum normAngle_0_2PI(rnum a)
 {
-	if(ABS(a)>PImult2)	a-=((long)(a/(PImult2)))*PImult2;
-	if(a<0.0) a+=PImult2;
+	if(ABS(a)>PIm2)	a-=((long)(a/(PIm2)))*PIm2;
+	if(a<0.0) a+=PIm2;
 	return a;
 }
 
@@ -55,8 +55,8 @@ rnum arccos(rnum n)
 }
 rnum arcsin(rnum n)
 {
-	if(n<=-1.0) return -PIdiv2;
-	if(n>=1.0) return PIdiv2;
+	if(n<=-1.0) return -PId2;
+	if(n>=1.0) return PId2;
 	return asin(n);
 }
 

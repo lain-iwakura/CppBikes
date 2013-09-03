@@ -23,12 +23,12 @@ const rnum RAD_PER_DEG=PI/rnum(180);
 
 const rnum SQRT2=sqrt(rnum(2));
 const rnum SQRT3=sqrt(rnum(3));
-const rnum PIdiv2=PI/rnum(2);
-const rnum PIdiv3=PI/rnum(3);
-const rnum PIdiv4=PI/rnum(4);
-const rnum PIdiv6=PI/rnum(6);
-const rnum PImult2=PI*rnum(2);
-const rnum PI3div2=PIdiv2*rnum(3);
+const rnum PId2=PI/rnum(2);
+const rnum PId3=PI/rnum(3);
+const rnum PId4=PI/rnum(4);
+const rnum PId6=PI/rnum(6);
+const rnum PIm2=PI*rnum(2);
+const rnum PI3d2=PId2*rnum(3);
 
 const rnum ANG_1DEG=RAD_PER_DEG;
 const rnum ANG_1MIN=ANG_1DEG/60.0;

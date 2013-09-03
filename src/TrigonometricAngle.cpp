@@ -81,8 +81,8 @@ void TrAngle::setRad(rnum rad)
 	if(na<0)
 	{
 		_mdat|=MD_SINM;
-		if(-na>PIdiv2)_mdat|=MD_COSM;
-	}else if(na>PIdiv2) _mdat|=MD_COSM;	
+		if(-na>PId2)_mdat|=MD_COSM;
+	}else if(na>PId2) _mdat|=MD_COSM;	
 }
 
 void TrAngle::setDeg(rnum deg)

@@ -121,11 +121,11 @@ namespace Bikes
 	//							rad		sin		cos		tan	
 	const TrAngleConst g_tr0(		0,		0,		1,		0	);
 	const TrAngleConst g_trPI(		PI,		0,		-1,		0	);
-	const TrAngleConst g_tr2PI(		PImult2,0,		-1,		0	);
-	const TrAngleConst g_trPIdiv2(	PIdiv2,	1,		0,		RNUM_INFINITY);
-	const TrAngleConst g_trPIdiv3(	PIdiv3,	SQRT3/2.0,0.5,	SQRT3);
-	const TrAngleConst g_trPIdiv4(	PIdiv4,	1./SQRT2,1./SQRT2,1.);
-	const TrAngleConst g_trPIdiv6(	PIdiv6,	0.5,SQRT3/2,	1.0/SQRT3);
+	const TrAngleConst g_tr2PI(		PIm2,0,		-1,		0	);
+	const TrAngleConst g_trPIdiv2(	PId2,	1,		0,		RNUM_INFINITY);
+	const TrAngleConst g_trPIdiv3(	PId3,	SQRT3/2.0,0.5,	SQRT3);
+	const TrAngleConst g_trPIdiv4(	PId4,	1./SQRT2,1./SQRT2,1.);
+	const TrAngleConst g_trPIdiv6(	PId6,	0.5,SQRT3/2,	1.0/SQRT3);
 
 	const TrAngleConst g_tr1DEG(RAD_PER_DEG,sin(RAD_PER_DEG),cos(RAD_PER_DEG),tan(RAD_PER_DEG));
 	const TrAngleConst g_tr1MIN(RAD_PER_DEG/60.0,sin(RAD_PER_DEG/60.0),cos(RAD_PER_DEG/60.0),tan(RAD_PER_DEG/60.0));
