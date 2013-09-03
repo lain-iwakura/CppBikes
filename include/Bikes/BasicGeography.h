@@ -62,14 +62,23 @@ struct PhiLamRectangle
 {
     PhiLamRectangle(const PhiLamPoint& p1, const PhiLamPoint& p2);    
     PhiLamRectangle(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
+    PhiLamRectangle();
     void set(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
 
     PhiLamPoint anchor;
     rnum dPhi;
     rnum dLam;
 
+    PhiLamRectangle& operator += (const PhiLamRectangle& rec);
 };
 
+PhiLamRectangle getPhiLamRectangleForPoints(std::vector<PhiLamPoint> points);
+
+
+
+bool isRightLamDirection(rnum lam_l, rnum lam_r);
+
+rnum deltaLam(rnum lam_1, rnum lam_2);
 
 // Для сферы:
 Point PhiLam_to_PointS(rnum phi, rnum lam);  // преобразовать (фи,лямда) в (x,y,z)

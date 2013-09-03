@@ -215,17 +215,24 @@ rnum parallelR( rnum phi )
 
 
 
-PhiLamRectangel::PhiLamRectangel( const PhiLamPoint& p1, const PhiLamPoint& p2 )
+PhiLamRectangle::PhiLamRectangle( const PhiLamPoint& p1, const PhiLamPoint& p2 )
 {
     set(p1.phi,p2.phi,p1.lam,p2.lam);
 }
 
-PhiLamRectangel::PhiLamRectangel( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
+PhiLamRectangle::PhiLamRectangle( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
 {
     set(phi_1,phi_2,lam_1,lam_2);
 }
 
-void PhiLamRectangel::set( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
+PhiLamRectangle::PhiLamRectangle():
+dPhi(0),
+dLam(0)
+{
+
+}
+
+void PhiLamRectangle::set( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
 {
     if(phi_1>phi_2)
         swap_(phi_1,phi_2);
@@ -237,8 +244,120 @@ void PhiLamRectangel::set( rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2 )
     dLam=lam_2-lam_1;
     if(dLam<0)
     {
-        dLam=PImult2-dLam;
+        dLam=PIm2-dLam;
     }
+}
+
+PhiLamRectangle& PhiLamRectangle::operator+=( const PhiLamRectangle& rec )
+{
+    if(anchor.phi<rec.anchor.phi)
+    {
+        if(anchor.phi+dPhi<rec.anchor.phi+rec.dPhi)
+        {
+            dPhi=rec.anchor.phi+rec.dPhi-anchor.phi;
+        }
+    }else
+    {
+        if(rec.anchor.phi+rec.dPhi<anchor.phi+dPhi)
+        {
+            dPhi+=anchor.phi-rec.anchor.phi;
+        }else
+        {
+            dPhi=rec.dPhi;
+        }
+        anchor.phi=rec.anchor.phi;
+    }
+
+    rnum dl=deltaLam(anchor.lam,rec.anchor.lam);
+
+    if(dl>0)
+    {
+        if(dLam<dl+rec.dLam)
+        {
+            dLam=dl+rec.dLam;
+        }
+    }else
+    {
+        if(rec.dLam<-dl+dLam)
+        {
+            dLam+=-dl;
+        }else
+        {
+            dLam=rec.dLam;
+        }
+        anchor.lam=rec.anchor.lam;
+    }
+    return *this;
+}
+
+PhiLamRectangle getPhiLamRectangleForPoints( std::vector<PhiLamPoint> points )
+{    
+    PhiLamRectangle r;
+    if(points.size())
+    {   
+        rnum phi_min=points[0].phi;
+        rnum phi_max=phi_min;
+        rnum lam_l=points[0].lam;
+        rnum lam_r=lam_l;        
+
+        for(int i=0; i<points.size(); i++)
+        {
+            if(phi_min>points[i].phi)
+            {
+                phi_min=points[i].phi;
+            }
+            else if(phi_max<points[i].phi)
+            {
+                phi_max=points[i].phi;
+            }
+        
+            rnum lam=points[i].lam;
+            if(isRightLamDirection(lam,lam_l))
+            {
+                lam_l=lam;
+            }else if(isRightLamDirection(lam_r,lam))
+            {
+                lam_r=lam;
+            } 
+        }
+
+        r.anchor.lam=lam_l;
+        if(lam_l<lam_r)
+        {          
+            r.dLam=lam_r-lam_l;            
+        }else
+        {
+            r.dLam=PIm2-(lam_l-lam_r);
+        }
+
+        r.anchor.phi=phi_min;
+        r.dPhi=phi_max-phi_min;
+               
+
+    }
+    return r;
+}
+
+bool isRightLamDirection( rnum lam_l, rnum lam_r )
+{
+    if(lam_r>lam_l)
+    {
+        return (lam_r-lam_l)<PI;
+    }else
+    {
+        return (lam_l-lam_r)>PI;
+    }
+    return false;
+}
+
+Bikes::rnum deltaLam( rnum lam_1, rnum lam_2 )
+{
+    rnum d=ABS(lam_2-lam_1);
+    if(d>PI)
+        d=PIm2-d;
+    if(!isRightLamDirection(lam_1,lam_2))
+        d*=-1;
+    return d;
 }
 
 
