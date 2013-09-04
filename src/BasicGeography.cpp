@@ -290,6 +290,15 @@ PhiLamRectangle& PhiLamRectangle::operator+=( const PhiLamRectangle& rec )
     return *this;
 }
 
+bool PhiLamRectangle::isContain( const PhiLamPoint& p )
+{
+    rnum dlam=deltaLam(anchor.lam,p.lam);
+    return  (dlam>=0) && 
+            (dlam<=dLam) &&
+            (p.phi>=anchor.phi) &&
+            (p.phi<=anchor.phi+dPhi);    
+}
+
 PhiLamRectangle getPhiLamRectangleForPoints( std::vector<PhiLamPoint> points )
 {    
     PhiLamRectangle r;

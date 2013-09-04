@@ -65,6 +65,8 @@ struct PhiLamRectangle
     PhiLamRectangle();
     void set(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
 
+    bool isContain(const PhiLamPoint& p);
+
     PhiLamPoint anchor;
     rnum dPhi;
     rnum dLam;
