@@ -15,7 +15,7 @@ namespace Bikes
 const rnum PI=BIKES_CONST_PI;
 const rnum E=BIKES_CONST_E;
 const rnum RNUM_O=1E-30; //-35
-const rnum RNUM_INFINITY=rnum(1)/RNUM_O; 
+const rnum RNUM_INFINITY=rnum(1)/RNUM_O;
 const rnum EQUAL_O=1E-12;
 const rnum ANGLE_O=1E-10;
 const rnum DEG_PER_RAD=rnum(180)/PI;
@@ -54,39 +54,39 @@ void not0set(rnum &n, rnum o=RNUM_O);
 rnum normalDistribution(rnum x);
 
 
-template<class T> 
-T MAX(T x, T y) 
+template<class T>
+T (MAX)(T x, T y)
 {
-	if(x>y) return x;
-	return y;
-}
-
-template<class T> 
-T MIN(T x, T y) 
-{
-	if(x<y) return x;
-	return y;
+  if(x>y) return x;
+  return y;
 }
 
 template<class T>
-T ABS(T val)
+T (MIN)(T x, T y)
 {
-    if(val<0) return -val;
-    return val;
+  if(x<y) return x;
+  return y;
+}
+
+template<class T>
+T (ABS)(T val)
+{
+  if(val<0) return -val;
+  return val;
 }
 
 template<class T>
 T inRange(T val, T val_min, T val_max)
 {
-	if(val<val_min) val=val_min;
-	else if(val>val_max) val=val_max;
-	return val;
+  if(val<val_min) val=val_min;
+  else if(val>val_max) val=val_max;
+  return val;
 }
 
 template<class T>
 T intPart(T val)
 {
-	return static_cast<long long>(val);
+  return static_cast<long long>(val);
 }
 
 
@@ -97,27 +97,27 @@ T intPart(T val)
 
 enum MathFunctionResultType
 {
-	MATHFUNC_NORMAL_RESULT,
-	MATHFUNC_NO_RESULT,
-	MATHFUNC_INFINITY_RESULT
+  MATHFUNC_NORMAL_RESULT,
+  MATHFUNC_NO_RESULT,
+  MATHFUNC_INFINITY_RESULT
 };
 
 struct MathFunctionResult
 {
-	MathFunctionResult(rnum r_=0, MathFunctionResultType mfrt_=MATHFUNC_NO_RESULT):r(r_),mfrt(mfrt_){}
-	rnum r;
-	MathFunctionResultType mfrt;
+  MathFunctionResult(rnum r_=0, MathFunctionResultType mfrt_=MATHFUNC_NO_RESULT):r(r_),mfrt(mfrt_){}
+  rnum r;
+  MathFunctionResultType mfrt;
 };
 
 class MathFunction
 {
 public:
 
-	virtual MathFunctionResult f(rnum x) const =0;
+  virtual MathFunctionResult f(rnum x) const =0;
 
-	MathFunctionResult diff(rnum x, rnum dx=EQUAL_O) const;
-	rnum findNewtonRoot(rnum x_min, rnum x_max, bool *suc=0, rnum Eps=EQUAL_O, int MaxIter=10000, rnum dx=EQUAL_O*10 ) const;
-	
+  MathFunctionResult diff(rnum x, rnum dx=EQUAL_O) const;
+  rnum findNewtonRoot(rnum x_min, rnum x_max, bool *suc=0, rnum Eps=EQUAL_O, int MaxIter=10000, rnum dx=EQUAL_O*10 ) const;
+
 };
 
 }
