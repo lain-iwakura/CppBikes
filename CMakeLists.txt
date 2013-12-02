@@ -1,38 +1,91 @@
+# CMakeBikesLists v0.1 (необходимая подпись)
 cmake_minimum_required (VERSION 2.8)
-
-project(Bikes)
-
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-
-if(MSVC)
-	add_definitions(/W3)
-elseif (CMAKE_COMPILER_IS_GNUCXX)
-        add_definitions(-Wall -fPIC)
-else()
-	message("Unknown compiler")
+#-------------------------------------------------------------------------------
+# Включение CMakeBikes ->
+if(NOT CMAKE_BIKES)
+	set(CMAKE_BIKES ON)
+	set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
+	include(bikes)
 endif()
+# <- Включение CMakeBikes
+#-------------------------------------------------------------------------------
+# Имя проекта ->
+get_curent_dir_name(THIS_DIR)
+project( Bikes ) #${THIS_DIR})
+# <- Имя проекта 
+#-------------------------------------------------------------------------------
+# Опции ->
 
-file(GLOB BIKES_HEADERS "include/Bikes/*.h")
-file(GLOB BIKES_SOURCES "src/*.cpp")
+set(PROJECT_TYPE			AUTO) # AUTO|EXECUTABLE|SHARED_LIB|STATIC_LIB|SHARED_OR_STATIC_LIB|HEADERS_LIB|AGGREGATION
 
+set(REQUIRED_LIBS 			AUTO) # NO|[AUTO][DEPENDENCIES][PARENT_DEPENDENCIES][<REQUIRED_LIBS_LIST>]
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/Bikes)
+set(REQUIRED_INCLUDE		NO)   # NO|[<REQUIRED_TARGETS_LIST>]
 
-add_library(Bikes ${BIKES_HEADERS} ${BIKES_SOURCES})
-set_target_properties(Bikes PROPERTIES DEBUG_POSTFIX "_d")
+set(ADDITIONAL_INCLUDE_DIRS NO)   # NO|<INCLUDE_DIRS_LIST>
 
-include_directories(${BIKES_SOURCE_DIR})
+set(PRIVATE_DEFINITIONS 	NO)	  # NO|<DEFINITIONS_LIST>
 
-#-------------------------------------------
+set(USERS_INCLUDE 			AUTO) # NO|[AUTO][PUBLIC][PRIVATE][DEPENDENCIES][ADDITIONAL][<INCLUDE_DIRS_LIST>]
 
-option(BIKES_SAMPLES "GlobeViewer samples" ON)
-if(BIKES_SAMPLES)
-add_subdirectory(samples/BikesTest)
-set_property(TARGET BikesTest PROPERTY FOLDER "samples")
-endif()
+set(USERS_DEFINITIONS 		AUTO) # NO|[AUTO][STATIC_EXPORT][SHARED_EXPORT][PRIVATE][<DEFINITIONS_LIST>]
 
-#set_property (GLOBAL PROPERTY USE_FOLDERS ON)
+set(USE_PRECOMPILED_HEADER 	AUTO) # NO|AUTO|<HEADER_PATH>
 
+set(USE_BOOST				ON)  # ON|OFF
 
+set(USE_QT					OFF)  # ON|OFF|[ON][AUTOMOC][CORE][MAIN][GUI][OPENGL][SVG][XML][SQL][NETWORK][3SUPPORT][WEBKIT][HELP][TEST]
+
+set(USE_INSTALL				OFF)  # ON|OFF|<INSTALL_PATH>
+
+# <- Опции
+#-------------------------------------------------------------------------------
+# Каталоги ->
+ifndef_set(OUT_ROOT_DIR			${CMAKE_BINARY_DIR})
+ifndef_set(OUT_LIB_DIR			lib)
+ifndef_set(OUT_BIN_DIR			bin)
+ifndef_set(OUT_INSTALL_DIR		dist)
+set(HINT_SOURCES_DIR			src sources)  
+set(HINT_INCLUDE_DIR			include headers) 
+set(HINT_PUBLIC_INCLUDE_PREFIX	${PROJECT_NAME})
+set(HINT_DEPENDENCIES_DIR		dependencies libraries libs) 
+set(HINT_SAMPLES_DIR			sample* demo* test* tools) 
+set(HINT_RESOURCES_DIR			resource*)
+set(HINT_IGNOR_DIRS				.git build CMakeModules doc 
+								${OUT_LIB_DIR} ${OUT_BIN_DIR} 
+								${OUT_INSTALL_DIR} ${CMAKE_BINARY_DIR}) # NO REGEXP! 
+# <- Каталоги
+
+# Файлы ->
+set(HINT_PRECOMPILED_HEADER	precompil* prerequisit* )
+set(HINT_EXPORT_HEADER		export* )
+set(HINT_MAIN_SOURCE		main )
+# <- Файлы
+
+# Расширения файлов ->
+set(HINT_EXT_HEADERS		h hpp )
+set(HINT_EXT_SOURCES		cpp cc c )
+set(HINT_EXT_QT_RESOURCES	qrc )
+set(HINT_EXT_QT_UI			ui )
+set(OUT_EXT_MOC				cxx)
+# <- Расширения файлов 
+
+# Определения препроцесcора ->
+set(DEF_FOR_STATIC_EXPORT	${PROJECT_NAME}_STATICLIB )
+set(DEF_FOR_SHARED_EXPORT	${PROJECT_NAME}_SHAREDLIB )
+string(TOUPPER ${DEF_FOR_STATIC_EXPORT} DEF_FOR_STATIC_EXPORT)
+string(TOUPPER ${DEF_FOR_SHARED_EXPORT} DEF_FOR_SHARED_EXPORT)
+# <- Определения препроцесcора 
+
+# Цель ->
+set(TARGET_NAME ${PROJECT_NAME})
+# <- Цель
+
+# Выходные каталоги ->
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_LIB_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_LIB_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_BIN_DIR}")
+set(CMAKE_INSTALL_PREFIX "${OUT_ROOT_DIR}/${OUT_INSTALL_DIR}")
+# <- Выходные каталоги 
+#-------------------------------------------------------------------------------
+CMakeBikes_run()
