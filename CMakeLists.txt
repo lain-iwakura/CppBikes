@@ -1,16 +1,19 @@
 # CMakeBikesLists v0.1 (необходимая подпись)
 cmake_minimum_required (VERSION 2.8)
 #-------------------------------------------------------------------------------
-# Включение CMakeBikes ->
-if(NOT CMAKE_BIKES)
+# Включение и инициализация CMakeBikes ->
+if(NOT CMAKE_BIKES)	
 	set(CMAKE_BIKES ON)
-	set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
+	set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeBikes/CMakeModules)		
+	if(NOT (EXISTS ${CMAKE_MODULE_PATH}))
+		set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
+	endif()	
 	include(bikes)
 endif()
-# <- Включение CMakeBikes
+CMakeBikes_init()
+# <- Включение и инициализация CMakeBikes
 #-------------------------------------------------------------------------------
 # Имя проекта ->
-get_curent_dir_name(THIS_DIR)
 project( Bikes ) #${THIS_DIR})
 # <- Имя проекта 
 #-------------------------------------------------------------------------------
@@ -39,53 +42,5 @@ set(USE_QT					OFF)  # ON|OFF|[ON][AUTOMOC][CORE][MAIN][GUI][OPENGL][SVG][XML][S
 set(USE_INSTALL				OFF)  # ON|OFF|<INSTALL_PATH>
 
 # <- Опции
-#-------------------------------------------------------------------------------
-# Каталоги ->
-ifndef_set(OUT_ROOT_DIR			${CMAKE_BINARY_DIR})
-ifndef_set(OUT_LIB_DIR			lib)
-ifndef_set(OUT_BIN_DIR			bin)
-ifndef_set(OUT_INSTALL_DIR		dist)
-set(HINT_SOURCES_DIR			src sources)  
-set(HINT_INCLUDE_DIR			include headers) 
-set(HINT_PUBLIC_INCLUDE_PREFIX	${PROJECT_NAME})
-set(HINT_DEPENDENCIES_DIR		dependencies libraries libs) 
-set(HINT_SAMPLES_DIR			sample* demo* test* tools) 
-set(HINT_RESOURCES_DIR			resource*)
-set(HINT_IGNOR_DIRS				.git build CMakeModules doc 
-								${OUT_LIB_DIR} ${OUT_BIN_DIR} 
-								${OUT_INSTALL_DIR} ${CMAKE_BINARY_DIR}) # NO REGEXP! 
-# <- Каталоги
-
-# Файлы ->
-set(HINT_PRECOMPILED_HEADER	precompil* prerequisit* )
-set(HINT_EXPORT_HEADER		export* )
-set(HINT_MAIN_SOURCE		main )
-# <- Файлы
-
-# Расширения файлов ->
-set(HINT_EXT_HEADERS		h hpp )
-set(HINT_EXT_SOURCES		cpp cc c )
-set(HINT_EXT_QT_RESOURCES	qrc )
-set(HINT_EXT_QT_UI			ui )
-set(OUT_EXT_MOC				cxx)
-# <- Расширения файлов 
-
-# Определения препроцесcора ->
-set(DEF_FOR_STATIC_EXPORT	${PROJECT_NAME}_STATICLIB )
-set(DEF_FOR_SHARED_EXPORT	${PROJECT_NAME}_SHAREDLIB )
-string(TOUPPER ${DEF_FOR_STATIC_EXPORT} DEF_FOR_STATIC_EXPORT)
-string(TOUPPER ${DEF_FOR_SHARED_EXPORT} DEF_FOR_SHARED_EXPORT)
-# <- Определения препроцесcора 
-
-# Цель ->
-set(TARGET_NAME ${PROJECT_NAME})
-# <- Цель
-
-# Выходные каталоги ->
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_LIB_DIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_LIB_DIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_ROOT_DIR}/${OUT_BIN_DIR}")
-set(CMAKE_INSTALL_PREFIX "${OUT_ROOT_DIR}/${OUT_INSTALL_DIR}")
-# <- Выходные каталоги 
 #-------------------------------------------------------------------------------
 CMakeBikes_run()

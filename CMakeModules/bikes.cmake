@@ -1,4 +1,5 @@
-message(STATUS "\nInclude CMakeBikesModules.")
+message(STATUS "\nInclude CMakeBikes.")
+include(bikes_checkUsersOptions)
 include(bikes_messageFuncs)
 include(bikes_stringFuncs)
 include(bikes_fileFuncs)

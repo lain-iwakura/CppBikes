@@ -5,6 +5,8 @@ macro(CMakeBikes_run)
 message("\n>>>>>>>>>> [ ${PROJECT_NAME} ] >>>>>>>>>>")
 message("\nLet's go biking!")
 #...............................................................................
+check_users_options()
+#...............................................................................
 # Дополнительные опции ->
 #set(CMAKE_USE_RELATIVE_PATHS TRUE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
