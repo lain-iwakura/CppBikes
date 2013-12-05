@@ -1,5 +1,5 @@
 #CMakeBikes_generatedCMakeLists
-#738decb496f9236dec309657ee7c5691
+#2bb67f9817a040097c73507f4331c21a
 #
 cmake_minimum_required (VERSION 2.8)
  
@@ -37,8 +37,7 @@ set(CMAKEBIKES_${PROJECT_NAME}_EXEC_LIST ${CMAKEBIKES_${PROJECT_NAME}_EXEC_LIST}
  
 set_target_properties(BikesTest PROPERTIES DEBUG_POSTFIX "_d")
  
-target_link_libraries(BikesTest
-	Bikes)
+target_link_libraries(BikesTest	Bikes)
 								
  
 
