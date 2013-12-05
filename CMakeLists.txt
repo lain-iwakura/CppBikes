@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 2.8)
 if(NOT CMAKE_BIKES)	
 	set(CMAKE_BIKES ON)
 	set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeBikes/CMakeModules)		
-	include(bikes)
+	include(CMakeBikes)
 endif()
 CMakeBikes_init()
 # <- Включение и инициализация CMakeBikes
