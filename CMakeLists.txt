@@ -1,35 +1,43 @@
+# CMakeBikesLists v0.1 (необходимая подпись)
 cmake_minimum_required (VERSION 2.8)
-
-project(Bikes)
-
-if(MSVC)
-	add_definitions(/W3)
-elseif (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-Wall -pedantic)
-else()
-	message("Unknown compiler")
+#-------------------------------------------------------------------------------
+# Включение и инициализация CMakeBikes ->
+if(NOT CMAKE_BIKES)	
+	set(CMAKE_BIKES ON)
+	set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeBikes/CMakeModules)		
+	include(CMakeBikes)
 endif()
+CMakeBikes_init()
+# <- Включение и инициализация CMakeBikes
+#-------------------------------------------------------------------------------
+# Имя проекта ->
+project( BikesAssembly ) #${THIS_DIR})
+# <- Имя проекта 
+#-------------------------------------------------------------------------------
+# Опции ->
 
-set(CMAKE_USE_RELATIVE_PATHS true)
+set(PROJECT_TYPE			AGGREGATION) # AUTO|EXECUTABLE|SHARED_LIB|STATIC_LIB|SHARED_OR_STATIC_LIB|HEADERS_LIB|AGGREGATION
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+set(REQUIRED_LIBS 			NO) # NO|[AUTO][DEPENDENCIES][PARENT_DEPENDENCIES][<REQUIRED_LIBS_LIST>]
 
-file(GLOB BIKES_HEADERS "include/Bikes/*.h")
-file(GLOB BIKES_SOURCES "src/*.cpp")
+set(REQUIRED_INCLUDE		NO)   # NO|[<REQUIRED_TARGETS_LIST>]
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/Bikes)
+set(ADDITIONAL_INCLUDE_DIRS NO)   # NO|<INCLUDE_DIRS_LIST>
 
-add_library(Bikes ${BIKES_HEADERS} ${BIKES_SOURCES})
-set_target_properties(Bikes PROPERTIES DEBUG_POSTFIX "_d")
+set(PRIVATE_DEFINITIONS 	NO)	  # NO|<DEFINITIONS_LIST>
 
-include_directories(${BIKES_SOURCE_DIR})
+set(USERS_INCLUDE 			NO) # NO|[AUTO][PUBLIC][PRIVATE][DEPENDENCIES][ADDITIONAL][<INCLUDE_DIRS_LIST>]
 
-#-------------------------------------------
-add_subdirectory(samples/BikesTest)
+set(USERS_DEFINITIONS 		NO) # NO|[AUTO][STATIC_EXPORT][SHARED_EXPORT][PRIVATE][<DEFINITIONS_LIST>]
 
-#set_property (GLOBAL PROPERTY USE_FOLDERS ON)
-set_property(TARGET BikesTest PROPERTY FOLDER "samples")
+set(USE_PRECOMPILED_HEADER 	NO) # NO|AUTO|<HEADER_PATH>
 
+set(USE_BOOST				OFF)  # ON|OFF
+
+set(USE_QT					OFF)  # ON|OFF|[ON][AUTOMOC][CORE][MAIN][GUI][OPENGL][SVG][XML][SQL][NETWORK][3SUPPORT][WEBKIT][HELP][TEST]
+
+set(USE_INSTALL				OFF)  # ON|OFF|<INSTALL_PATH>
+
+# <- Опции
+#-------------------------------------------------------------------------------
+CMakeBikes_run()

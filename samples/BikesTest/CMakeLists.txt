@@ -1,30 +1,38 @@
+# CMakeBikesLists v0.1 (необходимая подпись)
 cmake_minimum_required (VERSION 2.8)
+#-------------------------------------------------------------------------------
+# Включение и инициализация CMakeBikes ->
+CMakeBikes_init()
+# <- Включение и инициализация CMakeBikes
+#-------------------------------------------------------------------------------
+# Имя проекта ->
+project( ${THIS_DIR} )
+# <- Имя проекта 
+#-------------------------------------------------------------------------------
+# Опции ->
 
-project(BikesTest)
+set(PROJECT_TYPE			AUTO) # AUTO|EXECUTABLE|SHARED_LIB|STATIC_LIB|SHARED_OR_STATIC_LIB|HEADERS_LIB|AGGREGATION
 
-set(CMAKE_USE_RELATIVE_PATHS true)
+set(REQUIRED_LIBS 			Bikes) # NO|[AUTO][DEPENDENCIES][PARENT_DEPENDENCIES][<REQUIRED_LIBS_LIST>]
 
-include_directories(${BIKES_SOURCE_DIR}/include)
+set(REQUIRED_INCLUDE		NO)   # NO|[<REQUIRED_TARGETS_LIST>]
 
+set(ADDITIONAL_INCLUDE_DIRS NO)   # NO|<INCLUDE_DIRS_LIST>
 
+set(PRIVATE_DEFINITIONS 	NO)	  # NO|<DEFINITIONS_LIST>
 
-if(MSVC)
-	add_definitions(/W3)
-	add_definitions(/MP /wd4068 /wd4355 /wd4800 /wd4290 /wd4996)
-elseif (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-Wall -pedantic -Wno-long-long)
-else()
-	message("Unknown compiler")
-endif()
+set(USERS_INCLUDE 			NO) # NO|[AUTO][PUBLIC][PRIVATE][DEPENDENCIES][ADDITIONAL][<INCLUDE_DIRS_LIST>]
 
-file(GLOB BIKESTEST_SOURSEFILES "src/*.cpp"
-								"src/*.h")
+set(USERS_DEFINITIONS 		NO) # NO|[AUTO][STATIC_EXPORT][SHARED_EXPORT][PRIVATE][<DEFINITIONS_LIST>]
 
-add_executable(BikesTest ${BIKESTEST_SOURSEFILES})
+set(USE_PRECOMPILED_HEADER 	NO) # NO|AUTO|<HEADER_PATH>
 
-set_target_properties(BikesTest PROPERTIES DEBUG_POSTFIX "_d")
+set(USE_BOOST				OFF)  # ON|OFF
 
-target_link_libraries(BikesTest
-	Bikes)
-								
+set(USE_QT					ON)  # ON|OFF|[ON][AUTOMOC][CORE][MAIN][GUI][OPENGL][SVG][XML][SQL][NETWORK][3SUPPORT][WEBKIT][HELP][TEST]
 
+set(USE_INSTALL				OFF)  # ON|OFF|<INSTALL_PATH>
+
+# <- Опции
+#-------------------------------------------------------------------------------
+CMakeBikes_run()
