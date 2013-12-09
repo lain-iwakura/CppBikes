@@ -1,5 +1,5 @@
-#ifndef _BIKES_SIGNALS_H_
-#define _BIKES_SIGNALS_H_
+#ifndef PREBIKES_SIGNALS_H_
+#define PREBIKES_SIGNALS_H_
 
 #include <Bikes/MacrosBikes.h>
 #include <vector>

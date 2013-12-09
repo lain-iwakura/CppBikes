@@ -1,5 +1,5 @@
-#ifndef _BIKES_BIKESTREAMER_H_
-#define _BIKES_BIKESTREAMER_H_
+#ifndef PREBIKES_BIKESTREAMER_H
+#define PREBIKES_BIKESTREAMER_H
 #include <Bikes/ObjectStreamer.h>
 
 namespace Bikes

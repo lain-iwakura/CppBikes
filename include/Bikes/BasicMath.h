@@ -1,5 +1,5 @@
-#ifndef BASICMATH_H
-#define BASICMATH_H
+#ifndef PREBIKES_BASICMATH_H
+#define PREBIKES_BASICMATH_H
 #include <math.h>
 #include <Bikes/List.h>
 #include <Bikes/Types.h>

@@ -1,6 +1,5 @@
-#ifndef PHANTOMOBJECT_H
-#define PHANTOMOBJECT_H
-
+#ifndef PREBIKES_PHANTOMOBJECT_H
+#define PREBIKES_PHANTOMOBJECT_H
 
 #include <Bikes/List.h>
 #include <Bikes/AdjacentObject.h>

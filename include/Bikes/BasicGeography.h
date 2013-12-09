@@ -1,5 +1,5 @@
-#ifndef BASICGEOGRAPHY_H
-#define BASICGEOGRAPHY_H
+#ifndef PREBIKES_BASICGEOGRAPHY_H
+#define PREBIKES_BASICGEOGRAPHY_H
 #include <Bikes/BasicMath.h>
 #include <Bikes/BasicGeometry.h>
 #include <string>

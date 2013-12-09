@@ -1,5 +1,5 @@
-#ifndef MYCPP_QUEUE_H
-#define MYCPP_QUEUE_H
+#ifndef PREBIKES_QUEUE_H
+#define PREBIKES_QUEUE_H
 
 
 namespace Bikes

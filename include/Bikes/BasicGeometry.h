@@ -14,16 +14,15 @@
 // Если базис уничтожается, все объекты, привязанные к данному базису, переводятся в глобальную СК.
 
 
-#ifndef _BIKES_BASICGEOMETRY_H_
-#define _BIKES_BASICGEOMETRY_H_
+#ifndef PREBIKES_BASICGEOMETRY_H
+#define PREBIKES_BASICGEOMETRY_H
 
 #include <Bikes/Types.h>
 #include <Bikes/List.h>
 #include <Bikes/BasicMath.h>
 
-//#define BIKES_USE_TRANGLE
 
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 #include <Bikes/TrigonometricAngle.h>
 #endif
 
@@ -220,7 +219,7 @@ public:
 
 
 
-#ifdef BIKES_USE_TRANGLE	
+#ifdef PREBIKES_USE_TRANGLE	
 	TrAngle angle(const Vector &v) const {return angle(*this,v);}  // вероятно ненужная функция
 #else
 	rnum angle(const Vector &v) const {return angle(*this,v);} 
@@ -232,7 +231,7 @@ public:
 	// Если вектора скрещивающиеся, то точкой пересечения считается точка лежащая
 	// на векторе *this и являющаяся концом отрезка минимального расстояния до вектора v
 
-#ifdef BIKES_USE_TRANGLE	
+#ifdef PREBIKES_USE_TRANGLE	
 	static TrAngle angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
 #else
 	static rnum angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
@@ -266,7 +265,7 @@ public:
 	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
 	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(anchor,p))
 
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 	TrAngle operator ^ (const Vector &v) const;// возвращает Angle(v)
 #else
 	rnum operator ^ (const Vector &v) const;// возвращает Angle(v)

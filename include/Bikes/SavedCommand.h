@@ -1,7 +1,7 @@
 // Dependeds: loki
 
-#ifndef SAVEDCOMMAND_H
-#define SAVEDCOMMAND_H
+#ifndef PREBIKES_SAVEDCOMMAND_H
+#define PREBIKES_SAVEDCOMMAND_H
 
 #include <loki/Functor.h>
 //#include "loki/Function.h"

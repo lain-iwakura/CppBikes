@@ -1,5 +1,5 @@
-#ifndef _BIKES_BYTESTREAM_H_
-#define _BIKES_BYTESTREAM_H_
+#ifndef PREBIKES_BYTESTREAM_H
+#define PREBIKES_BYTESTREAM_H
 #include <Bikes/RawArray.h>
 #include <vector>
 #include <Bikes/Types.h>

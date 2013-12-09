@@ -1,5 +1,5 @@
-#ifndef MYCPP_VALUESERIES_H
-#define MYCPP_VALUESERIES_H
+#ifndef PREBIKES_VALUESERIES_H
+#define PREBIKES_VALUESERIES_H
 
 #include <Bikes/List.h>
 #include <Bikes/BasicMath.h>

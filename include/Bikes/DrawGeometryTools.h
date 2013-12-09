@@ -1,5 +1,5 @@
-#ifndef BIKES_DRAWGEOMETRYTOOLS_H
-#define BIKES_DRAWGEOMETRYTOOLS_H
+#ifndef PREBIKES_DRAWGEOMETRYTOOLS_H
+#define PREBIKES_DRAWGEOMETRYTOOLS_H
 
 #include <Bikes/BasicMath.h>
 #include <Bikes/BasicGeometry.h>
