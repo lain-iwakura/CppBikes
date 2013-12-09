@@ -197,14 +197,14 @@ namespace Bikes
 		TypeDataArray(): d(new std::vector<Private::AbstractTypeData*>(typeCount(),0)){}
 		~TypeDataArray()
 		{
-			for(unsigned int i=0; i<d->size(); i++)
+			for(unum i=0; i<d->size(); i++)
 				if((*d)[i]) delete (*d)[i];
 			delete d;
 		}
 
 		void clear()
 		{
-			for(unsigned int i=0; i<d->size(); i++)
+			for(unum i=0; i<d->size(); i++)
 				if((*d)[i]){delete (*d)[i]; (*d)[i]=0;}
 		}
 
@@ -261,14 +261,14 @@ namespace Bikes
 		TypeDataMap():d(new std::vector<Private::AbstractTypeDataArray*>(typeCount(),0)){}
 		~TypeDataMap()
 		{
-			for(unsigned int i=0; i<d->size(); i++) 
+			for(unum i=0; i<d->size(); i++) 
 				if((*d)[i]) delete (*d)[i];
 			delete d;
 		}
 
 		void clear()
 		{
-			for(unsigned int i=0; i<d->size(); i++) 
+			for(unum i=0; i<d->size(); i++) 
 				if((*d)[i]){ delete (*d)[i]; (*d)[i]=0; }
 		}
 
