@@ -17,7 +17,7 @@
 namespace Bikes
 {
 
-
+#ifdef PREBIKES_DEV_TESTBIKES
 
 namespace Test
 {
@@ -230,4 +230,6 @@ BIKES_ABSTRACTTYPESTREAMER_DEF(AClassStreamer,
 
 
 }//Test
+
+#endif
 }// Bikes

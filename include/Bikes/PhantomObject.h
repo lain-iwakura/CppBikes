@@ -2,7 +2,7 @@
 #define PREBIKES_PHANTOMOBJECT_H
 
 #include <Bikes/List.h>
-#include <Bikes/AdjacentObject.h>
+
 #define TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) C_this(){}; C_this(const C_this<T> &xo):C_that<T>(xo){} C_this(const T& o):C_that<T>(o){}
 #define TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T) void operator =(const T&  obj_){C_that<T>::operator=(obj_);} void operator=(C_this<T> & cobj){C_that<T>::operator=(cobj);}
 #define TEMPLT_DEFALL(C_this,C_that,T) TEMPLT_CONSTRUCTOR_DEFALL(C_this,C_that,T) TEMPLT_ASSIGMENTOPERATORS(C_this,C_that,T)
@@ -148,7 +148,54 @@ private:
 		*MustDestroy=false; 
 	}
 };
- 
+
+
+
+
+// DEV ->
+
+#ifdef PREBIKES_DEV_PHANTOMVAL
+
+#define VALOPERATORS_DEFALL(T,B) \
+    void operator +=(const T &v){ B::operator +=(v);}\
+    void operator -=(const T &v){ B::operator -=(v);}\
+    void operator /=(const T &v){ B::operator /=(v);}\
+    void operator *=(const T &v){ B::operator *=(v);}\
+
+template<class T> class PhantomVal: public PhantomObject<T>   
+{
+protected:
+    using  PhantomObject<T>::OBJ;
+public:
+    using  PhantomObject<T>::destroy;
+    using  PhantomObject<T>::exist;
+    TEMPLT_DEFALL(PhantomVal,PhantomObject,T)
+
+        void clear(){destroy();}
+
+    operator T() const {if(OBJ) return *OBJ; return T(0);}
+    //T val() const {return PhantomObject<T>::Val()}
+
+    void operator +=(const T &v){if(OBJ) *OBJ+=v; else OBJ=new T(v);}
+    void operator -=(const T &v){if(OBJ) *OBJ-=v; else OBJ=new T(-v);}
+    void operator *=(const T &v){if(OBJ) *OBJ*=v;}
+    void operator /=(const T &v){if(OBJ) *OBJ/=v;}
+
+    void operator +=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ+=*cval.OBJ; else *OBJ=new T(*cval.OBJ);}}
+    void operator -=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ-=*cval.OBJ; else *OBJ=new T(-(*cval.OBJ));}}
+    void operator /=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ/=*cval.OBJ;}}
+    void operator *=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ*=*cval.OBJ;}}
+
+    T operator -() const {if(OBJ) return -*OBJ; return -T(0);}
+    T operator +() const {if(OBJ) return +*OBJ; return +T(0);}
+
+    bool operator ==(const PhantomVal<T> &cval) const{if(exist()&&cval.exist()) return *OBJ==*cval.OBJ; return false;}	
+};
+
+#endif
+
+#ifdef PREBIKES_DEV_JOINPHANTOMOBJECT
+#include <Bikes/AdjacentObject.h>
 #define JointObject JointPhantomObject
 template<class T>class JointPhantomObject: public PhantomObject<T>, public AdjacentObject
 {
@@ -279,59 +326,10 @@ public:
     bool operator ==(const JointPhantomValue<T> &jval) const{if(exist()&&jval.exist()) return *OBJ==*jval.OBJ; return false;}
 };
 
+#endif
 
+// <- DEV
 
-#define VALOPERATORS_DEFALL(T,B) \
-	void operator +=(const T &v){ B::operator +=(v);}\
-	void operator -=(const T &v){ B::operator -=(v);}\
-	void operator /=(const T &v){ B::operator /=(v);}\
-	void operator *=(const T &v){ B::operator *=(v);}\
-	
-
-
-template<class T> class PhantomVal: public PhantomObject<T>   
-{
-protected:
-    using  PhantomObject<T>::OBJ;
-public:
-	using  PhantomObject<T>::destroy;
-    using  PhantomObject<T>::exist;
-	TEMPLT_DEFALL(PhantomVal,PhantomObject,T)
-
-	void clear(){destroy();}
-
-	operator T() const {if(OBJ) return *OBJ; return T(0);}
-	//T val() const {return PhantomObject<T>::Val()}
-
-	void operator +=(const T &v){if(OBJ) *OBJ+=v; else OBJ=new T(v);}
-	void operator -=(const T &v){if(OBJ) *OBJ-=v; else OBJ=new T(-v);}
-	void operator *=(const T &v){if(OBJ) *OBJ*=v;}
-	void operator /=(const T &v){if(OBJ) *OBJ/=v;}
-
-	void operator +=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ+=*cval.OBJ; else *OBJ=new T(*cval.OBJ);}}
-	void operator -=(const PhantomVal<T> &cval){if(cval.OBJ){ if(OBJ)*OBJ-=*cval.OBJ; else *OBJ=new T(-(*cval.OBJ));}}
-	void operator /=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ/=*cval.OBJ;}}
-	void operator *=(const PhantomVal<T> &cval){if(OBJ){ if(cval.OBJ) *OBJ*=*cval.OBJ;}}
-
-	T operator -() const {if(OBJ) return -*OBJ; return -T(0);}
-	T operator +() const {if(OBJ) return +*OBJ; return +T(0);}
-
-	bool operator ==(const PhantomVal<T> &cval) const{if(exist()&&cval.exist()) return *OBJ==*cval.OBJ; return false;}	
-};
-
-
-
-// class Deleter // ?
-// {
-// public:
-// 	Deleter(void *delObj=0){*this+=delObj;}
-// 	~Deleter()
-// 	{
-// 		for(int i=0; i<delObjects.count(); i++) delete delObjects[i];
-// 	}
-// 	void operator +=(void *delObj){if(delObj) delObjects+=delObj;}
-// 	List<void*> delObjects;
-// };
 }
 #endif
 

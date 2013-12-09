@@ -4,8 +4,8 @@
 namespace Bikes
 {
 	typedef double rnum;
-	typedef long long llnum;
-	typedef unsigned long long ullnum;	
+	typedef long long lnum;
+	typedef unsigned long long ulnum;	
 }
 
 #endif

@@ -6,6 +6,8 @@
 
 namespace Bikes
 {
+
+#ifdef PREBIKES_DEV_TESTBIKES
 	
 	template<class T>
 	bool isPointer(const T&){return false;}
@@ -59,6 +61,7 @@ namespace Test
 	const test_GlobalObjectClass<int> test_globalObject;
 	
 }	
+#endif // PREBIKES_DEV_TESTBIKES
 }
 
 #endif

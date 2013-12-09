@@ -16,9 +16,9 @@ namespace Bikes
 	{
 	public:
 		virtual ~InOutInterface(){}
-		virtual void readBytes(char *bt, llnum btSize) = 0;
-		virtual void writeBytes(const char *bt, llnum btSize) = 0;
-		virtual void prepareForWrite(llnum byteCapacity){}
+		virtual void readBytes(char *bt, lnum btSize) = 0;
+		virtual void writeBytes(const char *bt, lnum btSize) = 0;
+		virtual void prepareForWrite(lnum byteCapacity){}
 		virtual bool atEnd() const{return false;};
 		//... 
 	};
@@ -29,7 +29,7 @@ namespace Bikes
 		ByteArray();
 		ByteArray(int cap, int dcap=1, int sz=0);
 		ByteArray(const ByteArray& ba);
-		ByteArray(const char *bt, llnum btSize);
+		ByteArray(const char *bt, lnum btSize);
 		ByteArray(const char *str);
 
 		ByteArray& operator=(const ByteArray& ba);
@@ -39,9 +39,9 @@ namespace Bikes
 		bool operator ==(const char *str) const;
 
 
-		void readBytes(char *bt, llnum btSize);
-		void writeBytes(const char *bt, llnum btSize);
-		void prepareForWrite(llnum byteCapacity);
+		void readBytes(char *bt, lnum btSize);
+		void writeBytes(const char *bt, lnum btSize);
+		void prepareForWrite(lnum byteCapacity);
 		bool atEnd() const;
 
 		int writeIndex() const;
@@ -187,9 +187,9 @@ namespace Bikes
 			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
-		void readBytes(char *bt, llnum btSize);
-		void writeBytes(const char *bt, llnum btSize);
-		void prepareForWrite(llnum byteCapacity);
+		void readBytes(char *bt, lnum btSize);
+		void writeBytes(const char *bt, lnum btSize);
+		void prepareForWrite(lnum byteCapacity);
 
 
 	private:
