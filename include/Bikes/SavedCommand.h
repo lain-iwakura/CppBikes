@@ -145,18 +145,6 @@ namespace CppBikes
 		}
 
 
-		/**********************************************************************************************//**
-		 * \fn	void SavedCommandsThread::startCommandsExec(bool clear_and_restart=false,
-		 * 		bool stop_when_complete=false)
-		 *
-		 * \brief	Starts the commands execute.
-		 *
-		 * \author	Andrey Kostin
-		 * \date	04.09.2012
-		 *
-		 * \param	clear_and_restart 	(optional) the clear and restart.
-		 * \param	stop_when_complete	(optional) the stop when complete.
-		 **************************************************************************************************/
 		void startCommandsExec(bool clear_and_restart=false, bool stop_when_complete=false)
 		{
 			if(!ThreadClass::isRunning())

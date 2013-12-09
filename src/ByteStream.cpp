@@ -24,7 +24,7 @@ namespace Bikes
 	{
 	}
 
-	ByteArray::ByteArray( const char *bt, llnum btSize ):RawArray<char>(bt,btSize)
+	ByteArray::ByteArray( const char *bt, lnum btSize ):RawArray<char>(bt,btSize)
 	{
 		ri=0;
 		wi=l;
@@ -39,7 +39,7 @@ namespace Bikes
 	
 
 
-	void ByteArray::readBytes( char *bt, llnum btSize )
+	void ByteArray::readBytes( char *bt, lnum btSize )
 	{
 		int nr=btSize;
 		if(ri+nr>l) nr=l-ri;
@@ -48,7 +48,7 @@ namespace Bikes
 			bt[i]=arr[ri];
 	}
 
-	void ByteArray::writeBytes(const char *bt, llnum btSize )
+	void ByteArray::writeBytes(const char *bt, lnum btSize )
 	{
 		if(wi+btSize>l) setSize(wi+btSize);
 		for(int i=0; i<btSize; i++, wi++)
@@ -75,7 +75,7 @@ namespace Bikes
 		ri=inRange<int>(i,0,size());
 	}
 
-	void ByteArray::prepareForWrite( llnum byteCapacity )
+	void ByteArray::prepareForWrite( lnum byteCapacity )
 	{
 		if(wi+byteCapacity>s) this->setCapacity(wi+byteCapacity);
 	}
@@ -140,17 +140,17 @@ namespace Bikes
 		return io_;
 	}
 
-	void ByteStream::readBytes( char *bt, llnum btSize )
+	void ByteStream::readBytes( char *bt, lnum btSize )
 	{
 		io_->readBytes(bt,btSize);
 	}
 
-	void ByteStream::writeBytes(const char *bt, llnum btSize )
+	void ByteStream::writeBytes(const char *bt, lnum btSize )
 	{
 		io_->writeBytes(bt,btSize);
 	}
 
-	void ByteStream::prepareForWrite( llnum byteCapacity )
+	void ByteStream::prepareForWrite( lnum byteCapacity )
 	{
 		io_->prepareForWrite(byteCapacity);
 	}
