@@ -3,6 +3,8 @@
 #ifndef PREBIKES_SAVEDCOMMAND_H
 #define PREBIKES_SAVEDCOMMAND_H
 
+#ifdef PREBIKES_DEV_SAVEDCOMMAND_H
+
 #include <loki/Functor.h>
 //#include "loki/Function.h"
 #include <loki/TypelistMacros.h>
@@ -15,7 +17,7 @@
 #include <QWaitCondition>
 
 
-namespace CppBikes
+namespace Bikes
 {
 
 	class SavedCommand
@@ -316,6 +318,6 @@ namespace CppBikes
 	
 }
 
-
+#endif //PREBIKES_DEV_SAVEDCOMMAND
 
 #endif

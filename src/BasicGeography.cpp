@@ -1,4 +1,5 @@
 #include <Bikes/BasicGeography.h>
+#include <Bikes/BasicMath.h>
 #include <Bikes/TrigonometricAngle.h>
 #include <Bikes/MemoryBikes.h>
 #include <string>

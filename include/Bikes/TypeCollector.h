@@ -1,7 +1,6 @@
 #ifndef PREBIKES_TYPECOLLECTOR_H
 #define PREBIKES_TYPECOLLECTOR_H
 
-#include <Bikes/MacrosBikes.h>
 #include <vector>
 
 namespace Bikes

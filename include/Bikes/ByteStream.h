@@ -1,9 +1,11 @@
 #ifndef PREBIKES_BYTESTREAM_H
 #define PREBIKES_BYTESTREAM_H
+
 #include <Bikes/RawArray.h>
-#include <vector>
 #include <Bikes/Types.h>
 #include <Bikes/AbstractStreamer.h>
+
+#include <vector>
 
 namespace Bikes
 {
