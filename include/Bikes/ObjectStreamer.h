@@ -404,7 +404,7 @@ public:
 	template<class ObjectStreamer>
 	static void add()
 	{
-        int it=TypesCollection::template typeId<typename ObjectStreamer::StreamerType>();
+        unum it=TypesCollection::template typeId<typename ObjectStreamer::StreamerType>();
 		if(it>=strCreators.size()) strCreators.resize(it+1);
 		strCreators[it].reset(new OneTypeObjectStreamerCreator<ObjectStreamer>());
 	}
