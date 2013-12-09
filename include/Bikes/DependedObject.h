@@ -1,5 +1,5 @@
-#ifndef DEPENDEDOBJECT_H
-#define DEPENDEDOBJECT_H
+#ifndef PREBIKES_DEPENDEDOBJECT_H
+#define PREBIKES_DEPENDEDOBJECT_H
 #include "PhantomObject.h"
 
 

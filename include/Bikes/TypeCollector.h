@@ -1,5 +1,5 @@
-#ifndef TYPECOLLECTOR_H
-#define TYPECOLLECTOR_H
+#ifndef PREBIKES_TYPECOLLECTOR_H
+#define PREBIKES_TYPECOLLECTOR_H
 
 #include <Bikes/MacrosBikes.h>
 #include <vector>

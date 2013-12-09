@@ -1,5 +1,5 @@
-#ifndef _BIKES_SMARTPTR_H_
-#define _BIKES_SMARTPTR_H_
+#ifndef PREBIKES_SMARTPTR_H
+#define PREBIKES_SMARTPTR_H
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <memory>

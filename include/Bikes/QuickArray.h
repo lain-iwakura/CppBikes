@@ -1,5 +1,5 @@
-#ifndef _BIKES_QUICKARRAY_H_
-#define _BIKES_QUICKARRAY_H_
+#ifndef PREBIKES_QUICKARRAY_H
+#define PREBIKES_QUICKARRAY_H
 #include <Bikes/MacrosBikes.h>
 
 #define AUXBIKES_QUICKARRAY_FILL_1(ARR,EL) ARR[0]=EL##1;

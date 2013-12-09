@@ -1,5 +1,5 @@
-#ifndef _BIKES_TESTBIKES_H_
-#define _BIKES_TESTBIKES_H_
+#ifndef PREBIKES_TESTBIKES_H
+#define PREBIKES_TESTBIKES_H
 #include <Bikes/BikeStreamer.h>
 #include <Bikes/SmartPtr.h>
 #include <Bikes/AbstractRegistrableType.h>

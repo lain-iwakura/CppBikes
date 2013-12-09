@@ -1,5 +1,5 @@
-#ifndef _BIKES_RAWARRAY_H_
-#define _BIKES_RAWARRAY_H_
+#ifndef PREBIKES_RAWARRAY_H
+#define PREBIKES_RAWARRAY_H
 #include <vector>
 
 namespace Bikes

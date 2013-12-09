@@ -422,7 +422,7 @@ bool Vector::operator || (const Vector &v) const {return isParallel(*this,v);}
 bool Vector::operator |=(const Vector &v) const {return isRightVectors(*this,v);}
 Basis Vector::operator && (const Vector &v) const {return ortoBasis_ByIJ(*this,v);}
 Basis Vector::operator && (const Point &p) const {return ortoBasis_ByIJ(*this,Vector(anchor,p));}
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 TrAngle Vector::operator ^ (const Vector &v) const {return angle(*this,v);}
 #else
 rnum Vector::operator ^ (const Vector &v) const {return angle(*this,v);}
@@ -565,7 +565,7 @@ Vector& Vector::rotate_Z(rnum a)
 	return rotate_W(Vector(0,0,1),a);
 }
 
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 TrAngle Vector::angle(const Vector &v1, const Vector &v2) 
 {
 	return TrAngle(v1.e()&v2.e());

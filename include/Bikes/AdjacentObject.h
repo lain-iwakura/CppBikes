@@ -1,5 +1,5 @@
-#ifndef ADJACENTOBJECT_H
-#define ADJACENTOBJECT_H
+#ifndef PREBIKES_ADJACENTOBJECT_H
+#define PREBIKES_ADJACENTOBJECT_H
 
 //#include "List.h"
 

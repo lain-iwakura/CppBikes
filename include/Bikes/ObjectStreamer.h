@@ -1,5 +1,5 @@
-#ifndef _BIKES_OBJECTSTREAMER_H_
-#define _BIKES_OBJECTSTREAMER_H_
+#ifndef PREBIKES_OBJECTSTREAMER_H
+#define PREBIKES_OBJECTSTREAMER_H
 
 #include <Bikes/ByteStream.h>
 #include <Bikes/ObjectStreamerMacros.h>
