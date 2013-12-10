@@ -7,8 +7,8 @@ namespace Bikes
 	class Point;
 	class Vector;
 	class Basis;
-	class PhiLamPoint;
-	class PhiLamHPoint;
+	struct PhiLamPoint;
+	struct PhiLamHPoint;
 
 	
 	BIKES_OBJECTSTREAMER_DECL(PointStreamer,			Point			)

@@ -16,7 +16,7 @@ namespace Bikes
 	{
 	}
 
-	ByteArray::ByteArray( int cap, int dcap/*=1*/, int sz/*=0*/ ):RawArray<char>(sz,cap,dcap),ri(0),wi(0)
+	ByteArray::ByteArray( unum cap, unum dcap/*=1*/, unum sz/*=0*/ ):RawArray<char>(sz,cap,dcap),ri(0),wi(0)
 	{		
 	}
 
@@ -24,7 +24,7 @@ namespace Bikes
 	{
 	}
 
-	ByteArray::ByteArray( const char *bt, lnum btSize ):RawArray<char>(bt,btSize)
+	ByteArray::ByteArray( const char *bt, unum btSize ):RawArray<char>(bt,btSize)
 	{
 		ri=0;
 		wi=l;
@@ -39,7 +39,7 @@ namespace Bikes
 	
 
 
-	void ByteArray::readBytes( char *bt, lnum btSize )
+	void ByteArray::readBytes( char *bt, unum btSize )
 	{
 		int nr=btSize;
 		if(ri+nr>l) nr=l-ri;
@@ -48,34 +48,34 @@ namespace Bikes
 			bt[i]=arr[ri];
 	}
 
-	void ByteArray::writeBytes(const char *bt, lnum btSize )
+	void ByteArray::writeBytes(const char *bt, unum btSize )
 	{
 		if(wi+btSize>l) setSize(wi+btSize);
-		for(int i=0; i<btSize; i++, wi++)
+		for(unum i=0; i<btSize; i++, wi++)
 			arr[wi]=bt[i];
 	}
 
-	int ByteArray::writeIndex() const
+	unum ByteArray::writeIndex() const
 	{
 		return wi;
 	}
 
-	int ByteArray::readIndex() const
+	unum ByteArray::readIndex() const
 	{
 		return ri;
 	}
 
-	void ByteArray::setWriteIndex( int i )
+	void ByteArray::setWriteIndex( unum i )
 	{
-		wi=inRange<int>(i,0,size());
+		wi=inRange<unum>(i,0,size());
 	}
 
-	void ByteArray::setReadIndex( int i )
+	void ByteArray::setReadIndex( unum i )
 	{
-		ri=inRange<int>(i,0,size());
+		ri=inRange<unum>(i,0,size());
 	}
 
-	void ByteArray::prepareForWrite( lnum byteCapacity )
+	void ByteArray::prepareForWrite( unum byteCapacity )
 	{
 		if(wi+byteCapacity>s) this->setCapacity(wi+byteCapacity);
 	}
@@ -84,30 +84,30 @@ namespace Bikes
 	{
 		setCapacity(ba.capacity());
 		setSize(ba.size());
-		for(int i=0; i<size(); i++) arr[i]=ba[i];
+		for(unum i=0; i<size(); i++) arr[i]=ba[i];
 		return *this;
 	}
 
 	ByteArray& ByteArray::operator=( const char *bt )
 	{
 		setSize(strlen(bt)+1);
-		for(int i=0; i<size(); i++) arr[i]=bt[i];
+		for(unum i=0; i<size(); i++) arr[i]=bt[i];
 		return *this;
 	}
 
 	bool ByteArray::operator==( const ByteArray& ba ) const
 	{
 		if(ba.size()!=size()) return false;
-		for(int i=0; i<size(); i++)
+		for(unum i=0; i<size(); i++)
 			if(arr[i]!=ba[i]) return false;
 		return true;
 	}
 
 	bool ByteArray::operator==( const char *str ) const
 	{
-		int strl=strlen(str);
+		unum strl=strlen(str);
 		if(strl!=size()-1) return false;
-		for(int i=0;i<size();i++)
+		for(unum i=0;i<size();i++)
 			if(str[i]!=arr[i]) return false;
 		return true;
 	}
@@ -140,17 +140,17 @@ namespace Bikes
 		return io_;
 	}
 
-	void ByteStream::readBytes( char *bt, lnum btSize )
+	void ByteStream::readBytes( char *bt, unum btSize )
 	{
 		io_->readBytes(bt,btSize);
 	}
 
-	void ByteStream::writeBytes(const char *bt, lnum btSize )
+	void ByteStream::writeBytes(const char *bt, unum btSize )
 	{
 		io_->writeBytes(bt,btSize);
 	}
 
-	void ByteStream::prepareForWrite( lnum byteCapacity )
+	void ByteStream::prepareForWrite( unum byteCapacity )
 	{
 		io_->prepareForWrite(byteCapacity);
 	}
