@@ -73,11 +73,11 @@ public:
 	static void read(ByteStream& bs, StreamerType *obj)
 	{
 		obj->clear();
-		int sz;		
+		uint sz;		
 		bs >> sz;
         typename ElementStreamer::StreamerType el;
 		ElementStreamer es(&el);
-		for(int i=0; i<sz; i++)
+		for(uint i=0; i<sz; i++)
 		{			
 			bs >> es;
 			obj->push_back(el);
@@ -86,9 +86,9 @@ public:
 
 	static void write(ByteStream& bs, const StreamerType *obj)
 	{
-		bs.prepareForWrite(obj->size()+sizeof(int));
-		bs << int(obj->size());
-		for(int i=0; i<obj->size(); i++)
+		bs.prepareForWrite(obj->size()+sizeof(uint));
+		bs << uint(obj->size());
+		for(uint i=0; i<obj->size(); i++)
 			bs << ElementStreamer(&((*obj)[i]));		
 	}
 	
