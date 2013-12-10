@@ -1,11 +1,13 @@
-#ifndef _BIKES_TYPES_H_
-#define _BIKES_TYPES_H_
+#ifndef PREBIKES_TYPES_H
+#define PREBIKES_TYPES_H
 
 namespace Bikes
 {
 	typedef double rnum;
-	typedef long long llnum;
-	typedef unsigned long long ullnum;	
+    typedef int num;
+    typedef unsigned int unum;
+	typedef long long lnum;
+	typedef unsigned long long ulnum;	
 }
 
 #endif
