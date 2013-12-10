@@ -1,6 +1,7 @@
-#ifndef _BIKES_MEMORYBIKES_H_
-#define _BIKES_MEMORYBIKES_H_
+#ifndef PREBIKES_MEMORYBIKES_H
+#define PREBIKES_MEMORYBIKES_H
 
+#include <Bikes/Types.h>
 
 
 namespace Bikes
@@ -21,11 +22,11 @@ void delete_void(void* p)
 }
 
 
-void swap_void(void* a, void* b, unsigned int size);
+void swap_void(void* a, void* b, unum size);
 
-bool isEqual_void(void *a, void *b, unsigned int n);
+bool isEqual_void(void *a, void *b, unum n);
 
-void copy_void(void *a, void *b, unsigned int n);
+void copy_void(void *a, void *b, unum n);
 
 
 }

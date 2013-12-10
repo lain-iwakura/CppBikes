@@ -1,9 +1,12 @@
 #include <Bikes/BasicGeography.h>
+#include <Bikes/BasicMath.h>
 #include <Bikes/TrigonometricAngle.h>
 #include <Bikes/MemoryBikes.h>
 #include <string>
 #include <cstdio>
 
+#include <iomanip>
+#include <sstream>
 
 namespace Bikes
 {
@@ -25,7 +28,7 @@ void DegMinSecAngle::setFromRad( double a_rad )
 void DegMinSecAngle::setFromDeg( double a_deg )
 {
 	if(negative=a_deg<0) a_deg*=-1;
-  int const seconds(floor(a_deg * 3600 + .5));
+  int const seconds(int(a_deg * 3600 + .5));
   sec = seconds % 60;
   int const d_m(seconds / 60);
 	deg = d_m / 60;
@@ -49,35 +52,29 @@ int DegMinSecAngle::sign() const
 
 std::string DegMinSecAngle::toString(bool print_sign, bool print_zero) const
 {
-	//std::string str;
-	char str_sign[2]={'\0','\0'};
-	char str_deg[50]="";
-	char str_min[5]="";
-	char str_sec[5]="";
+    std::ostringstream stream;
 
-	char rstr[70]="";
-
-	if(print_sign&&negative) str_sign[0]='-';
+	if(print_sign&&negative)
+        stream << '-';
 	
 	if(print_zero)
-	{
-		sprintf(str_deg,"%d°",deg);
-		sprintf(str_min,"%2d\'",int(min));
-		sprintf(str_sec,"%2d\"",int(sec));
+	{		
+        stream << deg << "°";		
+        stream << std::setw(2) << int(min) << "\'";		
+        stream << std::setw(2) << int(sec) << "\"";
 	}else
 	{
-		sprintf(str_deg,"%d°",deg);
-		if(min)sprintf(str_min,"%2d\'",int(min));
-		if(sec)sprintf(str_sec,"%2d\"",int(sec));
-	}
-	
-	sprintf(rstr,"%s%s%s%s",str_sign,str_deg,str_min,str_sec);
-	
-	return std::string(rstr);
+        stream << deg << "°";	
+		if(min)
+            stream << std::setw(2) << int(min) << "\'";
+		if(sec)
+            stream << std::setw(2) << int(sec) << "\"";
+	}		
+    stream << '\0';
+	return stream.str();
 }
 
 
-////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -103,6 +100,7 @@ Vector EllipsePhiTan(const Point &p)
 	vt.normalize();
 	return vt;
 }
+
 inline Point PhiLam_to_PointS( rnum phi, rnum lam )
 {
 	return Point(GEO_R*cos(lam)*cos(phi),GEO_R*sin(lam)*cos(phi),GEO_R*sin(phi));
@@ -309,7 +307,7 @@ PhiLamRectangle getPhiLamRectangleForPoints( std::vector<PhiLamPoint> points )
         rnum lam_l=points[0].lam;
         rnum lam_r=lam_l;        
 
-        for(int i=0; i<points.size(); i++)
+        for(unum i=0; i<points.size(); i++)
         {
             if(phi_min>points[i].phi)
             {

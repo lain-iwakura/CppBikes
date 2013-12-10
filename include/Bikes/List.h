@@ -1,7 +1,8 @@
-#ifndef _BIKES_LIST_H_
-#define _BIKES_LIST_H_
+#ifndef PREBIKES_LIST_H
+#define PREBIKES_LIST_H
+#include <Bikes/Types.h>
 #include <vector>
-#include <stdlib.h>
+
 
 namespace Bikes
 {
@@ -18,12 +19,12 @@ public:
 
 	~List()
 	{
-		int c=size();
-		for(int i=0; i<c; i++) delete l_[i];
+		unum c=size();
+		for(unum i=0; i<c; i++) delete l_[i];
 	}
 	
-	int count() const {return l_.size();}	
-	int size() const {return l_.size();}
+	unum count() const {return l_.size();}	
+	unum size() const {return l_.size();}
 	bool isEmpty() const {return l_.size()==0;}
 		
 	const List<T> & operator = (const List<T> & other ) 
@@ -33,9 +34,9 @@ public:
 		return *this;
 	}
 
-	T& increase(int di)
+	T& increase(unum di)
 	{
-		for(int i=0; i<di; i++) l_.push_back(new T());
+		for(unum i=0; i<di; i++) l_.push_back(new T());
 		return last();
 	}
 
@@ -57,8 +58,8 @@ public:
 	void append ( const T & obj ) {l_.push_back(new T(obj)); /*cnt++;*/}
 	void append (const List<T> & other )
 	{
-		int c=other.size();
-		for(int i=0; i<c; i++) push_back(other[i]);
+		unum c=other.size();
+		for(unum i=0; i<c; i++) push_back(other[i]);
 	}
 
 	void push_back(const T& obj)
@@ -91,7 +92,7 @@ public:
 		return *pItm;
 	}
 
-	T& take(T *pItm,int i)
+	T& take(T *pItm,unum i)
 	{
 		l_.insert(l_.begin()+i,pItm);
 		return *pItm;
@@ -99,12 +100,12 @@ public:
 
 	void take(List<T>& l)
 	{		
-		int c=l.size();
-		for(int i=0; i<c; i++)l_.push_back(l.l_[i]);
+		unum c=l.size();
+		for(unum i=0; i<c; i++)l_.push_back(l.l_[i]);
 		l.clear();
 	}
 
-	T*	pass(int i)
+	T*	pass(unum i)
 	{
 	//	if(i>=size()||i<0)  return 0;
 		T* r=l_[i];
@@ -114,7 +115,7 @@ public:
 
 	T* passLast()
 	{
-		int i=l_.size()-1;
+		unum i=l_.size()-1;
 		T* r=l_[i];
 		l_.erase(l_.begin()+i);
 		return r;
@@ -128,18 +129,18 @@ public:
 	}
 
 
-	void removeAt(int i)
+	void removeAt(unum i)
 	{
-		if(i>=0&&i<size())
+		if(i<size())
 		{
 			delete l_[i];
 			l_.erase(l_.begin()+i);
 		}
 	}
 
-	void remove_i1i2(int i1,int i2)
+	void remove_i1i2(unum i1,unum i2)
 	{
-        if(i1>=0&&i1<size()&&i2>=0&&i2<size()&&i2>=i1)
+        if(i1<size()&&i2<size()&&i2>=i1)
 		{
 			for(int i=i1; i<=i2; i++) delete l_[i];
 			l_.erase(l_.begin()+i1,l_.begin()+i2);
@@ -148,14 +149,14 @@ public:
 
 	bool remove(const T &r)
 	{
-		int c=size();
-		for(int i=0; i<c; i++) if((*this)[i]==r){ removeAt(i); return true;}
+		unum c=size();
+		for(unum i=0; i<c; i++) if((*this)[i]==r){ removeAt(i); return true;}
 		return false;
 	}
 	bool removeThat(T *r)
 	{
-		int c=size();
-		for(int i=0; i<c; i++) if(l_[i]==r)
+		unum c=size();
+		for(unum i=0; i<c; i++) if(l_[i]==r)
 		{
 			removeAt(i);
 			return true;
@@ -165,7 +166,7 @@ public:
 	void removeLast(){if(size()>0) removeAt(size()-1);}
 	void removeFirst(){if(size()>0) removeAt(0);}
 
-	void insert(int i,const T &o)
+	void insert(unum i,const T &o)
 	{
 		if(i<0) i=0;
 		else if(i>size()) i=size();
@@ -174,32 +175,32 @@ public:
 
 	bool contains(const T& itm) const
 	{
-		int c=size();
-		for(int i=0; i<c; i++) if((*this)[i]==itm){ return true;}
+		unum c=size();
+		for(unum i=0; i<c; i++) if((*this)[i]==itm){ return true;}
 		return false;
 	}
 
 	int find(const T &itm) const
 	{
-		int c=size();
-		for(int i=0; i<c; i++) if(*(l_[i])==itm) return i;
+		unum c=size();
+		for(unum i=0; i<c; i++) if(*(l_[i])==itm) return i;
 		return -1;
 	}
 
 	void clear()
 	{
-		int c=size();
-		for(int i=0; i<c; i++) delete l_[i];
+		unum c=size();
+		for(unum i=0; i<c; i++) delete l_[i];
 		l_.clear();
 	}	
 
 	void invert()
 	{
-		int c=size();
-		int c_=c-1;
-		int c2=c/2;
+		unum c=size();
+		unum c_=c-1;
+		unum c2=c/2;
 		T *buf;
-		for(int i=0; i<c2; i++)
+		for(unum i=0; i<c2; i++)
 		{
 			buf=l_[i];
 			l_[i]=l_[c_-i];
