@@ -72,7 +72,7 @@ void Point::operator = (const Vector &v)
 }
 
 
-Vector Point::operator && (const Point &p) const {return Vector(*this,p,false);}
+Vector Point::operator && (const Point &p) const {return Vector(*this,p,0,false);}
 Point Point::operator [](const Basis &b) const {return inBasis(&b);}
 Point Point::operator [](const Basis *b) const {return inBasis(b);}
 Point& Point::operator >>(const Basis &b)  {return setBasis(&b);}
