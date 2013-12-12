@@ -13,6 +13,7 @@ namespace Bikes
 		TrAngleConst(rnum _rad_val,rnum _sin_val, rnum _cos_val, rnum _tan_val);
 		TrAngleConst(rnum ang_rad);	
 
+        void set(rnum ang_rad);
 		TrAngleConst& operator =(rnum ang_rad);
 
 		operator rnum () const;
