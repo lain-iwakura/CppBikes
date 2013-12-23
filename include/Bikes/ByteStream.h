@@ -18,9 +18,9 @@ namespace Bikes
 	{
 	public:
 		virtual ~InOutInterface(){}
-		virtual void readBytes(char *bt, unum btSize) = 0;
-		virtual void writeBytes(const char *bt, unum btSize) = 0;
-		virtual void prepareForWrite(unum byteCapacity){}
+		virtual void readBytes(char *bt, sznum btSize) = 0;
+		virtual void writeBytes(const char *bt, sznum btSize) = 0;
+		virtual void prepareForWrite(sznum byteCapacity){}
 		virtual bool atEnd() const{return false;};
 		//... 
 	};
@@ -29,9 +29,9 @@ namespace Bikes
 	{
 	public:
 		ByteArray();
-		ByteArray(unum cap, unum dcap=1, unum sz=0);
+		ByteArray(sznum cap, sznum dcap=1, sznum sz=0);
 		ByteArray(const ByteArray& ba);
-		ByteArray(const char *bt, unum btSize);
+		ByteArray(const char *bt, sznum btSize);
 		ByteArray(const char *str);
 
 		ByteArray& operator=(const ByteArray& ba);
@@ -41,19 +41,19 @@ namespace Bikes
 		bool operator ==(const char *str) const;
 
 
-		void readBytes(char *bt, unum btSize);
-		void writeBytes(const char *bt, unum btSize);
-		void prepareForWrite(unum byteCapacity);
+		void readBytes(char *bt, sznum btSize);
+		void writeBytes(const char *bt, sznum btSize);
+		void prepareForWrite(sznum byteCapacity);
 		bool atEnd() const;
 
-		unum writeIndex() const;
-		unum readIndex() const;
-		void setWriteIndex(unum i);
-		void setReadIndex(unum i);
+		sznum writeIndex() const;
+		sznum readIndex() const;
+		void setWriteIndex(sznum i);
+		void setReadIndex(sznum i);
 
 	private:
-		unum ri;
-		unum wi;		
+		sznum ri;
+		sznum wi;		
 	};
 
 	
@@ -189,9 +189,9 @@ namespace Bikes
 			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
-		void readBytes(char *bt, unum btSize);
-		void writeBytes(const char *bt, unum btSize);
-		void prepareForWrite(unum byteCapacity);
+		void readBytes(char *bt, sznum btSize);
+		void writeBytes(const char *bt, sznum btSize);
+		void prepareForWrite(sznum byteCapacity);
 
 
 	private:

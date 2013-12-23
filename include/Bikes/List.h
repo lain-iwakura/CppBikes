@@ -19,12 +19,12 @@ public:
 
 	~List()
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) delete l_[i];
+		sznum c=size();
+		for(sznum i=0; i<c; i++) delete l_[i];
 	}
 	
-	unum count() const {return l_.size();}	
-	unum size() const {return l_.size();}
+	sznum count() const {return l_.size();}	
+	sznum size() const {return l_.size();}
 	bool isEmpty() const {return l_.size()==0;}
 		
 	const List<T> & operator = (const List<T> & other ) 
@@ -34,9 +34,9 @@ public:
 		return *this;
 	}
 
-	T& increase(unum di)
+	T& increase(sznum di)
 	{
-		for(unum i=0; i<di; i++) l_.push_back(new T());
+		for(sznum i=0; i<di; i++) l_.push_back(new T());
 		return last();
 	}
 
@@ -58,8 +58,8 @@ public:
 	void append ( const T & obj ) {l_.push_back(new T(obj)); /*cnt++;*/}
 	void append (const List<T> & other )
 	{
-		unum c=other.size();
-		for(unum i=0; i<c; i++) push_back(other[i]);
+		sznum c=other.size();
+		for(sznum i=0; i<c; i++) push_back(other[i]);
 	}
 
 	void push_back(const T& obj)
@@ -92,7 +92,7 @@ public:
 		return *pItm;
 	}
 
-	T& take(T *pItm,unum i)
+	T& take(T *pItm,sznum i)
 	{
 		l_.insert(l_.begin()+i,pItm);
 		return *pItm;
@@ -100,12 +100,12 @@ public:
 
 	void take(List<T>& l)
 	{		
-		unum c=l.size();
-		for(unum i=0; i<c; i++)l_.push_back(l.l_[i]);
+		sznum c=l.size();
+		for(sznum i=0; i<c; i++)l_.push_back(l.l_[i]);
 		l.clear();
 	}
 
-	T*	pass(unum i)
+	T*	pass(sznum i)
 	{
 	//	if(i>=size()||i<0)  return 0;
 		T* r=l_[i];
@@ -115,7 +115,7 @@ public:
 
 	T* passLast()
 	{
-		unum i=l_.size()-1;
+		sznum i=l_.size()-1;
 		T* r=l_[i];
 		l_.erase(l_.begin()+i);
 		return r;
@@ -129,7 +129,7 @@ public:
 	}
 
 
-	void removeAt(unum i)
+	void removeAt(sznum i)
 	{
 		if(i<size())
 		{
@@ -138,7 +138,7 @@ public:
 		}
 	}
 
-	void remove_i1i2(unum i1,unum i2)
+	void remove_i1i2(sznum i1,sznum i2)
 	{
         if(i1<size()&&i2<size()&&i2>=i1)
 		{
@@ -149,14 +149,14 @@ public:
 
 	bool remove(const T &r)
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) if((*this)[i]==r){ removeAt(i); return true;}
+		sznum c=size();
+		for(sznum i=0; i<c; i++) if((*this)[i]==r){ removeAt(i); return true;}
 		return false;
 	}
 	bool removeThat(T *r)
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) if(l_[i]==r)
+		sznum c=size();
+		for(sznum i=0; i<c; i++) if(l_[i]==r)
 		{
 			removeAt(i);
 			return true;
@@ -166,7 +166,7 @@ public:
 	void removeLast(){if(size()>0) removeAt(size()-1);}
 	void removeFirst(){if(size()>0) removeAt(0);}
 
-	void insert(unum i,const T &o)
+	void insert(sznum i,const T &o)
 	{
 		if(i<0) i=0;
 		else if(i>size()) i=size();
@@ -175,32 +175,32 @@ public:
 
 	bool contains(const T& itm) const
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) if((*this)[i]==itm){ return true;}
+		sznum c=size();
+		for(sznum i=0; i<c; i++) if((*this)[i]==itm){ return true;}
 		return false;
 	}
 
 	int find(const T &itm) const
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) if(*(l_[i])==itm) return i;
+		sznum c=size();
+		for(sznum i=0; i<c; i++) if(*(l_[i])==itm) return i;
 		return -1;
 	}
 
 	void clear()
 	{
-		unum c=size();
-		for(unum i=0; i<c; i++) delete l_[i];
+		sznum c=size();
+		for(sznum i=0; i<c; i++) delete l_[i];
 		l_.clear();
 	}	
 
 	void invert()
 	{
-		unum c=size();
-		unum c_=c-1;
-		unum c2=c/2;
+		sznum c=size();
+		sznum c_=c-1;
+		sznum c2=c/2;
 		T *buf;
-		for(unum i=0; i<c2; i++)
+		for(sznum i=0; i<c2; i++)
 		{
 			buf=l_[i];
 			l_[i]=l_[c_-i];

@@ -307,7 +307,7 @@ PhiLamRectangle getPhiLamRectangleForPoints( std::vector<PhiLamPoint> points )
         rnum lam_l=points[0].lam;
         rnum lam_r=lam_l;        
 
-        for(unum i=0; i<points.size(); i++)
+        for(sznum i=0; i<points.size(); i++)
         {
             if(phi_min>points[i].phi)
             {
