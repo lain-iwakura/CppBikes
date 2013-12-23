@@ -22,11 +22,11 @@ void delete_void(void* p)
 }
 
 
-void swap_void(void* a, void* b, unum size);
+void swap_void(void* a, void* b, sznum size);
 
-bool isEqual_void(void *a, void *b, unum n);
+bool isEqual_void(void *a, void *b, sznum n);
 
-void copy_void(void *a, void *b, unum n);
+void copy_void(void *a, void *b, sznum n);
 
 
 }

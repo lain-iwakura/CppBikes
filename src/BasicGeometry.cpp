@@ -846,8 +846,8 @@ void Basis::remove(Vector *v) const
 }
 void Basis::removeAll() const
 {
-  for(unum i=0; i<vectors->count(); i++) if((*vectors)[i]->basis==this)/*?*/ (*vectors)[i]->basis=0;
-  for(unum i=0; i<points->count(); i++) if((*points)[i]->basis==this)/*?*/ (*points)[i]->basis=0;
+  for(sznum i=0; i<vectors->count(); i++) if((*vectors)[i]->basis==this)/*?*/ (*vectors)[i]->basis=0;
+  for(sznum i=0; i<points->count(); i++) if((*points)[i]->basis==this)/*?*/ (*points)[i]->basis=0;
   vectors->clear();
   points->clear();
 }

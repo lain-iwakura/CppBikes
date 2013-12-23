@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	RawArray(unum sz)
+	RawArray(sznum sz)
 	{
 		if(sz>0)
 		{	
@@ -30,7 +30,7 @@ public:
 		}
 	}
 
-	RawArray(unum sz, unum cap, unum dcap=1)
+	RawArray(sznum sz, sznum cap, sznum dcap=1)
 	{
 		if(cap>0)
 		{
@@ -56,7 +56,7 @@ public:
 		if(s>0)
 		{		
 			arr=new T[s];
-			for(unum i=0; i<l; i++)
+			for(sznum i=0; i<l; i++)
 			{
 				arr[i]=ra.arr[i];
 			}
@@ -66,12 +66,12 @@ public:
 		}
 	}
 
-	RawArray(const T* buf, unum sz)
+	RawArray(const T* buf, sznum sz)
 	{
 		if(sz>0)
 		{
 			arr=new T[sz];
-			for(unum i=0; i<sz; i++)
+			for(sznum i=0; i<sz; i++)
 				arr[i]=buf[i];	
 			l=sz;
 			s=sz;
@@ -90,14 +90,14 @@ public:
 		if(arr) delete [] arr;
 	}
 
-	void setCapacity(unum cap)
+	void setCapacity(sznum cap)
 	{
 		T *narr=0;
 		if(cap>0)
 		{		
 			narr=new T[cap];
-			unum ms=l;if(ms>cap)ms=cap;
-			for(unum i=0; i<ms;i++)
+			sznum ms=l;if(ms>cap)ms=cap;
+			for(sznum i=0; i<ms;i++)
 				narr[i]=arr[i];
 			s=cap;
 			l=ms;
@@ -116,7 +116,7 @@ public:
 		else ds=dcap;
 	}
 
-	void setSize(unum sz)
+	void setSize(sznum sz)
 	{
 		if(sz<0)
 		{
@@ -144,12 +144,12 @@ public:
 		setSize(0);
 	}
 
-	unum size()const{return l;}
-	unum capacity()const{return s;}
+	sznum size()const{return l;}
+	sznum capacity()const{return s;}
 	T* data(){return arr;}
 	const T* data() const{return arr;}
 
-	void takeData(T* d, unum sz)
+	void takeData(T* d, sznum sz)
 	{
 		 if(arr) delete [] arr;
 		 arr=d;
@@ -179,25 +179,25 @@ public:
 
 	void toVector(std::vector<T>& v)
 	{
-		for(unum i=0; i<l; i++)
+		for(sznum i=0; i<l; i++)
 			v.push_back(arr[i]);
 	}
 
-	T& operator [](unum i){return arr[i];}
-	const T& operator [](unum i) const {return arr[i];}
+	T& operator [](sznum i){return arr[i];}
+	const T& operator [](sznum i) const {return arr[i];}
 
 	//operator T*(){return arr;} //?
 	//operator const T*(){return arr;} //?
 
-	T& at(unum i){return arr[i];}
-	const T& at(unum i)const{return arr[i];}
+	T& at(sznum i){return arr[i];}
+	const T& at(sznum i)const{return arr[i];}
 
 
 protected:
 	T *arr;
-	unum s;	
-	unum l;
-	unum ds;
+	sznum s;	
+	sznum l;
+	sznum ds;
 };
 
 }

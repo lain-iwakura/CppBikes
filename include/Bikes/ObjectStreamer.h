@@ -73,11 +73,11 @@ public:
   static void read(ByteStream& bs, StreamerType *obj)
   {
     obj->clear();
-    unum sz;
+    sznum sz;
     bs >> sz;
         typename ElementStreamer::StreamerType el;
     ElementStreamer es(&el);
-    for(unum i=0; i<sz; i++)
+    for(sznum i=0; i<sz; i++)
     {
       bs >> es;
       obj->push_back(el);
@@ -86,9 +86,9 @@ public:
 
   static void write(ByteStream& bs, const StreamerType *obj)
   {
-    bs.prepareForWrite(obj->size()+sizeof(unum));
-    bs << unum(obj->size());
-    for(unum i=0; i<obj->size(); i++)
+    bs.prepareForWrite(obj->size()+sizeof(sznum));
+    bs << sznum(obj->size());
+    for(sznum i=0; i<obj->size(); i++)
       bs << ElementStreamer(&((*obj)[i]));
   }
 
@@ -404,7 +404,7 @@ public:
   template<class ObjectStreamer>
   static void add()
   {
-        unum it=TypesCollection::template typeId<typename ObjectStreamer::StreamerType>();
+        sznum it=TypesCollection::template typeId<typename ObjectStreamer::StreamerType>();
     if(it>=strCreators.size()) strCreators.resize(it+1);
     strCreators[it].reset(new OneTypeObjectStreamerCreator<ObjectStreamer>());
   }
