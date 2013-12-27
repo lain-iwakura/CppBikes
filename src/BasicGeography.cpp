@@ -368,4 +368,147 @@ Bikes::rnum deltaLam( rnum lam_1, rnum lam_2 )
 }
 
 
+
+void approximativeEllipseRange(const Point& p1,/* в геоцентрической СК */ 
+                               const Point& p2,/* в геоцентрической СК */ 
+                               rnum range, /* [м] дальность */ 
+                               List<Point>& out_contour /* контур досягаемости */ 
+                               )
+{
+//*
+    std::vector<rnum> l1;
+    std::vector<rnum> l2;
+    std::vector<rnum> bad_alpha;
+    Vector v1(p1);
+    Vector v2(p2);
+    rnum r1 = v1.length();
+    rnum r2 = v2.length();
+    rnum r = (r1+r2)/2.0;
+    Vector vw=v1*v2;
+
+
+    rnum dalpha=PIm2/90.0;
+
+    
+    int i=0;
+
+    int j=0;
+    for(rnum alpha=0; alpha<PIm2; alpha+=dalpha) 
+    {    
+        rnum cos_phi0=inRange<rnum>((v1&v2)/(r1*r2), 0, 1.0);
+        rnum sin2_phi0=1.0-cos_phi0*cos_phi0;
+        rnum sin_phi0=sqrt(sin2_phi0);
+        rnum sin_lr=sin(range/r);
+        rnum cos_lr=sqrt(1.0-sin_lr*sin_lr);
+        /*
+        rnum a=-sin_phi0*cos(alpha)+sin_lr;
+        rnum b=cos_lr;
+        rnum c=0.5*sin2_phi0-1.0;
+        rnum f=2.0*a/(1.0-b);
+        rnum e=2.0*(b+c)/(1.0-b);
+        rnum d=f*f-4.0*e;
+        
+        if(d>=0)
+        {
+            phi1+=0.5*(-f+sqrt(d));
+            phi2+=0.5*(-f-sqrt(d));
+        }else
+        {
+            int bingo=0;
+            j++;
+        }
+        //*/
+        rnum a=1.0-cos_lr;
+        rnum b=2.0*(sin_lr-sin_phi0*cos(alpha));
+        rnum c=sin2_phi0+2.0*cos_lr-2.0;
+
+        rnum d=b*b-4.0*a*c;
+
+        if(d>=0)
+        {
+            rnum phi1=/*arcsin(*/(-b+sqrt(d))/(2.0*a)/*)*/;
+            rnum phi2=/*arcsin(*/(-b-sqrt(d))/(2.0*a)/*)*/;
+            Vector vv1(v1);
+            vv1.rotate_W(vw,phi1);
+            out_contour+=vv1.destination();
+            l1.push_back(phi1*r);
+            l2.push_back(phi2*r);
+        }else
+        {
+            int bingo=0;
+            bad_alpha.push_back(RAD_to_DEG(alpha));
+            j++;
+        }
+
+        vw.rotate_W(v1,dalpha);
+        i++;
+    }
+    int st=0;
+    //*/
+}
+
+
+void approximativeEllipseRange_(const Point& p1,/* в геоцентрической СК */ 
+                               const Point& p2,/* в геоцентрической СК */ 
+                               rnum range, /* [м] дальность */ 
+                               List<Point>& out_contour /* контур досягаемости */ 
+                               )
+{
+//*
+//    std::vector<rnum> l1;
+//    std::vector<rnum> l2;
+//    std::vector<rnum> bad_alpha;
+    Vector v1(p1);
+    Vector v2(p2);
+    rnum r1 = v1.length();
+    rnum r2 = v2.length();
+    rnum r = (r1+r2)/2.0;
+    Vector vw=v1*v2;
+
+
+    rnum dalpha=PIm2/90.0;
+
+    rnum dL=inRange<rnum>(range/50,0.001,100000);
+    
+    //int i=0;
+    //int j=0;
+
+    rnum cos_phi0=inRange<rnum>((v1&v2)/(r1*r2), 0, 1.0);
+    rnum sin2_phi0=1.0-cos_phi0*cos_phi0;
+    rnum sin_phi0=sqrt(sin2_phi0);
+    rnum sin_lr=sin(range/r);
+    rnum cos_lr=sqrt(1.0-sin_lr*sin_lr);
+    rnum a=1.0-cos_lr;
+    rnum c=sin2_phi0+2.0*cos_lr-2.0;
+
+    for(rnum alpha=0; alpha<PIm2; alpha+=dalpha) 
+    {                             
+        rnum b=2.0*(sin_lr-sin_phi0*cos(alpha));
+        rnum d=b*b-4.0*a*c;
+
+        if(d>=0)
+        {
+           // rnum phi1=/*arcsin(*/(-b+sqrt(d))/(2.0*a)/*)*/;
+            rnum phi1=arcsin((-b+sqrt(d))/(2.0*a));
+         // rnum phi2=arcsin((-b-sqrt(d))/(2.0*a));
+            Vector vv1(v1);
+            vv1.rotate_W(vw,phi1);
+            dalpha=inRange(dL/not0(phi1*r),PI/1000,PI/10);
+            out_contour+=vv1.destination();
+            //l1.push_back(phi1*r);
+            //l2.push_back(phi2*r);
+        }else
+        {
+        //    int bingo=0;
+        //    bad_alpha.push_back(RAD_to_DEG(alpha));
+        //    j++;
+        }
+        vw.rotate_W(v1,dalpha);
+     //   i++;
+    }
+    int st=0;
+    //*/
+}
+
+
 }//Bikes
