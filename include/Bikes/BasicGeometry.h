@@ -57,7 +57,7 @@ public:
 	rnum gz; // координата Z в глобальном(!) базисе // для получения локальной использовать z()
 	
 	// Конструктор по умолчанию:
-	// plx,ply,plz - логкальные координаты в базисе *b (b=0 - глобальный базис), notransient=true/false - обычный/временный объект 
+	// plx,ply,plz - локальные координаты в базисе *b (b=0 - глобальный базис), notransient=true/false - обычный/временный объект 
 	Point(rnum plx=0,rnum ply=0,rnum plz=0,const Basis *b=0, bool notransient=true);
 	// Point(rnum plx=0,rnum ply=0,rnum plz=0,const Basis *b=0,);//notransient=false;
 
