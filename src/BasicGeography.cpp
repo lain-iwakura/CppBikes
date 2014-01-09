@@ -372,142 +372,166 @@ Bikes::rnum deltaLam( rnum lam_1, rnum lam_2 )
 void approximativeEllipseRange(const Point& p1,/* в геоцентрической СК */ 
                                const Point& p2,/* в геоцентрической СК */ 
                                rnum range, /* [м] дальность */ 
-                               List<Point>& out_contour /* контур досягаемости */ 
-                               )
-{
-//*
-    std::vector<rnum> l1;
-    std::vector<rnum> l2;
-    std::vector<rnum> bad_alpha;
-    Vector v1(p1);
-    Vector v2(p2);
-    rnum r1 = v1.length();
-    rnum r2 = v2.length();
-    rnum r = (r1+r2)/2.0;
-    Vector vw=v1*v2;
-
-
-    rnum dalpha=PIm2/90.0;
-
-    
-    int i=0;
-
-    int j=0;
-    for(rnum alpha=0; alpha<PIm2; alpha+=dalpha) 
-    {    
-        rnum cos_phi0=inRange<rnum>((v1&v2)/(r1*r2), 0, 1.0);
-        rnum sin2_phi0=1.0-cos_phi0*cos_phi0;
-        rnum sin_phi0=sqrt(sin2_phi0);
-        rnum sin_lr=sin(range/r);
-        rnum cos_lr=sqrt(1.0-sin_lr*sin_lr);
-        /*
-        rnum a=-sin_phi0*cos(alpha)+sin_lr;
-        rnum b=cos_lr;
-        rnum c=0.5*sin2_phi0-1.0;
-        rnum f=2.0*a/(1.0-b);
-        rnum e=2.0*(b+c)/(1.0-b);
-        rnum d=f*f-4.0*e;
-        
-        if(d>=0)
-        {
-            phi1+=0.5*(-f+sqrt(d));
-            phi2+=0.5*(-f-sqrt(d));
-        }else
-        {
-            int bingo=0;
-            j++;
-        }
-        //*/
-        rnum a=1.0-cos_lr;
-        rnum b=2.0*(sin_lr-sin_phi0*cos(alpha));
-        rnum c=sin2_phi0+2.0*cos_lr-2.0;
-
-        rnum d=b*b-4.0*a*c;
-
-        if(d>=0)
-        {
-            rnum phi1=/*arcsin(*/(-b+sqrt(d))/(2.0*a)/*)*/;
-            rnum phi2=/*arcsin(*/(-b-sqrt(d))/(2.0*a)/*)*/;
-            Vector vv1(v1);
-            vv1.rotate_W(vw,phi1);
-            out_contour+=vv1.destination();
-            l1.push_back(phi1*r);
-            l2.push_back(phi2*r);
-        }else
-        {
-            int bingo=0;
-            bad_alpha.push_back(RAD_to_DEG(alpha));
-            j++;
-        }
-
-        vw.rotate_W(v1,dalpha);
-        i++;
-    }
-    int st=0;
-    //*/
-}
-
-
-void approximativeEllipseRange_(const Point& p1,/* в геоцентрической СК */ 
-                               const Point& p2,/* в геоцентрической СК */ 
-                               rnum range, /* [м] дальность */ 
-                               List<Point>& out_contour /* контур досягаемости */ 
+                               List<Point>& out_contour, /* контур досягаемости */ 
+                               ApproximationMethodType approxMethod /*= ApproxMethod_avg*/
                                )
 {
 //*
 //    std::vector<rnum> l1;
 //    std::vector<rnum> l2;
 //    std::vector<rnum> bad_alpha;
+
+    out_contour.clear();
+    
+
     Vector v1(p1);
     Vector v2(p2);
     rnum r1 = v1.length();
     rnum r2 = v2.length();
     rnum r = (r1+r2)/2.0;
-    Vector vw=v1*v2;
-
-
+    Vector vw=v2*v1;//v1*v2;  
+   // vw=vw*v1;
+   
     rnum dalpha=PIm2/90.0;
 
     rnum dL=inRange<rnum>(range/50,0.001,100000);
+ 
     
+
     //int i=0;
     //int j=0;
 
     rnum cos_phi0=inRange<rnum>((v1&v2)/(r1*r2), 0, 1.0);
+
+    if(arccos(cos_phi0)*MAX(r1,r2) + METRIC_O > range)
+        return;
+
     rnum sin2_phi0=1.0-cos_phi0*cos_phi0;
     rnum sin_phi0=sqrt(sin2_phi0);
+
+    rnum sin_phiCrit = sin(0.5*range/r);    
+    rnum sin2_phiCrit = sin_phiCrit*sin_phiCrit;    
+    rnum cos_alphaCrit = (sin2_phi0+sin2_phiCrit-2.0*(1.0-sqrt(inRange<rnum>(1.0-sin2_phiCrit,0,1.0))))/(2.0*sin_phi0*sin_phiCrit); 
+    rnum alphaCrit = arccos(cos_alphaCrit);
+
+
     rnum sin_lr=sin(range/r);
     rnum cos_lr=sqrt(1.0-sin_lr*sin_lr);
     rnum a=1.0-cos_lr;
     rnum c=sin2_phi0+2.0*cos_lr-2.0;
 
-    for(rnum alpha=0; alpha<PIm2; alpha+=dalpha) 
+    
+    rnum e2=0;
+    {     
+        rnum b=2.0*(sin_lr-sin_phi0*(-1.0));
+        rnum d=b*b-4.0*a*c;
+        rnum phi1=arcsin((-b+sqrt(d))/(2.0*a));
+        Vector vv(v1);
+        vv.rotate_W(vw,phi1);
+        e2=(ABS(phi1)+ (vv^v2) )*r - range;
+    }
+
+    vw.rotate_W(v1,-(PI-alphaCrit));
+    rnum e1=0;
+    {        
+        rnum b=2.0*(sin_lr-sin_phi0*cos_alphaCrit);
+        rnum d=b*b-4.0*a*c;
+        rnum phi1=arcsin((-b+sqrt(d))/(2.0*a));
+        Vector vv(v1);
+        vv.rotate_W(vw,phi1);
+        e1=(ABS(phi1) + (vv^v2) )*r - range;
+    } 
+
+    rnum drange=0;
+
+    switch(approxMethod)
+    {
+    case ApproxMethod_avg:
+        {
+            drange = -(e1+e2)/2.0;
+        }break;
+    case ApproxMethod_min:
+        {
+            drange = -(MAX(e1,e2) + METRIC_O);
+        }break;
+    case ApproxMethod_max:
+        {
+            drange = -(MIN(e1,e2) - METRIC_O);
+        }break;
+    }
+
+    range += drange;
+    
+    sin_lr=sin(range/r);
+    cos_lr=sqrt(1.0-sin_lr*sin_lr);
+    a=1.0-cos_lr;
+    c=sin2_phi0+2.0*cos_lr-2.0;
+
+
+
+
+    for(rnum alpha=alphaCrit; alpha<PI; alpha+=dalpha) 
     {                             
         rnum b=2.0*(sin_lr-sin_phi0*cos(alpha));
         rnum d=b*b-4.0*a*c;
 
         if(d>=0)
         {
-           // rnum phi1=/*arcsin(*/(-b+sqrt(d))/(2.0*a)/*)*/;
+            //rnum phi1=/*arcsin(*/(-b+sqrt(d))/(2.0*a)/*)*/;
             rnum phi1=arcsin((-b+sqrt(d))/(2.0*a));
-         // rnum phi2=arcsin((-b-sqrt(d))/(2.0*a));
-            Vector vv1(v1);
-            vv1.rotate_W(vw,phi1);
+            Vector vv(v1);
+            vv.rotate_W(vw,phi1);
             dalpha=inRange(dL/not0(phi1*r),PI/1000,PI/10);
-            out_contour+=vv1.destination();
-            //l1.push_back(phi1*r);
-            //l2.push_back(phi2*r);
+            out_contour+=vv.destination();         
         }else
         {
-        //    int bingo=0;
-        //    bad_alpha.push_back(RAD_to_DEG(alpha));
-        //    j++;
         }
-        vw.rotate_W(v1,dalpha);
-     //   i++;
+        vw.rotate_W(v1,dalpha);    
     }
-    int st=0;
+    
+    Basis be;
+    Vector v0= (v1/r1) + (v2/r2);    
+    be.setOrtoBasis_ByIJ(v0,v1*v2);
+    be.setOrtoBasis_ByIJ(-be.k,be.j);
+
+    for(sznum i=0; i<out_contour.size(); i++)
+    {
+        if( out_contour[i].lx(be)>0 || out_contour[i].ly(be)<0)
+        {
+            out_contour.removeAt(i);
+            i--;
+        }
+    }
+
+
+    for(num i=out_contour.size()-1; i>=0; i--)
+        out_contour += Point(out_contour[i].lx(be),-out_contour[i].ly(be),out_contour[i].lz(be),&be);
+
+
+    for(num i=out_contour.size()-1; i>=0; i--)
+        out_contour += Point(-out_contour[i].lx(be),out_contour[i].ly(be),out_contour[i].lz(be),&be);
+
+
+    for(sznum i=0; i<out_contour.size(); i++)
+        MovePointToEllipsoidSurface(out_contour[i]);
+
+    
     //*/
+}
+
+void approximativeEllipseRange( 
+                               const PhiLamPoint& p1, 
+                               const PhiLamPoint& p2, 
+                               rnum range, /* [м] дальность */ 
+                               List<PhiLamPoint>& out_contour, /* контур досягаемости */ 
+                               ApproximationMethodType approxMethod /*= ApproxMethod_avg */ 
+                               )
+{
+    out_contour.clear();
+    List<Point> ps;
+    approximativeEllipseRange(PhiLam_to_PointE(p1),PhiLam_to_PointE(p2),range,ps,approxMethod);
+    for(sznum i=0; i<ps.size(); i++)    
+        out_contour += Point_to_PhiLamE(ps[i]);    
 }
 
 

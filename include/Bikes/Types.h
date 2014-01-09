@@ -10,6 +10,13 @@ namespace Bikes
 	typedef long long lnum;
 	typedef unsigned long long ulnum;
     typedef std::size_t sznum;    
+
+    enum ApproximationMethodType
+    {
+        ApproxMethod_avg,
+        ApproxMethod_max,
+        ApproxMethod_min        
+    };
 }
 
 #endif
