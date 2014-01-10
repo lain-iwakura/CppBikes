@@ -6,7 +6,7 @@ namespace Bikes
 {
 	typedef double rnum;
     typedef int num;
-    typedef unsigned int sznum;
+    typedef unsigned int unum;
 	typedef long long lnum;
 	typedef unsigned long long ulnum;
     typedef std::size_t sznum;    
