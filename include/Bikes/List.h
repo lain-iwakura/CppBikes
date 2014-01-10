@@ -102,7 +102,7 @@ public:
 	{		
 		sznum c=l.size();
 		for(sznum i=0; i<c; i++)l_.push_back(l.l_[i]);
-		l.clear();
+		l.l_.clear();
 	}
 
 	T*	pass(sznum i)
