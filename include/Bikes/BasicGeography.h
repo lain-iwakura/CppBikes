@@ -105,19 +105,22 @@ Point PhiLam_to_PointE(TrAngle *phi, TrAngle *lam);
 Point PhiLam_to_PointE_old( rnum phi, rnum lam );
 
 
-void approximativeEllipseRange(const Point& p1, // в геоцентрической СК
-                               const Point& p2, // в геоцентрической СК
-                               rnum range,  // [м] дальность
-                               List<Point>& out_contour, // контур досягаемости
-                               ApproximationMethodType approxMethod = ApproxMethod_avg
-                               );
+void ellipseRange_approx(const Point& p1, // в геоцентрической СК
+                         const Point& p2, // в геоцентрической СК
+                         rnum range,  // [м] дальность
+                         List<Point>& out_contour, // контур досягаемости
+                         ApproximationMethodType approxMethod = ApproxMethod_avg,
+                         rnum da = PI/90 // шаг аппроксимации
+                         );
 
-void approximativeEllipseRange(const PhiLamPoint& p1, 
-                               const PhiLamPoint& p2, 
-                               rnum range,  // [м] дальность
-                               List<PhiLamPoint>& out_contour, // контур досягаемости
-                               ApproximationMethodType approxMethod = ApproxMethod_avg
-                               );
+void ellipseRange_approx(const PhiLamPoint& p1,
+                         const PhiLamPoint& p2,
+                         rnum range,  // [м] дальность
+                         List<PhiLamPoint>& out_contour, // контур досягаемости
+                         ApproximationMethodType approxMethod = ApproxMethod_avg,
+                         rnum da = PI/90 // шаг аппроксимации
+                         );
+
 
 }
 #endif

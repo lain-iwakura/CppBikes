@@ -369,12 +369,13 @@ Bikes::rnum deltaLam( rnum lam_1, rnum lam_2 )
 
 
 
-void approximativeEllipseRange(const Point& p1,/* в геоцентрической СК */ 
-                               const Point& p2,/* в геоцентрической СК */ 
-                               rnum range, /* [м] дальность */ 
-                               List<Point>& out_contour, /* контур досягаемости */ 
-                               ApproximationMethodType approxMethod /*= ApproxMethod_avg*/
-                               )
+void ellipseRange_approx(const Point& p1,/* в геоцентрической СК */ 
+                         const Point& p2,/* в геоцентрической СК */ 
+                         rnum range, /* [м] дальность */ 
+                         List<Point>& out_contour, /* контур досягаемости */ 
+                         ApproximationMethodType approxMethod, /*= ApproxMethod_avg*/
+                         rnum da_
+                         )
 {
 //*
 //    std::vector<rnum> l1;
@@ -392,9 +393,14 @@ void approximativeEllipseRange(const Point& p1,/* в геоцентрическ�
     Vector vw=v2*v1;//v1*v2;  
    // vw=vw*v1;
    
-    rnum dalpha=PIm2/90.0;
+    rnum dalpha=da_;//PIm2/90.0;
+    rnum da_min=dalpha/100.0;
+    rnum da_max=dalpha*100.0;
 
-    rnum dL=inRange<rnum>(range/50,0.001,100000);
+
+    rnum dL=(range/2.0)*dalpha;
+
+    
  
     
 
@@ -481,7 +487,7 @@ void approximativeEllipseRange(const Point& p1,/* в геоцентрическ�
             rnum phi1=arcsin((-b+sqrt(d))/(2.0*a));
             Vector vv(v1);
             vv.rotate_W(vw,phi1);
-            dalpha=inRange(dL/not0(phi1*r),PI/1000,PI/10);
+            dalpha=inRange(dL/not0(phi1*r),da_min,da_max);
             out_contour+=vv.destination();         
         }else
         {
@@ -519,17 +525,18 @@ void approximativeEllipseRange(const Point& p1,/* в геоцентрическ�
     //*/
 }
 
-void approximativeEllipseRange( 
+void ellipseRange_approx( 
                                const PhiLamPoint& p1, 
                                const PhiLamPoint& p2, 
                                rnum range, /* [м] дальность */ 
                                List<PhiLamPoint>& out_contour, /* контур досягаемости */ 
-                               ApproximationMethodType approxMethod /*= ApproxMethod_avg */ 
+                               ApproximationMethodType approxMethod, /*= ApproxMethod_avg */
+                               rnum da
                                )
 {
     out_contour.clear();
     List<Point> ps;
-    approximativeEllipseRange(PhiLam_to_PointE(p1),PhiLam_to_PointE(p2),range,ps,approxMethod);
+    ellipseRange_approx(PhiLam_to_PointE(p1),PhiLam_to_PointE(p2),range,ps,approxMethod,da);
     for(sznum i=0; i<ps.size(); i++)    
         out_contour += Point_to_PhiLamE(ps[i]);    
 }
