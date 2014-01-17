@@ -97,6 +97,9 @@ Vector EllipsePhiTan(const Point &p); // единичный касательны
 Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
 rnum parallelR(rnum phi);
 
+
+rnum getEarthRadiusAt(const Point& p);
+
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
 
@@ -121,6 +124,19 @@ void ellipseRange_approx(const PhiLamPoint& p1,
                          rnum da = PI/90 // шаг аппроксимации
                          );
 
+void circleRange_approx(const Point &p,
+                        rnum range,
+                        List<Point>& out_contour,
+                        ApproximationMethodType approxMethod = ApproxMethod_avg,
+                        rnum da = PI/90 // шаг аппроксимации
+                        );
+
+void circleRange_approx(const PhiLamPoint &p,
+                        rnum range,
+                        List<PhiLamPoint>& out_contour,
+                        ApproximationMethodType approxMethod = ApproxMethod_avg,
+                        rnum da = PI/90 // шаг аппроксимации
+                        );
 
 }
 #endif

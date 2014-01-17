@@ -190,13 +190,25 @@ Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
 
 }
 
+Bikes::rnum getEarthRadiusAt( const Point& p )
+{
+    static const rnum a=1.0/(GEO_A*GEO_A);
+    static const rnum b=1.0/(GEO_B*GEO_B);
+
+    Vector vr(p);
+    vr.normalize();
+    rnum sinA=vr&v_gk;
+    return 1.0/sqrt(sinA*sinA*(b-a)+a);    
+}
+
 
 void MovePointToEllipsoidSurface(Point &p)
 {
+    static const rnum a=1.0/(GEO_A*GEO_A);
+    static const rnum b=1.0/(GEO_B*GEO_B);
+
 	Vector vr(p);
 	vr.normalize();
-	static const rnum a=1.0/(GEO_A*GEO_A);
-	static const rnum b=1.0/(GEO_B*GEO_B);
 	rnum sinA=vr&v_gk;
 	rnum r=1.0/sqrt(sinA*sinA*(b-a)+a);
 	vr*=r;
@@ -209,7 +221,6 @@ rnum parallelR( rnum phi )
 	sinBsinB*=sinBsinB;		
 	return  GEO_A*sqrt((1.0-sinBsinB)/(1.0-GEO_EE*sinBsinB));
 }
-
 
 
 
@@ -540,6 +551,80 @@ void ellipseRange_approx(
     for(sznum i=0; i<ps.size(); i++)    
         out_contour += Point_to_PhiLamE(ps[i]);    
 }
+
+
+
+void circleRange_approx(const Point &p_, 
+                        rnum range, 
+                        List<Point>& out_contour, 
+                        ApproximationMethodType approxMethod, /*= ApproxMethod_avg */
+                        rnum da
+                        )
+{    
+//    static const rnum da=DEG_to_RAD(2.0);
+
+    Point p(p_);
+    MovePointToEllipsoidSurface(p);
+    Vector vp(p);
+    Vector w=vp*v_gk;
+
+    rnum rp=vp.length();
+    rnum rt=rp;
+    rnum rb=rp;
+
+    rnum ra=range/rp;
+    
+
+    {    
+        Vector vvp(vp);
+        vvp.rotate_W(w,ra);
+        rt=getEarthRadiusAt(vvp.destination());
+    }
+
+    {    
+        Vector vvp(vp);
+        vvp.rotate_W(-w,ra);
+        rb=getEarthRadiusAt(vvp.destination());
+    }
+
+    
+    
+    if(approxMethod == ApproxMethod_min)
+    {
+        ra=range/MAX(rp,rt,rb);        
+    }else if(approxMethod == ApproxMethod_max)
+    {
+        ra=(range/cos(da/2.0))/(MIN(rp,rt,rb));
+    }else
+    {  
+        ra=(range/cos(da/2.0))/(AVG(rp,rt,rb));
+    }
+    
+    
+    for(rnum a=0; a<PIm2; a+=da)
+    {
+        Vector vvp(vp);
+        vvp.rotate_W(w,ra);
+        Point *dp =new Point(vvp.destination());
+        MovePointToEllipsoidSurface(*dp);
+        out_contour.take(dp);
+        w.rotate_W(vp,da);
+    }
+}
+
+void circleRange_approx(const PhiLamPoint &p, 
+                        rnum range, 
+                        List<PhiLamPoint>& out_contour, 
+                        ApproximationMethodType approxMethod, /*= ApproxMethod_avg */
+                        rnum da 
+                        )
+{
+    List<Point> c;
+    circleRange_approx(PhiLam_to_PointE(p),range,c,approxMethod,da);
+    for(sznum i=0; i<c.size(); i++)
+        out_contour.push_back(Point_to_PhiLamE(c[i]));
+}
+
 
 
 }//Bikes
