@@ -73,11 +73,54 @@ T (MAX)(T x, T y)
 }
 
 template<class T>
+T (MAX)(T x1, T x2, T x3)
+{
+    return MAX(MAX(x1,x2),x3);
+}
+
+template<class T>
+T (MAX)(T x1, T x2, T x3, T x4)
+{
+    return MAX(MAX(x1,x2),MAX(x3,x4));
+}
+
+template<class T>
 T (MIN)(T x, T y)
 {
   if(x<y) return x;
   return y;
 }
+
+template<class T>
+T (MIN)(T x1, T x2, T x3)
+{
+    return MIN(MIN(x1,x2),x3);
+}
+
+template<class T>
+T (MIN)(T x1, T x2, T x3, T x4)
+{
+    return MIN(MIN(x1,x2),MIN(x3,x4));
+}
+
+template<class T>
+T (AVG)(T x1, T x2)
+{
+    return (x1+x2)/2.0;
+}
+
+template<class T>
+T (AVG)(T x1, T x2, T x3)
+{
+    return (x1+x2+x3)/3.0;
+}
+
+template<class T>
+T (AVG)(T x1, T x2, T x3, T x4)
+{
+    return (x1+x2+x3+x4)/4.0;
+}
+
 
 template<class T>
 T (ABS)(T val)
