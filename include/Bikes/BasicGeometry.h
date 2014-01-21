@@ -82,9 +82,13 @@ public:
 	Point& set(rnum px, rnum py, rnum pz,const Basis *b=0); //Точка по координатам в базисе *b
 	Point& setGlobal(rnum pgx, rnum pgy, rnum pgz); // Точка по координатам в глобальном базисе
 	Point& setLocal(rnum localx,rnum localy, rnum localz); // Точка  по координатам в локальном базисе
+    Point& setLocal(rnum localx,rnum localy, rnum localz, const Basis& b); // Точка  по координатам в локальном базисе
 	Point& setLocalX(rnum localx); // Изменить локальную координату X
 	Point& setLocalY(rnum localy); // Изменить локальную координату Y
 	Point& setLocalZ(rnum localz); // Изменить локальную координату Z
+    Point& setLocalX(rnum localx, const Basis& b); // Изменить локальную координату X
+    Point& setLocalY(rnum localy, const Basis& b); // Изменить локальную координату Y
+    Point& setLocalZ(rnum localz, const Basis& b); // Изменить локальную координату Z
 	Point& setBasis(const Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
 	Point& setGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
 	Point& replaceBasis(const Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
@@ -152,7 +156,7 @@ public:
 	Point anchor; // точка приложения/привязки вектора (начало вектора)
 	rnum gx; // проекция на ось OX в глобальном(!) базисе // для получения локальной использовать x()
 	rnum gy; // проекция на ось OY в глобальном(!) базисе // для получения локальной использовать y()
-	rnum gz;	// проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
+	rnum gz; // проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
 
 	// Конструктор по умолчанию:
 	// vx,vy,vz - проекции на оси координат в базисе *b, ap - точка приложения(anchor), notransient=true/false=обычный/временный объект.
