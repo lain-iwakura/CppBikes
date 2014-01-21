@@ -261,6 +261,15 @@ Point& Point::setLocal(rnum localx, rnum localy, rnum localz)
   else {gx=localx; gy=localy; gz=localz;}
   return *this;
 }
+
+Point& Point::setLocal( rnum localx, rnum localy, rnum localz, const Basis& b )
+{    
+    gx=b.O.gx + b.i.gx*localx + b.j.gx*localy + b.k.gx*localz;
+    gy=b.O.gy + b.i.gy*localx + b.j.gy*localy + b.k.gy*localz;
+    gz=b.O.gz + b.i.gz*localx + b.j.gz*localy + b.k.gz*localz;
+    return *this;
+}
+
 Point& Point::setLocalX(rnum localx)
 {
   if(basis)
@@ -270,6 +279,16 @@ Point& Point::setLocalX(rnum localx)
   }else gx=localx;
   return *this;
 }
+
+Point& Point::setLocalX( rnum localx, const Basis& b )
+{       
+    rnum dx=localx-lx(b);
+    gx+=b.i.gx*dx;
+    gy+=b.i.gy*dx;
+    gz+=b.i.gz*dx;    
+    return *this;
+}
+
 Point& Point::setLocalY(rnum localy)
 {
   if(basis)
@@ -279,6 +298,16 @@ Point& Point::setLocalY(rnum localy)
   }else gy=localy;
   return *this;
 }
+
+Point& Point::setLocalY( rnum localy, const Basis& b )
+{
+    rnum dy=localy-ly(b);
+    gx+=b.j.gx*dy;
+    gy+=b.j.gy*dy;
+    gz+=b.j.gz*dy;    
+    return *this;
+}
+
 Point& Point::setLocalZ(rnum localz)
 {
   if(basis)
@@ -287,6 +316,15 @@ Point& Point::setLocalZ(rnum localz)
     *this+=basis->k*(localz-z());
   }else gz=localz;
   return *this;
+}
+
+Point& Point::setLocalZ( rnum localz, const Basis& b )
+{
+    rnum dz=localz-lz(b);
+    gx+=b.k.gx*dz;
+    gy+=b.k.gy*dz;
+    gz+=b.k.gz*dz;    
+    return *this;
 }
 
 
