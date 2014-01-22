@@ -14,16 +14,15 @@
 // Если базис уничтожается, все объекты, привязанные к данному базису, переводятся в глобальную СК.
 
 
-#ifndef _BIKES_BASICGEOMETRY_H_
-#define _BIKES_BASICGEOMETRY_H_
+#ifndef PREBIKES_BASICGEOMETRY_H
+#define PREBIKES_BASICGEOMETRY_H
 
 #include <Bikes/Types.h>
 #include <Bikes/List.h>
 #include <Bikes/BasicMath.h>
 
-//#define BIKES_USE_TRANGLE
 
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 #include <Bikes/TrigonometricAngle.h>
 #endif
 
@@ -58,7 +57,7 @@ public:
 	rnum gz; // координата Z в глобальном(!) базисе // для получения локальной использовать z()
 	
 	// Конструктор по умолчанию:
-	// plx,ply,plz - логкальные координаты в базисе *b (b=0 - глобальный базис), notransient=true/false - обычный/временный объект 
+	// plx,ply,plz - локальные координаты в базисе *b (b=0 - глобальный базис), notransient=true/false - обычный/временный объект 
 	Point(rnum plx=0,rnum ply=0,rnum plz=0,const Basis *b=0, bool notransient=true);
 	// Point(rnum plx=0,rnum ply=0,rnum plz=0,const Basis *b=0,);//notransient=false;
 
@@ -83,9 +82,13 @@ public:
 	Point& set(rnum px, rnum py, rnum pz,const Basis *b=0); //Точка по координатам в базисе *b
 	Point& setGlobal(rnum pgx, rnum pgy, rnum pgz); // Точка по координатам в глобальном базисе
 	Point& setLocal(rnum localx,rnum localy, rnum localz); // Точка  по координатам в локальном базисе
+    Point& setLocal(rnum localx,rnum localy, rnum localz, const Basis& b); // Точка  по координатам в локальном базисе
 	Point& setLocalX(rnum localx); // Изменить локальную координату X
 	Point& setLocalY(rnum localy); // Изменить локальную координату Y
 	Point& setLocalZ(rnum localz); // Изменить локальную координату Z
+    Point& setLocalX(rnum localx, const Basis& b); // Изменить локальную координату X
+    Point& setLocalY(rnum localy, const Basis& b); // Изменить локальную координату Y
+    Point& setLocalZ(rnum localz, const Basis& b); // Изменить локальную координату Z
 	Point& setBasis(const Basis *b); // Привязка к базису *b (b=0 означает перейти в глобальный базис, т.е.  [локальный базис] = [глобальный базис])
 	Point& setGlobalBasis(); // Удалить привязку к базису *basis (basis=0) // тот же результат дает SetBasis(0);
 	Point& replaceBasis(const Basis *b); // Изменить глобальные координаты точки таким образом, чтобы при переходе в новый базис *b локальные координаты не изменились
@@ -153,7 +156,7 @@ public:
 	Point anchor; // точка приложения/привязки вектора (начало вектора)
 	rnum gx; // проекция на ось OX в глобальном(!) базисе // для получения локальной использовать x()
 	rnum gy; // проекция на ось OY в глобальном(!) базисе // для получения локальной использовать y()
-	rnum gz;	// проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
+	rnum gz; // проекция на ось OZ в глобальном(!) базисе // для получения локальной использовать z()
 
 	// Конструктор по умолчанию:
 	// vx,vy,vz - проекции на оси координат в базисе *b, ap - точка приложения(anchor), notransient=true/false=обычный/временный объект.
@@ -220,7 +223,7 @@ public:
 
 
 
-#ifdef BIKES_USE_TRANGLE	
+#ifdef PREBIKES_USE_TRANGLE	
 	TrAngle angle(const Vector &v) const {return angle(*this,v);}  // вероятно ненужная функция
 #else
 	rnum angle(const Vector &v) const {return angle(*this,v);} 
@@ -232,7 +235,7 @@ public:
 	// Если вектора скрещивающиеся, то точкой пересечения считается точка лежащая
 	// на векторе *this и являющаяся концом отрезка минимального расстояния до вектора v
 
-#ifdef BIKES_USE_TRANGLE	
+#ifdef PREBIKES_USE_TRANGLE	
 	static TrAngle angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
 #else
 	static rnum angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
@@ -266,7 +269,7 @@ public:
 	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
 	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(anchor,p))
 
-#ifdef BIKES_USE_TRANGLE
+#ifdef PREBIKES_USE_TRANGLE
 	TrAngle operator ^ (const Vector &v) const;// возвращает Angle(v)
 #else
 	rnum operator ^ (const Vector &v) const;// возвращает Angle(v)

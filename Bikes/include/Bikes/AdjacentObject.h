@@ -1,13 +1,13 @@
-#ifndef ADJACENTOBJECT_H
-#define ADJACENTOBJECT_H
-
-//#include "List.h"
-
-
-#define ADJACENTOBJECT_DEFFUNC(C_this) C_this * next(){return (C_this*)AdjacentObject::next();} C_this * previous(){return (C_this*) AdjacentObject::previous();} C_this * nextN(int n){return (C_this*)AdjacentObject::nextN(n);} C_this * previousN(int n){return (C_this*)AdjacentObject::previousN(n);}
+#ifndef PREBIKES_ADJACENTOBJECT_H
+#define PREBIKES_ADJACENTOBJECT_H
 
 namespace Bikes
 {
+
+#ifdef PREBIKES_DEV_ADJACENTOBJECT
+
+#define ADJACENTOBJECT_DEFFUNC(C_this) C_this * next(){return (C_this*)AdjacentObject::next();} C_this * previous(){return (C_this*) AdjacentObject::previous();} C_this * nextN(int n){return (C_this*)AdjacentObject::nextN(n);} C_this * previousN(int n){return (C_this*)AdjacentObject::previousN(n);}
+
 
 class AdjacentObject
 {
@@ -118,12 +118,7 @@ private:
 	AdjacentObject *_previous;
 };
 
-
-// class AdjacentContainer: public List<AdjacentObject*>
-// {
-//  	AdjacentContainer():List<AdjacentObject*>(){}
-// 	
-// };
+#endif //PREBIKES_DEV_ADJACENTOBJECT
 
 }
-#endif
+#endif 

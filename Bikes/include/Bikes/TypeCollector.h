@@ -1,7 +1,8 @@
-#ifndef TYPECOLLECTOR_H
-#define TYPECOLLECTOR_H
+#ifndef PREBIKES_TYPECOLLECTOR_H
+#define PREBIKES_TYPECOLLECTOR_H
 
-#include <Bikes/MacrosBikes.h>
+#include <Bikes/Types.h>
+
 #include <vector>
 
 namespace Bikes
@@ -26,7 +27,7 @@ namespace Bikes
 
 	template<class T>
 	const int TypeGlobalRegister<T>::typeId = BaseTypeGlobalRegister::tc++;
-	
+
 
 //================================================================
 // TypeCollector<Collector> ->
@@ -37,17 +38,17 @@ namespace Bikes
 	public:
 
 		// Реестр типов
-		template<class T> 
+		template<class T>
 		class TypeRegister;
 		//--------------------
-		template<class T> 
+		template<class T>
 		class TypeDataArray;
 		//--------------------
 		class TypeDataMap;
 		//--------------------
 		typedef TypeDataArray<Collector> TypeDataContainer;
 		//--------------------
-		template<int collectionId> 
+		template<int collectionId>
 		class TypeCollection;
 		//--------------------
 		template<class T>
@@ -61,29 +62,29 @@ namespace Bikes
 
 		template<class T>
 		static int typeId()
-		{				
+		{
 			return TypeRegister<T>::typeId;
-		}	
+		}
 
 // 		template<class T>
 // 		static int typeGlobalId()
-// 		{			
+// 		{
 // 			return TypeGlobalRegister<T>::typeId;
 // 		}
-		
+
 
 	private:
-		static  int typeIter;	
+		static  int typeIter;
 
 	};
 //--------
 	template<class Collector>
 	int TypeCollector<Collector>::typeIter=0;
 //================================================================
-// <- TypeCollector<Collector> 
+// <- TypeCollector<Collector>
 //================================================================
 
-	
+
 	namespace Private
 	{
 		class AbstractTypeDataArray
@@ -101,7 +102,7 @@ namespace Bikes
 		template<class DataT>
 		class TypeData: public AbstractTypeData
 		{
-		public:	
+		public:
 			DataT d;
 		};
 	}
@@ -114,9 +115,9 @@ namespace Bikes
 	class TypeCollector<Collector>::TypeRegister
 	{
 	public:
-		static const int typeId;		
+		static const int typeId;
 	};
-//--------------	
+//--------------
 
 	template<class Collector> template<class T>
 	const int TypeCollector<Collector>::TypeRegister<T>::typeId=TypeCollector<Collector>::typeIter++;
@@ -156,7 +157,7 @@ namespace Bikes
 	public:
 		TypePointerArray(bool createAll=true):ar(typeCount())
 		{
-			if(createAll)			
+			if(createAll)
 				for(int i=0; i<ar.size(); i++)
 					ar[i]=new T();
 		}
@@ -171,7 +172,7 @@ namespace Bikes
 				if(ar[i]) delete ar[i];
 		}
 
-		T*& operator[](int i){return ar[i];}		
+		T*& operator[](int i){return ar[i];}
 
 		int size(){return ar.size();}
 		int count(){return ar.size();}
@@ -198,14 +199,14 @@ namespace Bikes
 		TypeDataArray(): d(new std::vector<Private::AbstractTypeData*>(typeCount(),0)){}
 		~TypeDataArray()
 		{
-			for(unsigned int i=0; i<d->size(); i++)
+			for(sznum i=0; i<d->size(); i++)
 				if((*d)[i]) delete (*d)[i];
 			delete d;
 		}
 
 		void clear()
 		{
-			for(unsigned int i=0; i<d->size(); i++)
+			for(sznum i=0; i<d->size(); i++)
 				if((*d)[i]){delete (*d)[i]; (*d)[i]=0;}
 		}
 
@@ -229,7 +230,7 @@ namespace Bikes
 		}
 
 		template<class DataT>
-		const DataT& data() const 
+		const DataT& data() const
 		{
 			Private::TypeData<DataT> *td=dynamic_cast<Private::TypeData<DataT> * >((*d)[TypeRegister<DataT>::typeId]);
 			if(td==0)
@@ -262,14 +263,14 @@ namespace Bikes
 		TypeDataMap():d(new std::vector<Private::AbstractTypeDataArray*>(typeCount(),0)){}
 		~TypeDataMap()
 		{
-			for(unsigned int i=0; i<d->size(); i++) 
+			for(sznum i=0; i<d->size(); i++)
 				if((*d)[i]) delete (*d)[i];
 			delete d;
 		}
 
 		void clear()
 		{
-			for(unsigned int i=0; i<d->size(); i++) 
+			for(sznum i=0; i<d->size(); i++)
 				if((*d)[i]){ delete (*d)[i]; (*d)[i]=0; }
 		}
 
@@ -292,7 +293,7 @@ namespace Bikes
 
 		template<class T>
 		TypeDataArray<T>& dataArray()
-		{		
+		{
 			TypeDataArray<T> *tda=dynamic_cast< TypeDataArray<T>* >((*d)[TypeRegister<T>::typeId]);
 			if(tda==0)
 			{
@@ -304,7 +305,7 @@ namespace Bikes
 
 		template<class T>
 		const TypeDataArray<T>& dataArray() const
-		{		
+		{
 			TypeDataArray<T> *tda=dynamic_cast< TypeDataArray<T>* >((*d)[TypeRegister<T>::typeId]);
 			if(tda==0)
 			{
@@ -316,7 +317,7 @@ namespace Bikes
 
 		template<class T, class DataT>
 		DataT& data()
-		{		
+		{
 			TypeDataArray<T> *tda=dynamic_cast< TypeDataArray<T>* >((*d)[TypeRegister<T>::typeId]);
 			if(tda==0)
 			{
@@ -328,7 +329,7 @@ namespace Bikes
 
 		template<class T, class DataT>
 		const DataT& data() const
-		{		
+		{
 			TypeDataArray<T> *tda=dynamic_cast< TypeDataArray<T>* >((*d)[TypeRegister<T>::typeId]);
 			if(tda==0)
 			{
@@ -339,7 +340,7 @@ namespace Bikes
 		}
 
 	private:
-		std::vector<Private::AbstractTypeDataArray*> *d;			
+		std::vector<Private::AbstractTypeDataArray*> *d;
 	};
 //================================================================
 // <- TypeCollector<Collector>::TypeDataMap
@@ -351,7 +352,7 @@ namespace Bikes
 //================================================================
 	template<class Collector> template<int collectionId>
 	class TypeCollector<Collector>::TypeCollection: public TypeCollector<TypeCollection<collectionId> >
-	{		
+	{
 	};
 //================================================================
 // <- TypeCollector<Collector>::TypeCollection

@@ -1,6 +1,7 @@
-#ifndef _BIKES_SIGNALS_H_
-#define _BIKES_SIGNALS_H_
+#ifndef PREBIKES_SIGNALS_H_
+#define PREBIKES_SIGNALS_H_
 
+#include <Bikes/Types.h>
 #include <Bikes/MacrosBikes.h>
 #include <vector>
 #include <map>
@@ -300,7 +301,7 @@ public:																							\
     Signal(const Signal<TT>& sig){}																\
     ~Signal()																					\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
         {																						\
             slots_[i]->disconnect(this);														\
             delete slots_[i];																	\
@@ -308,18 +309,18 @@ public:																							\
     }																							\
     void operator ()(TP) const																	\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             slots_[i]->call(PP COMMA this);														\
     }																							\
     void call(TP) const																			\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             slots_[i]->call(PP COMMA this);														\
     }																							\
     template<class ObjectClass, class RT>														\
     void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
         slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
     }																							\
@@ -327,7 +328,7 @@ public:																							\
     template<class ObjectClass, class RT>														\
     void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func))											\
             {																					\
                 if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
@@ -350,7 +351,7 @@ public:																							\
     template<class ObjectClass, class RT>														\
     void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func))											\
             {																					\
                 slots_[i]->disconnect(this);													\
@@ -361,7 +362,7 @@ public:																							\
     }																							\
     void disconnectAll(void *pObj)																\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->pObj()==pObj)															\
             {																					\
                 slots_[i]->disconnect(this);													\
@@ -372,7 +373,7 @@ public:																							\
     }																							\
     void disconnectAll()																		\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
         {																						\
             slots_[i]->disconnect(this);														\
             delete slots_[i];																	\
@@ -382,7 +383,7 @@ public:																							\
 private:																						\
     void disconnectAll_(void *pObj)																\
     {																							\
-        for(unsigned int i=0; i<slots_.size(); i++)												\
+        for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->pObj()==pObj)															\
             {																					\
                 delete slots_[i];																\

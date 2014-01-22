@@ -1,5 +1,5 @@
-#ifndef _BIKES_BIKESTREAMER_H_
-#define _BIKES_BIKESTREAMER_H_
+#ifndef PREBIKES_BIKESTREAMER_H
+#define PREBIKES_BIKESTREAMER_H
 #include <Bikes/ObjectStreamer.h>
 
 namespace Bikes
@@ -7,8 +7,8 @@ namespace Bikes
 	class Point;
 	class Vector;
 	class Basis;
-	class PhiLamPoint;
-	class PhiLamHPoint;
+	struct PhiLamPoint;
+	struct PhiLamHPoint;
 
 	
 	BIKES_OBJECTSTREAMER_DECL(PointStreamer,			Point			)

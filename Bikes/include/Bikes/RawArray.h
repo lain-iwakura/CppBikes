@@ -1,5 +1,6 @@
-#ifndef _BIKES_RAWARRAY_H_
-#define _BIKES_RAWARRAY_H_
+#ifndef PREBIKES_RAWARRAY_H
+#define PREBIKES_RAWARRAY_H
+#include <Bikes/Types.h>
 #include <vector>
 
 namespace Bikes
@@ -14,7 +15,7 @@ public:
 	{
 	}
 
-	RawArray(int sz)
+	RawArray(sznum sz)
 	{
 		if(sz>0)
 		{	
@@ -29,7 +30,7 @@ public:
 		}
 	}
 
-	RawArray(int sz, int cap, int dcap=1)
+	RawArray(sznum sz, sznum cap, sznum dcap=1)
 	{
 		if(cap>0)
 		{
@@ -55,7 +56,7 @@ public:
 		if(s>0)
 		{		
 			arr=new T[s];
-			for(int i=0; i<l; i++)
+			for(sznum i=0; i<l; i++)
 			{
 				arr[i]=ra.arr[i];
 			}
@@ -65,12 +66,12 @@ public:
 		}
 	}
 
-	RawArray(const T* buf, int sz)
+	RawArray(const T* buf, sznum sz)
 	{
 		if(sz>0)
 		{
 			arr=new T[sz];
-			for(int i=0; i<sz; i++)
+			for(sznum i=0; i<sz; i++)
 				arr[i]=buf[i];	
 			l=sz;
 			s=sz;
@@ -89,14 +90,14 @@ public:
 		if(arr) delete [] arr;
 	}
 
-	void setCapacity(int cap)
+	void setCapacity(sznum cap)
 	{
 		T *narr=0;
 		if(cap>0)
 		{		
 			narr=new T[cap];
-			int ms=l;if(ms>cap)ms=cap;
-			for(int i=0; i<ms;i++)
+			sznum ms=l;if(ms>cap)ms=cap;
+			for(sznum i=0; i<ms;i++)
 				narr[i]=arr[i];
 			s=cap;
 			l=ms;
@@ -109,13 +110,13 @@ public:
 		arr=narr;		
 	}
 
-	void setCapacityIncrement(int dcap)
+	void setCapacityIncrement(num dcap)
 	{
 		if(dcap<1)ds=1;
 		else ds=dcap;
 	}
 
-	void setSize(int sz)
+	void setSize(sznum sz)
 	{
 		if(sz<0)
 		{
@@ -143,12 +144,12 @@ public:
 		setSize(0);
 	}
 
-	int size()const{return l;}
-	int capacity()const{return s;}
+	sznum size()const{return l;}
+	sznum capacity()const{return s;}
 	T* data(){return arr;}
 	const T* data() const{return arr;}
 
-	void takeData(T* d, int sz)
+	void takeData(T* d, sznum sz)
 	{
 		 if(arr) delete [] arr;
 		 arr=d;
@@ -178,25 +179,25 @@ public:
 
 	void toVector(std::vector<T>& v)
 	{
-		for(int i=0; i<l; i++)
+		for(sznum i=0; i<l; i++)
 			v.push_back(arr[i]);
 	}
 
-	T& operator [](int i){return arr[i];}
-	const T& operator [](int i) const {return arr[i];}
+	T& operator [](sznum i){return arr[i];}
+	const T& operator [](sznum i) const {return arr[i];}
 
 	//operator T*(){return arr;} //?
 	//operator const T*(){return arr;} //?
 
-	T& at(int i){return arr[i];}
-	const T& at(int i)const{return arr[i];}
+	T& at(sznum i){return arr[i];}
+	const T& at(sznum i)const{return arr[i];}
 
 
 protected:
 	T *arr;
-	int s;	
-	int l;
-	int ds;
+	sznum s;	
+	sznum l;
+	sznum ds;
 };
 
 }

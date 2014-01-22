@@ -4,7 +4,6 @@ namespace Bikes
 {
 
 
-
 rnum acosh(rnum a)
 {
 	if(ABS(a)<1) return 0;
@@ -34,7 +33,7 @@ rnum normAngle(rnum a)
 	return a;
 }
 
-rnum normAngle_0_2PI(rnum a)
+rnum normAzimuthAngle(rnum a)
 {
 	if(ABS(a)>PIm2)	a-=((long)(a/(PIm2)))*PIm2;
 	if(a<0.0) a+=PIm2;
@@ -60,8 +59,6 @@ rnum arcsin(rnum n)
 	return asin(n);
 }
 
-//inline rnum DEG_to_RAD(rnum deg){return deg*RAD_PER_DEG;}
-//inline rnum RAD_to_DEG(rnum rad){return rad*DEG_PER_RAD;}
 
 bool isEqual(rnum n1, rnum n2, rnum O)
 {
@@ -70,19 +67,20 @@ bool isEqual(rnum n1, rnum n2, rnum O)
 
 bool isEqualAngle(rnum a1, rnum a2)
 {
-	a1=normAngle_0_2PI(a1);
-	a2=normAngle_0_2PI(a2);
+	a1=normAzimuthAngle(a1);
+	a2=normAzimuthAngle(a2);
 	return isEqual(a1,a2,ANGLE_O);
 }
 
 rnum normalDistribution( rnum x )
 {
-	static const rnum m=1/sqrt(2*PI);
-	return m*pow(E,-x*x/2);
+	static const rnum m=1.0/sqrt(PIm2);
+	return m*pow(E,-x*x/2.0);
 }
 
 
-
+// DEV ->
+#ifdef PREBIKES_DEV_MATHFUNCTION
 
 rnum MathFunction::findNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum Eps/*=RNUM_O*/, int MaxIter/*=10000*/, rnum dx/*=(x_max-x_min)/rnum(MaxIter) */ ) const
 {
@@ -128,7 +126,6 @@ rnum MathFunction::findNewtonRoot(rnum x_min, rnum x_max, bool *suc/*=0*/, rnum 
 }
 
 
-
 MathFunctionResult MathFunction::diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
 {
 	MathFunctionResult r;
@@ -167,6 +164,8 @@ MathFunctionResult MathFunction::diff( rnum x, rnum dx/*=EQUAL_O*/ ) const
 	return r;
 }
 
+#endif // BIKES_DEV_MATHFUNCTION
+// <- DEV
 }// Bikes
 
 /////////////////////////////////////////////////////
