@@ -1,5 +1,5 @@
-#ifndef _BIKES_OBJECTSTREAMMACROS_H_
-#define _BIKES_OBJECTSTREAMMACROS_H_
+#ifndef PREBIKES_OBJECTSTREAMMACROS_H
+#define PREBIKES_OBJECTSTREAMMACROS_H
 #include <Bikes/MacrosBikes.h>
 
 
@@ -222,34 +222,6 @@ private:																	\
 
 //-------------------------------------------------------------------------
 
-//#define BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DECL(AbstractTypeStreamerName, AddStreamerName)\
-namespace Aux																\
-{																			\
-	/*const Bikes::Aux::AbstractTypeStreamerInitor<AbstractTypeStreamerName,AddStreamerName> initor_##AbstractTypeStreamerName##_add_##AddStreamerName;*/\
-	class AbstractTypeStreamerNameInitor_add_##AddStreamerName\
-	{\
-	public:\
-		AbstractTypeStreamerNameInitor_add_##AddStreamerName();\
-	};\
-	const AbstractTypeStreamerNameInitor_add_##AddStreamerName initor_##AbstractTypeStreamerName##_add_##AddStreamerName;\
-}	
-
-
-//#define BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DEF(AbstractTypeStreamerName, AddStreamerName)\
-namespace Aux\
-{\
-	AbstractTypeStreamerNameInitor_add_##AddStreamerName::AbstractTypeStreamerNameInitor_add_##AddStreamerName()\
-	{\
-		static bool i=false;\
-		if(!i)\
-		{\
-			i=true;\
-			AbstractTypeStreamerName ats;\
-			ats.add<AddStreamerName>();\
-		}\
-	}\
-}
-	
 
 #define BIKES_TYPESTREAMER_DECL(AbstractTypeStreamerName, TypeStreamerName, TypeClass)\
 	BIKES_OBJECTSTREAMER_DECL(TypeStreamerName,TypeClass)					\
@@ -259,14 +231,6 @@ namespace Aux\
 		typedef AbstractTypeStreamerName TypeStreamerName_##AbstractStreamer;\
 	}
 
-
-// #define BIKES_TYPESTREAMER_DECLDEF(AbstractTypeStreamerName, TypeStreamerName, TypeClass, ValAccessList)\
-// 	BIKES_OBJECTSTREAMER_DECLDEF(TypeStreamerName,TypeClass,ValAccessList)\
-// 	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DECL(AbstractTypeStreamerName,TypeStreamerName)
-
-// #define BIKES_TYPESTREAMER_DECLDEF_EXTENDED(AbstractTypeStreamerName, TypeStreamerName, TypeClass, ValAccessList, PostReadAction)\
-// 	BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(TypeStreamerName,TypeClass,ValAccessList,PostReadAction)\
-// 	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER(AbstractTypeStreamerName,TypeStreamerName)
 
 #define BIKES_TYPESTREAMER_DEF_EXTENDED(TypeStreamerName, TypeClass, ValAccessList, PostReadAction)\
 	BIKES_OBJECTSTREAMER_DEF_EXTENDED(TypeStreamerName,TypeClass,ValAccessList,PostReadAction)\

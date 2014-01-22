@@ -1,11 +1,13 @@
-#ifndef _BIKES_TESTBIKES_H_
-#define _BIKES_TESTBIKES_H_
+#ifndef PREBIKES_TESTBIKES_H
+#define PREBIKES_TESTBIKES_H
 #include <Bikes/BikeStreamer.h>
 #include <Bikes/SmartPtr.h>
 #include <Bikes/AbstractRegistrableType.h>
 
 namespace Bikes
 {
+
+#ifdef PREBIKES_DEV_TESTBIKES
 	
 	template<class T>
 	bool isPointer(const T&){return false;}
@@ -59,6 +61,7 @@ namespace Test
 	const test_GlobalObjectClass<int> test_globalObject;
 	
 }	
+#endif // PREBIKES_DEV_TESTBIKES
 }
 
 #endif

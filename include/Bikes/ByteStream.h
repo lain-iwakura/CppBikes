@@ -1,9 +1,11 @@
-#ifndef _BIKES_BYTESTREAM_H_
-#define _BIKES_BYTESTREAM_H_
+#ifndef PREBIKES_BYTESTREAM_H
+#define PREBIKES_BYTESTREAM_H
+
 #include <Bikes/RawArray.h>
-#include <vector>
 #include <Bikes/Types.h>
 #include <Bikes/AbstractStreamer.h>
+
+#include <vector>
 
 namespace Bikes
 {
@@ -16,9 +18,9 @@ namespace Bikes
 	{
 	public:
 		virtual ~InOutInterface(){}
-		virtual void readBytes(char *bt, llnum btSize) = 0;
-		virtual void writeBytes(const char *bt, llnum btSize) = 0;
-		virtual void prepareForWrite(llnum byteCapacity){}
+		virtual void readBytes(char *bt, sznum btSize) = 0;
+		virtual void writeBytes(const char *bt, sznum btSize) = 0;
+		virtual void prepareForWrite(sznum byteCapacity){}
 		virtual bool atEnd() const{return false;};
 		//... 
 	};
@@ -27,9 +29,9 @@ namespace Bikes
 	{
 	public:
 		ByteArray();
-		ByteArray(int cap, int dcap=1, int sz=0);
+		ByteArray(sznum cap, sznum dcap=1, sznum sz=0);
 		ByteArray(const ByteArray& ba);
-		ByteArray(const char *bt, llnum btSize);
+		ByteArray(const char *bt, sznum btSize);
 		ByteArray(const char *str);
 
 		ByteArray& operator=(const ByteArray& ba);
@@ -39,19 +41,19 @@ namespace Bikes
 		bool operator ==(const char *str) const;
 
 
-		void readBytes(char *bt, llnum btSize);
-		void writeBytes(const char *bt, llnum btSize);
-		void prepareForWrite(llnum byteCapacity);
+		void readBytes(char *bt, sznum btSize);
+		void writeBytes(const char *bt, sznum btSize);
+		void prepareForWrite(sznum byteCapacity);
 		bool atEnd() const;
 
-		int writeIndex() const;
-		int readIndex() const;
-		void setWriteIndex(int i);
-		void setReadIndex(int i);
+		sznum writeIndex() const;
+		sznum readIndex() const;
+		void setWriteIndex(sznum i);
+		void setReadIndex(sznum i);
 
 	private:
-		int ri;
-		int wi;		
+		sznum ri;
+		sznum wi;		
 	};
 
 	
@@ -187,9 +189,9 @@ namespace Bikes
 			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
-		void readBytes(char *bt, llnum btSize);
-		void writeBytes(const char *bt, llnum btSize);
-		void prepareForWrite(llnum byteCapacity);
+		void readBytes(char *bt, sznum btSize);
+		void writeBytes(const char *bt, sznum btSize);
+		void prepareForWrite(sznum byteCapacity);
 
 
 	private:

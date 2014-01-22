@@ -1,16 +1,11 @@
-#ifndef CALCVAL_H
-#define CALCVAL_H
+#ifndef PREBIKES_CALCVAL_H
+#define PREBIKES_CALCVAL_H
 
 #define TMIN_DEF 0
 #define TMAX_DEF 0
 
-#include "BasicMath.h"
-#include "PhantomObject.h"
-#include "List.h"
-
 namespace Bikes
 {
-
 
 	template<typename T>
 	class CalcVal

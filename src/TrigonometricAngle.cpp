@@ -27,13 +27,18 @@ rad_val(0),sin_val(0),cos_val(1),tan_val(0)
 }
 
 
+void TrAngleConst::set( rnum ang_rad )
+{
+    TrAngle ang(ang_rad);
+    rad_val=ang_rad;
+    sin_val=ang.sin();
+    cos_val=ang.cos();
+    tan_val=ang.tan();
+}
+
 TrAngleConst& TrAngleConst::operator=( rnum ang_rad )
 {
-	TrAngle ang(ang_rad);
-	rad_val=ang_rad;
-	sin_val=ang.sin();
-	cos_val=ang.cos();
-	tan_val=ang.tan();
+    set(ang_rad);
 	return *this;
 }
 
@@ -41,6 +46,8 @@ TrAngleConst::operator rnum () const
 {
 	return rad_val;
 }
+
+
 
 
 

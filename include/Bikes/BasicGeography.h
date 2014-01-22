@@ -1,6 +1,5 @@
-#ifndef BASICGEOGRAPHY_H
-#define BASICGEOGRAPHY_H
-#include <Bikes/BasicMath.h>
+#ifndef PREBIKES_BASICGEOGRAPHY_H
+#define PREBIKES_BASICGEOGRAPHY_H
 #include <Bikes/BasicGeometry.h>
 #include <string>
 
@@ -98,6 +97,9 @@ Vector EllipsePhiTan(const Point &p); // единичный касательны
 Vector EllipseLamTan(const Point &p); // единичный касательный вектор к паралеле
 rnum parallelR(rnum phi);
 
+
+rnum getEarthRadiusAt(const Point& p);
+
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
 
@@ -106,6 +108,35 @@ Point PhiLam_to_PointE(TrAngle *phi, TrAngle *lam);
 Point PhiLam_to_PointE_old( rnum phi, rnum lam );
 
 
+void ellipseRange_approx(const Point& p1, // в геоцентрической СК
+                         const Point& p2, // в геоцентрической СК
+                         rnum range,  // [м] дальность
+                         List<Point>& out_contour, // контур досягаемости
+                         ApproximationMethodType approxMethod = ApproxMethod_avg,
+                         rnum da = PI/90 // шаг аппроксимации
+                         );
+
+void ellipseRange_approx(const PhiLamPoint& p1,
+                         const PhiLamPoint& p2,
+                         rnum range,  // [м] дальность
+                         List<PhiLamPoint>& out_contour, // контур досягаемости
+                         ApproximationMethodType approxMethod = ApproxMethod_avg,
+                         rnum da = PI/90 // шаг аппроксимации
+                         );
+
+void circleRange_approx(const Point &p,
+                        rnum range,
+                        List<Point>& out_contour,
+                        ApproximationMethodType approxMethod = ApproxMethod_avg,
+                        rnum da = PI/90 // шаг аппроксимации
+                        );
+
+void circleRange_approx(const PhiLamPoint &p,
+                        rnum range,
+                        List<PhiLamPoint>& out_contour,
+                        ApproximationMethodType approxMethod = ApproxMethod_avg,
+                        rnum da = PI/90 // шаг аппроксимации
+                        );
 
 }
 #endif
