@@ -437,12 +437,16 @@ bool Vector::operator >= ( rnum l ) const
 	return length() >= l - PREBIKES_VECTOR_EQUAL_EPSILON;
 #endif
 }
-
+//=============================================================================
+bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
+{
+	return ((v1*v2)&v3) > 0;
+}
 //-----------------------------------------------------------------------------
-
-
-
-
+bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
+{
+	return ((v1*v2)&v3) < 0;
+}
 //-----------------------------------------------------------------------------
 
 

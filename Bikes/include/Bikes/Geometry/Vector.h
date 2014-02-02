@@ -2,7 +2,6 @@
 #define INCLUDEBIKES_VECTOR_H
 
 #include <Bikes/Types.h>
-#include <Bikes/Geometry/BasisObject.h>
 
 namespace Bikes
 {
@@ -36,9 +35,11 @@ public:
 //cccccccccccccccccccccccccccc
 
 	
-	// Конструктор создает вектор, началом которого является точка p1, а концом - точка p2,
-	// вектор привязывается к базису *b.  
-	Vector( const Point &p1, const Point &p2 ); 
+	//! Конструктор для определения по двум точкам вектор
+	Vector( 
+		const Point &p1, //!< - начало вектора 
+		const Point &p2  //!< - конец вектора
+		); 
 
 	// Конструктор копирования
 	Vector( const Vector &v );
@@ -163,6 +164,9 @@ public:
 
 
 };
+
+bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 );
+bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 );
 
 }
 
