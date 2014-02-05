@@ -189,7 +189,7 @@ void Vector::rotate_W( const Vector &w, rnum a )
 		Vector vj = ew * (*this);				
 		Vector vi = vj * ew;
 		vi *= cos_a - 1.0;
-		vj *= sin_a - 1.0;
+		vj *= sin_a;
 		*this += vi;
 		*this += vj;
 	}
@@ -205,7 +205,7 @@ void Vector::rotate_W( const Vector &w, const TrAngle& a )
 		Vector vj = ew * (*this);				
 		Vector vi = vj * ew;
 		vi *= a.cos() - 1.0;
-		vj *= a.sin() - 1.0;
+		vj *= a.sin();
 		*this += vi;
 		*this += vj;
 	}
@@ -219,8 +219,7 @@ void Vector::rotate_globalX( rnum a )
 	if(a < 0)
 		sin_a = -sin_a;
 
-	cos_a -= 1.0;
-	sin_a -= 1.0;
+	cos_a -= 1.0;	
 	
 	rnum dy = gy*cos_a - gz*sin_a;
 	rnum dz = gz*cos_a + gy*sin_a;
@@ -238,7 +237,6 @@ void Vector::rotate_globalY( rnum a )
 		sin_a = -sin_a;
 
 	cos_a -= 1.0;
-	sin_a -= 1.0;
 
 	rnum dz = gz*cos_a - gx*sin_a;
 	rnum dx = gx*cos_a + gz*sin_a;
@@ -256,7 +254,6 @@ void Vector::rotate_globalZ( rnum a )
 		sin_a = -sin_a;
 
 	cos_a -= 1.0;
-	sin_a -= 1.0;
 
 	rnum dx = gx*cos_a - gy*sin_a;
 	rnum dy = gy*cos_a + gx*sin_a;
@@ -280,6 +277,40 @@ Vector Vector::e() const
 	Vector v(gx,gy,gz);
 	v.normalize();
 	return v;
+}
+//-----------------------------------------------------------------------------
+bool Vector::isCollinear( const Vector& v2, rnum cos_angleEpsilon ) const
+{
+	rnum c = ((*this) & v2) / ( length() * v2.length() );
+	return c >= cos_AngleEpsilon || c <= -cos_AngleEpsilon;
+}
+//-----------------------------------------------------------------------------
+rnum Vector::angle( const Vector& v ) const
+{
+	return arccos( ( v.gx*gx + v.gy*gy + v.gz*gz ) / (length() * v.length()) );
+}
+//-----------------------------------------------------------------------------
+rnum Vector::cosAngle( const Vector& v ) const
+{
+	return ( v.gx*gx + v.gy*gy + v.gz*gz ) / (length() * v.length());
+}
+//-----------------------------------------------------------------------------
+bool Vector::isEqual( const Vector&v ) const
+{
+#ifndef PREBIKES_VECTOR_EQUAL_EPSILON
+	return (v.gx == gx) && (v.gy == gy) && (v.gz == gz);
+#else
+	return isEqual(v.gx, gx, PREBIKES_VECTOR_EQUAL_EPSILON)  
+		&& isEqual(v.gy, gy, PREBIKES_VECTOR_EQUAL_EPSILON) 
+		&& isEqual(v.gz, gz, PREBIKES_VECTOR_EQUAL_EPSILON);
+#endif
+}
+//-----------------------------------------------------------------------------
+bool Vector::isEqual( const Vector& v, rnum epsilon ) const
+{
+	return isEqual(v.gx, gx, epsilon)  
+		&& isEqual(v.gy, gy, epsilon) 
+		&& isEqual(v.gz, gz, epsilon);
 }
 //=============================================================================
 Vector Vector::operator+( const Vector &v ) const
@@ -363,25 +394,6 @@ Vector Vector::operator-() const
 	return Vector(-gx,-gy,-gz);
 }
 //-----------------------------------------------------------------------------
-
-bool Vector::isEqual( const Vector&v ) const
-{
-#ifndef PREBIKES_VECTOR_EQUAL_EPSILON
-	return (v.gx == gx) && (v.gy == gy) && (v.gz == gz);
-#else
-	return isEqual(v.gx, gx, PREBIKES_VECTOR_EQUAL_EPSILON)  
-		&& isEqual(v.gy, gy, PREBIKES_VECTOR_EQUAL_EPSILON) 
-		&& isEqual(v.gz, gz, PREBIKES_VECTOR_EQUAL_EPSILON);
-#endif
-}
-//-----------------------------------------------------------------------------
-bool Vector::isEqual( const Vector& v, rnum epsilon ) const
-{
-	return isEqual(v.gx, gx, epsilon)  
-		&& isEqual(v.gy, gy, epsilon) 
-		&& isEqual(v.gz, gz, epsilon);
-}
-//-----------------------------------------------------------------------------
 bool Vector::operator == ( const Vector &v ) const
 {
 	return isEqual(v);
@@ -415,6 +427,11 @@ bool Vector::operator < ( rnum l ) const
 	return length() < l;
 }
 //-----------------------------------------------------------------------------
+bool Vector::operator<( const Vector &v ) const
+{
+	return length() < v.length();
+}
+//-----------------------------------------------------------------------------
 bool Vector::operator <= ( rnum l ) const
 {
 #ifndef PREBIKES_VECTOR_EQUAL_EPSILON
@@ -424,10 +441,25 @@ bool Vector::operator <= ( rnum l ) const
 #endif
 }
 //-----------------------------------------------------------------------------
+bool Vector::operator<=( const Vector &v ) const
+{
+#ifndef PREBIKES_VECTOR_EQUAL_EPSILON
+	return length() <= v.length();
+#else	
+	return length() <= v.length() + PREBIKES_VECTOR_EQUAL_EPSILON;
+#endif
+}
+//-----------------------------------------------------------------------------
 bool Vector::operator > ( rnum l ) const
 {
 	return length() > l;
 }
+//-----------------------------------------------------------------------------
+bool Vector::operator>( const Vector &v ) const
+{
+	return length() > v.length();
+}
+
 //-----------------------------------------------------------------------------
 bool Vector::operator >= ( rnum l ) const
 {
@@ -435,6 +467,15 @@ bool Vector::operator >= ( rnum l ) const
 	return length() >= l;
 #else	
 	return length() >= l - PREBIKES_VECTOR_EQUAL_EPSILON;
+#endif
+}
+//-----------------------------------------------------------------------------
+bool Vector::operator>=( const Vector &v ) const
+{
+#ifndef PREBIKES_VECTOR_EQUAL_EPSILON
+	return length() >= v.length();
+#else	
+	return length() >= v.length() - PREBIKES_VECTOR_EQUAL_EPSILON;
 #endif
 }
 //=============================================================================
@@ -447,6 +488,7 @@ bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
 	return ((v1*v2)&v3) < 0;
 }
+
 //-----------------------------------------------------------------------------
 
 

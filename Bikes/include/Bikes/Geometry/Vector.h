@@ -9,164 +9,246 @@ namespace Bikes
 class Basis;
 class Point;
 
+//! Вектор в 3-х мерном пространстве.
 class Vector
 {
 public:
 
- 	rnum gx; //!< - проекция на ось OX в глобальном(!) базисе. Для получения локальной использовать Vector::x()
-	rnum gy; //!< - проекция на ось OY в глобальном(!) базисе. Для получения локальной использовать Vector::y()
-	rnum gz; //!< - проекция на ось OZ в глобальном(!) базисе. Для получения локальной использовать Vector::z()
+ 	rnum gx; //!< - проекция на ось OX в глобальном базисе
+	rnum gy; //!< - проекция на ось OY в глобальном базисе
+	rnum gz; //!< - проекция на ось OZ в глобальном базисе
 
 	//! Конструктор по умолчанию для определения в глобальных координатах.
 	Vector( 
-		rnum globalX = 0, //!< - проекция на ось OX в глобальном базисе.
-		rnum globalY = 0, //!< - проекция на ось OY в глобальном базисе.
-		rnum globalZ = 0  //!< - проекция на ось OZ в глобальном базисе.
+		rnum globalX = 0, //!< - проекция на ось OX в глобальном базисе
+		rnum globalY = 0, //!< - проекция на ось OY в глобальном базисе
+		rnum globalZ = 0  //!< - проекция на ось OZ в глобальном базисе
 		);
 
 	//! Конструктор для определения в локальных координатах.
 	Vector( 
-		rnum localX,	//!< - проекция на ось OX в локальном базисе.
-		rnum localY,	//!< - проекция на ось OY в локальном базисе.
-		rnum localZ,	//!< - проекция на ось OZ в локальном базисе.
-		const Basis &b	//!< - локальный базис
+		rnum localX,	//!< - проекция на ось OX в локальном базисе
+		rnum localY,	//!< - проекция на ось OY в локальном базисе
+		rnum localZ,	//!< - проекция на ось OZ в локальном базисе
+		const Basis &b	//!< - локальный базис.
 		);
 
-//cccccccccccccccccccccccccccc
-
-	
-	//! Конструктор для определения по двум точкам вектор
+	//! Конструктор для определения по двум точкам вектор.
 	Vector( 
-		const Point &p1, //!< - начало вектора 
+		const Point &p1, //!< - начало вектора
 		const Point &p2  //!< - конец вектора
 		); 
 
-	// Конструктор копирования
+	//! Конструктор копирования.
 	Vector( const Vector &v );
-	
-	Vector& operator = (const Vector &v); // Аналогично конструктору копирования.
 
+	//! Оператор присваивания.
+	Vector& operator = (const Vector &v); 
+
+	//! Виртуальный деструктор.
 	virtual ~Vector(); 
-
-	virtual rnum x() const; // проекция на ось OX в локальном(!) базисе *basis
-	virtual rnum y() const; // проекция на ось OY в локальном(!) базисе *basis
-	virtual rnum z() const; // проекция на ось OZ в локальном(!) базисе *basis
-
-	rnum x(const Basis *b) const; // проекция на ось OX в локальном базисе *b
-	rnum y(const Basis *b) const; // проекция на ось OY в локальном базисе *b
-	rnum z(const Basis *b) const; // проекция на ось OZ в локальном базисе *b
-
-	rnum x(const Basis &b) const; // проекция на ось OX в локальном базисе b
-	rnum y(const Basis &b) const; // проекция на ось OY в локальном базисе b
-	rnum z(const Basis &b) const; // проекция на ось OZ в локальном базисе b
-
-	void setGlobal(rnum globalX, rnum globalY, rnum globalZ);  // Вектор по проекциям в глобальном базисе
 	
-	virtual void setLocal(rnum localX, rnum localY, rnum localZ); // Вектор по проекциям в локальном базисе
-	
-	void setLocal(rnum localX, rnum localY, rnum localZ, const Basis& b); // Вектор по проекциям в локальном базисе b
-	
-	virtual void setLocalX(rnum localX); // Изменить локальную проекцию на ось OX
-	virtual void setLocalY(rnum localY); // Изменить локальную проекцию на ось OY
-	virtual void setLocalZ(rnum localZ); // Изменить локальную проекцию на ось OZ
+	//! Проекция на ось OX в собственном базисе. 
+	virtual rnum x() const; 
 
-	void setLocalX(rnum localX, const Basis& b); // Изменить локальную проекцию на ось OX
-	void setLocalY(rnum localY, const Basis& b); // Изменить локальную проекцию на ось OY
-	void setLocalZ(rnum localZ, const Basis& b); // Изменить локальную проекцию на ось OZ
+	//! Проекция на ось OY в собственном базисе. 
+	virtual rnum y() const; 
+
+	//! Проекция на ось OZ в собственном базисе. 
+	virtual rnum z() const; 
+
+	//! Проекция на ось OX в базисе *b.
+	rnum x(const Basis *b) const; 
+
+	//! Проекция на ось OY в базисе *b.
+	rnum y(const Basis *b) const; 
+
+	//! Проекция на ось OZ в базисе *b.
+	rnum z(const Basis *b) const; 
+
+	//! Проекция на ось OX в базисе b.
+	rnum x(const Basis &b) const; 
+
+	//! Проекция на ось OY в базисе b.
+	rnum y(const Basis &b) const; 
+
+	//! Проекция на ось OZ в базисе b.
+	rnum z(const Basis &b) const; 
+
+	//! Вектор по проекциям в глобальном базисе.
+	void setGlobal(
+		rnum globalX, //!< - проекция на ось ОX
+		rnum globalY, //!< - проекция на ось ОY
+		rnum globalZ  //!< - проекция на ось ОZ
+		);  
 	
-	void normalize(); // Превратить в единичный вектор (разделить вектор на его длину)
+	// Вектор по проекциям в собственном базисе.
+	virtual void setLocal(
+		rnum localX, //!< - проекция на ось ОX
+		rnum localY, //!< - проекция на ось ОY
+		rnum localZ  //!< - проекция на ось ОZ
+		); 
+	
+	//! Вектор по проекциям в локальном базисе.
+	void setLocal(
+		rnum localX, //!< - проекция на ось ОX
+		rnum localY, //!< - проекция на ось ОY
+		rnum localZ, //!< - проекция на ось ОZ
+		const Basis& b //!< - локальный базис
+		); 
+	
+	//! Изменить проекцию на ось OX в собственном базисе.
+	virtual void setLocalX(rnum localX); 
+
+	//! Изменить проекцию на ось OY в собственном базисе.
+	virtual void setLocalY(rnum localY);
+
+	//! Изменить проекцию на ось OZ в собственном базисе.
+	virtual void setLocalZ(rnum localZ);
+	
+	//! Изменить локальную проекцию на ось OX в базисе b.
+	void setLocalX(rnum localX, const Basis& b); 
+
+	//! Изменить локальную проекцию на ось OY в базисе b.
+	void setLocalY(rnum localY, const Basis& b);
+
+	//! Изменить локальную проекцию на ось OZ в базисе b.
+	void setLocalZ(rnum localZ, const Basis& b);	
+
+	//! Превратить в единичный вектор (разделить вектор на его длину).
+	void normalize(); 
 			
-	void rotate_W(const Vector &w, rnum a); // вращать вектор по правилу буравчика относительно оси w на угол a	
+	//! Вращать вектор по правилу буравчика в направлении w на угол а.
+	void rotate_W(const Vector &w, rnum a); 
+
+	//! Вращать вектор по правилу буравчика в направлении w на угол а.
 	void rotate_W(const Vector &w, const TrAngle& a);
 	
-	void rotate_globalX(rnum a); // вращать вектор по правилу буравчика относительно оси OX(в локальном базисе) на угол a
-	void rotate_globalY(rnum a); // вращать вектор по правилу буравчика относительно оси OY(в локальном базисе) на угол a
-	void rotate_globalZ(rnum a); // вращать вектор по правилу буравчика относительно оси OZ(в локальном базисе) на угол a	
+	//! Вращать вектор по правилу буравчика в направлении оси OX в глобальном базисе на угол a.
+	void rotate_globalX(rnum a); 
 
+	//! Вращать вектор по правилу буравчика в направлении оси OX в глобальном базисе на угол a.
+	void rotate_globalY(rnum a); 
 
-	rnum length() const; // длина вектора
-	rnum l() const; // длина вектора
+	//! Вращать вектор по правилу буравчика в направлении оси OX в глобальном базисе на угол a.
+	void rotate_globalZ(rnum a); 
 
-	Vector e() const; // единичный вектор соответсвующий данному вектору
+	//! Получить длину вектора.
+	rnum length() const; 
 
+	//! Получить длину вектора.
+	rnum l() const; 
+
+	//! Получить единичный вектор соответсвующий данному вектору.
+	Vector e() const; 
+
+	//! Проверить на равенство другому вектору.
 	bool isEqual(const Vector& v ) const;
-	bool isEqual(const Vector& v, rnum epsilon) const; 
+
+	//! Проверить на равенство дргуому веткору с заданной погрешностью.
+	bool isEqual(
+		const Vector& v, //!< - вектор, с которым сравниваем
+		rnum epsilon     //!< - максимальная разница проекций на оси в глобальном базисе сравниваемых векторов
+		) const; 
+
+	//! Проверить на колиниарность другому вектору с заданной погрешностью.
+	bool isCollinear(
+		const Vector& v2, //!< - вектор, с которым сравниваем
+		rnum cos_angleEpsilon //!< - косинус максимально допустимого угла между векторами
+		) const;
 	
+	//! Получить угол между векторами.
+	//! \note Медленнее чем cosAngle().
+	rnum angle(const Vector& v) const;
 
-#ifdef PREBIKES_USE_TRANGLE	
-	TrAngle angle(const Vector &v) const {return angle(*this,v);}  // вероятно ненужная функция
-#else
-	rnum angle(const Vector &v) const {return angle(*this,v);} 
-#endif
+	//! Получить косинус угла между векторами. 
+	//! \note Быстрее чем angle().
+	rnum cosAngle(const Vector& v) const;
+	
+	//! Получить сумму векторов.
+	Vector operator + (const Vector& v) const; 
 
+	//! Получить разницу векторов.
+	Vector operator - (const Vector& v) const; 
 
-#ifdef PREBIKES_USE_TRANGLE	
-	static TrAngle angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
-#else
-	static rnum angle(const Vector &v1, const Vector &v2); // угол между двумя векторами
-#endif
+	//! Получить произведение вектора на число.
+	Vector operator * (rnum n) const; 
 
-	static bool isParallel(const Vector &v1, const Vector &v2); // v1,v2  прарллельны?
-	static rnum parallelDistance(const Vector &v1, const Vector &v2); // Найти расстояние между параллельными векторами. Если векторы не параллельны, то возвращается 0.
+	// Получить результат деления вектора на число.
+	Vector operator / (rnum n) const; 
 
-	static bool isRightVectors(Vector v1, Vector v2, Vector v3=Vector(0,0,1)); // правая тройка векторов?
+	//! Получить скалярное произведение двух векторов.
+	rnum   operator & (const Vector& v) const; 
 
+	//! Получить Векторное произведение двух вектор.
+	Vector operator * (const Vector& v) const; 
 
-	// Основные операторы:
-	Vector operator + (const Vector& v) const; // сложение двух векторов
-	Vector operator - (const Vector& v) const; // вычитание двух векторов
-	Vector operator * (rnum n) const; // умножение вектора на число
-	Vector operator / (rnum n) const; // деление вектора на число
-	rnum   operator & (const Vector& v) const; // скалярное произведение двух векторов
-	Vector operator * (const Vector& v) const; // векторное произведение двух вектор
+	//! Прибавить к данному вектору другой вектор.
+	Vector& operator += (const Vector& v); 
 
-	Vector& operator += (const Vector& v); // прибавить к данному вектору вектор v
-	Vector& operator -= (const Vector& v); // отнять от данного вектора вектор v
-	Vector& operator *= (rnum n); // изменить данный вектор, умножив его на n
+	//! Отнять от данного вектора  другой вектор.
+	Vector& operator -= (const Vector& v); 
+
+	//! Умножить данный вектор на число.
+	Vector& operator *= (rnum n); 
+
+	//! Разделить данный вектор на число.
+	Vector& operator /= (rnum n); 
+
+	//! Умножить векторно данный вектор на другой вектор.
 	Vector& operator *= (const Vector& v);
-	Vector& operator /= (rnum n); // изменить данный вектор, разделив его на n
-
-	Vector operator -() const; // возвращает (*this)*(-1)
-
-	bool operator ==(const Vector &v) const; // Правда, если проекции вектора v отличаются не более чем на METRIC_O
-	bool operator !=(const Vector &v) const; // Неправда если.. (см.выше)
 	
+	//! Получить веткор противоположный данному вектору. 
+	Vector operator -() const; 
+
+	//! Проверить на равенство другому вектору.
+	bool operator ==(const Vector &v) const; 
+
+	//! Проверить на неравенство другому вектору.
+	bool operator !=(const Vector &v) const; 
+	
+	//! Проверить на равенство заданной величине длины вектора. 
 	bool operator == (rnum l) const;
+
+	//! Проверить на неравенство заданной величине длины вектора. 
 	bool operator != (rnum l) const;
+
+	//! Проверить, что длина вектора строго меньше заданной величины.
 	bool operator <  (rnum l) const;
+
+	//! Проверить, что длина вектора меньше или равна заданной величине.
 	bool operator <= (rnum l) const;
+
+	//! Проверить, что длина вектора строго больше заданной величины.
 	bool operator >  (rnum l) const;
+
+	//! Проверить, что длина вектора больше или равна заданной величины.
 	bool operator >= (rnum l) const;
 
+	//! Поулчить угол между двумя векторами.
+	rnum operator ^ (const Vector &v) const;
+		
+	//! Проверить, что длина данного вектора строго больше длины другого вектора.
+	bool operator > (const Vector &v) const;
 
-	//	Vector operator +() const;
+	//! Проверить, что длина данного вектора строго меньше другого вектора.
+	bool operator < (const Vector &v) const;
 
-	// Дополнительные операторы:
-	Point operator % (const Vector &v) const;// возвращает Intersection(v)
-	bool operator || (const Vector &v) const;// возвращает isParallel(*this,v)
-	bool operator |=(const Vector &v) const; // возвращает isRightVectors(*this,v);
-	Basis operator && (const Vector &v) const;// возвращает OrtoBasis_ByIJ(*this,v)
-	Basis operator && (const Point &p) const;// возвращает OrtoBasis_ByIJ(*this,Vector(anchor,p))
+	//! Проверить, что длина данного вектора больше или равна длине другого вектора.
+	bool operator >= (const Vector &v) const;
 
-#ifdef PREBIKES_USE_TRANGLE
-	TrAngle operator ^ (const Vector &v) const;// возвращает Angle(v)
-#else
-	rnum operator ^ (const Vector &v) const;// возвращает Angle(v)
-#endif
-
-	Vector operator [] (const Basis &b) const;// возвращает inBasis(&b)
-	Vector operator [] (const Basis *b) const;// возвращает inBasis(b)
-	Vector& operator >> (const Basis &b);// возвращает SetBasis(&b)
-	Vector& operator >> (const Basis *b);// возвращает SetBasis(b)
-	Vector operator !() const;// возвращает Vector(true,*this,false).invert()
-	bool operator > (const Vector &v) const;// возвращает length()>v.length()
-	bool operator < (const Vector &v) const;// возвращает length()<v.length()
-
+	//! Проверить, что длина данного вектора меньше или равна длине другого вектора.
+	bool operator <= (const Vector &v) const;
 
 };
 
+
+//! Проверить правую тройку векторв.
 bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 );
+
+//! Проверить левую тройку векторв.
 bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 );
+
 
 }
 
