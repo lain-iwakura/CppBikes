@@ -96,6 +96,12 @@ public:
 		rnum localZ, //!< - проекция на ось ОZ
 		const Basis& b //!< - локальный базис
 		); 
+
+	//! Установить длину.
+	void setLength(rnum len);
+
+	//! Масштабировать
+	void scaling(rnum scaleFactor);
 	
 	//! Изменить проекцию на ось OX в собственном базисе.
 	virtual void setLocalX(rnum localX); 

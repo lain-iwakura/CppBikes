@@ -173,6 +173,25 @@ void Vector::normalize()
 #endif
 }
 //-----------------------------------------------------------------------------
+void Vector::setLength( rnum len )
+{
+	rnum cur_len=length();
+	if(cur_len != 0)
+	{
+		len /= cur_len;
+		gx *= len;
+		gy *= len;
+		gz *= len;
+	}
+}
+//-----------------------------------------------------------------------------
+void Vector::scaling( rnum scaleFactor )
+{
+	gx*=scaleFactor;
+	gy*=scaleFactor;
+	gz*=scaleFactor;
+}
+//-----------------------------------------------------------------------------
 void Vector::rotate_W( const Vector &w, rnum a )
 {
 	rnum wl = w.l();
