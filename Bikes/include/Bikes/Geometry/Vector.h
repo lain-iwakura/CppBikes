@@ -184,7 +184,7 @@ public:
 	Vector operator / (rnum n) const; 
 
 	//! Получить скалярное произведение двух векторов.
-	rnum   operator & (const Vector& v) const; 
+	rnum   operator % (const Vector& v) const; 
 
 	//! Получить Векторное произведение двух вектор.
 	Vector operator * (const Vector& v) const; 

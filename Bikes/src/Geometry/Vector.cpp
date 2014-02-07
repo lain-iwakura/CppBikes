@@ -4,7 +4,6 @@
 
 namespace Bikes
 {
-
 //=============================================================================
 Vector::Vector( rnum globalX /*= 0*/, rnum globalY /*= 0*/, rnum globalZ /*= 0*/ ):
 	gx(globalX),
@@ -300,7 +299,7 @@ Vector Vector::e() const
 //-----------------------------------------------------------------------------
 bool Vector::isCollinear( const Vector& v2, rnum cos_angleEpsilon ) const
 {
-	rnum c = ((*this) & v2) / ( length() * v2.length() );
+	rnum c = ((*this) % v2) / ( length() * v2.length() );
 	return c >= cos_AngleEpsilon || c <= -cos_AngleEpsilon;
 }
 //-----------------------------------------------------------------------------
@@ -352,7 +351,7 @@ Vector Vector::operator/( rnum n ) const
 	return Vector( gx/n, gy/n, gz/n);
 }
 //-----------------------------------------------------------------------------
-rnum Vector::operator&( const Vector &v ) const
+rnum Vector::operator%( const Vector &v ) const
 {
 	return v.gx*gx + v.gy*gy + v.gz*gz;
 }
@@ -497,15 +496,17 @@ bool Vector::operator>=( const Vector &v ) const
 	return length() >= v.length() - PREBIKES_VECTOR_EQUAL_EPSILON;
 #endif
 }
+
+
 //=============================================================================
 bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
-	return ((v1*v2)&v3) > 0;
+	return ((v1*v2)%v3) > 0;
 }
 //-----------------------------------------------------------------------------
 bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
-	return ((v1*v2)&v3) < 0;
+	return ((v1*v2)%v3) < 0;
 }
 
 //-----------------------------------------------------------------------------
