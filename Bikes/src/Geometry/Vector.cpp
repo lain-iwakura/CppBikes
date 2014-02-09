@@ -1,6 +1,6 @@
 #include <Bikes/Geometry/Vector.h>
 #include <Bikes/Geometry/Basis.h>
-#include <Bikes/Math/BasicMath.h>
+#include <Bikes/Math.h>
 
 namespace Bikes
 {
