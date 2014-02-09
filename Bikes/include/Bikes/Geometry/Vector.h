@@ -160,16 +160,16 @@ public:
 	//! ѕроверить на колиниарность другому вектору с заданной погрешностью.
 	bool isCollinear(
 		const Vector& v2, //!< - вектор, с которым сравниваем
-		rnum cos_angleEpsilon //!< - косинус максимально допустимого угла между векторами
+		cosnum cos_angleEpsilon //!< - косинус максимально допустимого угла между векторами
 		) const;
 	
 	//! ѕолучить угол между векторами.
 	//! \note ћедленнее чем cosAngle().
-	rnum angle(const Vector& v) const;
+	radian angle(const Vector& v) const;
 
 	//! ѕолучить косинус угла между векторами. 
 	//! \note Ѕыстрее чем angle().
-	rnum cosAngle(const Vector& v) const;
+	cosnum cosAngle(const Vector& v) const;
 	
 	//! ѕолучить сумму векторов.
 	Vector operator + (const Vector& v) const; 
@@ -232,7 +232,7 @@ public:
 	bool operator >= (rnum l) const;
 
 	//! ѕоулчить угол между двум€ векторами.
-	rnum operator ^ (const Vector &v) const;
+	radian operator ^ (const Vector &v) const;
 		
 	//! ѕроверить, что длина данного вектора строго больше длины другого вектора.
 	bool operator > (const Vector &v) const;
