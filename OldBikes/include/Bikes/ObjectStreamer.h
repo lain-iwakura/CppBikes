@@ -154,7 +154,7 @@ public:
       ChildTypeStreamer::read(bs,obj);
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
   void write(ByteStream &bs,const AbstractType* aobj) const
@@ -164,7 +164,7 @@ public:
       ChildTypeStreamer::write(bs,obj);
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
   AbstractType* newObject() const
@@ -206,7 +206,7 @@ public:
       //// Проверка совместимости(?):  должно быть сравнение имен типов(?)
     }else
     {
-      //TODO: exaption
+      //exception
     }
     */
     ByteArray bastr(100,10);
@@ -259,7 +259,7 @@ public:
 
       }else
       {
-        //TODO: exaption
+        //exception
       }
     }
     */
@@ -284,11 +284,11 @@ public:
         stre->write(bs,getP(ppAObj));
       }else
       {
-        //TODO: exaption
+        //exception
       }
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
 
@@ -434,7 +434,7 @@ public:
       curStr.reset(strCreators[it]->newObjectStreamer(obj));
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
 
@@ -447,7 +447,7 @@ public:
       curStr.reset(strCreators[it]->newObjectStreamer(obj));
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
 
@@ -458,7 +458,7 @@ public:
       curStr->read(bs);
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
 
@@ -469,7 +469,7 @@ public:
       curStr->write(bs);
     }else
     {
-      //TODO: exaption
+      //exception
     }
   }
 

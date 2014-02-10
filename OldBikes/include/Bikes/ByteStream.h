@@ -119,7 +119,7 @@ namespace Bikes
 			}else
 			{	
 				readValue(val);
-				//TODO: exaption
+				//exception
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace Bikes
 			}else
 			{
 				//?
-				//TODO: exaption
+				//exception
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace Bikes
 			}else
 			{
 				writeValue(val);
-				//TODO: exaption
+				//exception
 			}
 		}
 
