@@ -8,6 +8,7 @@ namespace Bikes
 
 class Basis;
 class Point;
+class TrAngle;
 
 //! Вектор в 3-х мерном пространстве.
 class Vector

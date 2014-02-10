@@ -1,6 +1,8 @@
 #include <Bikes/Geometry/Vector.h>
 #include <Bikes/Geometry/Basis.h>
-#include <Bikes/Math.h>
+#include <Bikes/Geometry/Point.h>
+#include <Bikes/BMath.h>
+
 
 namespace Bikes
 {
@@ -300,7 +302,7 @@ Vector Vector::e() const
 bool Vector::isCollinear( const Vector& v2, rnum cos_angleEpsilon ) const
 {
 	rnum c = ((*this) % v2) / ( length() * v2.length() );
-	return c >= cos_AngleEpsilon || c <= -cos_AngleEpsilon;
+	return c >= cos_angleEpsilon || c <= -cos_angleEpsilon;
 }
 //-----------------------------------------------------------------------------
 rnum Vector::angle( const Vector& v ) const
@@ -326,9 +328,9 @@ bool Vector::isEqual( const Vector&v ) const
 //-----------------------------------------------------------------------------
 bool Vector::isEqual( const Vector& v, rnum epsilon ) const
 {
-	return isEqual(v.gx, gx, epsilon)  
-		&& isEqual(v.gy, gy, epsilon) 
-		&& isEqual(v.gz, gz, epsilon);
+	return Bikes::isEqual(v.gx, gx, epsilon)  
+		&& Bikes::isEqual(v.gy, gy, epsilon) 
+		&& Bikes::isEqual(v.gz, gz, epsilon);
 }
 //=============================================================================
 Vector Vector::operator+( const Vector &v ) const
