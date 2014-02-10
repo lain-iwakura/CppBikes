@@ -1,4 +1,4 @@
-#ifndef INCLUDEBIKES_CONSTATNS_H
+#ifndef INCLUDEBIKES_CONSTANTS_H
 #define INCLUDEBIKES_CONSTANTS_H
 
 #include <Bikes/Types.h>
