@@ -35,6 +35,13 @@ namespace Bikes
 		ApproxMethod_max,
 		ApproxMethod_min        
 	};
+
+	enum ValSign
+	{
+		positiveSign,
+		negativeSign,
+		undefinedSign
+	};
 }
 
 #endif
