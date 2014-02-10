@@ -3,7 +3,6 @@
 
 #include <Bikes/Geometry/Vector.h>
 #include <Bikes/Geometry/VectorPair.h>
-#include <Bikes/Geometry/VectorTriple.h>
 #include <Bikes/Geometry/Point.h>
 #include <Bikes/Geometry/Basis.h>
 
