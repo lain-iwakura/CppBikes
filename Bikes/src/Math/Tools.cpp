@@ -70,7 +70,18 @@ rnum normAngle(rnum a)
 	return a;
 }
 
-rnum normAzimuthAngle(rnum a)
+
+void setNormAngle( radian& a )
+{
+	if(a>PI)
+		a -= intPart(a/PIm2 + 0.5)*PIm2;
+
+	else if(a<-PI)
+		a -= intPart(a/PIm2 - 0.5)*PIm2;
+}
+
+
+radian normAzimuthAngle(radian a)
 {
 	if(a > PIm2 || a < -PIm2)	
 		a -= intPart(a/(PIm2))*PIm2;
@@ -79,6 +90,15 @@ rnum normAzimuthAngle(rnum a)
 		a += PIm2;
 
 	return a;
+}
+
+void setNormAzimuthAngle(radian& a)
+{
+	if(a > PIm2 || a < -PIm2)	
+		a -= intPart(a/(PIm2))*PIm2;
+
+	if(a < 0.0) 
+		a += PIm2;	
 }
 
 rnum signum(rnum n)

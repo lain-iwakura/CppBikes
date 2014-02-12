@@ -13,7 +13,11 @@ rnum asinh(rnum a);
 
 radian normAngle(radian a);
 
+void setNormAngle(radian& a);
+
 radian normAzimuthAngle(radian a);
+
+void setNormAzimuthAngle(radian& a);
 
 rnum signum(rnum n);
 
