@@ -45,6 +45,15 @@ rnum normalDistribution(rnum x);
 
 
 template<class T>
+void setInRange(T& val, T val_min, T val_max)
+{
+	if(val<val_min) 
+		val = val_min;
+	else if(val>val_max) 
+		val = val_max;	
+}
+
+template<class T>
 T (MAX)(T x, T y)
 {
   if(x>y) return x;
