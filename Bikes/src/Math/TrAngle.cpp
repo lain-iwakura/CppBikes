@@ -152,4 +152,10 @@ Bikes::degree TrAngle::deg() const
 }
 
 
+void TrAngle::set( sinnum sin_ang, cosnum cos_ang )
+{
+	setCos(cos_ang,getSign(sin_ang));
+}
+
+
 }

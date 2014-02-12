@@ -113,6 +113,10 @@ namespace Bikes
 		virtual bool isGreater(const TrAngle& ang) const = 0;
 
 		virtual bool isGreaterOrEqual(const TrAngle& ang) const = 0;
+
+	protected:
+
+		virtual void set(sinnum sin_ang, cosnum cos_ang);		
 		
 	};
 
