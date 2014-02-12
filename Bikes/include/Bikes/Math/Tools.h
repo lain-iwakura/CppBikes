@@ -33,16 +33,36 @@ bool isEqual(rnum n1, rnum n2, rnum O = EQUAL_O);
 
 bool isEqualAngle(radian a1, radian a2, radian O = ANGLE_O);
 
-rnum not0 (rnum n, rnum o=RNUM_O);
+rnum not0 (rnum n, rnum O = RNUM_O);
 
-void not0Set(rnum& n, rnum o=RNUM_O);
+void setNot0(rnum& n, rnum O = RNUM_O);
 
-rnum notSmall(rnum n, rnum o=RNUM_O);
+rnum notSmall(rnum n, rnum O = RNUM_O);
 
-void notSmallSet(rnum& n, rnum o=RNUM_O);
+void setNotSmall(rnum& n, rnum O = RNUM_O);
 
 rnum normalDistribution(rnum x);
 
+
+template<class T>
+ValSign getSign(T val)
+{
+	if(val > 0)
+		return positiveSign;
+	if(val < 0)
+		return negativeSign;
+	return undefinedSign;
+}
+
+template<class T>
+T inRange(T val, T val_min, T val_max)
+{
+	if(val<val_min) 
+		return val_min;
+	if(val>val_max) 
+		return val_max;
+	return val;
+}
 
 template<class T>
 void setInRange(T& val, T val_min, T val_max)
@@ -56,7 +76,8 @@ void setInRange(T& val, T val_min, T val_max)
 template<class T>
 T (MAX)(T x, T y)
 {
-  if(x>y) return x;
+  if(x>y) 
+	  return x;
   return y;
 }
 
@@ -113,22 +134,16 @@ T (AVG)(T x1, T x2, T x3, T x4)
 template<class T>
 T (ABS)(T val)
 {
-  if(val<0) return -val;
+  if(val<0) 
+	  return -val;
   return val;
 }
 
-template<class T>
-T inRange(T val, T val_min, T val_max)
-{
-  if(val<val_min) val=val_min;
-  else if(val>val_max) val=val_max;
-  return val;
-}
 
 template<class T>
 T intPart(T val)
 {
-  return static_cast<long long>(val);
+  return T( static_cast<long long>(val) );
 }
 
 

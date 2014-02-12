@@ -40,13 +40,13 @@ rnum notSmall(rnum n, rnum o/* =RNUM_O */)
 	return n;
 }
 
-void not0Set(rnum& n, rnum o/* =RNUM_O */)
+void setNot0(rnum& n, rnum o/* =RNUM_O */)
 {
 	if(n == 0.0)
 		n = o;
 }
 
-void notSmallSet(rnum& n, rnum o/* =RNUM_O */)
+void setNotSmall(rnum& n, rnum o/* =RNUM_O */)
 {
 	if(n < 0.0)
 	{
