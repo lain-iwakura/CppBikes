@@ -72,15 +72,17 @@ namespace Bikes
 
 		virtual cosnum cos() const = 0;
 
-		virtual tannum tan() const = 0;
+		virtual tannum tan() const;
 
 		virtual radian rad() const = 0;
 
 		virtual degree deg() const;
 
-		virtual void set(const TrAngle& ang) = 0;
+		virtual void set(const TrAngle& ang); //= 0;
 
-		virtual void setRad(radian ang) = 0;		
+		virtual void setRad(radian ang) = 0;
+
+		virtual void setDeg(degree ang);
 
 		virtual void setSin(sinnum sin_ang, ValSign cosSign = positiveSign) = 0;
 

@@ -1,5 +1,6 @@
 #include <Bikes/Math/TrAngle.h>
 #include <Bikes/Math/Tools.h>
+#include <Bikes/Math/SoftTrAngle.h>
 
 
 namespace Bikes
@@ -151,10 +152,24 @@ Bikes::degree TrAngle::deg() const
 	return RAD_to_DEG(rad());
 }
 
+void TrAngle::setDeg( degree ang )
+{
+	setRad(DEG_to_RAD(ang));
+}
 
 void TrAngle::set( sinnum sin_ang, cosnum cos_ang )
 {
 	setCos(cos_ang,getSign(sin_ang));
+}
+
+void TrAngle::set( const TrAngle& ang )
+{
+	set(ang.sin(),ang.cos());
+}
+
+Bikes::tannum TrAngle::tan() const
+{
+	return sin()/cos();
 }
 
 
