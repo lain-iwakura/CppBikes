@@ -4,7 +4,7 @@
 #include <Bikes/Math/Constants.h>
 
 
-namespace Bikes
+namespace Bikes                 
 {
 
 	class SoftTrAngle;
@@ -16,57 +16,58 @@ namespace Bikes
 
 		virtual ~TrAngle();
 
-		operator radian () const;
 
-		TrAngle& operator = (const TrAngle& ang);
+ 
+        operator radian () const;
 
-		TrAngle& operator = (radian ang);
+        TrAngle& operator = (const TrAngle& ang);
 
-		TrAngle& operator += (const TrAngle& ang);
+        TrAngle& operator = (radian ang);
 
-		TrAngle& operator += (radian ang);
+        TrAngle& operator += (const TrAngle& ang);
 
-		TrAngle& operator -= (const TrAngle& ang);
+        TrAngle& operator += (radian ang);
 
-		TrAngle& operator -= (radian ang);
+        TrAngle& operator -= (const TrAngle& ang);
 
-		TrAngle& operator *= (rnum m);
+        TrAngle& operator -= (radian ang);
 
-		TrAngle& operator /= (rnum m);
+        TrAngle& operator *= (rnum m);
 
-		SoftTrAngle operator + (const TrAngle& ang) const;
+        TrAngle& operator /= (rnum m);
 
-		radian operator + (radian ang) const;
+        SoftTrAngle operator + (const TrAngle& ang) const;
 
-		SoftTrAngle operator - (const TrAngle& ang) const;
+        radian operator + (radian ang) const;
 
-		radian operator - (radian ang) const;
+        SoftTrAngle operator - (const TrAngle& ang) const;
 
-		SoftTrAngle operator * (rnum m) const;
+        radian operator - (radian ang) const;
 
-		SoftTrAngle operator / (rnum m) const;
+        SoftTrAngle operator * (rnum m) const;
 
-		bool operator == (const TrAngle& ang) const;
+        SoftTrAngle operator / (rnum m) const;
 
-		bool operator == (radian ang) const;
+        bool operator == (const TrAngle& ang) const;
 
-		bool operator < (const TrAngle& ang) const;
+        bool operator == (radian ang) const;
 
-		bool operator < (radian ang) const;
+        bool operator < (const TrAngle& ang) const;
 
-		bool operator <= (const TrAngle& ang) const;
+        bool operator < (radian ang) const;
 
-		bool operator <= (radian ang) const;
+        bool operator <= (const TrAngle& ang) const;
 
-		bool operator > (const TrAngle& ang) const;
+        bool operator <= (radian ang) const;
 
-		bool operator > (radian ang) const;
+        bool operator > (const TrAngle& ang) const;
 
-		bool operator >= (const TrAngle& ang) const;
+        bool operator > (radian ang) const;
 
-		bool operator >= (radian ang) const;
+        bool operator >= (const TrAngle& ang) const;
 
-		
+		bool operator >= (radian ang) const;                                
+
 
 		virtual sinnum sin() const = 0;
 
@@ -88,34 +89,38 @@ namespace Bikes
 
 		virtual void setCos(sinnum cos_ang, ValSign sinSign = positiveSign) = 0;
 
-		virtual void setTan(tannum tan_ang, ValSign cosSign = positiveSign) = 0;
+		virtual void setTan(tannum tan_ang, ValSign cosSign = positiveSign);
 
 		virtual SoftTrAngle getSum(const TrAngle& ang) const = 0;		
 
-		virtual void setSum(const TrAngle& ang) = 0;
+		virtual TrAngle& getSumAndSet(const TrAngle& ang) = 0;
 
 		virtual SoftTrAngle getDifference(const TrAngle& ang) const = 0;
 
-		virtual void setDifference(const TrAngle& ang) = 0;
+		virtual TrAngle& getDifferenceAndSet(const TrAngle& ang) = 0;
 
-		virtual SoftTrAngle getProduct(rnum m) const = 0;
+		virtual SoftTrAngle getProduct(rnum m) const;
 
-		virtual void setProduct(rnum m) = 0;
+        virtual SoftTrAngle getProduct(num n) const;
+
+		virtual TrAngle& getProductAndSet(rnum m);
+
+        virtual TrAngle& getProductAndSet(num n);
 
 		virtual SoftTrAngle getNegative() const = 0;
 
 		virtual void setNegative() = 0;
 
-		virtual bool isEqual(const TrAngle& ang) const = 0; 
+		virtual bool isEqual(const TrAngle& ang) const; 
 
-		virtual bool isLess(const TrAngle& ang) const = 0;
+		virtual bool isLess(const TrAngle& ang) const;
 
-		virtual bool isLessOrEqual(const TrAngle& ang) const = 0;
+		virtual bool isLessOrEqual(const TrAngle& ang) const;
 
-		virtual bool isGreater(const TrAngle& ang) const = 0;
+		virtual bool isGreater(const TrAngle& ang) const;
 
-		virtual bool isGreaterOrEqual(const TrAngle& ang) const = 0;
-
+		virtual bool isGreaterOrEqual(const TrAngle& ang) const;
+        
 	protected:
 
 		virtual void set(sinnum sin_ang, cosnum cos_ang);		
