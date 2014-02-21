@@ -8,8 +8,57 @@
 namespace Bikes
 {
 
+class BaseSequence;
+
 template<class T>
-class SequenceElement
+class Sequence;
+
+class BaseSequenceElement
+{
+public:
+
+    virtual ~BaseSequenceElement();
+
+    virtual sznum getIndex() const = 0;
+
+    virtual const BaseSequence* getSequence() const = 0;
+    
+protected:
+
+    virtual void sequenceElementWillBeChanged(sznum iEl)
+    {
+    }
+
+    virtual void sequenceElementChanged(sznum iEl)
+    {
+    }
+
+    virtual void sequenceElementAdded(sznum iEl)
+    {
+    }
+
+    virtual void sequenceElementWillBeRemoved(sznum iEl)
+    {
+    }
+
+    virtual void inserted()
+    {
+    }
+
+    virtual void willBePassed()
+    {
+    }
+
+    void willBeChanged();
+
+    void changed();
+
+    friend class InnerSequence;
+};
+
+
+template<class T>
+class SequenceElement : public BaseSequenceElement
 {
 public:
 
@@ -34,6 +83,11 @@ public:
         return _seq;
     }
 
+//     const BaseSequence* getBaseSequence() const
+//     {
+//         return _seq;
+//     }
+
     const T* getRight() const
     {
         if (_seq && _iEl < _sec->size() - 1)
@@ -49,49 +103,14 @@ public:
     }
 
 
-protected:
-
-
-    virtual void sequenceElementWillBeChanged(const T& el)
-    {
-    }
-
-    virtual void sequenceElementChanged(const T& el)
-    {
-    }
-
-    virtual void sequenceElementWillBeAdded(const T& el)
-    {
-    }
-
-    virtual void sequenceElementAdded(const T& el)
-    {
-    }
-
-    virtual void sequenceElementWillBeRemoved(const T& el)
-    {
-    }
-
-    virtual void sequenceElementRemoved(const T& el)
-    {
-    }
-
-
-    void willBeChanged()
-    {
-        _seq->elementWillBeChanged(_iEl);
-    }
-    
-    void changed() 
-    {
-        _seq->elementChanged(_iEl);
-    }
 
 private:
-    sznum _iEl;
-    const Sequence<T>* _seq;
+    Sequence<T>* _seq;
+    sznum _iEl;    
+    
+    friend class Sequence<T>;
 
-    friend class BaseSequence;
+    
 };
 
 }
