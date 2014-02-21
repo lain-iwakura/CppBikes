@@ -1,31 +1,27 @@
-#include <bikes/SequenceElement.h>
-
+#include <Bikes/SequenceElement.h>
+#include <Bikes/Sequence.h>
 
 namespace Bikes
 {
-       
+    
+BaseSequenceElement::~BaseSequenceElement()
+{
+}
 
-
-    SequenceElement::SequenceElement() :
-        _iEl(0),
-        _seq(0)
+void BaseSequenceElement::willBeChanged()
+{
+    if (const BaseSequence* seq = getSequence())
     {
-
+        seq->elementWillBeChanged(getIndex());
     }
+}
 
-    SequenceElement::~SequenceElement()
+void BaseSequenceElement::changed()
+{
+    if (const BaseSequence* seq = getSequence())
     {
-        //?
+        seq->elementChanged(getIndex());
     }
-
-    Bikes::sznum SequenceElement::getIndex() const
-    {
-        return _iEl;
-    }
-
-    const Sequence* SequenceElement::getSequence() const
-    {
-        return _seq;
-    }
+}
 
 }
