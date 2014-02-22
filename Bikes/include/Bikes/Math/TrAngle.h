@@ -8,6 +8,7 @@ namespace Bikes
 {
 
 	class SoftTrAngle;
+    class HardTrAngle;
 
 
 	class TrAngle
@@ -91,13 +92,29 @@ namespace Bikes
 
 		virtual void setTan(tannum tan_ang, ValSign cosSign = positiveSign);
 
-		virtual SoftTrAngle getSum(const TrAngle& ang) const = 0;		
+		virtual SoftTrAngle getSum(const TrAngle& ang) const;	
+
+        virtual SoftTrAngle getSum(const HardTrAngle& ang) const;	
+
+        virtual SoftTrAngle getSum(const SoftTrAngle& ang) const;	
 
 		virtual TrAngle& getSumAndSet(const TrAngle& ang) = 0;
 
-		virtual SoftTrAngle getDifference(const TrAngle& ang) const = 0;
+        virtual TrAngle& getSumAndSet(const HardTrAngle& ang);
+
+        virtual TrAngle& getSumAndSet(const SoftTrAngle& ang);
+
+		virtual SoftTrAngle getDifference(const TrAngle& ang) const;
+
+        virtual SoftTrAngle getDifference(const HardTrAngle& ang) const;
+
+        virtual SoftTrAngle getDifference(const SoftTrAngle& ang) const;
 
 		virtual TrAngle& getDifferenceAndSet(const TrAngle& ang) = 0;
+
+        virtual TrAngle& getDifferenceAndSet(const HardTrAngle& ang);
+
+        virtual TrAngle& getDifferenceAndSet(const SoftTrAngle& ang);
 
 		virtual SoftTrAngle getProduct(rnum m) const;
 

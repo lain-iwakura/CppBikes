@@ -203,4 +203,62 @@ TrAngle& TrAngle::getProductAndSet( num n )
 }
 
 
+
+Bikes::SoftTrAngle TrAngle::getSum( const TrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getSumAndSet(ang);
+}
+
+Bikes::SoftTrAngle TrAngle::getSum( const SoftTrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getSumAndSet(ang);
+}
+
+Bikes::SoftTrAngle TrAngle::getSum( const HardTrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getSumAndSet(ang);
+}
+
+TrAngle& TrAngle::getSumAndSet( const HardTrAngle& ang )
+{
+    return getSumAndSet(static_cast<const TrAngle&>(ang));
+}
+
+TrAngle& TrAngle::getSumAndSet( const SoftTrAngle& ang )
+{
+    return getSumAndSet(static_cast<const TrAngle&>(ang));
+}
+
+Bikes::SoftTrAngle TrAngle::getDifference( const TrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getDifferenceAndSet(ang);
+}
+
+Bikes::SoftTrAngle TrAngle::getDifference( const HardTrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getDifferenceAndSet(ang);
+}
+
+Bikes::SoftTrAngle TrAngle::getDifference( const SoftTrAngle& ang ) const
+{
+    SoftTrAngle ra(*this);
+    return ra.getDifferenceAndSet(ang);
+}
+
+TrAngle& TrAngle::getDifferenceAndSet( const HardTrAngle& ang )
+{
+    return getDifferenceAndSet(static_cast<const TrAngle&>(ang));
+}
+
+TrAngle& TrAngle::getDifferenceAndSet( const SoftTrAngle& ang )
+{
+    return getDifferenceAndSet(static_cast<const TrAngle&>(ang));
+}
+
+
 }
