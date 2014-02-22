@@ -1,103 +1,124 @@
 #ifndef INCLUDEBIKES_SOFTTRANGLE_H
-#define INCLUDEBIKES_SOFTTRANGEL_H
+#define INCLUDEBIKES_SOFTTRANGLE_H
 
 #include <Bikes/Math/TrAngle.h>
 
 namespace Bikes
 {
 
+class HardTrAngle;
 
-class SoftTrAngle: TrAngle
+class SoftTrAngle: public TrAngle
 {
-
 public:
 
-	enum MData
-	{
-		MD_NULL		=	0,
-		MD_SINCALC	=	1<<0,
-		MD_COSCALC	=	1<<1,
-		MD_TANCALC	=	1<<2,
-		MD_RADCALC	=	1<<3,
-		MD_SINM		=	1<<4,
-		MD_COSM		=	1<<5,
-		MD_TRCALC	=	1<<6,
-		MD_RESERVED	=	1<<7,
+    SoftTrAngle();
 
-		MD_NSINCALC	=	0xFF^MD_SINCALC,
-		MD_NCOSCALC	=	0xFF^MD_COSCALC,
-		MD_NTANCALC	=	0xFF^MD_TANCALC,
-		MD_NRADCALC	=	0xFF^MD_RADCALC,
-		MD_NSINM	=	0xFF^MD_SINM,			
-		MD_NCOSM	=	0xFF^MD_COSM,			
-		MD_NTRCALC	=	0xFF^MD_TRCALC,
-		MD_NRESERVED=	0xFF^MD_RESERVED,
+    SoftTrAngle(radian ang);
 
-		MD_ALLDEF	=	MD_SINCALC|MD_COSCALC|MD_TANCALC|MD_RADCALC|MD_TRCALC
-	};
+    SoftTrAngle(cosnum cos_ang, ValSign sinSign);
 
+    SoftTrAngle(const SoftTrAngle& ang);
 
+    SoftTrAngle(const HardTrAngle& ang);
 
-	SoftTrAngle(rnum rad_val, rnum sin_val, rnum cos_val, rnum tan_val, char mdat=MD_ALLDEF);
-	SoftTrAngle(rnum cos_val, bool sin_negative);
-	SoftTrAngle(rnum rad_val);		
-	SoftTrAngle();
+    sinnum sin() const;
 
-	operator rnum (){return rad();}
-	operator SoftTrAngle*(){return this;}
-	SoftTrAngle & operator = (rnum ang_rad) {setRad(ang_rad); return *this;}
+    cosnum cos() const;
 
-	void operator += (SoftTrAngle &ta);
-	void operator -= (SoftTrAngle &ta);
-	SoftTrAngle operator + (SoftTrAngle &ta);
-	SoftTrAngle operator - (SoftTrAngle &ta);
-	void operator += (const HardTrAngle &ta);
-	void operator -= (const HardTrAngle &ta);
-	SoftTrAngle operator + (const HardTrAngle &ta);
-	SoftTrAngle operator - (const HardTrAngle &ta);
-	SoftTrAngle operator-();
+    tannum tan() const;
 
-	bool operator > (SoftTrAngle &ta);  //-
-	bool operator < (SoftTrAngle &ta);  //-
+    radian rad() const;
 
-	void operator += (rnum ang_rad);
-	void operator -= (rnum ang_rad);		
+    //virtual degree deg() const;
 
-	bool operator < (rnum ang_rad);
-	bool operator <= (rnum ang_rad);
-	bool operator > (rnum ang_rad);
-	bool operator >= (rnum ang_rad);
+    void set(const TrAngle& ang); //= 0;
 
+    void set(const SoftTrAngle& ang);
 
+    void set(const HardTrAngle& ang);
 
-	void setCos(rnum cos_val, bool sin_negative=false);
-	void setSin(rnum sin_val, bool cos_negative=false);
-	void setTan(rnum tan_val, bool cos_negative=false);
-	void setRad(rnum rad);
-	void setDeg(rnum deg);
+    void setRad(radian ang);
 
+    //virtual void setDeg(degree ang);
 
-	rnum sin();
-	rnum cos();
-	rnum tg();
-	rnum tan();
-	rnum ctg();
-	rnum rad();
-	rnum deg();
+    void setSin(sinnum sin_ang, ValSign cosSign = positiveSign);
 
-	rnum sSin();
-	rnum sCos();
+    void setCos(sinnum cos_ang, ValSign sinSign = positiveSign);
 
-	void trCalc();
+    void setTan(tannum tan_ang, ValSign cosSign = positiveSign);
+
+    SoftTrAngle getSum(const TrAngle& ang) const;
+
+    SoftTrAngle getSum(const SoftTrAngle& ang) const;
+
+    SoftTrAngle getSum(const HardTrAngle& ang) const;
+
+    SoftTrAngle& getSumAndSet(const TrAngle& ang);
+
+    SoftTrAngle& getSumAndSet(const SoftTrAngle& ang);
+
+    SoftTrAngle& getSumAndSet(const HardTrAngle& ang);
+
+    SoftTrAngle getDifference(const TrAngle& ang) const ;
+
+    SoftTrAngle getDifference(const SoftTrAngle& ang) const ;
+
+    SoftTrAngle getDifference(const HardTrAngle& ang) const ;
+
+    SoftTrAngle& getDifferenceAndSet(const TrAngle& ang);
+
+    SoftTrAngle& getDifferenceAndSet(const SoftTrAngle& ang);
+
+    SoftTrAngle& getDifferenceAndSet(const HardTrAngle& ang);
+
+//    SoftTrAngle getProduct(rnum m) const;
+
+   // SoftTrAngle getProduct(num n) const;
+
+//    HardTrAngle& getProductAndSet(rnum m);
+
+  //  HardTrAngle& getProductAndSet(num n);
+
+    SoftTrAngle getNegative() const;
+
+    void setNegative();
+
+    //virtual bool isEqual(const TrAngle& ang) const; 
+
+    //virtual bool isLess(const TrAngle& ang) const;
+
+    //virtual bool isLessOrEqual(const TrAngle& ang) const;
+
+    //virtual bool isGreater(const TrAngle& ang) const;
+
+    //virtual bool isGreaterOrEqual(const TrAngle& ang) const;
+
 
 private:
 
-	char _mdat;
+    SoftTrAngle(rnum rad, rnum sin, rnum cos);
+
+    void _calcRad();
+    void _calcSin();
+    void _calcCos();
+    void _calcTan();
+
+    void _trSum(sinnum s2, cosnum c2);
+
+    void _trDif(sinnum s2, cosnum c2);
+
+	rnum _rad;
 	rnum _sin;
 	rnum _cos;
 	rnum _tan;
-	rnum _rad;
-	SoftTrAngle *_dirtyThis;
+
+    char _state;
+
+	SoftTrAngle *_dirty;
+
+    friend class TrAngle;
+    friend class HardTrAngle;
 };
 
 }
