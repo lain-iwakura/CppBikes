@@ -7,6 +7,8 @@
 namespace Bikes
 {
 
+class SoftTrAngle;
+
 class HardTrAngle: public TrAngle
 {
 public:
@@ -23,13 +25,13 @@ public:
 
     cosnum cos() const;
 
-    //virtual tannum tan() const;
+    //tannum tan() const;
 
-    virtual radian rad() const;
+    radian rad() const;
 
     //virtual degree deg() const;
 
-    virtual void set(const TrAngle& ang); //= 0;
+    void set(const TrAngle& ang); //= 0;
 
     void setRad(radian ang);
 
@@ -51,11 +53,9 @@ public:
 
     SoftTrAngle getProduct(rnum m) const;
 
-    SoftTrAngle getProduct(num n) const;
 
     HardTrAngle& getProductAndSet(rnum m);
 
-    HardTrAngle& getProductAndSet(num n);
 
     SoftTrAngle getNegative() const;
 
@@ -82,6 +82,8 @@ private:
     rnum _rad;
     rnum _sin;
     rnum _cos;
+
+    friend class SoftTrAngle;
 };
 
 }

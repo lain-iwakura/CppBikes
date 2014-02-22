@@ -158,10 +158,6 @@ Bikes::SoftTrAngle HardTrAngle::getProduct( rnum m ) const
     return SoftTrAngle(m*_rad);
 }
 
-Bikes::SoftTrAngle HardTrAngle::getProduct( num n ) const
-{
-
-}
 
 HardTrAngle& HardTrAngle::getProductAndSet( rnum m )
 {    
@@ -170,7 +166,6 @@ HardTrAngle& HardTrAngle::getProductAndSet( rnum m )
 }
 
 
-typedef void (*nGetProductAndSet)(HardTrAngle& ang, num n);
 // 
 // template< num n>
 // void tGetProductAndSet(HardTrAngle& ang)
@@ -179,21 +174,6 @@ typedef void (*nGetProductAndSet)(HardTrAngle& ang, num n);
 // }
 
 
-HardTrAngle& HardTrAngle::getProductAndSet( num n )
-{
-    if(n<0)
-    {
-
-    }else if(n == 0)
-    {
-    }else if(n == 1)
-    {
-    }else if(n == 2)
-    {
-
-    }
-    return *this;
-}
 
 Bikes::SoftTrAngle HardTrAngle::getNegative() const
 {
