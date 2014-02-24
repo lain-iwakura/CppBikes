@@ -123,9 +123,9 @@ public:
             el->_iEl = n;
             _arr.push_back(el);
 
-            INNERBIKES_SEQUENCE_ACTION(sequenceElementAdded,n)
-
             call_inserted(el);
+
+            INNERBIKES_SEQUENCE_ACTION(sequenceElementInserted,n)            
         }
     }
 
@@ -146,9 +146,10 @@ public:
 
             _arr.insert(_arr.begin()+iEl, el);
                         
-            INNERBIKES_SEQUENCE_ACTION(sequenceElementAdded, iEl)
-
             call_inserted(el);
+
+            INNERBIKES_SEQUENCE_ACTION(sequenceElementInserted, iEl)
+            
         }
     }
 
