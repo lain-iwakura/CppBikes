@@ -25,9 +25,9 @@ void InnerSequence::call_sequenceElementWillBeRemoved(BaseSequenceElement* el, s
     el->sequenceElementWillBeRemoved(ich);
 }
 
-void InnerSequence::call_sequenceElementAdded(BaseSequenceElement* el, sznum ich) const
+void InnerSequence::call_sequenceElementInserted(BaseSequenceElement* el, sznum ich) const
 {
-    el->sequenceElementAdded(ich);
+    el->sequenceElementInserted(ich);
 }
 
 void InnerSequence::call_inserted(BaseSequenceElement* el)
@@ -35,9 +35,9 @@ void InnerSequence::call_inserted(BaseSequenceElement* el)
     el->inserted();
 }
 
-void InnerSequence::call_willBePassed(BaseSequenceElement* el)
+void InnerSequence::call_willBeRemoved(BaseSequenceElement* el)
 {
-    el->willBePassed();
+    el->willBeRemoved();
 }
 
 

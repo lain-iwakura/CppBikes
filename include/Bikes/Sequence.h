@@ -38,11 +38,11 @@ protected:
 
     void call_sequenceElementWillBeRemoved(BaseSequenceElement* el, sznum ich) const;
 
-    void call_sequenceElementAdded(BaseSequenceElement* el, sznum ich) const;
+    void call_sequenceElementInserted(BaseSequenceElement* el, sznum ich) const;
 
     void call_inserted(BaseSequenceElement* el);
 
-    void call_willBePassed(BaseSequenceElement* el);
+    void call_willBeRemoved(BaseSequenceElement* el);
 
 
 };
@@ -160,7 +160,7 @@ public:
 
             INNERBIKES_SEQUENCE_ACTION(sequenceElementWillBeRemoved, iEl)
 
-            call_willBePassed(el);
+            call_willBeRemoved(el);
                 
             el->_iEl = 0;
             el->_seq = 0;
@@ -224,7 +224,7 @@ protected:
     {
     }
 
-    virtual void sequenceElementAdded(sznum ich) const
+    virtual void sequenceElementInserted(sznum ich) const
     {
     }
 

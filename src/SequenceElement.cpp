@@ -8,7 +8,7 @@ BaseSequenceElement::~BaseSequenceElement()
 {
 }
 
-void BaseSequenceElement::willBeChanged()
+void BaseSequenceElement::startChanging()
 {
     if (const BaseSequence* seq = getSequence())
     {
@@ -16,7 +16,7 @@ void BaseSequenceElement::willBeChanged()
     }
 }
 
-void BaseSequenceElement::changed()
+void BaseSequenceElement::endChanging()
 {
     if (const BaseSequence* seq = getSequence())
     {

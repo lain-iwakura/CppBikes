@@ -33,7 +33,7 @@ protected:
     {
     }
 
-    virtual void sequenceElementAdded(sznum iEl)
+    virtual void sequenceElementInserted(sznum iEl)
     {
     }
 
@@ -45,13 +45,13 @@ protected:
     {
     }
 
-    virtual void willBePassed()
+    virtual void willBeRemoved()
     {
     }
 
-    void willBeChanged();
+    void startChanging();
 
-    void changed();
+    void endChanging();
 
     friend class InnerSequence;
 };
@@ -82,11 +82,6 @@ public:
     {
         return _seq;
     }
-
-//     const BaseSequence* getBaseSequence() const
-//     {
-//         return _seq;
-//     }
 
     const T* getRight() const
     {
