@@ -3,15 +3,12 @@
 
 
 #include <Bikes/Types.h>
+#include <Bikes/Sequence.h>
 
 
 namespace Bikes
 {
 
-class BaseSequence;
-
-template<class T>
-class Sequence;
 
 class BaseSequenceElement
 {
