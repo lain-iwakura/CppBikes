@@ -204,6 +204,17 @@ public:
         return *_arr[iEl];
     }
 
+    T& at(sznum iEl)
+    {
+        return *_arr[iEl];
+    }
+
+    const T& at(sznum iEl) const
+    {
+        return *_arr[iEl];
+    }
+
+
     const std::vector<T*>& data() const
     {
         return _arr;
