@@ -19,7 +19,9 @@ public:
     virtual sznum getIndex() const = 0;
 
     virtual const BaseSequence* getSequence() const = 0;
-    
+
+
+   
 protected:
 
     virtual void sequenceElementWillBeChanged(sznum iEl)
@@ -55,17 +57,19 @@ protected:
 
 
 template<class T>
-class SequenceElement : public BaseSequenceElement
+class AbstractSequenceElement : public BaseSequenceElement
 {
 public:
 
-    SequenceElement() :
+    typedef Sequence<T> MySequence;
+
+    AbstractSequenceElement():
         _iEl(0),
         _seq(0)
     {
     }
 
-    virtual ~SequenceElement()
+    virtual ~AbstractSequenceElement()
     {
         //?
     }
@@ -94,16 +98,39 @@ public:
         return 0;
     }
 
-
+    const T* getAt(sznum iEl) const
+    {
+        if (_seq && iEl < _seq->size())
+            return &(_seq->at(iEl));
+        return 0;
+    }
+    
+    virtual T* clone() const = 0;
 
 private:
     Sequence<T>* _seq;
     sznum _iEl;    
     
-    friend class Sequence<T>;
-
-    
+    friend class Sequence<T>;    
 };
+
+template<class T>
+class SequenceElement : public AbstractSequenceElement<T>
+{
+public:
+
+    virtual ~SequenceElement()
+    {
+    }
+
+    virtual T* clone() const
+    {
+        if (const T* el = dynamic_cast<const T*>(this))
+            return new T(*el);
+        return 0;
+    }
+};
+
 
 }
 

@@ -7,6 +7,7 @@
 namespace Bikes
 {
 
+
 class BaseSequenceElement;
 
 class BaseSequence
@@ -65,7 +66,7 @@ public:
     Sequence(const Sequence<T>& seq)
     {
         for (sznum i = 0; i < seq._arr.size(); i++)
-            take(new T(*seq._arr[i]));
+            take(cloneElement(*seq._arr[i]));
     }
 
     virtual ~Sequence()
@@ -78,13 +79,13 @@ public:
     {
         clear();
         for (sznum i = 0; i < seq._arr.size(); i++)
-            take(new T(*seq._arr[i]));
+            take(cloneElement(*seq._arr[i]));
         return *this;
     }
 
     Sequence<T>& operator += (const T& el)
     {
-        take(new T(el));
+        take(cloneElement(el));
         return *this;
     }
 
@@ -97,18 +98,18 @@ public:
     Sequence<T>& operator += (const Sequence<T>& seq)
     {
         for (sznum i = 0; i < seq._arr.size(); i++)
-            take(new T(*seq._arr[i]));
+            take(cloneElement(*seq._arr[i]));
         return *this;
     }
 
     void push_back(const T& el)
     {   
-        take(new T(el));
+        take(cloneElement(el));
     }
 
     void insert(const T& el, sznum iEl)
     {
-        take(new T(el), iEl);
+        take(cloneElement(el), iEl);
     }
 
     void take(T *el)
@@ -240,6 +241,11 @@ protected:
     {
     }
 
+
+    virtual T* cloneElement(const T& obj) const
+    {
+        return obj.clone();
+    }
     
 private:
 
@@ -255,8 +261,12 @@ private:
             INNERBIKES_SEQUENCE_ACTION(sequenceElementChanged, ich)
     }
 
+  
     std::vector<T*> _arr;
 };
+
+
+
 
 }
 
