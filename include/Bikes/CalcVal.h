@@ -22,8 +22,6 @@ namespace Bikes
 		operator T() const { return val_;}
 		operator T&() {calc_=true; return val_;}
 		operator const T&() const {return val_;}		
-		operator bool(){return calc_;}
-		bool operator !(){return !calc_;}
 
 		T& operator = (T v) {calc_=true; val_=v; return val_;}
 		T& operator += (T v) {val_+=v; return val_;}
