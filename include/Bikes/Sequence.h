@@ -215,6 +215,25 @@ public:
         return *_arr[iEl];
     }
 
+    T& first()
+    {
+        return *_arr.front();
+    }
+
+    T& last()
+    {
+        return *_arr.back();
+    }
+
+    const T& first() const
+    {
+        return *_arr.front();
+    }
+
+    const T& last() const
+    {
+        return *_arr.back();
+    }
 
     const std::vector<T*>& data() const
     {
