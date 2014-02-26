@@ -5,9 +5,6 @@
 namespace Bikes
 {
 
-
-
-
 HardTrAngle::HardTrAngle():
     _sin(0.0),
     _cos(1.0),
@@ -40,11 +37,12 @@ Bikes::radian HardTrAngle::rad() const
     return _rad;
 }
 
-void HardTrAngle::set( const TrAngle& ang )
+HardTrAngle& HardTrAngle::operator=( const TrAngle& ang )
 {
     _sin = ang.sin();
     _cos = ang.cos();
     _rad = ang.rad();
+    return *this;
 }
 
 void HardTrAngle::setRad( radian ang )
@@ -101,19 +99,7 @@ void HardTrAngle::setTan( tannum tan_ang, ValSign cosSign /*= positiveSign*/ )
     }
 }
 
-Bikes::SoftTrAngle HardTrAngle::getSum( const TrAngle& ang ) const
-{
-    rnum s = ang.sin();
-    rnum c = ang.cos();    
-
-    return SoftTrAngle(
-        _rad + ang.rad(),
-        _sin*c + _cos*_sin,
-        _cos*c - _sin*s
-        );
-}
-
-HardTrAngle& HardTrAngle::getSumAndSet( const TrAngle& ang )
+HardTrAngle& HardTrAngle::operator+=( const TrAngle& ang )
 {
     _rad += ang.rad();
     
@@ -127,19 +113,8 @@ HardTrAngle& HardTrAngle::getSumAndSet( const TrAngle& ang )
     return *this;
 }
 
-Bikes::SoftTrAngle HardTrAngle::getDifference( const TrAngle& ang ) const
-{ 
-    rnum s = ang.sin();
-    rnum c = ang.cos();    
 
-    return SoftTrAngle(
-        _rad - ang.rad(),
-        _sin*c - _cos*s,
-        _cos*c + _sin*s
-        );
-}
-
-HardTrAngle& HardTrAngle::getDifferenceAndSet( const TrAngle& ang )
+HardTrAngle& HardTrAngle::operator-=( const TrAngle& ang )
 {
     _rad -= ang.rad();
 
@@ -153,37 +128,24 @@ HardTrAngle& HardTrAngle::getDifferenceAndSet( const TrAngle& ang )
     return *this;
 }
 
-Bikes::SoftTrAngle HardTrAngle::getProduct( rnum m ) const
-{
-    return SoftTrAngle(m*_rad);
-}
 
-
-HardTrAngle& HardTrAngle::getProductAndSet( rnum m )
+HardTrAngle& HardTrAngle::operator*=( rnum m )
 {    
     setRad(m*_rad);
     return *this;
 }
 
 
-// 
-// template< num n>
-// void tGetProductAndSet(HardTrAngle& ang)
-// {
-//     ang.getProductAndSet(rnum(n));
-// }
-
-
-
-Bikes::SoftTrAngle HardTrAngle::getNegative() const
-{
-    return SoftTrAngle(-_rad,-_sin,_cos);
-}
-
-void HardTrAngle::setNegative()
+HardTrAngle& HardTrAngle::setNegative()
 {
     _rad = -_rad;
     _sin = -_sin;
+    return *this;
+}
+
+HardTrAngle* HardTrAngle::clone() const
+{
+    return new HardTrAngle(*this);
 }
 
 }

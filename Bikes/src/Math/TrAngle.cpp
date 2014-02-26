@@ -5,22 +5,23 @@
 namespace Bikes
 {
 
-
 TrAngle::~TrAngle()
 {
 }
-
-
 
 TrAngle::operator radian() const
 {
     return rad();
 }
 
-TrAngle& TrAngle::operator=( const TrAngle& ang )
+TrAngle& TrAngle::operator=( const HardTrAngle& ang )
 {
-    set(ang);
-    return *this;
+    return *this = static_cast<const TrAngle& >(ang);
+}
+
+TrAngle& TrAngle::operator=( const SoftTrAngle& ang )
+{
+    return *this = static_cast<const TrAngle& >(ang);
 }
 
 TrAngle& TrAngle::operator=( radian ang )
@@ -29,11 +30,6 @@ TrAngle& TrAngle::operator=( radian ang )
     return *this;
 }
 
-TrAngle& TrAngle::operator+=( const TrAngle& ang )
-{
-    getSumAndSet(ang);
-    return *this;
-}
 
 TrAngle& TrAngle::operator+=( radian ang )
 {
@@ -41,10 +37,17 @@ TrAngle& TrAngle::operator+=( radian ang )
     return *this;
 }
 
-TrAngle& TrAngle::operator-=( const TrAngle& ang )
+TrAngle& TrAngle::operator+=( const HardTrAngle& ang )
 {
-    return getDifferenceAndSet(ang);    
+    return *this += static_cast<const TrAngle& >(ang);
 }
+
+TrAngle& TrAngle::operator+=( const SoftTrAngle& ang )
+{
+    return *this += static_cast<const TrAngle& >(ang);
+}
+
+
 
 TrAngle& TrAngle::operator-=( radian ang )
 {
@@ -52,21 +55,44 @@ TrAngle& TrAngle::operator-=( radian ang )
     return *this;
 }
 
+TrAngle& TrAngle::operator-=( const HardTrAngle& ang )
+{
+    return *this -= static_cast<const TrAngle& >(ang);
+}
+
+TrAngle& TrAngle::operator-=( const SoftTrAngle& ang )
+{
+    return *this -= static_cast<const TrAngle& >(ang);
+}
+
+
 TrAngle& TrAngle::operator*=( rnum m )
 {
-    return getProductAndSet(m);    
+    setRad(rad()*m);
+    return *this;
+}
+
+TrAngle& TrAngle::operator*=( lnum n )
+{
+    return *this *= rnum(n);
 }
 
 TrAngle& TrAngle::operator/=( rnum m )
 {
     if(m!=0)
-        return getProductAndSet(1.0/m);
+        return *this *= 1.0/m;
     return *this;
+}
+
+TrAngle& TrAngle::operator/=( lnum n )
+{
+    return *this /= rnum(n);
 }
 
 SoftTrAngle TrAngle::operator+( const TrAngle& ang ) const
 {
-    return getSum(ang);
+    SoftTrAngle r(*this);
+    return r += ang;
 }
 
 radian TrAngle::operator+( radian ang ) const
@@ -74,9 +100,22 @@ radian TrAngle::operator+( radian ang ) const
     return rad() + ang;
 }
 
+Bikes::SoftTrAngle TrAngle::operator+( const HardTrAngle& ang ) const
+{
+    SoftTrAngle r(*this);
+    return r += ang;
+}
+
+Bikes::SoftTrAngle TrAngle::operator+( const SoftTrAngle& ang ) const
+{
+    SoftTrAngle r(ang);
+    return r += *this;
+}
+
 SoftTrAngle TrAngle::operator-( const TrAngle& ang ) const
 {
-    return getDifference(ang);
+    SoftTrAngle r(*this);
+    return r -= ang;
 }
 
 radian TrAngle::operator-( radian ang ) const
@@ -84,21 +123,46 @@ radian TrAngle::operator-( radian ang ) const
     return rad() - ang;
 }
 
+Bikes::SoftTrAngle TrAngle::operator-( const HardTrAngle& ang ) const
+{
+    SoftTrAngle r(*this);
+    return r -= ang;
+}
+
+Bikes::SoftTrAngle TrAngle::operator-( const SoftTrAngle& ang ) const
+{
+    SoftTrAngle r(ang);
+    return (r -= *this).setNegative();
+}
+
+
 SoftTrAngle TrAngle::operator*( rnum m ) const
 {
-    return getProduct(m);
+    SoftTrAngle r(*this);
+    return r *= m;
+}
+
+Bikes::SoftTrAngle TrAngle::operator*( lnum n ) const
+{
+    SoftTrAngle r(*this);
+    return r *= n;
 }
 
 SoftTrAngle TrAngle::operator/( rnum m ) const
 {
-    if(m!=0)
-        return getProduct(1.0/m);
-    return SoftTrAngle(*this);
+    SoftTrAngle r(*this);
+    return r /= m;    
+}
+
+Bikes::SoftTrAngle TrAngle::operator/( lnum n ) const
+{
+    SoftTrAngle r(*this);
+    return r /= n;    
 }
 
 bool TrAngle::operator==( const TrAngle& ang ) const
 {
-    return isEqual(ang);
+    return rad() == ang.rad();
 }
 
 bool TrAngle::operator==( radian ang ) const
@@ -108,7 +172,7 @@ bool TrAngle::operator==( radian ang ) const
 
 bool TrAngle::operator<( const TrAngle& ang ) const
 {
-    return isLess(ang);
+    return rad() < ang.rad();
 }
 
 bool TrAngle::operator<( radian ang ) const
@@ -118,7 +182,7 @@ bool TrAngle::operator<( radian ang ) const
 
 bool TrAngle::operator<=( const TrAngle& ang ) const
 {
-    return isLessOrEqual(ang);
+    return rad() <= ang.rad();
 }
 
 bool TrAngle::operator<=( radian ang ) const
@@ -126,9 +190,10 @@ bool TrAngle::operator<=( radian ang ) const
     return rad() <= ang;
 }
 
+
 bool TrAngle::operator>( const TrAngle& ang ) const
 {
-    return isGreater(ang);
+    return rad() > ang.rad();
 }
 
 bool TrAngle::operator>( radian ang ) const
@@ -138,7 +203,7 @@ bool TrAngle::operator>( radian ang ) const
 
 bool TrAngle::operator>=( const TrAngle& ang ) const
 {
-    return isGreaterOrEqual(ang);
+    return rad() >= ang.rad();
 }
 
 bool TrAngle::operator>=( radian ang ) const
@@ -161,10 +226,6 @@ void TrAngle::set( sinnum sin_ang, cosnum cos_ang )
 	setCos(cos_ang,getSign(sin_ang));
 }
 
-void TrAngle::set( const TrAngle& ang )
-{
-	set(ang.sin(),ang.cos());
-}
 
 tannum TrAngle::tan() const
 {
@@ -181,84 +242,13 @@ void TrAngle::setTan( tannum tan_ang, ValSign cosSign /*= positiveSign*/ )
     setCos(c,getSign(c*tan_ang));
 }
 
-Bikes::SoftTrAngle TrAngle::getProduct( rnum m ) const
+SoftTrAngle TrAngle::operator-() const
 {
-    return SoftTrAngle(rad()*m);
-}
-
-Bikes::SoftTrAngle TrAngle::getProduct( num n ) const
-{
-    return getProduct( rnum(n) );
-}
-
-TrAngle& TrAngle::getProductAndSet( rnum m )
-{
-    setRad(rad()*m);
-    return *this;
-}
-
-TrAngle& TrAngle::getProductAndSet( num n )
-{
-    return getProductAndSet( rnum(n) );
+    SoftTrAngle r(*this);
+    return r.setNegative();
 }
 
 
-
-Bikes::SoftTrAngle TrAngle::getSum( const TrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-}
-
-Bikes::SoftTrAngle TrAngle::getSum( const SoftTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-}
-
-Bikes::SoftTrAngle TrAngle::getSum( const HardTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-}
-
-TrAngle& TrAngle::getSumAndSet( const HardTrAngle& ang )
-{
-    return getSumAndSet(static_cast<const TrAngle&>(ang));
-}
-
-TrAngle& TrAngle::getSumAndSet( const SoftTrAngle& ang )
-{
-    return getSumAndSet(static_cast<const TrAngle&>(ang));
-}
-
-Bikes::SoftTrAngle TrAngle::getDifference( const TrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
-
-Bikes::SoftTrAngle TrAngle::getDifference( const HardTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
-
-Bikes::SoftTrAngle TrAngle::getDifference( const SoftTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
-
-TrAngle& TrAngle::getDifferenceAndSet( const HardTrAngle& ang )
-{
-    return getDifferenceAndSet(static_cast<const TrAngle&>(ang));
-}
-
-TrAngle& TrAngle::getDifferenceAndSet( const SoftTrAngle& ang )
-{
-    return getDifferenceAndSet(static_cast<const TrAngle&>(ang));
-}
 
 
 }

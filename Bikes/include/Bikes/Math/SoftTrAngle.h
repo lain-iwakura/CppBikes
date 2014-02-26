@@ -30,17 +30,13 @@ public:
 
     radian rad() const;
 
-    //virtual degree deg() const;
+    SoftTrAngle& operator=(const TrAngle& ang); //= 0;
 
-    void set(const TrAngle& ang); //= 0;
+    SoftTrAngle& operator=(const SoftTrAngle& ang);
 
-    void set(const SoftTrAngle& ang);
-
-    void set(const HardTrAngle& ang);
+    SoftTrAngle& operator=(const HardTrAngle& ang);
 
     void setRad(radian ang);
-
-    //virtual void setDeg(degree ang);
 
     void setSin(sinnum sin_ang, ValSign cosSign = positiveSign);
 
@@ -48,51 +44,21 @@ public:
 
     void setTan(tannum tan_ang, ValSign cosSign = positiveSign);
 
-    SoftTrAngle getSum(const TrAngle& ang) const;
+    SoftTrAngle& operator+=(const TrAngle& ang);
 
-    SoftTrAngle getSum(const SoftTrAngle& ang) const;
+    SoftTrAngle& operator+=(const SoftTrAngle& ang);
 
-    SoftTrAngle getSum(const HardTrAngle& ang) const;
+    SoftTrAngle& operator+=(const HardTrAngle& ang);
 
-    SoftTrAngle& getSumAndSet(const TrAngle& ang);
+    SoftTrAngle& operator-=(const TrAngle& ang);
 
-    SoftTrAngle& getSumAndSet(const SoftTrAngle& ang);
+    SoftTrAngle& operator-=(const SoftTrAngle& ang);
 
-    SoftTrAngle& getSumAndSet(const HardTrAngle& ang);
+    SoftTrAngle& operator-=(const HardTrAngle& ang);
 
-    SoftTrAngle getDifference(const TrAngle& ang) const ;
+    SoftTrAngle&  setNegative();
 
-    SoftTrAngle getDifference(const SoftTrAngle& ang) const ;
-
-    SoftTrAngle getDifference(const HardTrAngle& ang) const ;
-
-    SoftTrAngle& getDifferenceAndSet(const TrAngle& ang);
-
-    SoftTrAngle& getDifferenceAndSet(const SoftTrAngle& ang);
-
-    SoftTrAngle& getDifferenceAndSet(const HardTrAngle& ang);
-
-//    SoftTrAngle getProduct(rnum m) const;
-
-   // SoftTrAngle getProduct(num n) const;
-
-//    HardTrAngle& getProductAndSet(rnum m);
-
-  //  HardTrAngle& getProductAndSet(num n);
-
-    SoftTrAngle getNegative() const;
-
-    void setNegative();
-
-    //virtual bool isEqual(const TrAngle& ang) const; 
-
-    //virtual bool isLess(const TrAngle& ang) const;
-
-    //virtual bool isLessOrEqual(const TrAngle& ang) const;
-
-    //virtual bool isGreater(const TrAngle& ang) const;
-
-    //virtual bool isGreaterOrEqual(const TrAngle& ang) const;
+    SoftTrAngle* clone() const;
 
 
 private:

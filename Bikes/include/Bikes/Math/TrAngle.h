@@ -10,65 +10,91 @@ namespace Bikes
 	class SoftTrAngle;
     class HardTrAngle;
 
-
 	class TrAngle
 	{
 	public:
 
 		virtual ~TrAngle();
-
-
  
         operator radian () const;
 
-        TrAngle& operator = (const TrAngle& ang);
+        virtual TrAngle& operator = (const TrAngle& ang) = 0;
 
-        TrAngle& operator = (radian ang);
+        virtual TrAngle& operator = (const HardTrAngle& ang);
 
-        TrAngle& operator += (const TrAngle& ang);
+        virtual TrAngle& operator = (const SoftTrAngle& ang);
 
-        TrAngle& operator += (radian ang);
+        virtual TrAngle& operator = (radian ang);
 
-        TrAngle& operator -= (const TrAngle& ang);
+        virtual TrAngle& operator += (const TrAngle& ang) = 0;
 
-        TrAngle& operator -= (radian ang);
+        virtual TrAngle& operator += (const HardTrAngle& ang);
 
-        TrAngle& operator *= (rnum m);
+        virtual TrAngle& operator += (const SoftTrAngle& ang);
 
-        TrAngle& operator /= (rnum m);
+        virtual TrAngle& operator += (radian ang);
 
-        SoftTrAngle operator + (const TrAngle& ang) const;
+        virtual TrAngle& operator -= (const TrAngle& ang) = 0;
+
+        virtual TrAngle& operator -= (const HardTrAngle& ang);
+
+        virtual TrAngle& operator -= (const SoftTrAngle& ang);
+
+        virtual TrAngle& operator -= (radian ang);
+
+        virtual TrAngle& operator *= (rnum m);
+
+        virtual TrAngle& operator *= (lnum n);
+
+        virtual TrAngle& operator /= (rnum m);
+
+        virtual TrAngle& operator /= (lnum n);
+
+        virtual SoftTrAngle operator + (const TrAngle& ang) const;
+
+        virtual SoftTrAngle operator + (const HardTrAngle& ang) const;
+
+        virtual SoftTrAngle operator + (const SoftTrAngle& ang) const;
 
         radian operator + (radian ang) const;
 
-        SoftTrAngle operator - (const TrAngle& ang) const;
+        virtual SoftTrAngle operator - (const TrAngle& ang) const;
+
+        virtual SoftTrAngle operator - (const HardTrAngle& ang) const;
+
+        virtual SoftTrAngle operator - (const SoftTrAngle& ang) const;
 
         radian operator - (radian ang) const;
 
-        SoftTrAngle operator * (rnum m) const;
+        virtual SoftTrAngle operator * (rnum m) const;
 
-        SoftTrAngle operator / (rnum m) const;
+        virtual SoftTrAngle operator * (lnum n) const;
 
-        bool operator == (const TrAngle& ang) const;
+        virtual SoftTrAngle operator / (rnum m) const;
+
+        virtual SoftTrAngle operator / (lnum n) const;
+
+        virtual bool operator == (const TrAngle& ang) const;
 
         bool operator == (radian ang) const;
 
-        bool operator < (const TrAngle& ang) const;
+        virtual bool operator < (const TrAngle& ang) const;
 
         bool operator < (radian ang) const;
 
-        bool operator <= (const TrAngle& ang) const;
+        virtual bool operator <= (const TrAngle& ang) const;
 
         bool operator <= (radian ang) const;
 
-        bool operator > (const TrAngle& ang) const;
+        virtual bool operator > (const TrAngle& ang) const;
 
         bool operator > (radian ang) const;
 
-        bool operator >= (const TrAngle& ang) const;
+        virtual bool operator >= (const TrAngle& ang) const;
 
-		bool operator >= (radian ang) const;                                
+		bool operator >= (radian ang) const;       
 
+        virtual SoftTrAngle operator-() const;
 
 		virtual sinnum sin() const = 0;
 
@@ -80,8 +106,6 @@ namespace Bikes
 
 		virtual degree deg() const;
 
-		virtual void set(const TrAngle& ang); //= 0;
-
 		virtual void setRad(radian ang) = 0;
 
 		virtual void setDeg(degree ang);
@@ -92,55 +116,13 @@ namespace Bikes
 
 		virtual void setTan(tannum tan_ang, ValSign cosSign = positiveSign);
 
-		virtual SoftTrAngle getSum(const TrAngle& ang) const;	
+		virtual TrAngle& setNegative() = 0;
 
-        virtual SoftTrAngle getSum(const HardTrAngle& ang) const;	
-
-        virtual SoftTrAngle getSum(const SoftTrAngle& ang) const;	
-
-		virtual TrAngle& getSumAndSet(const TrAngle& ang) = 0;
-
-        virtual TrAngle& getSumAndSet(const HardTrAngle& ang);
-
-        virtual TrAngle& getSumAndSet(const SoftTrAngle& ang);
-
-		virtual SoftTrAngle getDifference(const TrAngle& ang) const;
-
-        virtual SoftTrAngle getDifference(const HardTrAngle& ang) const;
-
-        virtual SoftTrAngle getDifference(const SoftTrAngle& ang) const;
-
-		virtual TrAngle& getDifferenceAndSet(const TrAngle& ang) = 0;
-
-        virtual TrAngle& getDifferenceAndSet(const HardTrAngle& ang);
-
-        virtual TrAngle& getDifferenceAndSet(const SoftTrAngle& ang);
-
-		virtual SoftTrAngle getProduct(rnum m) const;
-
-        virtual SoftTrAngle getProduct(num n) const;
-
-		virtual TrAngle& getProductAndSet(rnum m);
-
-        virtual TrAngle& getProductAndSet(num n);
-
-		virtual SoftTrAngle getNegative() const = 0;
-
-		virtual void setNegative() = 0;
-
-		virtual bool isEqual(const TrAngle& ang) const; 
-
-		virtual bool isLess(const TrAngle& ang) const;
-
-		virtual bool isLessOrEqual(const TrAngle& ang) const;
-
-		virtual bool isGreater(const TrAngle& ang) const;
-
-		virtual bool isGreaterOrEqual(const TrAngle& ang) const;
+        virtual TrAngle* clone() const = 0;
         
 	protected:
 
-		virtual void set(sinnum sin_ang, cosnum cos_ang);		
+		virtual void set(sinnum sin_ang, cosnum cos_ang); // (???)		
 		
 	};
 

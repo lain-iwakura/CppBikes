@@ -308,12 +308,12 @@ void SoftTrAngle::setTan( tannum tan_ang, ValSign cosSign /*= positiveSign*/ )
 }
 
 
-void SoftTrAngle::set( const TrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator=( const TrAngle& ang )
 {
-    if(const SoftTrAngle* sang = dynamic_cast<const SoftTrAngle*>(&ang))
-    {
-        set(*sang);
-    }else
+//     if(const SoftTrAngle* sang = dynamic_cast<const SoftTrAngle*>(&ang))
+//     {
+//         return *this = (*sang);
+//     }else
     {
         _rad = ang.rad();
         _sin = ang.sin();
@@ -325,18 +325,21 @@ void SoftTrAngle::set( const TrAngle& ang )
         if(_cos<0)
             _state |= cosM;
     }
+
+    return *this;
 }
 
-void SoftTrAngle::set( const SoftTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator=( const SoftTrAngle& ang )
 {
     _rad = ang._rad;
     _sin = ang._sin;
     _cos = ang._cos;
     _tan = ang._tan;
     _state = ang._state;
+    return *this;
 }
 
-void SoftTrAngle::set( const HardTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator=( const HardTrAngle& ang )
 {
     _rad = ang._rad;
     _sin = ang._sin;
@@ -347,34 +350,16 @@ void SoftTrAngle::set( const HardTrAngle& ang )
         _state |= sinM;
     if(_cos < 0)
         _state |= cosM;
+    return *this;
 }
 
 
-Bikes::SoftTrAngle SoftTrAngle::getSum( const TrAngle& ang ) const
+SoftTrAngle& SoftTrAngle::operator+=( const TrAngle& ang )
 {
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-}
-
-Bikes::SoftTrAngle SoftTrAngle::getSum( const SoftTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-}
-
-Bikes::SoftTrAngle SoftTrAngle::getSum( const HardTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getSumAndSet(ang);
-    
-}
-
-SoftTrAngle& SoftTrAngle::getSumAndSet( const TrAngle& ang )
-{
-    if(const SoftTrAngle* sa = dynamic_cast<const SoftTrAngle*>(&ang))
-    {
-        return getSumAndSet(*sa);
-    }else
+//     if(const SoftTrAngle* sa = dynamic_cast<const SoftTrAngle*>(&ang))
+//     {
+//         return *this+=(*sa);
+//     }else
     {
         if(_state&radCalc)
             _rad += ang.rad();
@@ -386,7 +371,7 @@ SoftTrAngle& SoftTrAngle::getSumAndSet( const TrAngle& ang )
     return *this;
 }
 
-SoftTrAngle& SoftTrAngle::getSumAndSet( const SoftTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator+=( const SoftTrAngle& ang )
 {
     if(_state&radCalc)
     {
@@ -412,7 +397,7 @@ SoftTrAngle& SoftTrAngle::getSumAndSet( const SoftTrAngle& ang )
     return *this;
 }
 
-SoftTrAngle& SoftTrAngle::getSumAndSet( const HardTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator+=( const HardTrAngle& ang )
 {
     if(_state&radCalc)
         _rad += ang._rad;
@@ -423,30 +408,13 @@ SoftTrAngle& SoftTrAngle::getSumAndSet( const HardTrAngle& ang )
     return *this;
 }
 
-Bikes::SoftTrAngle SoftTrAngle::getDifference( const TrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
 
-Bikes::SoftTrAngle SoftTrAngle::getDifference( const SoftTrAngle& ang ) const
+SoftTrAngle& SoftTrAngle::operator-=( const TrAngle& ang )
 {
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
-
-Bikes::SoftTrAngle SoftTrAngle::getDifference( const HardTrAngle& ang ) const
-{
-    SoftTrAngle ra(*this);
-    return ra.getDifferenceAndSet(ang);
-}
-
-SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const TrAngle& ang )
-{
-    if(const SoftTrAngle* sa = dynamic_cast<const SoftTrAngle*>(&ang))
-    {
-        return getDifferenceAndSet(*sa);
-    }else
+//     if(const SoftTrAngle* sa = dynamic_cast<const SoftTrAngle*>(&ang))
+//     {
+//         return this+=(*sa);
+//     }else
     {
         if(_state&radCalc)
             _rad -= ang.rad();
@@ -458,7 +426,7 @@ SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const TrAngle& ang )
     return *this;
 }
 
-SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const SoftTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator-=( const SoftTrAngle& ang )
 {
     if(_state&radCalc)
     {
@@ -484,7 +452,7 @@ SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const SoftTrAngle& ang )
     return *this;
 }
 
-SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const HardTrAngle& ang )
+SoftTrAngle& SoftTrAngle::operator-=( const HardTrAngle& ang )
 {
     if(_state&radCalc)
         _rad -= ang._rad;
@@ -495,14 +463,7 @@ SoftTrAngle& SoftTrAngle::getDifferenceAndSet( const HardTrAngle& ang )
     return *this;
 }
 
-Bikes::SoftTrAngle SoftTrAngle::getNegative() const
-{
-    SoftTrAngle ra(*this);
-    ra.setNegative();
-    return ra;
-}
-
-void SoftTrAngle::setNegative()
+SoftTrAngle& SoftTrAngle::setNegative()
 {
     _sin = -_sin;
 
@@ -512,7 +473,7 @@ void SoftTrAngle::setNegative()
         _state |= sinM;
         
     _rad = -_rad;
-    
+    return *this;
 }
 
 void SoftTrAngle::_trSum( sinnum s2, cosnum c2 )
@@ -555,6 +516,11 @@ void SoftTrAngle::_trDif( sinnum s2, cosnum c2 )
         _state |= cosM;
     else
         _state &= noCosM;
+}
+
+SoftTrAngle* SoftTrAngle::clone() const
+{
+    return new SoftTrAngle(*this);
 }
 
 
