@@ -1,6 +1,6 @@
-#include <Bikes/Geometry/BasisObject.h>
-#include <Bikes/Geometry/BasisReference.h>
-#include <Bikes/Geometry/Basis.h>
+#include <Bikes/Geom/BasisObject.h>
+#include <Bikes/Geom/BasisReference.h>
+#include <Bikes/Geom/Basis.h>
 
 
 namespace Bikes

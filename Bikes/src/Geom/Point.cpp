@@ -1,4 +1,4 @@
-#include <Bikes/Geometry/Point.h>
+#include <Bikes/Geom/Point.h>
 
 namespace Bikes
 {

@@ -1,4 +1,4 @@
-#include <Bikes/Geometry/VectorPair.h>
+#include <Bikes/Geom/VectorPair.h>
 
 namespace Bikes
 {

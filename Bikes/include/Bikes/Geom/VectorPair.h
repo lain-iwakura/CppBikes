@@ -1,7 +1,7 @@
 #ifndef INCLUDEBIKES_VECTORPAIR_H
 #define INCLUDEBIKES_VECTORPAIR_H
 
-#include <Bikes/Geometry/Vector.h>
+#include <Bikes/Geom/Vector.h>
 
 namespace Bikes
 {

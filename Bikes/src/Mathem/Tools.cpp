@@ -1,6 +1,5 @@
+#include <Bikes/Mathem/Tools.h>
 #include <math.h>
-#include <Bikes/Math/Tools.h>
-
 
 namespace Bikes
 {

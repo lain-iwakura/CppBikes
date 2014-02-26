@@ -1,4 +1,4 @@
-#include <Bikes/Geometry/BasisReference.h>
+#include <Bikes/Geom/BasisReference.h>
 
 namespace Bikes
 {

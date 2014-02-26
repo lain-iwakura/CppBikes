@@ -1,8 +1,8 @@
 #ifndef INCLUDEBIKES_VECTORTRIPLE_H
 #define INCLUDEBIKES_VECTORTRIPLE_H
 
-#include <Bikes/Geometry/Vector.h>
-#include <Bikes/Geometry/VectorPair.h>
+#include <Bikes/Geom/Vector.h>
+#include <Bikes/Geom/VectorPair.h>
 
 namespace Bikes
 {

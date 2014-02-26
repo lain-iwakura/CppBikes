@@ -1,7 +1,7 @@
-#include <Bikes/Geometry/Vector.h>
-#include <Bikes/Geometry/Basis.h>
-#include <Bikes/Geometry/Point.h>
-#include <Bikes/BMath.h>
+#include <Bikes/Geom/Vector.h>
+#include <Bikes/Geom/Basis.h>
+#include <Bikes/Geom/Point.h>
+#include <Bikes/Mathem.h>
 
 
 namespace Bikes

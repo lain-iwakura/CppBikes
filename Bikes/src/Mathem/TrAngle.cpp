@@ -1,5 +1,5 @@
-#include <Bikes/Math/TrAngle.h>
-#include <Bikes/BMath.h>
+#include <Bikes/Mathem/TrAngle.h>
+#include <Bikes/Mathem.h>
 
 
 namespace Bikes

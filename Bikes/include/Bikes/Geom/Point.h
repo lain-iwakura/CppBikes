@@ -1,6 +1,6 @@
 #ifndef INCLUDEBIKES_POINT_H
 #define INCLUDEBIKES_POINT_H
-#include <Bikes/Geometry/Vector.h>
+#include <Bikes/Geom/Vector.h>
 
 namespace Bikes
 {

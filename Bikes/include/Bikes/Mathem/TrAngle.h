@@ -1,7 +1,7 @@
 #ifndef INCLUDEBIKES_TRANGLE_H
 #define INCLUDEBIKES_TRANGLE_H
 
-#include <Bikes/Math/Constants.h>
+#include <Bikes/Mathem/Constants.h>
 
 namespace Bikes                 
 {

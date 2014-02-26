@@ -1,5 +1,5 @@
-#include <Geometry/Basis.h>
-#include <Geometry/VectorPair.h>
+#include <Geom/Basis.h>
+#include <Geom/VectorPair.h>
 
 namespace Bikes
 {

@@ -1,7 +1,7 @@
 #ifndef INCLUDEBIKES_HARDTRANGLE_H
 #define INCLUDEBIKES_HARDTRANGLE_H
 
-#include <Bikes/Math/TrAngle.h>
+#include <Bikes/Mathem/TrAngle.h>
 
 namespace Bikes
 {

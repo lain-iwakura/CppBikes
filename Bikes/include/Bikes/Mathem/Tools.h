@@ -1,7 +1,7 @@
 #ifndef INCLUDEBIKES_TOOLS_H
 #define INCLUDEBIKES_TOOLS_H
 
-#include <Bikes/Math/Constants.h>
+#include <Bikes/Mathem/Constants.h>
 
 
 namespace Bikes
