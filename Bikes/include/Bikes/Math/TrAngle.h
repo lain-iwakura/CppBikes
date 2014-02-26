@@ -3,7 +3,6 @@
 
 #include <Bikes/Math/Constants.h>
 
-
 namespace Bikes                 
 {
 
@@ -137,7 +136,7 @@ namespace Bikes
 
 	inline degree deg(const TrAngle &ta) {return ta.deg();}
 
-}
 
+}
 
 #endif

@@ -87,5 +87,16 @@ private:
     friend class HardTrAngle;
 };
 
+inline sinnum sin(const SoftTrAngle &ta) {return ta.sin();}
+
+inline cosnum cos(const SoftTrAngle &ta) {return ta.cos();}
+
+inline tannum tan(const SoftTrAngle &ta) {return ta.tan();}
+
+inline radian rad(const SoftTrAngle &ta) {return ta.rad();}
+
+inline degree deg(const SoftTrAngle &ta) {return ta.deg();}
+
 }
+
 #endif

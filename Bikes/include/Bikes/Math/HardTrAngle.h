@@ -3,7 +3,6 @@
 
 #include <Bikes/Math/TrAngle.h>
 
-
 namespace Bikes
 {
 
@@ -54,6 +53,16 @@ private:
 
     friend class SoftTrAngle;
 };
+
+inline sinnum sin(const HardTrAngle &ta) {return ta.sin();}
+
+inline cosnum cos(const HardTrAngle &ta) {return ta.cos();}
+
+inline tannum tan(const HardTrAngle &ta) {return ta.tan();}
+
+inline radian rad(const HardTrAngle &ta) {return ta.rad();}
+
+inline degree deg(const HardTrAngle &ta) {return ta.deg();}
 
 }
 
