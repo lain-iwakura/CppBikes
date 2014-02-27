@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_VECTOR_H
-#define INCLUDEBIKES_VECTOR_H
+#ifndef INCLUDE_BIKES_GEOM_VECTOR_H
+#define INCLUDE_BIKES_GEOM_VECTOR_H
 
 #include <Bikes/Types.h>
 
@@ -259,4 +259,4 @@ bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 );
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_GEOM_VECTOR_H

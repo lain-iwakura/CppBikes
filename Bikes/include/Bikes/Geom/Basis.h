@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_VECTORTRIPLE_H
-#define INCLUDEBIKES_VECTORTRIPLE_H
+#ifndef INCLUDE_BIKES_GEOM_BASIS_H
+#define INCLUDE_BIKES_GEOM_BASIS_H
 
 #include <Bikes/Geom/Vector.h>
 #include <Bikes/Geom/VectorPair.h>
@@ -45,4 +45,4 @@ public:
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_GEOM_BASIS_H

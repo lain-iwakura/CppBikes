@@ -1,7 +1,8 @@
-#ifndef INCLUDEBIKES_CONSTANTS_H
-#define INCLUDEBIKES_CONSTANTS_H
+#ifndef INCLUDE_BIKES_MATHEM_CONSTANTS_H
+#define INCLUDE_BIKES_MATHEM_CONSTANTS_H
 
 #include <Bikes/Types.h>
+
 
 #define CONSTBIKES_PI       3.1415926535897932384626433832795  // (double) 3.1415926535897932
 
@@ -52,4 +53,4 @@ namespace Bikes
 	const rnum PI3d2 = PId2*3.0;
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_CONSTANTS_H

@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_HARDTRANGLE_H
-#define INCLUDEBIKES_HARDTRANGLE_H
+#ifndef INCLUDE_BIKES_MATHEM_HARDTRANGLE_H
+#define INCLUDE_BIKES_MATHEM_HARDTRANGLE_H
 
 #include <Bikes/Mathem/TrAngle.h>
 
@@ -66,4 +66,4 @@ inline degree deg(const HardTrAngle &ta) {return ta.deg();}
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_HARDTRANGLE_H

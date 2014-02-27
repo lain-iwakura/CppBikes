@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_VECTORPAIR_H
-#define INCLUDEBIKES_VECTORPAIR_H
+#ifndef INCLUDE_BIKES_GEOM_VECTORPAIR_H
+#define INCLUDE_BIKES_GEOM_VECTORPAIR_H
 
 #include <Bikes/Geom/Vector.h>
 
@@ -22,4 +22,4 @@ public:
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_GEOM_VECTORPAIR_H

@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_TOOLS_H
-#define INCLUDEBIKES_TOOLS_H
+#ifndef INCLUDE_BIKES_MATHEM_TOOLS_H
+#define INCLUDE_BIKES_MATHEM_TOOLS_H
 
 #include <Bikes/Mathem/Constants.h>
 
@@ -179,4 +179,4 @@ public:
 #endif // BIKES_DEV_MATHFUNCTION
 // <- DEV 
 }
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_TOOLS_H

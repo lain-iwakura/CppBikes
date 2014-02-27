@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_SOFTTRANGLE_H
-#define INCLUDEBIKES_SOFTTRANGLE_H
+#ifndef INCLUDE_BIKES_MATHEM_SOFTTRANGLE_H
+#define INCLUDE_BIKES_MATHEM_SOFTTRANGLE_H
 
 #include <Bikes/Mathem/TrAngle.h>
 
@@ -99,4 +99,4 @@ inline degree deg(const SoftTrAngle &ta) {return ta.deg();}
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_SOFTTRANGLE_H

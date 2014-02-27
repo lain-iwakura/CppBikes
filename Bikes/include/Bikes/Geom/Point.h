@@ -1,5 +1,6 @@
-#ifndef INCLUDEBIKES_POINT_H
-#define INCLUDEBIKES_POINT_H
+#ifndef INCLUDE_BIKES_GEOM_POINT_H
+#define INCLUDE_BIKES_GEOM_POINT_H
+
 #include <Bikes/Geom/Vector.h>
 
 namespace Bikes
@@ -13,4 +14,4 @@ public:
 
 }
 
-#endif 
+#endif // <- INCLUDE_BIKES_GEOM_POINT_H

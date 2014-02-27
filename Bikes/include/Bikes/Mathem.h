@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_MATH_H
-#define INCLUDEBIKES_MATH_H
+#ifndef INCLUDE_BIKES_MATHEM_H
+#define INCLUDE_BIKES_MATHEM_H
 
 #include <math.h>
 
@@ -11,4 +11,4 @@
 #include <Bikes/Mathem/FixTrFuncs.h>
 
 
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_H

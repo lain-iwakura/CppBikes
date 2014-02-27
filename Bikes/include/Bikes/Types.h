@@ -1,5 +1,5 @@
-#ifndef PREBIKES_TYPES_H
-#define PREBIKES_TYPES_H
+#ifndef INCLUDE_BIKES_TYPES_H
+#define INCLUDE_BIKES_TYPES_H
 
 #include <cstddef>
 
@@ -44,4 +44,4 @@ namespace Bikes
 	};
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_TYPES_H

@@ -1,5 +1,5 @@
-#ifndef INCLUDEBIKES_TRANGLE_H
-#define INCLUDEBIKES_TRANGLE_H
+#ifndef INCLUDE_BIKES_MATHEM_TRANGLE_H
+#define INCLUDE_BIKES_MATHEM_TRANGLE_H
 
 #include <Bikes/Mathem/Constants.h>
 
@@ -139,4 +139,4 @@ namespace Bikes
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_MATHEM_TRANGLE_H
