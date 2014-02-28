@@ -1,5 +1,5 @@
 # CMakeBikesLists v0.1 (необходимая подпись)
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.9)
 #-------------------------------------------------------------------------------
 # Включение и инициализация CMakeBikes ->
 CMakeBikes_init()
