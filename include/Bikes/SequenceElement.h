@@ -21,7 +21,7 @@ public:
     virtual const BaseSequence* getSequence() const = 0;
 
 
-   
+
 protected:
 
     virtual void sequenceElementWillBeChanged(sznum iEl)
@@ -86,7 +86,7 @@ public:
 
     const T* getRight() const
     {
-        if (_seq && _iEl < _sec->size() - 1)
+        if (_seq && _iEl < _seq->size() - 1)
             return &((*_seq)[_iEl + 1]);
         return 0;
     }
@@ -104,14 +104,14 @@ public:
             return &(_seq->at(iEl));
         return 0;
     }
-    
+
     virtual T* clone() const = 0;
 
 private:
     Sequence<T>* _seq;
-    sznum _iEl;    
-    
-    friend class Sequence<T>;    
+    sznum _iEl;
+
+    friend class Sequence<T>;
 };
 
 template<class T>
