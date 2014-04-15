@@ -26,7 +26,7 @@ class List
 	std::vector<T*> _l;
 public:
 
-	std::vector<T*>& data(){ return _l; }
+	const std::vector<T*>& data() const { return _l; }
 
 	List()
 	{
@@ -100,7 +100,18 @@ public:
 //	x
 
 // 	vector::erase(STL / CLR) // Removes elements at specified positions.
-//	x	
+	void erase(sznum i)
+	{
+		Deleter::cleanup(_l[i]);
+		_l.erase(_l.begin() + i);
+	}
+
+	void erase(sznum iFirst, sznum iLast)
+	{
+		for (sznum i = iFirst; i < iLast; i++)				
+			Deleter::cleanup(_l[i]);
+		_l.erase(_l.begin()+iFirst,_l.begin()+iLast);
+	}
 
 //	vector::front(STL / CLR) // Accesses the first element.
 	T& front()
@@ -113,7 +124,10 @@ public:
 	}
 
 //  vector::insert(STL / CLR) // Adds elements at a specified position.
-//	x
+	void	insert(sznum i, const T & obj)
+	{
+		_l.insert(_l.begin() + i, Cloner::createCopy(&obj));
+	}
 
 //	vector::pop_back(STL / CLR) // Removes the last element.
 	void pop_back()
@@ -122,11 +136,40 @@ public:
 		_l.pop_back();
 	}
 
+	void pop_front()
+	{
+		Deleter::cleanup(_l.front());
+		_l.erase(_l.begin());
+	}
+
 
 //	vector::push_back(STL / CLR) // Adds a new last element.
 	void push_back(const T& obj)
 	{
-		_l.push_back(Cloner::createCopy(obj));
+		_l.push_back(Cloner::createCopy(&obj));
+	}
+
+	void push_back(const List<T> & objs)
+	{		
+		rnum sz1 = _l.size();
+		rnum sz2 = objs._l.size();
+		_l.resize(sz1 + sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[sz1 + i] = Cloner::createCopy(objs._l[i]);
+	}
+
+	void push_front(const T & obj)
+	{
+		_l.insert(_l.begin(), Cloner::createCopy(&obj));
+	}
+
+	void push_front(const List<T> & objs)
+	{
+		rnum sz1 = _l.size();
+		rnum sz2 = objs._l.size();	
+		_l.insert(_l.begin(),sz2,T*(0))
+		for (sznum i = 0; i < sz2; i++)		
+			_l[i] = Cloner::createCopy(objs._l[i]);	
 	}
 
 //	vector::rbegin(STL / CLR) //Designates the beginning of the reversed controlled sequence.
@@ -186,9 +229,15 @@ public:
 
 // QList interface ->
 
-//		void	append(const T & value)
-// 		void	append(const QList<T> & value)
-// 		const T &	at(int i) const
+		void	append(const T & obj)
+		{
+			push_back(obj);
+		}
+
+		void	append(const List<T> & objs)
+		{
+			push_back(objs);			
+		}
 
 // 		iterator	begin()
 // 		const_iterator	begin() const
@@ -212,7 +261,7 @@ public:
 			return false;
 		}
 		
-		int	count(const T & obj) const
+		num	count(const T & obj) const
 		{
 			sznum s = _l.size();
 			int c = 0;
@@ -224,9 +273,9 @@ public:
 			return c;
 		}
 
-		int	count() const
+		num	count() const
 		{
-			return int(_l.size());
+			return num(_l.size());
 		}
 
 
@@ -243,7 +292,7 @@ public:
 			return *_l.front();
 		}
 
-		int	indexOf(const T & obj, sznum from = 0) const
+		num	indexOf(const T & obj, sznum from = 0) const
 		{
 			sznum sz = _l.size();
 			for (sznum i = from; i < sz; i++)
@@ -253,9 +302,7 @@ public:
 			}
 			return -1;
 		}
-
-// 		void	insert(int i, const T & value)
-// 		iterator	insert(iterator before, const T & value)
+				
 		bool	isEmpty() const
 		{
 			return _l.empty();
@@ -277,33 +324,159 @@ public:
 
 // 		QList<T>	mid(int pos, int length = -1) const
 // 		void	move(int from, int to)
-// 		void	pop_back()
-// 		void	pop_front()
-// 		void	prepend(const T & value)
-// 		void	push_back(const T & value)
-// 		void	push_front(const T & value)
-// 		int	removeAll(const T & value)
-// 		void	removeAt(int i)
-// 		void	removeFirst()
-// 		void	removeLast()
-// 		bool	removeOne(const T & value)
-// 		void	replace(int i, const T & value)
-// 		void	reserve(int alloc)
-// 		int	size() const
+
+		void	prepend(const T & obj)
+		{
+			push_front(obj);
+		}
+
+
+
+		sznum	removeAll(const T & obj)
+		{
+			sznum sz = _l.size();
+			sznum c = 0;
+			for (sznum i = 0; i < sz; i++)
+			{
+				if (*_l[i] == obj)
+				{
+					Deleter::cleanup(_l[i]);
+					_l.erase(_l.begin() + i);
+					i--;
+					sz--;
+					c++;
+				}
+			}
+			return c;
+		}
+
+		void	removeAt(sznum i)
+		{
+			erase(i);
+		}
+
+		void	removeFirst()
+		{
+			pop_front();
+		}
+
+		void	removeLast()
+		{
+			pop_back();
+		}
+
+		bool	removeOne(const T & obj)
+		{
+			sznum sz = _l.size();
+			for (sznum i = 0; i < sz; i++)
+			{
+				if (_l[i] == obj)
+				{
+					Deleter::cleanup(_l[i]);
+					_l.erase(_l.begin() + i);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		void	replace(sznum i, const T & obj)
+		{
+			Deleter::cleanup(_l[i]);
+			_l[i] = Cloner::createCopy(&obj);
+		}
+
 // 		bool	startsWith(const T & value) const
-// 		void	swap(QList<T> & other)
-// 		void	swap(int i, int j)
+		void	swap(sznum i, sznum j)
+		{
+			const T * buf = _l[i];
+			_l[i] = _l[j];
+			_l[j] = buf;
+		}
+
 // 		T	takeAt(int i)
+		T* passAt(sznum i) // unsafe
+		{
+			T* buf = _l[i];
+			_l.erase(_l.begin() + i);
+			return buf;
+		}
+
 // 		T	takeFirst()
+		T* passFirst() // unsafe
+		{
+			T* buf = _l.front();
+			_l.erase(_l.begin());
+			return buf;
+		}
+
 // 		T	takeLast()
-// 		QSet<T>	toSet() const
+		T* passLast() // unsafe
+		{
+			T* buf = _l.back();
+			_l.erase(_l.begin());
+			return buf;
+		}
+
 // 		std::list<T>	toStdList() const
 // 		QVector<T>	toVector() const
+
+		std::vector<T> toStdVector()
+		{
+			std::vector<T> r;
+			sznum sz = _l.size();			
+			r.reserve(sz);
+			for (sznum i = 0; i < sz; i++)
+				r.push_back(*_l[i]);
+			return r;
+		}
+
+		void fromStdVector(const std::vector<T>& objs)
+		{
+			sznum sz1 = _l.size();
+			sznum sz2 = objs.size();
+			for (sznum i = 0; i < sz1; i++)
+				Deleter::cleanup(_l[i]);
+			_l.resize(sz2);
+			for (sznum i = 0; i < sz2; i++)
+				_l[i] = Cloner::createCopy(&objs[i]);
+		}
+
 // 		T	value(int i) const
 // 		T	value(int i, const T & defaultValue) const
 
 // <- QList interface
 	
+//..............................................................................
+
+	T& operator [] (sznum i)
+	{
+		return *_l[i];
+	}
+
+	const T& operator [] (sznum i) const
+	{
+		return *_l[i];
+	}
+
+	List<T>& operator += (const T& obj)
+	{
+		push_back(obj);
+		return *this;
+	}
+
+	List<T>& operator = (const List<T>& objs)
+	{
+		sznum sz1 = _l.size();
+		sznum sz2 = objs._l.size();
+		for (sznum i = 0; i < sz1; i++)
+			Deleter::cleanup(_l[i]);
+		_l.resize(sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[i] = Cloner::createCopy(objs._l[i]);
+		return *this;
+	}
+
 //..............................................................................
 		
 	const List<T> & operator = (const List<T> & other ) 
@@ -348,7 +521,6 @@ public:
 	
 	const T & last () const { return (*this)[size()-1]; }
 	T & last () { return (*this)[size()-1]; }
-
 	
 	const T & afterFirst () const { return (*this)[1];}
 	T & afterFirst (){ return (*this)[1]; }
