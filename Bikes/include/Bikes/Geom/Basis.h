@@ -8,7 +8,32 @@ namespace Bikes
 {
 class VectorPair;
 
-class Basis
+
+class IConstBasis
+{
+public:
+
+    virtual ~IConstBasis();
+
+    virtual Vector const& i() const = 0;
+    virtual Vector const& j() const = 0;
+    virtual Vector const& k() const = 0;
+
+};
+
+class IBasis: public IConstBasis
+{
+public:
+
+    virtual ~IBasis();
+
+    virtual Vector& i() = 0;
+    virtual Vector& j() = 0;
+    virtual Vector& k() = 0;
+
+};
+
+class Basis //: public IBasis
 {
 public:
 	Vector i;
