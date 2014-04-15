@@ -23,6 +23,8 @@ namespace Bikes
 
 	typedef rnum meter;
 
+	typedef rnum kmeter;
+
 	typedef rnum cosnum;
 
 	typedef rnum sinnum;
