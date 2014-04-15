@@ -12,16 +12,16 @@ Basis::Basis( const Vector& vi, const Vector& vj, const Vector& vk ):
 }
 
 Basis::Basis( const VectorPair& pair_ij, const Vector& vk ):
-	i(pair_ij.i),
-	j(pair_ij.j),
+	i(pair_ij.vi),
+	j(pair_ij.vj),
 	k(vk)
 {
 }
 
 Basis::Basis( const Vector& vi, const VectorPair& pair_jk ):
 	i(vi),
-	j(pair_jk.i),
-	k(pair_jk.j)
+	j(pair_jk.vi),
+	k(pair_jk.vj)
 {
 }
 
@@ -39,7 +39,7 @@ Basis::Basis( const Vector& vi, const Vector& vj, bool right/*=true*/ )
 
 Basis::Basis( const VectorPair& pair_ij, bool right/*=true*/ )
 {
-	setOrtonormalByIJ(pair_ij.i,pair_ij.j,right);
+	setOrtonormalByIJ(pair_ij.vi,pair_ij.vj,right);
 }
 
 Basis::~Basis()
@@ -81,7 +81,7 @@ void Basis::setOrtonormalByIJ( const Vector& vi, const Vector& vj, bool right)
 
 void Basis::setOrtonormalByIJ( const VectorPair& ij, bool right/*=true*/ )
 {
-	setOrtonormalByIJ(ij.i,ij.j,right);
+	setOrtonormalByIJ(ij.vi,ij.vj,right);
 }
 
 }
