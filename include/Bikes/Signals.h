@@ -208,76 +208,68 @@ template<MACROSBIKES_CT10_DEFTYPE(SignalNullType)> class Signal;
 
 
 //==============================================================================================
-#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(CT,TT,COMMA)							\
-template<class ObjectClass, class RT COMMA CT>													\
-void connect(ObjectClass *obj, RT(ObjectClass::*f)(TT));										\
+//#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT##PN,MACROSBIKES_TT##PN,MACROSBIKES_COMMA##PN)							
+#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(PN)\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+void connect(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN));										\
                                                                                                 \
-template<class ObjectClass, class RT COMMA CT>													\
-void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT));									\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN));									\
                                                                                                 \
-template<class ObjectClass, class RT COMMA CT>													\
-void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT));
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+void disconnect(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN));
 //-----------------------------------------------------------------------------------------------
 class SignalConnectInterface
 {
 public:
     virtual ~SignalConnectInterface(){}
 
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL( , , )
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_COMMA)
-
+    MACROSBIKES_FOREACHPARAMLIST(MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DECL)
 };
 //==============================================================================================
-#define MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(CT,TT,TP,PP,COMMA)								\
-template<CT>																					\
-class AbstractSlot<TT>: public BaseSlot															\
+//#define MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(CT,TT,TP,PP,COMMA)								
+#define MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(PN)								                \
+template<MACROSBIKES_CT##PN>																					\
+class AbstractSlot<MACROSBIKES_TT##PN>: public BaseSlot															\
 {																								\
 public:																							\
 	virtual ~AbstractSlot(){}																	\
-	virtual void call(TP COMMA const BaseSignal *sig) const = 0;								\
+	virtual void call(MACROSBIKES_TTP##PN MACROSBIKES_COMMA##PN const BaseSignal *sig) const = 0;								\
 	template<class ObjectClass,class RT>														\
-	bool isSlotObject(ObjectClass *pObg,RT(ObjectClass::*slot_func)(TT))						\
+	bool isSlotObject(ObjectClass *pObg,RT(ObjectClass::*slot_func)(MACROSBIKES_TT##PN))						\
 	{																							\
-		if(SlotObject<ObjectClass,RT COMMA TT> *s=dynamic_cast<SlotObject<ObjectClass,RT COMMA TT>*>(this))\
+		if(SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN> *s=dynamic_cast<SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>*>(this))\
 		{																						\
 			return (s->pObj_==pObg)&&(s->f==slot_func);											\
 		}																						\
 		return false;																			\
 	}																							\
 };																								\
-template<class ObjectClass, class RT COMMA CT>													\
-class SlotObject<ObjectClass,RT COMMA TT>: public AbstractSlot<TT>								\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+class SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>: public AbstractSlot<MACROSBIKES_TT##PN>								\
 {																								\
 public:																							\
 	virtual ~SlotObject(){}																		\
-	typedef RT (ObjectClass::*ObjFuncType)(TT);													\
+	typedef RT (ObjectClass::*ObjFuncType)(MACROSBIKES_TT##PN);													\
 	SlotObject(ObjectClass *obj,ObjFuncType fu): pObj_(obj),f(fu){}								\
-    virtual void call(TP COMMA const BaseSignal *sig) const {(pObj_->*f)(PP);}                  \
+    virtual void call(MACROSBIKES_TTP##PN MACROSBIKES_COMMA##PN const BaseSignal *sig) const {(pObj_->*f)(MACROSBIKES_PP##PN);}                  \
 	void* pObj(){return pObj_;}																	\
 	ObjectClass *pObj_;																			\
 	ObjFuncType f;																				\
 };																								\
 																								\
-template<class ObjectClass, class RT COMMA CT>													\
-class SlotConnectableObject<ObjectClass,RT COMMA TT>: public SlotObject<ObjectClass,RT COMMA TT>\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+class SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>: public SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>\
 {																								\
-    typedef SlotObject<ObjectClass,RT COMMA TT> Base;                                           \
+    typedef SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN> Base;                                           \
     typedef typename Base::ObjFuncType ObjFuncType;                                             \
 public:																							\
     SlotConnectableObject(ObjectClass *obj,ObjFuncType fu): Base(obj,fu){}                      \
 																								\
-	void call(TP COMMA const BaseSignal *sig)	const											\
+	void call(MACROSBIKES_TTP##PN MACROSBIKES_COMMA##PN const BaseSignal *sig)	const											\
 	{																							\
         this->begin_emission(this->pObj_,sig);														\
-        ((this->pObj_)->*(this->f))(PP);														\
+        ((this->pObj_)->*(this->f))(MACROSBIKES_PP##PN);														\
         this->end_emission(this->pObj_);																\
 	}																							\
 																								\
@@ -293,12 +285,12 @@ public:																							\
 																								\
 };																								\
                                                                                                 \
-template<CT>																					\
-class Signal<TT>: public SignalConnectInterface, public BaseSignal								\
+template<MACROSBIKES_CT##PN>																					\
+class Signal<MACROSBIKES_TT##PN>: public SignalConnectInterface, public BaseSignal								\
 {																								\
 public:																							\
     Signal(){}																					\
-    Signal(const Signal<TT>& sig){}																\
+    Signal(const Signal<MACROSBIKES_TT##PN>& sig){}																\
     ~Signal()																					\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
@@ -307,49 +299,49 @@ public:																							\
             delete slots_[i];																	\
         }																						\
     }																							\
-    void operator ()(TP) const																	\
+    void operator ()(MACROSBIKES_TTP##PN) const																	\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
-            slots_[i]->call(PP COMMA this);														\
+            slots_[i]->call(MACROSBIKES_PP##PN MACROSBIKES_COMMA##PN this);														\
     }																							\
-    void call(TP) const																			\
+    void call(MACROSBIKES_TTP##PN) const																			\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
-            slots_[i]->call(PP COMMA this);														\
+            slots_[i]->call(MACROSBIKES_PP##PN MACROSBIKES_COMMA##PN this);														\
     }																							\
     template<class ObjectClass, class RT>														\
-    void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))						\
+    void connect_unsafe(ObjectClass *obj, RT(ObjectClass::*slot_func)(MACROSBIKES_TT##PN))						\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func)) return;									\
-        slots_.push_back(new SlotObject<ObjectClass,RT COMMA TT>(obj,slot_func));				\
+        slots_.push_back(new SlotObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>(obj,slot_func));				\
     }																							\
                                                                                                 \
     template<class ObjectClass, class RT>														\
-    void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(TT))								\
+    void connect(ObjectClass *obj,RT(ObjectClass::*slot_func)(MACROSBIKES_TT##PN))								\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func))											\
             {																					\
-                if(SlotConnectableObject<ObjectClass,RT COMMA TT>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT COMMA TT>* >(slots_[i]) )\
+                if(SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>* s=dynamic_cast<SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>* >(slots_[i]) )\
                 {																				\
                     return;																		\
                 }else																			\
                 {																				\
                     slots_[i]->disconnect(this);												\
                     delete slots_[i];															\
-                    slots_[i]=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+                    slots_[i]=new SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>(obj,slot_func);\
                     slots_[i]->connect(this);													\
                     return;																		\
                 }																				\
             }																					\
-        SlotConnectableObject<ObjectClass,RT COMMA TT> *s=new SlotConnectableObject<ObjectClass,RT COMMA TT>(obj,slot_func);\
+        SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN> *s=new SlotConnectableObject<ObjectClass,RT MACROSBIKES_COMMA##PN MACROSBIKES_TT##PN>(obj,slot_func);\
         s->connect(this);																		\
         slots_.push_back(s);																	\
     }																							\
                                                                                                 \
     template<class ObjectClass, class RT>														\
-    void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(TT))							\
+    void disconnect(ObjectClass *obj, RT(ObjectClass::*slot_func)(MACROSBIKES_TT##PN))							\
     {																							\
         for(sznum i=0; i<slots_.size(); i++)												\
             if(slots_[i]->isSlotObject(obj,slot_func))											\
@@ -391,57 +383,41 @@ private:																						\
                 i--;																			\
             }																					\
     }																							\
-    std::vector<AbstractSlot<TT>* > slots_;														\
+    std::vector<AbstractSlot<MACROSBIKES_TT##PN>* > slots_;														\
 };
 //-----------------------------------------------------------------------------------------------
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL( , , , , )
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_TTP1,MACROSBIKES_PP1,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_TTP2,MACROSBIKES_PP2,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_TTP3,MACROSBIKES_PP3,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_TTP4,MACROSBIKES_PP4,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_TTP5,MACROSBIKES_PP5,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_TTP6,MACROSBIKES_PP6,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_TTP7,MACROSBIKES_PP7,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_TTP8,MACROSBIKES_PP8,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_TTP9,MACROSBIKES_PP9,MACROSBIKES_COMMA)
+MACROSBIKES_FOREACHPARAMLIST(MACROSBIKES_SIGNAL_TEMPLATECLASS_DECL)
 //==============================================================================================
 
-#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(CT,TT,COMMA)                             \
-template<class ObjectClass, class RT COMMA CT>													\
-void SignalConnectInterface::connect(ObjectClass *obj, RT(ObjectClass::*f)(TT))					\
+//#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(CT,TT,COMMA)                             
+#define MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(PN)                                      \
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>					\
+void SignalConnectInterface::connect(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN))					\
 {																								\
-    if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+    if(Signal<MACROSBIKES_TT##PN>* s=dynamic_cast<Signal<MACROSBIKES_TT##PN>*>(this))											\
     {																							\
         s->connect(obj,f);																		\
     }																							\
 }																								\
-template<class ObjectClass, class RT COMMA CT>													\
-void SignalConnectInterface::connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(TT))			\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+void SignalConnectInterface::connect_unsafe(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN))			\
 {																								\
-    if(Signal<TT>* s=dynamic_cast<Signal<TT>*>(this))											\
+    if(Signal<MACROSBIKES_TT##PN>* s=dynamic_cast<Signal<MACROSBIKES_TT##PN>*>(this))											\
     {																							\
         s->connect_unsafe(obj,f);																\
     }																							\
 }																								\
-template<class ObjectClass, class RT COMMA CT>													\
-void SignalConnectInterface::disconnect(ObjectClass *obj, RT(ObjectClass::*f)(TT))				\
+template<class ObjectClass, class RT MACROSBIKES_COMMA##PN MACROSBIKES_CT##PN>													\
+void SignalConnectInterface::disconnect(ObjectClass *obj, RT(ObjectClass::*f)(MACROSBIKES_TT##PN))				\
 {																								\
-    if(Signal<TT>* s=dynamic_cast<Signal<TT>* >(this))											\
+    if(Signal<MACROSBIKES_TT##PN>* s=dynamic_cast<Signal<MACROSBIKES_TT##PN>* >(this))											\
     {																							\
         s->disconnect(obj,f);																	\
     }																							\
 }
-
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF( , , )
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT1,MACROSBIKES_TT1,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT2,MACROSBIKES_TT2,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT3,MACROSBIKES_TT3,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT4,MACROSBIKES_TT4,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT5,MACROSBIKES_TT5,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT6,MACROSBIKES_TT6,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT7,MACROSBIKES_TT7,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT8,MACROSBIKES_TT8,MACROSBIKES_COMMA)
-MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF(MACROSBIKES_CT9,MACROSBIKES_TT9,MACROSBIKES_COMMA)
+//-----------------------------------------------------------------------------------------------
+MACROSBIKES_FOREACHPARAMLIST(MACROSBIKES_SIGNALCONNECTINTERFACE_CONNECT_DEF)
+//==============================================================================================
 
 }// Bikes
 
