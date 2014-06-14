@@ -1,5 +1,5 @@
-#ifndef INCLUDE_BIKES_ABSTRACT_CLONER_H
-#define INCLUDE_BIKES_ABSTRACT_CLONER_H
+#ifndef INCLUDE_BIKES_CREATION_CLONER_H
+#define INCLUDE_BIKES_CREATION_CLONER_H
 
 
 namespace Bikes
@@ -10,6 +10,7 @@ template<class T>
 class SimpleCopier
 {
 public:
+	typedef T value_type;
 
 	static T* createCopy(T const* obj)
 	{
@@ -22,6 +23,7 @@ template<class T >
 class SimpleCloner
 {
 public:
+	typedef T value_type;
 		
 	static T* createCopy(T const* obj)
 	{
@@ -33,4 +35,4 @@ public:
 }
 
 
-#endif // <- INCLUDE_BIKES_ABSTRACT_CLONER_H
+#endif // <- INCLUDE_BIKES_CREATION_CLONER_H
