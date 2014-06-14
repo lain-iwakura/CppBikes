@@ -2,48 +2,133 @@
 #define INCLUDE_BIKES_ARRAY_LIST_H
 
 #include <Bikes/Types.h>
-#include <Bikes/Abstract/Cloner.h>
-#include <Bikes/Abstract/Creator.h>
-#include <Bikes/Abstract/Deleter.h>
+#include <Bikes/Creation/CreationSupervisor.h>
 
 #include <vector>
-
-
+#include <algorithm>
 
 namespace Bikes
 {
 
+template<class TList>
+class ListConstIterator
+{
+public:
+
+	typedef typename TList::BaseContainer::iterator BaseIterator;
+	typedef typename TList::BaseContainer::const_iterator BaseConstIterator;
+
+	typedef typename TList::value_type value_type;
+	typedef const value_type* pointer;
+	typedef const value_type& reference;
+
+	ListConstIterator()
+	{
+	}
+
+	const BaseConstIterator& data() const /*no const?*/
+	{
+		return _it;
+	}
+
+	reference operator*() const
+	{
+		return **_it;
+	}
+
+	pointer operator->() const
+	{
+		return *_it;
+	}
+
+	ListConstIterator<TList>& operator++()
+	{
+		_it++;
+		return *this;
+	}
+
+protected:
+	BaseIterator _it;
+};
+
+template<class TList>
+class ListIterator: public ListConstIterator<TList>
+{
+public:
+
+	typedef typename TList::value_type value_type;
+	typedef value_type* pointer;
+	typedef value_type& reference;
+
+	reference operator*() 
+	{
+		return **_it;
+	}
+
+	pointer operator->() 
+	{
+		return *_it;
+	}
+};
 
 	
+// template<
+// 	class T, 
+// 	class TCloner = SimpleCopier<T>, 
+// 	class TCreator = SimpleCreator<T>,
+// 	class TDeleter = SimpleDeleter<T>
+// 	>
 template<
-	class T, 
-	class Cloner = SimpleCopier<T>, 
-	class Creator = SimpleCreator<T>,
-	class Deleter = SimpleDeleter<T>
+	class T,
+	class TCreationSupervisor = SimpleCopyingSupervisor<T>
 	>
-class List 
+class List:
 {
 	std::vector<T*> _l;
 public:
 
-	const std::vector<T*>& data() const { return _l; }
+	typedef std::vector<T*> BaseContainer;
+
+	typedef TCreationSupervisor CreationSupervisor;
+
+	typedef T value_type;
+	typedef sznum size_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
+
+
+
+	const BaseContainer& data() /*no const*/
+	{
+		return _l; 
+	}
 
 	List()
 	{
 	}
 
-	List(const List<T> & cnt) : _l(cnt.size(), T*(0))
+	List(const List<T> & objs) : _l(objs._l.size())
 	{
-		sznum c = cnt.size();
-		for (sznum i = 0; i < c; i++)
-			_l[i] = Cloner::createCopy(cnt._l[i]);
+		sznum sz = objs.size();
+		for (sznum i = 0; i < sz; i++)
+			_l[i] = _createCopy(objs._l[i]);
+	}
+
+	template<class ArrayT>
+	List(const ArrayT& objs) :_l(objs.size())
+	{
+		sznum sz = objs.size();
+		for (sznum i = 0; i < sz; i++)
+			_l[i] = _createCopy(&objs[i]);
 	}
 
 	~List()
 	{
 		sznum c = size();
 		for (sznum i = 0; i < c; i++)
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 	}
 
 //..............................................................................
@@ -75,7 +160,7 @@ public:
 // 	vector::begin(STL / CLR) // Designates the beginning of the controlled sequence.
 //	x
 
-// 	vector::capacity(STL / CLR) // Reports the size of allocated storage for the container.
+// 	vector::capacity(STL / CLR) // Reports the size of allocated storage for the Container.
 	sznum capacity() const
 	{
 		return _l.capacity();
@@ -86,7 +171,7 @@ public:
 	{
 		sznum sz = _l.size();
 		for (sznum i = 0; i < sz; i++) 
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 		_l.clear();
 	}
 
@@ -109,7 +194,7 @@ public:
 	void erase(sznum iFirst, sznum iLast)
 	{
 		for (sznum i = iFirst; i < iLast; i++)				
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 		_l.erase(_l.begin()+iFirst,_l.begin()+iLast);
 	}
 
@@ -123,30 +208,49 @@ public:
 		return *_l.front();
 	}
 
-//  vector::insert(STL / CLR) // Adds elements at a specified position.
-	void	insert(sznum i, const T & obj)
+//  vector::insert(STL / CLR) // Adds elements at a specified position.	
+	void	insert(sznum iWhere, const T & obj)
 	{
-		_l.insert(_l.begin() + i, Cloner::createCopy(&obj));
+		_l.insert(_l.begin() + iWhere, _createCopy(&obj));
+	}
+
+	void insert(sznum iWhere, const List<T>& objs)
+	{
+		rnum sz1 = _l.size();
+		rnum sz2 = objs._l.size();
+		_l.insert(_l.begin() + iWhere, sz2, T*(0))
+		for (sznum i = 0; i < sz2; i++)
+			_l[iWhere + i] = _createCopy(objs._l[i]);
+	}
+	
+	template<class ArrayT>
+	void insert(sznum iWhere, const ArrayT& objs)
+	{
+		rnum sz1 = _l.size();
+		rnum sz2 = objs.size();
+		_l.insert(_l.begin() + iWhere, sz2, T*(0))
+		for (sznum i = 0; i < sz2; i++)
+			_l[iWhere + i] = _createCopy(&objs[i]);
 	}
 
 //	vector::pop_back(STL / CLR) // Removes the last element.
 	void pop_back()
 	{
-		Deleter::cleanup(_l.back());
+		_destroy(_l.back());
 		_l.pop_back();
 	}
 
 	void pop_front()
 	{
-		Deleter::cleanup(_l.front());
+		_destroy(_l.front());
 		_l.erase(_l.begin());
 	}
 
 
-//	vector::push_back(STL / CLR) // Adds a new last element.
+//	vector::push_back(STL / CLR) // Adds a new last element.	
 	void push_back(const T& obj)
 	{
-		_l.push_back(Cloner::createCopy(&obj));
+		_l.push_back(_createCopy(&obj));
 	}
 
 	void push_back(const List<T> & objs)
@@ -155,21 +259,41 @@ public:
 		rnum sz2 = objs._l.size();
 		_l.resize(sz1 + sz2);
 		for (sznum i = 0; i < sz2; i++)
-			_l[sz1 + i] = Cloner::createCopy(objs._l[i]);
+			_l[sz1 + i] = _createCopy(objs._l[i]);
 	}
 
-	void push_front(const T & obj)
+	template<class ArrayT>
+	void push_back_array(const ArrayT& objs)
 	{
-		_l.insert(_l.begin(), Cloner::createCopy(&obj));
+		rnum sz1 = _l.size();
+		rnum sz2 = objs.size();
+		_l.resize(sz1 + sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[sz1 + i] = _createCopy(&objs[i]);
 	}
 
-	void push_front(const List<T> & objs)
+	void push_front(const T& obj)
+	{
+		_l.insert(_l.begin(), _createCopy(&obj));
+	}
+
+	void push_front(const List<T>& objs)
 	{
 		rnum sz1 = _l.size();
 		rnum sz2 = objs._l.size();	
 		_l.insert(_l.begin(),sz2,T*(0))
 		for (sznum i = 0; i < sz2; i++)		
-			_l[i] = Cloner::createCopy(objs._l[i]);	
+			_l[i] = _createCopy(objs._l[i]);	
+	}
+
+	template<class ArrayT>
+	void push_front_array(const ArrayT& objs)
+	{
+		rnum sz1 = _l.size();
+		rnum sz2 = objs.size();
+		_l.insert(_l.begin(), sz2, T*(0))
+		for (sznum i = 0; i < sz2; i++)
+			_l[i] = _createCopy(&objs[i]);
 	}
 
 //	vector::rbegin(STL / CLR) //Designates the beginning of the reversed controlled sequence.
@@ -178,7 +302,7 @@ public:
 //	vector::rend(STL / CLR) // Designates the end of the reversed controlled sequence.
 //	x
 
-//	vector::reserve(STL / CLR) // Ensures a minimum growth capacity for the container.
+//	vector::reserve(STL / CLR) // Ensures a minimum growth capacity for the Container.
 	void reserve(sznum cpct)
 	{
 		_l.reserve(cpct);
@@ -189,20 +313,20 @@ public:
 	{
 		sznum csz = size();
 		for (sznum i = sz; i < csz; i++)
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 		_l.resize(sz);
 		for (sznum i = csz; i < sz; i++)
-			_l[i] = Cloner::createCopy(def);
+			_l[i] = _createCopy(def);
 	}
 
 	void resize(sznum sz)
 	{
 		sznum csz = size();
 		for (sznum i = sz; i < csz; i++)
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 		_l.resize(sz);
 		for (sznum i = csz; i < sz; i++)
-			_l[i] = Creator::create();
+			_l[i] = _create();
 	}
 
 //	vector::size(STL / CLR) // Counts the number of elements.
@@ -211,7 +335,7 @@ public:
 		return _l.size();
 	}
 
-// 	vector::swap(STL / CLR) // Swaps the contents of two containers.
+// 	vector::swap(STL / CLR) // Swaps the contents of two Containers.
 	void swap(List<T>& other)
 	{
 		_l.swap(other._l);
@@ -234,9 +358,10 @@ public:
 			push_back(obj);
 		}
 
-		void	append(const List<T> & objs)
+		template<class ArrayT>
+		void	appendArray(const ArrayT & objs)
 		{
-			push_back(objs);			
+			push_back_array(objs);			
 		}
 
 // 		iterator	begin()
@@ -249,7 +374,7 @@ public:
 // 		const_iterator	end() const
 // 		iterator	erase(iterator pos)
 // 		iterator	erase(iterator begin, iterator end)
-
+		
 		bool contains(const T & obj) const
 		{
 			sznum s = _l.size();
@@ -287,7 +412,7 @@ public:
 			return *_l.front();
 		}
 
-		const T &	first() const
+		const T & first() const
 		{
 			return *_l.front();
 		}
@@ -303,7 +428,7 @@ public:
 			return -1;
 		}
 				
-		bool	isEmpty() const
+		bool isEmpty() const
 		{
 			return _l.empty();
 		}
@@ -313,7 +438,7 @@ public:
 			return *_l.back()
 		}
 
-		const T &	last() const
+		const T & last() const
 		{
 			return *_l.back();
 		}
@@ -325,14 +450,19 @@ public:
 // 		QList<T>	mid(int pos, int length = -1) const
 // 		void	move(int from, int to)
 
-		void	prepend(const T & obj)
+		void prepend(const T & obj)
 		{
 			push_front(obj);
 		}
 
 
+		void prependArray(const T & obj)
+		{
+			push_front_array(obj);
+		}
 
-		sznum	removeAll(const T & obj)
+
+		sznum removeAll(const T & obj)
 		{
 			sznum sz = _l.size();
 			sznum c = 0;
@@ -340,7 +470,7 @@ public:
 			{
 				if (*_l[i] == obj)
 				{
-					Deleter::cleanup(_l[i]);
+					_destroy(_l[i]);
 					_l.erase(_l.begin() + i);
 					i--;
 					sz--;
@@ -350,29 +480,29 @@ public:
 			return c;
 		}
 
-		void	removeAt(sznum i)
+		void removeAt(sznum i)
 		{
 			erase(i);
 		}
 
-		void	removeFirst()
+		void removeFirst()
 		{
 			pop_front();
 		}
 
-		void	removeLast()
+		void removeLast()
 		{
 			pop_back();
 		}
 
-		bool	removeOne(const T & obj)
+		bool removeOne(const T & obj)
 		{
 			sznum sz = _l.size();
 			for (sznum i = 0; i < sz; i++)
 			{
 				if (_l[i] == obj)
 				{
-					Deleter::cleanup(_l[i]);
+					_destroy(_l[i]);
 					_l.erase(_l.begin() + i);
 					return true;
 				}
@@ -380,66 +510,18 @@ public:
 			return false;
 		}
 
-		void	replace(sznum i, const T & obj)
+		void replace(sznum i, const T & obj)
 		{
-			Deleter::cleanup(_l[i]);
-			_l[i] = Cloner::createCopy(&obj);
+			_destroy(_l[i]);
+			_l[i] = _createCopy(&obj);
 		}
 
 // 		bool	startsWith(const T & value) const
-		void	swap(sznum i, sznum j)
+		void swap(sznum i, sznum j)
 		{
 			const T * buf = _l[i];
 			_l[i] = _l[j];
 			_l[j] = buf;
-		}
-
-// 		T	takeAt(int i)
-		T* passAt(sznum i) // unsafe
-		{
-			T* buf = _l[i];
-			_l.erase(_l.begin() + i);
-			return buf;
-		}
-
-// 		T	takeFirst()
-		T* passFirst() // unsafe
-		{
-			T* buf = _l.front();
-			_l.erase(_l.begin());
-			return buf;
-		}
-
-// 		T	takeLast()
-		T* passLast() // unsafe
-		{
-			T* buf = _l.back();
-			_l.erase(_l.begin());
-			return buf;
-		}
-
-// 		std::list<T>	toStdList() const
-// 		QVector<T>	toVector() const
-
-		std::vector<T> toStdVector()
-		{
-			std::vector<T> r;
-			sznum sz = _l.size();			
-			r.reserve(sz);
-			for (sznum i = 0; i < sz; i++)
-				r.push_back(*_l[i]);
-			return r;
-		}
-
-		void fromStdVector(const std::vector<T>& objs)
-		{
-			sznum sz1 = _l.size();
-			sznum sz2 = objs.size();
-			for (sznum i = 0; i < sz1; i++)
-				Deleter::cleanup(_l[i]);
-			_l.resize(sz2);
-			for (sznum i = 0; i < sz2; i++)
-				_l[i] = Cloner::createCopy(&objs[i]);
 		}
 
 // 		T	value(int i) const
@@ -464,175 +546,140 @@ public:
 		push_back(obj);
 		return *this;
 	}
-
+		
 	List<T>& operator = (const List<T>& objs)
 	{
 		sznum sz1 = _l.size();
 		sznum sz2 = objs._l.size();
 		for (sznum i = 0; i < sz1; i++)
-			Deleter::cleanup(_l[i]);
+			_destroy(_l[i]);
 		_l.resize(sz2);
 		for (sznum i = 0; i < sz2; i++)
-			_l[i] = Cloner::createCopy(objs._l[i]);
+			_l[i] = _createCopy(objs._l[i]);
+		return *this;
+	}
+
+	template<class ArrayT>
+	List<T>& operator = (const ArrayT& objs)
+	{
+		fromArray(objs);
 		return *this;
 	}
 
 //..............................................................................
+
+
+	T* pass(sznum i) // unsafe
+	{
+		T* buf = _l[i];
+		_l.erase(_l.begin() + i);
+		return buf;
+	}
+
+	T* pass_back() // unsafe
+	{
+		T* buf = _l.back();
+		_l.pop_back();
+		return buf;
+	}
+
+	T* pass_front() //unsafe
+	{
+		T* buf = _l.front();
+		_l.erase(_l.begin());
+		return buf;
+	}
+
+	T* pass() // unsafe
+	{
+		return pass_back();
+	}
+
+	void take_back(T* obj)
+	{
+		_l.push_back(obj);
+	}
+
+	void take_back(List<T>& objs)
+	{		
+		sznum sz1 = _l.size();
+		sznum sz2 = objs._l.size();
+		_l.resize(sz1 + sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[sz1 + i] = objs._l[i];
+		objs._l.clear();
+	}
+
+	void take_front(T* obj)
+	{
+		_l.insert(_l.begin(), obj);
+	}
+
+	void take_front(List<T>& objs)
+	{		
+		sznum sz2 = objs._l.size();
+		_l.insert(_l.begin(), sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[i] = objs._l[i];
+		objs._l.clear();
+	}
+
+	void take(T* obj, sznum i)
+	{
+		_l.insert(_l.begin()+i,obj);
+	}
+
+	void take(T* obj)
+	{
+		take_back(obj);
+	}
+	
+
+	// 		std::list<T>	toStdList() const
+	// 		QVector<T>	toVector() const
+
+	std::vector<T> to_std_vector()
+	{
+		std::vector<T> r;
+		sznum sz = _l.size();
+		r.reserve(sz);
+		for (sznum i = 0; i < sz; i++)
+			r.push_back(*_l[i]);
+		return r;
+	}
+
+	template<class ArrayT>
+	void from_array(const ArrayT& objs)
+	{
+		sznum sz1 = _l.size();
+		sznum sz2 = objs.size();
+		for (sznum i = 0; i < sz1; i++)
+			_destroy(_l[i]);
+		_l.resize(sz2);
+		for (sznum i = 0; i < sz2; i++)
+			_l[i] = _createCopy(&objs[i]);
+	}
 		
-	const List<T> & operator = (const List<T> & other ) 
-	{
-		clear();
-		append(other);
-		return *this;
-	}
-
-	T& increase(sznum di)
-	{
-		for(sznum i=0; i<di; i++) _l.push_back(new T());
-		return last();
-	}
-
 	T& increase()
 	{
-		_l.push_back(new T());
-		return last();
+		_l.push_back(_create());
+		return *_l.back();
 	}
 
 	T& operator ++ () 
-	{
-		_l.push_back(new T());
-		return last();
-	}
-	
-	void operator += (const List<T> & other ){append(other);}
-	void operator += (const T & obj ){_l.push_back(new T(obj));}
-	void add(const T &obj){_l.push_back(new T(obj));}
-	void append ( const T & obj ) {_l.push_back(new T(obj)); /*cnt++;*/}
-	void append (const List<T> & other )
-	{
-		sznum c=other.size();
-		for(sznum i=0; i<c; i++) push_back(other[i]);
-	}
-
-
-	
-	const T & first () const { return (*this)[0];}
-	T & first (){ return (*this)[0]; }
-	
-	const T & last () const { return (*this)[size()-1]; }
-	T & last () { return (*this)[size()-1]; }
-	
-	const T & afterFirst () const { return (*this)[1];}
-	T & afterFirst (){ return (*this)[1]; }
-
-	const T & beforeLast () const { return (*this)[size()-2]; }
-	T & beforeLast () { return (*this)[size()-2]; }
-
-	const T& operator[](int i) const { return *(_l[i]);}	
-	T& operator[](int i) { return *(_l[i]); }
-
-	T& take(T *pItm)
-	{
-		_l.push_back(pItm);	
-		return *pItm;
-	}
-
-	T& take(T *pItm,sznum i)
-	{
-		_l.insert(_l.begin()+i,pItm);
-		return *pItm;
-	}
-
-	void take(List<T>& l)
 	{		
-		sznum c=l.size();
-		for(sznum i=0; i<c; i++)_l.push_back(l._l[i]);
-		l._l.clear();
+		return increase();
 	}
 
-	T*	pass(sznum i)
+	const T & beforeLast () const 
 	{
-	//	if(i>=size()||i<0)  return 0;
-		T* r=_l[i];
-		_l.erase(_l.begin()+i);
-		return r;
+		return *_l[_l.size()-2]; 
 	}
 
-	T* passLast()
-	{
-		sznum i=_l.size()-1;
-		T* r=_l[i];
-		_l.erase(_l.begin()+i);
-		return r;
+	T & beforeLast () 
+	{ 
+		return *_l[_l.size()-2]; 
 	}
-
-	T* passFirst()
-	{
-		T* r=_l[0];
-		_l.erase(_l.begin());
-		return r;
-	}
-
-
-	void removeAt(sznum i)
-	{
-		if(i<size())
-		{
-			delete _l[i];
-			_l.erase(_l.begin()+i);
-		}
-	}
-
-	void remove_i1i2(sznum i1,sznum i2)
-	{
-        if(i1<size()&&i2<size()&&i2>=i1)
-		{
-			for(int i=i1; i<=i2; i++) delete _l[i];
-			_l.erase(_l.begin()+i1,_l.begin()+i2);
-		}
-	}
-
-	bool remove(const T &r)
-	{
-		sznum c=size();
-		for(sznum i=0; i<c; i++) if((*this)[i]==r){ removeAt(i); return true;}
-		return false;
-	}
-	bool removeThat(T *r)
-	{
-		sznum c=size();
-		for(sznum i=0; i<c; i++) if(_l[i]==r)
-		{
-			removeAt(i);
-			return true;
-		}
-		return false;
-	}
-	void removeLast(){if(size()>0) removeAt(size()-1);}
-	void removeFirst(){if(size()>0) removeAt(0);}
-
-	void insert(sznum i,const T &o)
-	{
-		if(i<0) i=0;
-		else if(i>size()) i=size();
-		_l.insert(_l.begin()+i,new T(o));
-	}
-
-	bool contains(const T& itm) const
-	{
-		sznum c=size();
-		for(sznum i=0; i<c; i++) if((*this)[i]==itm){ return true;}
-		return false;
-	}
-
-	int find(const T &itm) const
-	{
-		sznum c=size();
-		for(sznum i=0; i<c; i++) if(*(_l[i])==itm) return i;
-		return -1;
-	}
-
-
 
 	void invert()
 	{		
@@ -647,7 +694,27 @@ public:
 		}
 	}
 
-private:	
+private:
+
+	BaseContainer _l;
+
+	static T* _createCopy(const T* obj)
+	{
+		//return Cloner::createCopy(obj);
+		return CreationSupervisor::createCopy(obj);
+	}
+
+	static T* _create()
+	{
+		//return Creator::create();
+		return CreationSupervisor::create();
+	}
+
+	static void _destroy(T* obj)
+	{
+		//Deleter::destroy(obj);
+		return CreationSupervisor::destroy(obj);
+	}
 
 };
 
