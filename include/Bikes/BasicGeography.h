@@ -138,6 +138,8 @@ void circleRange_approx(const PhiLamPoint &p,
                         rnum da = PI/90 // шаг аппроксимации
                         );
 
+bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& crossPoint2);
+
 }
 #endif
 

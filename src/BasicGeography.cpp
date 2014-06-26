@@ -625,6 +625,45 @@ void circleRange_approx(const PhiLamPoint &p,
         out_contour.push_back(Point_to_PhiLamE(c[i]));
 }
 
+bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& crossPoint2)
+{
+    static const rnum eaa = 1.0 / (GEO_A*GEO_A);
+    static const rnum ebb = 1.0 / (GEO_B*GEO_B);
+
+    bool suc = false;    
+
+    rnum kx = line.gx / line.gz;
+    rnum ky = line.gy / line.gz;    
+    
+    rnum bx = line.anchor.gx - kx*line.anchor.gz;
+    rnum by = line.anchor.gy - ky*line.anchor.gz;
+
+    rnum a = (kx*kx + ky*ky) * eaa + ebb;
+    rnum b = 2.0 * eaa * (kx*bx + ky*by);
+    rnum c = (bx*bx + by*by) * eaa - 1.0;
+
+    rnum d = b*b - 4.0*a*c;
+
+    if (d >= 0.0)
+    {        
+        rnum sd = sqrt(d);
+        rnum z1 = (-b - sd) / (2.0*a);
+        rnum z2 = (-b + sd) / (2.0*a);
+
+        crossPoint1.gx = kx*z1 + bx;
+        crossPoint1.gy = ky*z1 + by;
+        crossPoint1.gz = z1;
+
+        crossPoint2.gx = kx*z2 + bx;
+        crossPoint2.gy = ky*z2 + by;
+        crossPoint2.gz = z2;
+
+        suc = true;
+    }    
+
+    return suc;
+}
+
 
 
 }//Bikes
