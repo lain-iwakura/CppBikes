@@ -639,16 +639,16 @@ bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& cr
     rnum by = line.anchor.gy - ky*line.anchor.gz;
 
     rnum a = (kx*kx + ky*ky) * eaa + ebb;
-    rnum b = 2.0 * eaa * (kx*bx + ky*by);
-    rnum c = (bx*bx + by*by) * eaa - 1.0;
+    rnum b = eaa * (kx*bx + ky*by) / a;
+    rnum c = ((bx*bx + by*by) * eaa - 1.0) / a;
 
-    rnum d = b*b - 4.0*a*c;
+    rnum d4 = b*b - c;
 
-    if (d >= 0.0)
+    if (d4 >= 0.0)
     {        
-        rnum sd = sqrt(d);
-        rnum z1 = (-b - sd) / (2.0*a);
-        rnum z2 = (-b + sd) / (2.0*a);
+        rnum sd = sqrt(d4);
+        rnum z1 = -b - sd;
+        rnum z2 = -b + sd;
 
         crossPoint1.gx = kx*z1 + bx;
         crossPoint1.gy = ky*z1 + by;
