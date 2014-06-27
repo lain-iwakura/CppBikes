@@ -627,8 +627,8 @@ void circleRange_approx(const PhiLamPoint &p,
 
 bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& crossPoint2)
 {
-    static const rnum eaa = 1.0 / (GEO_A*GEO_A);
-    static const rnum ebb = 1.0 / (GEO_B*GEO_B);
+    static const rnum eaa = GEO_A*GEO_A;    
+    static const rnum eab = eaa / (GEO_B*GEO_B);
 
     bool suc = false;    
 
@@ -638,9 +638,9 @@ bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& cr
     rnum bx = line.anchor.gx - kx*line.anchor.gz;
     rnum by = line.anchor.gy - ky*line.anchor.gz;
 
-    rnum a = (kx*kx + ky*ky) * eaa + ebb;
-    rnum b = eaa * (kx*bx + ky*by) / a;
-    rnum c = ((bx*bx + by*by) * eaa - 1.0) / a;
+    rnum a = (kx*kx + ky*ky) + eab;
+    rnum b = (kx*bx + ky*by) / a;
+    rnum c = (bx*bx + by*by - eaa) / a;
 
     rnum d4 = b*b - c;
 
