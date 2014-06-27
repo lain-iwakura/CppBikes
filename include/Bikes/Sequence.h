@@ -122,7 +122,7 @@ public:
             sznum n = _arr.size();
             el->_seq = this;
             el->_iEl = n;
-            _arr.push_back(el);
+            _arr.push_back(el);            
 
             call_inserted(el);
 
@@ -146,6 +146,10 @@ public:
             el->_iEl = iEl;
 
             _arr.insert(_arr.begin()+iEl, el);
+            n += 1;
+
+            for (sznum i = iEl + 1; i < n; i++)
+                _arr[i]->_iEl = i;
 
             call_inserted(el);
 
@@ -156,7 +160,8 @@ public:
 
     T* pass(sznum iEl)
     {
-        if (iEl < _arr.size())
+        sznum n = _arr.size();
+        if (iEl < n)
         {
             T* el = _arr[iEl];
 
@@ -168,6 +173,10 @@ public:
             el->_seq = 0;
 
             _arr.erase(_arr.begin() + iEl);
+            n -= 1;
+
+            for (sznum i = iEl + 1; i < n; i++)
+                _arr[i]->_iEl = i;
 
             return el;
         }
