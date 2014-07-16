@@ -99,4 +99,4 @@ protected:
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H

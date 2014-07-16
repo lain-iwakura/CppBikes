@@ -1,5 +1,5 @@
-#ifndef PREBIKES_BYTESTREAM_H
-#define PREBIKES_BYTESTREAM_H
+#ifndef INCLUDE_BIKES_STREAM_BYTESTREAM_H
+#define INCLUDE_BIKES_STREAM_BYTESTREAM_H
 
 #include <Bikes/Types.h>
 #include <Bikes/Stream/StreamerInterface.h>
@@ -139,4 +139,4 @@ namespace Bikes
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_STREAM_BYTESTREAM_H

@@ -1,5 +1,5 @@
-#ifndef PREBIKES_OBJECTSTREAMER_H
-#define PREBIKES_OBJECTSTREAMER_H
+#ifndef INCLUDE_BIKES_STREAM_OBJECTSTREAMER_H
+#define INCLUDE_BIKES_STREAM_OBJECTSTREAMER_H
 
 #include <Bikes/ByteStream.h>
 #include <Bikes/ObjectStreamerMacros.h>
@@ -369,4 +369,4 @@ std::vector<Ptr<AbstractOneTypeStreamerCreator>::Shared >  MultiTypeStreamer<Typ
 
 } // Bikes
 
-#endif
+#endif // <- INCLUDE_BIKES_STREAM_OBJECTSTREAMER_H

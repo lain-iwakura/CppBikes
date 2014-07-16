@@ -55,4 +55,4 @@ private:
 
 }
 
-#endif
+#endif // <- INCLUDE_BIKES_ARRAY_BYTEARRAY_H

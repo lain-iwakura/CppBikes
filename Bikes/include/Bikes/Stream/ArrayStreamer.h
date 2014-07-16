@@ -70,4 +70,4 @@ ArrayStreamer<ElementStreamer, ArrayClass> arrayStreamer(const ArrayClass *arr)
 }
 
 
-#endif
+#endif // <- INCLUDE_BIKES_STREAM_ARRAYSTREAMER_H
