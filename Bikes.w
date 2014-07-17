@@ -14,8 +14,6 @@ def build(ctx):
     src_glob = ctx.path.find_dir('src').ant_glob
 
     ctx.static_lib(
-        use='C++11',
-
         includes=[include_node, include_node.find_dir('Bikes')],
 
         source=src_glob('*.cpp'),
