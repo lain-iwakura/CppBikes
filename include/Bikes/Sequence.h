@@ -175,7 +175,7 @@ public:
             _arr.erase(_arr.begin() + iEl);
             n -= 1;
 
-            for (sznum i = iEl + 1; i < n; i++)
+            for (sznum i = iEl; i < n; i++)
                 _arr[i]->_iEl = i;
 
             return el;
