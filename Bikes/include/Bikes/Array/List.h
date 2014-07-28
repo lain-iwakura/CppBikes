@@ -82,9 +82,8 @@ template<
 	class T,
 	class TCreationSupervisor = SimpleCopyingSupervisor<T>
 	>
-class List:
+class List
 {
-	std::vector<T*> _l;
 public:
 
 	typedef std::vector<T*> BaseContainer;
@@ -417,7 +416,7 @@ public:
 			return *_l.front();
 		}
 
-		num	indexOf(const T & obj, sznum from = 0) const
+		lnum indexOf(const T & obj, sznum from = 0) const
 		{
 			sznum sz = _l.size();
 			for (sznum i = from; i < sz; i++)
