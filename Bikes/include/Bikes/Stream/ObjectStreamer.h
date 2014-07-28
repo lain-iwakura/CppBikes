@@ -1,11 +1,13 @@
 #ifndef INCLUDE_BIKES_STREAM_OBJECTSTREAMER_H
 #define INCLUDE_BIKES_STREAM_OBJECTSTREAMER_H
 
-#include <Bikes/ByteStream.h>
-#include <Bikes/ObjectStreamerMacros.h>
-#include <Bikes/TypeCollector.h>
+#include <Bikes/Stream/ByteStream.h>
+#include <Bikes/Stream/AbstractObjectStreamer.h>
+#include <Bikes/Stream/ObjectStreamerMacros.h>
+//#include <Bikes/TypeCollector.h>
 #include <Bikes/SmartPtr.h>
-#include <Bikes/StreamerInterface.h>
+#include <Bikes/Stream/StreamerInterface.h>
+#include <Bikes/TypeInfo.h>
 #include <vector>
 #include <map>
 
