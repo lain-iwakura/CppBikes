@@ -147,6 +147,18 @@ T intPart(T val)
 }
 
 
+template<typename Tx, typename Ty, typename Tr = Tx>
+Tr intPow(Tx x, Ty y)
+{
+	Tr r = x;
+	while (y > 1)
+	{
+		r *= x;
+		y--;
+	}
+	return r;
+}
+
 // DEV ->
 
 #ifdef PREBIKES_DEV_MATHFUNCTION
