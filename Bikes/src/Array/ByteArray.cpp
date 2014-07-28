@@ -8,7 +8,7 @@ ByteArray::ByteArray() : ri(0), wi(0)
 {
 }
 
-ByteArray::ByteArray(sznum cap, sznum dcap/*=1*/, sznum sz/*=0*/) : RawArray<char>(sz, cap, dcap), ri(0), wi(0)
+ByteArray::ByteArray(sznum cap, sznum sz/*=0*/) : RawArray<char>(sz, cap), ri(0), wi(0)
 {
 }
 
@@ -19,13 +19,13 @@ ByteArray::ByteArray(const ByteArray& ba) : RawArray<char>(ba), ri(ba.ri), wi(ba
 ByteArray::ByteArray(const char *bt, sznum btSize) : RawArray<char>(bt, btSize)
 {
     ri = 0;
-    wi = l;
+    wi = this->size();
 }
 
 ByteArray::ByteArray(const char *bt) :RawArray<char>(bt, strlen(bt) + 1)
 {
     ri = 0;
-    wi = l;
+    wi = this->size();
 }
 
 
@@ -33,18 +33,34 @@ void ByteArray::readBytes(char *bt, sznum btSize)
 {
     int nr = btSize;
 
-    if (ri + nr > l) 
-        nr = l - ri;
+    if (ri + nr > this->size()) 
+        nr = this->size() - ri;
 
+	char* arr = this->data();
     for (int i = 0; i<nr; i++, ri++)
         bt[i] = arr[ri];
 }
 
 void ByteArray::writeBytes(const char *bt, sznum btSize)
 {
-    if (wi + btSize>l) 
-        setSize(wi + btSize);
+	sznum nsz = wi + btSize;
+	sznum cap = this->capacity();
+	sznum mcap = this->maxCapacityIncrement();
 
+	if (nsz > this->size())
+	{
+		if (nsz > cap)
+		{
+			if (mcap + cap > nsz)
+				this->setCapacity(inRange<sznum>(2 * cap, nsz, cap + mcap));
+			else
+				this->setCapacity(nsz);
+		}
+
+		this->setSize(wi + btSize);
+	}
+
+	char* arr = this->data();
     for (sznum i = 0; i < btSize; i++, wi++)
         arr[wi] = bt[i];
 }
@@ -71,7 +87,7 @@ void ByteArray::setReadIndex(sznum i)
 
 void ByteArray::prepareForWrite(sznum byteCapacity)
 {
-    if (wi + byteCapacity > s) 
+    if (wi + byteCapacity > capacity()) 
         this->setCapacity(wi + byteCapacity);
 }
 
@@ -80,6 +96,7 @@ ByteArray& ByteArray::operator=(const ByteArray& ba)
     setCapacity(ba.capacity());
     setSize(ba.size());
 
+	char* arr = this->data();
     for (sznum i = 0; i < size(); i++) 
         arr[i] = ba[i];
 
@@ -90,6 +107,7 @@ ByteArray& ByteArray::operator=(const char *bt)
 {
     setSize(strlen(bt) + 1);
 
+	char* arr = this->data();
     for (sznum i = 0; i < size(); i++) 
         arr[i] = bt[i];
 
@@ -101,6 +119,7 @@ bool ByteArray::operator==(const ByteArray& ba) const
     if (ba.size() != size()) 
         return false;
 
+	const char* arr = this->data();
     for (sznum i = 0; i < size(); i++)
         if (arr[i] != ba[i]) 
             return false;
@@ -115,6 +134,7 @@ bool ByteArray::operator==(const char *str) const
     if (strl != size() - 1) 
         return false;
 
+	const char* arr = this->data();
     for (sznum i = 0; i < size(); i++)
         if (str[i] != arr[i]) 
             return false;

@@ -15,7 +15,7 @@ public:
 
     ByteArray();
 
-    ByteArray(sznum cap, sznum dcap = 1, sznum sz = 0);
+    ByteArray(sznum cap, sznum sz = 0);
 
     ByteArray(const ByteArray& ba);
 

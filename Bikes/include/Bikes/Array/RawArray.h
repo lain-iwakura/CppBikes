@@ -1,17 +1,18 @@
 #ifndef PREBIKES_RAWARRAY_H
 #define PREBIKES_RAWARRAY_H
 #include <Bikes/Types.h>
+#include <Bikes/Mathem/Tools.h>
 #include <vector>
 
 namespace Bikes
 {
 
-template<class T>
+template<class T, sznum maxCapacityIncrement_bytes = 1024>
 class RawArray
 {
 public:
 
-	RawArray():arr(0),s(0),l(0),ds(1)
+	RawArray():_arr(0),_cap(0),_sz(0)
 	{
 	}
 
@@ -19,50 +20,48 @@ public:
 	{
 		if(sz>0)
 		{	
-			arr=new T[sz];
-			s=sz;
-			l=s;
+			_arr=new T[sz];
+			_cap=sz;
+			_sz=_cap;
 		}else
 		{
-			arr=0;
-			s=0;
-			l=0;
+			_arr=0;
+			_cap=0;
+			_sz=0;
 		}
 	}
 
-	RawArray(sznum sz, sznum cap, sznum dcap=1)
+	RawArray(sznum sz, sznum cap)
 	{
 		if(cap>0)
 		{
-			s=cap;
-			arr=new T[cap];
+			_cap=cap;
+			_arr=new T[cap];
 			if(sz<=cap)
 			{
-				if(sz>0) l=sz;
-				else l=0;
-			}else l=cap;
+				if(sz>0) _sz=sz;
+				else _sz=0;
+			}else _sz=cap;
 		}else
 		{
-			arr=0;
-			s=0;
-			l=0;
+			_arr=0;
+			_cap=0;
+			_sz=0;
 		}		
-		if(dcap<1) ds=1;
-		else ds=dcap;
 	}
 
-	RawArray(const RawArray<T>& ra): s(ra.s), l(ra.l), ds(ra.ds)
+	RawArray(const RawArray<T>& ra): _cap(ra._cap), _sz(ra._sz)
 	{
-		if(s>0)
+		if(_cap>0)
 		{		
-			arr=new T[s];
-			for(sznum i=0; i<l; i++)
+			_arr=new T[_cap];
+			for(sznum i=0; i<_sz; i++)
 			{
-				arr[i]=ra.arr[i];
+				_arr[i]=ra._arr[i];
 			}
 		}else
 		{
-			arr=0;
+			_arr=0;
 		}
 	}
 
@@ -70,24 +69,23 @@ public:
 	{
 		if(sz>0)
 		{
-			arr=new T[sz];
+			_arr=new T[sz];
 			for(sznum i=0; i<sz; i++)
-				arr[i]=buf[i];	
-			l=sz;
-			s=sz;
-			ds=1;
+				_arr[i]=buf[i];	
+			_sz=sz;
+			_cap=sz;
 		}else
 		{
-			ds=1;
-			arr=0;
-			l=0;
-			s=0;
+			_arr=0;
+			_sz=0;
+			_cap=0;
 		}
 	}
 
 	virtual ~RawArray()
 	{
-		if(arr) delete [] arr;
+		if(_arr) 
+			delete [] _arr;
 	}
 
 	void setCapacity(sznum cap)
@@ -96,47 +94,40 @@ public:
 		if(cap>0)
 		{		
 			narr=new T[cap];
-			sznum ms=l;if(ms>cap)ms=cap;
+			sznum ms=_sz;if(ms>cap)ms=cap;
 			for(sznum i=0; i<ms;i++)
-				narr[i]=arr[i];
-			s=cap;
-			l=ms;
+				narr[i]=_arr[i];
+			_cap=cap;
+			_sz=ms;
 		}else
 		{
-			s=0;
-			l=0;
+			_cap=0;
+			_sz=0;
 		}
-		if(arr) delete [] arr;
-		arr=narr;		
-	}
-
-	void setCapacityIncrement(num dcap)
-	{
-		if(dcap<1)ds=1;
-		else ds=dcap;
+		if(_arr) delete [] _arr;
+		_arr=narr;		
 	}
 
 	void setSize(sznum sz)
-	{
-		if(sz<0)
-		{
-			l=0;
-		}else
-		{		
-			if(sz>s) setCapacity((int(sz/ds)+1)*ds);
-			l=sz;
-		}
+	{	
+		if (sz > _cap)
+			setCapacity(sz);
+		_sz = sz;
 	}
 
 	void push_back(const T& val)
 	{
-		setSize(l+1);
-		arr[l-1]=val;
+		if (_cap == _sz)
+		{
+			setCapacity(_cap + inRange(_cap, 1, maxCapacityIncrement()));
+		}
+		setSize(_sz+1);
+		_arr[_sz-1]=val;
 	}
 
 	void pop_back()
 	{
-		setSize(s-1);
+		setSize(_cap-1);
 	}
 	
 	void clear()
@@ -144,25 +135,42 @@ public:
 		setSize(0);
 	}
 
-	sznum size()const{return l;}
-	sznum capacity()const{return s;}
-	T* data(){return arr;}
-	const T* data() const{return arr;}
+	sznum size() const
+	{
+		return _sz;
+	}
+
+	sznum capacity() const
+	{
+		return _cap;
+	}
+
+	T* data()
+	{
+		return _arr;
+	}
+
+	const T* data() const
+	{
+		return _arr;
+	}
 
 	void takeData(T* d, sznum sz)
 	{
-		 if(arr) delete [] arr;
-		 arr=d;
-		 s=sz;
-		 l=s;
+		 if(_arr) 
+			 delete [] _arr;
+		 _arr=d;
+		 _cap=sz;
+		 _sz=_cap;
 	}
 
 	void takeData(RawArray<T>& ra)
 	{
-		if(arr) delete [] arr;
-		arr=ra.arr;
-		s=ra.s;
-		l=ra.l;
+		if(_arr) 
+			delete [] _arr;
+		_arr=ra.arr;
+		_cap=ra.s;
+		_sz=ra.l;
 		ra.arr=0;
 		ra.s=0;
 		ra.l=0;
@@ -170,35 +178,62 @@ public:
 
 	T* passData() // unsafe!
 	{
-		s=0;
-		l=0;
-		T* r=arr;
-		arr=0;
+		_cap=0;
+		_sz=0;
+		T* r=_arr;
+		_arr=0;
 		return r;
 	}
 
-	void toVector(std::vector<T>& v)
+	void toStdVector(std::vector<T>& v)
 	{
-		for(sznum i=0; i<l; i++)
-			v.push_back(arr[i]);
+		v.clear();
+		for(sznum i=0; i<_sz; i++)
+			v.push_back(_arr[i]);
 	}
 
-	T& operator [](sznum i){return arr[i];}
-	const T& operator [](sznum i) const {return arr[i];}
+	T& operator [](sznum i)
+	{
+		return _arr[i];
+	}
+
+	const T& operator [](sznum i) const
+	{
+		return _arr[i];
+	}
 
 	//operator T*(){return arr;} //?
 	//operator const T*(){return arr;} //?
 
-	T& at(sznum i){return arr[i];}
-	const T& at(sznum i)const{return arr[i];}
+	T& at(sznum i)
+	{
+		return _arr[i];
+	}
 
+	const T& at(sznum i) const
+	{
+		return _arr[i];
+	}
 
-protected:
-	T *arr;
-	sznum s;	
-	sznum l;
-	sznum ds;
+	
+	static sznum maxCapacityIncrement()
+	{
+		static const sznum inc = 
+			inRange<sznum>(
+			maxCapacityIncrement_bytes / sizeof(T), 
+			1, 
+			maxCapacityIncrement_bytes
+			);
+
+		return inc;
+	}
+
+private:
+	T *_arr;
+	sznum _cap;	
+	sznum _sz;
 };
+
 
 }
 #endif
