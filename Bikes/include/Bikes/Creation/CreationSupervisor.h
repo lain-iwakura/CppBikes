@@ -1,9 +1,9 @@
 #ifndef INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
 #define INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
 
-#include <Bikes/Abstract/Cloner.h>
-#include <Bikes/Abstract/Creator.h>
-#include <Bikes/Abstract/Deleter.h>
+#include <Bikes/Creation/Cloner.h>
+#include <Bikes/Creation/Creator.h>
+#include <Bikes/Creation/Deleter.h>
 
 namespace Bikes
 {						
@@ -14,10 +14,10 @@ template<class TCloner, class TCreator, class TDeleter>
 class CreationSupervisor
 {
 public:
-	typedef typename Cloner::value_type value_type;
 	typedef TCloner Cloner;
 	typedef TCreator Creator;
 	typedef TDeleter Deleter;
+	typedef typename Cloner::value_type value_type;
 
 	static value_type* createCopy(const value_type* obj)
 	{
