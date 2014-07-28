@@ -7,11 +7,17 @@
 
 namespace Bikes
 {
+
+	class TypeInfo;
+	class ByteStreamData;
+	class ByteArray;
     	
 //=========================================================================
 	class ByteStream: public InOutInterface
 	{
 	public:
+
+		~ByteStream();
 
 		ByteStream();
 
@@ -131,7 +137,11 @@ namespace Bikes
         void write(float val);
         void write(double val);
 
+		void readRecurrentData(ByteArray& data);
+		void writeRecurrentData(const ByteArray& data);
+
 	private:
+		ByteStreamData *_d;
 		InOutInterface *io_;
 	};
 
