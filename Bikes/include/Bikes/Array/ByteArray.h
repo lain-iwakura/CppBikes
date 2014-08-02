@@ -6,16 +6,21 @@
 
 namespace Bikes
 {
+
+	namespace Inner
+	{
+		const unum defMaxByteArrayMemoryIncrement = 1024 * 1024;
+	}
     
 class ByteArray: 
     public InOutInterface, 
     public RawArray<char>
-{
+{	
 public:
 
-    ByteArray();
+	typedef RawArray<char> RawArrayBase;
 
-    ByteArray(sznum cap, sznum sz = 0);
+	ByteArray(sznum sz = 0, sznum cap = 1024, unum maxCapInc = Inner::defMaxByteArrayMemoryIncrement);
 
     ByteArray(const ByteArray& ba);
 
@@ -29,7 +34,11 @@ public:
 
     bool operator ==(const ByteArray& ba) const;
 
+	bool operator !=(const ByteArray& ba) const;
+
     bool operator ==(const char *str) const;
+
+	bool operator !=(const char *str) const;
 
     void readBytes(char *bt, sznum btSize);
 

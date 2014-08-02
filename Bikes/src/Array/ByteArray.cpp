@@ -4,26 +4,24 @@
 namespace Bikes
 {
 
-ByteArray::ByteArray() : ri(0), wi(0)
+ByteArray::ByteArray(sznum sz/*=0*/, sznum cap/*=1024*/, unum capInc) :RawArrayBase(sz, cap, capInc), ri(0), wi(0)
 {
 }
 
-ByteArray::ByteArray(sznum cap, sznum sz/*=0*/) : RawArray<char>(sz, cap), ri(0), wi(0)
+ByteArray::ByteArray(const ByteArray& ba) : RawArrayBase(ba), ri(ba.ri), wi(ba.wi)
 {
 }
 
-ByteArray::ByteArray(const ByteArray& ba) : RawArray<char>(ba), ri(ba.ri), wi(ba.wi)
+ByteArray::ByteArray(const char *bt, sznum btSize) : RawArrayBase(bt, btSize)
 {
-}
-
-ByteArray::ByteArray(const char *bt, sznum btSize) : RawArray<char>(bt, btSize)
-{
+	this->setMaxCapacityIncrement(Inner::defMaxByteArrayMemoryIncrement);
     ri = 0;
     wi = this->size();
 }
 
-ByteArray::ByteArray(const char *bt) :RawArray<char>(bt, strlen(bt) + 1)
+ByteArray::ByteArray(const char *bt) :RawArrayBase(bt, strlen(bt) + 1)
 {
+	this->setMaxCapacityIncrement(Inner::defMaxByteArrayMemoryIncrement);
     ri = 0;
     wi = this->size();
 }
@@ -91,18 +89,6 @@ void ByteArray::prepareForWrite(sznum byteCapacity)
         this->setCapacity(wi + byteCapacity);
 }
 
-ByteArray& ByteArray::operator=(const ByteArray& ba)
-{
-    setCapacity(ba.capacity());
-    setSize(ba.size());
-
-	char* arr = this->data();
-    for (sznum i = 0; i < size(); i++) 
-        arr[i] = ba[i];
-
-    return *this;
-}
-
 ByteArray& ByteArray::operator=(const char *bt)
 {
     setSize(strlen(bt) + 1);
@@ -114,17 +100,13 @@ ByteArray& ByteArray::operator=(const char *bt)
     return *this;
 }
 
-bool ByteArray::operator==(const ByteArray& ba) const
+ByteArray& ByteArray::operator=(const ByteArray& ba)
 {
-    if (ba.size() != size()) 
-        return false;
-
-	const char* arr = this->data();
-    for (sznum i = 0; i < size(); i++)
-        if (arr[i] != ba[i]) 
-            return false;
-
-    return true;
+	RawArrayBase *ra1 = this;
+	*ra1 = ba;
+	ri = ba.ri;
+	wi = ba.wi;
+	return *this;
 }
 
 bool ByteArray::operator==(const char *str) const
@@ -141,6 +123,23 @@ bool ByteArray::operator==(const char *str) const
 
     return true;
 }
+
+bool ByteArray::operator!=(const char *str) const
+{
+	return !(*this == str);
+}
+
+bool ByteArray::operator ==(const ByteArray& ba) const
+{
+	const RawArrayBase *ra1 = this;
+	return *ra1 == ba;
+}
+
+bool ByteArray::operator !=(const ByteArray& ba) const
+{
+	return !(*this == ba);
+}
+		 
 
 bool ByteArray::atEnd() const
 {
