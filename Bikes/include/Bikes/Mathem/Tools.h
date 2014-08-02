@@ -44,7 +44,7 @@ void setNotSmall(rnum& n, rnum O = RNUM_O);
 rnum normalDistribution(rnum x);
 
 
-template<class T>
+template<typename T>
 ValSign getSign(T val)
 {
 	if(val > 0)
@@ -54,7 +54,7 @@ ValSign getSign(T val)
 	return undefinedSign;
 }
 
-template<class T>
+template<typename T>
 T inRange(T val, T val_min, T val_max)
 {
 	if(val<val_min) 
@@ -64,7 +64,7 @@ T inRange(T val, T val_min, T val_max)
 	return val;
 }
 
-template<class T>
+template<typename T>
 void setInRange(T& val, T val_min, T val_max)
 {
 	if(val<val_min) 
@@ -73,7 +73,7 @@ void setInRange(T& val, T val_min, T val_max)
 		val = val_max;	
 }
 
-template<class T>
+template<typename T>
 T (MAX)(T x, T y)
 {
   if(x>y) 
@@ -81,57 +81,57 @@ T (MAX)(T x, T y)
   return y;
 }
 
-template<class T>
+template<typename T>
 T (MAX)(T x1, T x2, T x3)
 {
     return MAX(MAX(x1,x2),x3);
 }
 
-template<class T>
+template<typename T>
 T (MAX)(T x1, T x2, T x3, T x4)
 {
     return MAX(MAX(x1,x2),MAX(x3,x4));
 }
 
-template<class T>
+template<typename T>
 T (MIN)(T x, T y)
 {
   if(x<y) return x;
   return y;
 }
 
-template<class T>
+template<typename T>
 T (MIN)(T x1, T x2, T x3)
 {
     return MIN(MIN(x1,x2),x3);
 }
 
-template<class T>
+template<typename T>
 T (MIN)(T x1, T x2, T x3, T x4)
 {
     return MIN(MIN(x1,x2),MIN(x3,x4));
 }
 
-template<class T>
+template<typename T>
 T (AVG)(T x1, T x2)
 {
     return (x1+x2)/2.0;
 }
 
-template<class T>
+template<typename T>
 T (AVG)(T x1, T x2, T x3)
 {
     return (x1+x2+x3)/3.0;
 }
 
-template<class T>
+template<typename T>
 T (AVG)(T x1, T x2, T x3, T x4)
 {
     return (x1+x2+x3+x4)/4.0;
 }
 
 
-template<class T>
+template<typename T>
 T (ABS)(T val)
 {
   if(val<0) 
@@ -140,7 +140,7 @@ T (ABS)(T val)
 }
 
 
-template<class T>
+template<typename T>
 T intPart(T val)
 {
   return T( static_cast<long long>(val) );
