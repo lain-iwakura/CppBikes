@@ -1,5 +1,6 @@
 #ifndef INCLUDE_BIKES_CREATION_CREATOR_H
 #define INCLUDE_BIKES_CREATION_CREATOR_H
+#include <Bikes/Types.h>
 
 namespace Bikes
 {
@@ -12,7 +13,24 @@ public:
 
 	static T* create()
 	{
-		return new T();
+		return new T;
+	}
+};
+
+template<class T>
+class SimpleArrayCreator
+{
+public:
+	typedef T value_type;
+
+	static T* create()
+	{
+		return new T;
+	}
+
+	static T* createArray(sznum sz)
+	{
+		return new T[sz];
 	}
 };
 
