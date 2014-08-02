@@ -138,7 +138,7 @@ namespace Bikes
         void write(double val);
 
 		void readRecurrentData(ByteArray& data);
-		void writeRecurrentData(const ByteArray& data);
+		void writeRecurrentData(const ByteArray& data);		
 
 	private:
 		ByteStreamData *_d;

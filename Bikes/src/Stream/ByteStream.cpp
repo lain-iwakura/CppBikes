@@ -24,7 +24,7 @@ class UnsignedValueStreamer : public AbstractUnsignedValueStreamer
 public:
 
 	sznum maxNumber() const	{
-		static const sznum mn = intPow<sznum,sznum>(2, sizeof(T)) - 1;
+		static const sznum mn = intPow<sznum,sznum>(2, sizeof(T)*8) - 1;
 		return mn;
 	}
 
@@ -148,7 +148,8 @@ _d(new ByteStreamData(io))
 void ByteStream::setIO( InOutInterface* io)
 {		
 	_d->io=io;
-	_d->types.clear();
+	_d->recData.clear();
+	_d->indexMap.clear();
 }
 
 InOutInterface* ByteStream::getIO() const
@@ -316,7 +317,7 @@ void ByteStream::readRecurrentData(ByteArray& data)
 	{
 		sznum dtsz;
 		read(dtsz);
-		ByteArray *ba = new ByteArray(dtsz);
+		ByteArray *ba = new ByteArray(dtsz,dtsz);
 		readBytes(ba->data(), dtsz);
 		_d->takeRecurrentData(ba);
 	}
@@ -334,7 +335,6 @@ void ByteStream::writeRecurrentData(const ByteArray& data)
 		write(data.size());
 		writeBytes(data.data(), data.size());
 	}
-
 }
 
 
