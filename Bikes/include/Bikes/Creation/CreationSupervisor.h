@@ -29,6 +29,11 @@ public:
 		return Creator::create();
 	}
 
+	static value_type* createArray(sznum sz)
+	{
+		return Creator::createArray(sz);
+	}
+
 	static void destroy(value_type* obj)
 	{			
 		Deleter::destroy(obj);
@@ -59,6 +64,18 @@ public:
 // 	typedef typename Base::Deleter Deleter;
 };
 
+
+template<class T>
+class SimpleArraySupervisor :
+	public CreationSupervisor<SimpleCopier<T>, SimpleArrayCreator<T>, SimpleArrayDeleter<T> >
+{
+public:
+	// 	typedef typename CreationSupervisor<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> > Base;
+	// 	typedef typename Base::value_type value_type;
+	// 	typedef typename Base::Cloner Cloner;
+	// 	typedef typename Base::Creator Creator;
+	// 	typedef typename Base::Deleter Deleter;
+};
 }	
 
 #endif // <- INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H

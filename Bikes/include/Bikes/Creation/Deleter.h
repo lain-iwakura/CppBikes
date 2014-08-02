@@ -17,7 +17,7 @@ public:
 };
 
 template<class T>
-class ArrayDeleter
+class SimpleArrayDeleter
 {
 public:
 	typedef T value_type;
