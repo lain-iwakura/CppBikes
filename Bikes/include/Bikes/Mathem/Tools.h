@@ -74,6 +74,22 @@ void setInRange(T& val, T val_min, T val_max)
 }
 
 template<typename T>
+T  noGreater(T val, T val_max)
+{
+	if (val > val_max)
+		return val_max;
+	return val;
+}
+
+template<typename T>
+T  noLess(T val, T val_min)
+{
+	if (val < val_min)
+		return val_min;
+	return val;
+}
+
+template<typename T>
 T (MAX)(T x, T y)
 {
   if(x>y) 
