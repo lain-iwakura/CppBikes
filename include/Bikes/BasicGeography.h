@@ -64,7 +64,7 @@ struct PhiLamRectangle
     PhiLamRectangle();
     void set(rnum phi_1, rnum phi_2, rnum lam_1, rnum lam_2);
 
-    bool isContain(const PhiLamPoint& p);
+    bool isContain(const PhiLamPoint& p) const;
 
     PhiLamPoint anchor;
     rnum dPhi;
@@ -73,7 +73,7 @@ struct PhiLamRectangle
     PhiLamRectangle& operator += (const PhiLamRectangle& rec);
 };
 
-PhiLamRectangle getPhiLamRectangleForPoints(std::vector<PhiLamPoint> points);
+PhiLamRectangle getPhiLamRectangleForPoints(const std::vector<PhiLamPoint>& points);
 
 
 
