@@ -1,6 +1,5 @@
 def configure(ctx):
-    if 'INCLUDES_BOOST' not in ctx.env:
-        ctx.check_boost(includes=ctx.environ.get('BOOST_ROOT'))
+    ctx.use('boost')
 
 
 def configure_PIC(ctx):
@@ -15,8 +14,6 @@ def build(ctx):
     src_glob = ctx.path.find_dir('src').ant_glob
 
     ctx.static_lib(
-        use='BOOST',
-
         includes=[include_node, include_node.find_dir('Bikes')],
 
         source=src_glob('*.cpp'),

@@ -19,7 +19,7 @@ protected:
 
     virtual void elementWillBeChanged(sznum i) const = 0;
 
-    virtual void elementChanged(sznum i) const = 0;      
+    virtual void elementChanged(sznum i) const = 0;
 
     friend class BaseSequenceElement;
 };
@@ -70,7 +70,7 @@ public:
     }
 
     virtual ~Sequence()
-    {        
+    {
         for (sznum i = 0; i < _arr.size(); i++)
             delete _arr[i];
     }
@@ -103,7 +103,7 @@ public:
     }
 
     void push_back(const T& el)
-    {   
+    {
         take(cloneElement(el));
     }
 
@@ -117,16 +117,16 @@ public:
         if (el)
         {
             if (el->_seq)
-                el->_seq->pass(el->_iEl);            
+                el->_seq->pass(el->_iEl);
 
             sznum n = _arr.size();
             el->_seq = this;
             el->_iEl = n;
-            _arr.push_back(el);
+            _arr.push_back(el);            
 
             call_inserted(el);
 
-            INNERBIKES_SEQUENCE_ACTION(sequenceElementInserted,n)            
+            INNERBIKES_SEQUENCE_ACTION(sequenceElementInserted,n)
         }
     }
 
@@ -141,33 +141,44 @@ public:
 
             if (el->_seq)
                 el->_seq->pass(el->_iEl);
-           
+
             el->_seq = this;
             el->_iEl = iEl;
 
             _arr.insert(_arr.begin()+iEl, el);
-                        
+            n += 1;
+
+            for (sznum i = iEl + 1; i < n; i++)
+                _arr[i]->_iEl = i;
+
             call_inserted(el);
 
             INNERBIKES_SEQUENCE_ACTION(sequenceElementInserted, iEl)
-            
+
         }
     }
 
     T* pass(sznum iEl)
     {
-        if (iEl < _arr.size())
+        sznum n = _arr.size();
+        if (iEl < n)
         {
-            T* el = _arr[iEl];           
+            T* el = _arr[iEl];
 
             INNERBIKES_SEQUENCE_ACTION(sequenceElementWillBeRemoved, iEl)
 
             call_willBeRemoved(el);
-                
+
             el->_iEl = 0;
             el->_seq = 0;
 
-            _arr.erase(_arr.begin() + iEl);            
+            _arr.erase(_arr.begin() + iEl);
+            n -= 1;
+
+            for (sznum i = iEl; i < n; i++)
+                _arr[i]->_iEl = i;
+
+            return el;
         }
         return 0;
     }
@@ -265,13 +276,13 @@ protected:
     {
         return obj.clone();
     }
-    
+
 private:
 
     void elementWillBeChanged(sznum ich) const
     {
         if ( ich < _arr.size())
-            INNERBIKES_SEQUENCE_ACTION(sequenceElementWillBeChanged, ich)        
+            INNERBIKES_SEQUENCE_ACTION(sequenceElementWillBeChanged, ich)
     }
 
     void elementChanged(sznum ich) const
@@ -280,7 +291,7 @@ private:
             INNERBIKES_SEQUENCE_ACTION(sequenceElementChanged, ich)
     }
 
-  
+
     std::vector<T*> _arr;
 };
 

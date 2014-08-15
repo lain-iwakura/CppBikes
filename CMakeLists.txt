@@ -1,19 +1,17 @@
-# CMakeBikesLists v0.1 (необходимая подпись)
-cmake_minimum_required (VERSION 2.8)
+# CMakeBikesLists
+cmake_minimum_required (VERSION 2.8.9)
 #-------------------------------------------------------------------------------
 # Включение и инициализация CMakeBikes ->
 CMakeBikes_init()
 # <- Включение и инициализация CMakeBikes
 #-------------------------------------------------------------------------------
-# Имя проекта ->
-project( Bikes ) #${THIS_DIR})
-# <- Имя проекта 
-#-------------------------------------------------------------------------------
 # Опции ->
+
+set(PROJECT_NAME			Bikes) # AUTO|<THE_NAME_OF_PROJECT>
 
 set(PROJECT_TYPE			STATIC_LIB) # AUTO|EXECUTABLE|SHARED_LIB|STATIC_LIB|SHARED_OR_STATIC_LIB|HEADERS_LIB|AGGREGATION
 
-set(REQUIRED_LIBS 			NO) # NO|[AUTO][DEPENDENCIES][PARENT_DEPENDENCIES][<REQUIRED_LIBS_LIST>]
+set(REQUIRED_LIBS 			NO) # NO|[AUTO][<REQUIRED_LIBS_LIST>]
 
 set(REQUIRED_INCLUDE		NO)   # NO|[<REQUIRED_TARGETS_LIST>]
 
@@ -37,5 +35,4 @@ set(USE_INSTALL				OFF)  # ON|OFF|<INSTALL_PATH>
 #-------------------------------------------------------------------------------
 CMakeBikes_run()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 

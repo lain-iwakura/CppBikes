@@ -305,7 +305,7 @@ PhiLamRectangle& PhiLamRectangle::operator+=( const PhiLamRectangle& rec )
     return *this;
 }
 
-bool PhiLamRectangle::isContain( const PhiLamPoint& p )
+bool PhiLamRectangle::isContain( const PhiLamPoint& p ) const
 {
     rnum dlam=deltaLam(anchor.lam,p.lam);
     return  (dlam>=0) && 
@@ -314,7 +314,7 @@ bool PhiLamRectangle::isContain( const PhiLamPoint& p )
             (p.phi<=anchor.phi+dPhi);    
 }
 
-PhiLamRectangle getPhiLamRectangleForPoints( std::vector<PhiLamPoint> points )
+PhiLamRectangle getPhiLamRectangleForPoints(const std::vector<PhiLamPoint>& points )
 {    
     PhiLamRectangle r;
     if(points.size())
@@ -629,6 +629,104 @@ void circleRange_approx(const PhiLamPoint &p,
     circleRange_approx(PhiLam_to_PointE(p),range,c,approxMethod,da);
     for(sznum i=0; i<c.size(); i++)
         out_contour.push_back(Point_to_PhiLamE(c[i]));
+}
+
+bool findEllipsoidIntersection(const Vector& line, Point& crossPoint1, Point& crossPoint2)
+{
+    static const rnum eaa = GEO_A*GEO_A;    
+    static const rnum eab = eaa / (GEO_B*GEO_B);
+
+    bool suc = false;    
+
+    if (line.gz != 0.0)
+    {
+        rnum kx = line.gx / line.gz;
+        rnum ky = line.gy / line.gz;
+
+        rnum bx = line.anchor.gx - kx*line.anchor.gz;
+        rnum by = line.anchor.gy - ky*line.anchor.gz;
+
+        rnum a = (kx*kx + ky*ky) + eab;
+        rnum b = (kx*bx + ky*by) / a;
+        rnum c = (bx*bx + by*by - eaa) / a;
+
+        rnum d4 = b*b - c;
+
+        if (d4 >= 0.0)
+        {
+            rnum sd = sqrt(d4);
+            rnum z1 = -b - sd;
+            rnum z2 = -b + sd;
+
+            crossPoint1.gx = kx*z1 + bx;
+            crossPoint1.gy = ky*z1 + by;
+            crossPoint1.gz = z1;
+
+            crossPoint2.gx = kx*z2 + bx;
+            crossPoint2.gy = ky*z2 + by;
+            crossPoint2.gz = z2;
+
+            suc = true;
+        }
+    }
+    else if (line.gx != 0.0)
+    {
+        rnum ky = line.gy / line.gx;
+        //rnum kz = 0; //line.gz / line.gx;
+
+        rnum by = line.anchor.gy - ky*line.anchor.gx;
+        rnum bz = line.anchor.gz; //- 0*line.anchor.gx;
+
+        rnum a = 1.0 + ky*ky;
+        rnum b = ky*by / a;
+        rnum c = (by*by + bz*bz*eab - eaa) / a;
+
+        rnum d4 = b*b - c;
+
+        if (d4 >= 0.0)
+        {
+            rnum sd = sqrt(d4);
+            rnum x1 = -b - sd;
+            rnum x2 = -b + sd;
+
+            crossPoint1.gx = x1;
+            crossPoint1.gy = ky*x1 + by;
+            crossPoint1.gz = bz;
+
+            crossPoint2.gx = x2;
+            crossPoint2.gy = ky*x2 + by;
+            crossPoint2.gz = bz;
+
+            suc = true;
+        }
+    }
+    else if (line.gy != 0.0)
+    {
+        //rnum kz = 0;
+        //rnum kx = 0;
+
+        rnum bz = line.anchor.gz;
+        rnum bx = line.anchor.gx;
+
+        rnum d4 = eaa - eab*bz*bz - bx*bx;
+
+        if (d4 >= 0.0)
+        {
+            rnum y = sqrt(d4);         
+
+            crossPoint1.gx = bx;
+            crossPoint1.gy = y;
+            crossPoint1.gz = bz;
+
+            crossPoint2.gx = bx;
+            crossPoint2.gy = -y;
+            crossPoint2.gz = bz;
+
+            suc = true;
+        }
+    }
+        
+    return suc;
 }
 
 

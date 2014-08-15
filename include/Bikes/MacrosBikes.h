@@ -5,6 +5,31 @@
 
 #define MACROSBIKES_COMMA , 
 
+#define MACROSBIKES_MAXNUMPARAM 9
+
+#define MACROSBIKES_FOREACHPARAMLIST(MACROSNAME)\
+    MACROSNAME(0)\
+    MACROSNAME(1)\
+    MACROSNAME(2)\
+    MACROSNAME(3)\
+    MACROSNAME(4)\
+    MACROSNAME(5)\
+    MACROSNAME(6)\
+    MACROSNAME(7)\
+    MACROSNAME(8)\
+    MACROSNAME(9)\
+
+#define MACROSBIKES_COMMA0
+#define MACROSBIKES_COMMA1 ,
+#define MACROSBIKES_COMMA2 ,
+#define MACROSBIKES_COMMA3 ,
+#define MACROSBIKES_COMMA4 ,
+#define MACROSBIKES_COMMA5 ,
+#define MACROSBIKES_COMMA6 ,
+#define MACROSBIKES_COMMA7 ,
+#define MACROSBIKES_COMMA8 ,
+#define MACROSBIKES_COMMA9 ,
+
 #define MACROSBIKES_NOTHING 
 
 #define MACROSBIKES_CT0  
@@ -21,8 +46,7 @@
 #define MACROSBIKES_CT9_DEFTYPE(DefaultType) class T1=DefaultType, class T2=DefaultType, class T3=DefaultType, class T4=DefaultType, class T5=DefaultType, class T6=DefaultType, class T7=DefaultType, class T8=DefaultType, class T9=DefaultType 
 #define MACROSBIKES_CT10_DEFTYPE(DefaultType) class T1=DefaultType, class T2=DefaultType, class T3=DefaultType, class T4=DefaultType, class T5=DefaultType, class T6=DefaultType, class T7=DefaultType, class T8=DefaultType, class T9=DefaultType, class T10=DefaultType 
 
-
-#define MACROSBIKES_TT0  
+#define MACROSBIKES_TT0 
 #define MACROSBIKES_TT1 T1
 #define MACROSBIKES_TT2 T1,T2
 #define MACROSBIKES_TT3 T1,T2,T3
