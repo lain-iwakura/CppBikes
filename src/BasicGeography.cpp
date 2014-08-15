@@ -190,16 +190,22 @@ Point PhiLam_to_PointE( TrAngle *phi, TrAngle *lam )
 
 }
 
-Bikes::rnum getEarthRadiusAt( const Point& p )
+rnum getEarthRadiusAt( const Point& p )
 {
-    static const rnum a=1.0/(GEO_A*GEO_A);
-    static const rnum b=1.0/(GEO_B*GEO_B);
-
-    Vector vr(p);
-    vr.normalize();
-    rnum sinA=vr&v_gk;
-    return 1.0/sqrt(sinA*sinA*(b-a)+a);    
+	Vector vr(p);
+	vr.normalize();
+	return getEarthRadiusAt(vr);
 }
+
+rnum getEarthRadiusAt(const Vector& e)
+{
+	static const rnum a = 1.0 / (GEO_A*GEO_A);
+	static const rnum b = 1.0 / (GEO_B*GEO_B);
+
+	rnum sinA = e&v_gk;
+	return 1.0 / sqrt(sinA*sinA*(b - a) + a);
+}
+
 
 
 void MovePointToEllipsoidSurface(Point &p)

@@ -100,6 +100,10 @@ rnum parallelR(rnum phi);
 
 rnum getEarthRadiusAt(const Point& p);
 
+rnum getEarthRadiusAt(
+	const Vector& e //!< - единичный вектор(!)
+	);  
+
 void MovePointToEllipsoidSurface(Point &p); // переместить точку на поверхность эллипсоида 
 
 
