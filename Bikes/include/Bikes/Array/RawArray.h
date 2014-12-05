@@ -23,7 +23,7 @@ const unum defMaxCapacityIncrement()
 
 template<
 	class T,
-	class TCreationSupervisor = SimpleArraySupervisor<T>
+	class TCreationSupervisor = SimpleCopyingSupervisor<T>
 	>
 class RawArray
 {
@@ -83,7 +83,7 @@ public:
 
 	virtual ~RawArray()
 	{
-		_destroy(_arr);
+		_destroyArray(_arr);
 	}
 
 	void setCapacity(sznum cap)
@@ -92,7 +92,7 @@ public:
 		if (_sz > cap)
 			_sz = cap;
 		T *narr=_createArrayCopy(_arr,cap,_sz);
-		_destroy(_arr);
+		_destroyArray(_arr);
 		_arr = narr;
 	}
 
@@ -146,7 +146,7 @@ public:
 
 	void take(T* d, sznum sz)
 	{
-		_destroy(_arr);
+		_destroyArray(_arr);
 		 _arr=d;
 		 _cap=sz;
 		 _sz=_cap;
@@ -154,7 +154,7 @@ public:
 
 	void take(RawArray& ra)
 	{
-		_destroy(_arr);
+		_destroyArray(_arr);
 		_arr=ra.arr;
 		_cap=ra._cap;
 		_sz=ra._sz;
@@ -244,15 +244,6 @@ public:
 
 private:
 
-	static T* _createCopy(const T* obj)
-	{
-		return CreationSupervisor::createCopy(obj);
-	}
-
-	static T* _create()
-	{
-		return CreationSupervisor::create();
-	}
 
 	static T* _createArray(sznum sz)
 	{
@@ -274,10 +265,10 @@ private:
 		return carr;
 	}
 
-	static void _destroy(T* arr)
+	static void _destroyArray(T* arr)
 	{
 		if (arr)
-			CreationSupervisor::destroy(arr);
+			CreationSupervisor::destroyArray(arr);
 	}
 
 	T *_arr;
