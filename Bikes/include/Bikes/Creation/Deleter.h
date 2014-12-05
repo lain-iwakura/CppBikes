@@ -14,17 +14,10 @@ public:
 	{
 		delete obj;
 	}
-};
 
-template<class T>
-class SimpleArrayDeleter
-{
-public:
-	typedef T value_type;
-
-	static void destroy(T *obj)
+	static void destroyArray(T *obj)
 	{
-		delete [] obj;
+		delete[] obj;
 	}
 };
 

@@ -15,18 +15,6 @@ public:
 	{
 		return new T;
 	}
-};
-
-template<class T>
-class SimpleArrayCreator
-{
-public:
-	typedef T value_type;
-
-	static T* create()
-	{
-		return new T;
-	}
 
 	static T* createArray(sznum sz)
 	{

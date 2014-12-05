@@ -38,6 +38,11 @@ public:
 	{			
 		Deleter::destroy(obj);
 	}
+
+	static void destroyArray(value_type* obj)
+	{
+		Deleter::destroyArray(obj);
+	}
 };
 
 template<class T>
@@ -65,17 +70,6 @@ public:
 };
 
 
-template<class T>
-class SimpleArraySupervisor :
-	public CreationSupervisor<SimpleCopier<T>, SimpleArrayCreator<T>, SimpleArrayDeleter<T> >
-{
-public:
-	// 	typedef typename CreationSupervisor<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> > Base;
-	// 	typedef typename Base::value_type value_type;
-	// 	typedef typename Base::Cloner Cloner;
-	// 	typedef typename Base::Creator Creator;
-	// 	typedef typename Base::Deleter Deleter;
-};
 }	
 
 #endif // <- INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
