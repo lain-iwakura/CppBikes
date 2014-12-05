@@ -7,112 +7,217 @@
 #include <vector>
 #include <algorithm>
 
-namespace Bikes
-{
-
-template<class TList>
-class ListConstIterator
-{
-public:
-
-	typedef typename TList::BaseContainer::iterator BaseIterator;
-	typedef typename TList::BaseContainer::const_iterator BaseConstIterator;
-
-	typedef typename TList::value_type value_type;
-	typedef const value_type* pointer;
-	typedef const value_type& reference;
-
-	ListConstIterator()
-	{
-	}
-
-	const BaseConstIterator& data() const /*no const?*/
-	{
-		return _it;
-	}
-
-	reference operator*() const
-	{
-		return **_it;
-	}
-
-	pointer operator->() const
-	{
-		return *_it;
-	}
-
-	ListConstIterator<TList>& operator++()
-	{
-		_it++;
-		return *this;
-	}
-
-protected:
-	BaseIterator _it;
-};
-
-template<class TList>
-class ListIterator: public ListConstIterator<TList>
+namespace Bikes{
+//------------------------------------------------------------------------------
+namespace Inner{
+//------------------------------------------------------------------------------
+template<class IterTypes>
+class ListIteratorPattern
 {
 public:
 
-	typedef typename TList::value_type value_type;
-	typedef value_type* pointer;
-	typedef value_type& reference;
+    typedef typename IterTypes::BaseContainer BaseContainer;
+    typedef typename IterTypes::BaseIterator BaseIterator;
 
-	reference operator*() 
-	{
-		return **_it;
-	}
+    typedef typename IterTypes::value_type value_type;
+    typedef typename IterTypes::pointer pointer;
+    typedef typename IterTypes::reference reference;
+    typedef typename IterTypes::difference_type difference_type;
 
-	pointer operator->() 
-	{
-		return *_it;
-	}
+    typedef typename ListIteratorPattern<IterTypes> ThisType;
+
+    ListIteratorPattern()
+    {
+    }
+
+    reference operator*() const
+    {
+        return *(*_it);
+    }
+
+    pointer operator->() const
+    {
+        return *_it;
+    }
+
+    ThisType& operator++()
+    {
+        ++_it;
+        return *this;
+    }
+
+    ThisType operator++(int)
+    {
+        ThisType tmp(*this);
+        ++_it;
+        return tmp;
+    }
+
+    ThisType& operator--()
+    {
+        --_it;
+        return *this;
+    }
+
+    ThisType operator--(int)
+    {
+        ThisType tmp(*this);
+        --_it;
+        return tmp;
+    }
+
+    ThisType& operator += (difference_type di)
+    {
+        _it += di;
+        return *this;
+    }
+
+    ThisType& operator -= (difference_type di)
+    {
+        _it -= di;
+        return *this;
+    }
+
+    ThisType operator + (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp += di;
+    }
+
+    ThisType operator - (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp -= di;
+    }
+
+    difference_type operator - (const ThisType& itr)
+    {
+        return _it - itr._it;
+    }
+
+    reference operator [] (difference_type di) const
+    {
+        return *_it[di];
+    }
+
+    bool operator == (const ThisType& right) const
+    {
+        return _it == right._it;
+    }
+
+    bool operator != (const ThisType& right) const
+    {
+        return !(*this == right);
+    }
+
+    bool operator > (const ThisType& right) const
+    {
+        return _it > right._it;
+    }
+
+    bool operator < (const ThisType& right) const
+    {
+        return _it < right._it;
+    }
+
+    bool operator >= (const ThisType& right) const
+    {
+        return _it >= right._it;
+    }
+
+    bool operator <= (const ThisType& right) const
+    {
+        return _it <= right._it;
+    }
+
+    const BaseIterator& data() const /*no const?*/
+    {
+        return _it;
+    }
+private:
+    BaseIterator _it;
 };
+//------------------------------------------------------------------------------
+} // Inner
+//------------------------------------------------------------------------------
+template<class T>
+class ListTypes
+{
+public:
+    typedef std::vector<T*> BaseContainer;
+    typedef typename BaseContainer::iterator BaseIterator;
+    typedef typename BaseContainer::const_iterator BaseConstIterator;
 
-	
-// template<
-// 	class T, 
-// 	class TCloner = SimpleCopier<T>, 
-// 	class TCreator = SimpleCreator<T>,
-// 	class TDeleter = SimpleDeleter<T>
-// 	>
+    typedef  T value_type;
+    typedef  T* pointer;
+    typedef const T* const_pointer;
+    typedef T&  reference;
+    typedef const T& const_reference;
+    typedef typename BaseContainer::size_type size_type;
+    typedef typename BaseContainer::difference_type difference_type;
+
+    class ConstIteratorTypes
+    {
+    public:
+        typedef typename ListTypes<T>::BaseContainer BaseContainer;
+        typedef typename ListTypes<T>::BaseConstIterator BaseIterator;
+
+        typedef typename ListTypes<T>::value_type value_type;
+        typedef typename ListTypes<T>::const_pointer pointer;
+        typedef typename ListTypes<T>::const_reference reference;
+        typedef typename ListTypes<T>::difference_type difference_type;
+    };
+
+    class IteratorTypes
+    {
+    public:
+        typedef typename ListTypes<T>::BaseContainer BaseContainer;
+        typedef typename ListTypes<T>::BaseIterator BaseIterator;
+
+        typedef typename ListTypes<T>::value_type value_type;
+        typedef typename ListTypes<T>::const_pointer pointer;
+        typedef typename ListTypes<T>::const_reference reference;
+        typedef typename ListTypes<T>::difference_type difference_type;
+    };
+
+    typedef Inner::ListIteratorPattern<ConstIteratorTypes> const_iterator;
+    typedef Inner::ListIteratorPattern<IteratorTypes> iterator;
+};
+//------------------------------------------------------------------------------
 template<
 	class T,
 	class TCreationSupervisor = SimpleCopyingSupervisor<T>
 	>
-class List
+class List 
 {
 public:
+   
+    typedef typename ListTypes<T>::value_type value_type;
+    typedef typename ListTypes<T>::size_type size_type;
+    typedef typename ListTypes<T>::difference_type difference_type;
+    typedef typename ListTypes<T>::pointer pointer;
+    typedef typename ListTypes<T>::const_pointer const_pointer;
+    typedef typename ListTypes<T>::reference reference;
+    typedef typename ListTypes<T>::const_reference const_reference;
 
-	typedef std::vector<T*> BaseContainer;
+    typedef typename ListTypes<T>::const_iterator const_iterator;
+    typedef typename ListTypes<T>::iterator iterator;
 
-	typedef TCreationSupervisor CreationSupervisor;
-
-	typedef T value_type;
-	typedef sznum size_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
-
-
-
-	const BaseContainer& data() /*no const*/
-	{
-		return _l; 
-	}
+    typedef typename ListTypes<T>::BaseContainer BaseContainer;
+    typedef typename ListTypes<T>::BaseConstIterator BaseConstIterator;
+    typedef typename ListTypes<T>::BaseIterator BaseIterator;
+    typedef List<T, TCreationSupervisor> ThisType;
+    typedef TCreationSupervisor CreationSupervisor;
 
 	List()
 	{
 	}
 
-	List(const List<T> & objs) : _l(objs._l.size())
-	{
-		sznum sz = objs.size();
-		for (sznum i = 0; i < sz; i++)
-			_l[i] = _createCopy(objs._l[i]);
+    List(const ThisType& other) : _l(other._l.size())
+    {
+        size_type sz = other.size();
+        for (size_type i = 0; i < sz; i++)
+            _l[i] = _createCopy(other._l[i]);
 	}
 
 	template<class ArrayT>
@@ -693,6 +798,11 @@ public:
 		}
 	}
 
+    const BaseContainer& data() /* not const (!) */
+    {
+        return _l;
+    }
+
 private:
 
 	BaseContainer _l;
@@ -716,6 +826,5 @@ private:
 	}
 
 };
-
 }
 #endif // <- INCLUDE_BIKES_ARRAY_LIST_H
