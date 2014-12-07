@@ -2,10 +2,7 @@
 #define INCLUDE_BIKES_ARRAY_LIST_H
 
 #include <Bikes/Creation/CreationSupervisor.h>
-#include <Bikes/Array/ListInner.h>
-
 #include <vector>
-#include <algorithm>
 
 namespace Bikes{
 template<class T> class ListConstIterator;
@@ -28,32 +25,6 @@ public:
     typedef typename BaseContainer::size_type size_type;
     typedef typename BaseContainer::difference_type difference_type;
 
-    class ConstIteratorTypes
-    {
-    public:
-        typedef typename ListBase<T>::BaseContainer BaseContainer;
-        typedef typename ListBase<T>::BaseConstIterator BaseIterator;
-
-        typedef typename ListBase<T>::value_type value_type;
-        typedef typename ListBase<T>::const_pointer pointer;
-        typedef typename ListBase<T>::const_reference reference;
-        typedef typename ListBase<T>::difference_type difference_type;
-    };
-
-    class IteratorTypes
-    {
-    public:
-        typedef typename ListBase<T>::BaseContainer BaseContainer;
-        typedef typename ListBase<T>::BaseIterator BaseIterator;
-
-        typedef typename ListBase<T>::value_type value_type;
-        typedef typename ListBase<T>::const_pointer pointer;
-        typedef typename ListBase<T>::const_reference reference;
-        typedef typename ListBase<T>::difference_type difference_type;
-    };
-
-//    typedef Inner::ListIteratorPattern<ConstIteratorTypes> const_iterator;
-//    typedef Inner::ListIteratorPattern<IteratorTypes> iterator;
     typedef ListConstIterator<T> const_iterator;
     typedef ListIterator<T> iterator;
 protected:
