@@ -8,9 +8,12 @@
 #include <algorithm>
 
 namespace Bikes{
+template<class T> class ListConstIterator;
+template<class T> class ListIterator;
+template<class T, class CreationSupervisorT = SimpleCopyingSupervisor<T> > class List;
 //------------------------------------------------------------------------------
 template<class T>
-class ListTypes
+class ListBase
 {
 public:
     typedef std::vector<T*> BaseContainer;
@@ -28,29 +31,310 @@ public:
     class ConstIteratorTypes
     {
     public:
-        typedef typename ListTypes<T>::BaseContainer BaseContainer;
-        typedef typename ListTypes<T>::BaseConstIterator BaseIterator;
+        typedef typename ListBase<T>::BaseContainer BaseContainer;
+        typedef typename ListBase<T>::BaseConstIterator BaseIterator;
 
-        typedef typename ListTypes<T>::value_type value_type;
-        typedef typename ListTypes<T>::const_pointer pointer;
-        typedef typename ListTypes<T>::const_reference reference;
-        typedef typename ListTypes<T>::difference_type difference_type;
+        typedef typename ListBase<T>::value_type value_type;
+        typedef typename ListBase<T>::const_pointer pointer;
+        typedef typename ListBase<T>::const_reference reference;
+        typedef typename ListBase<T>::difference_type difference_type;
     };
 
     class IteratorTypes
     {
     public:
-        typedef typename ListTypes<T>::BaseContainer BaseContainer;
-        typedef typename ListTypes<T>::BaseIterator BaseIterator;
+        typedef typename ListBase<T>::BaseContainer BaseContainer;
+        typedef typename ListBase<T>::BaseIterator BaseIterator;
 
-        typedef typename ListTypes<T>::value_type value_type;
-        typedef typename ListTypes<T>::const_pointer pointer;
-        typedef typename ListTypes<T>::const_reference reference;
-        typedef typename ListTypes<T>::difference_type difference_type;
+        typedef typename ListBase<T>::value_type value_type;
+        typedef typename ListBase<T>::const_pointer pointer;
+        typedef typename ListBase<T>::const_reference reference;
+        typedef typename ListBase<T>::difference_type difference_type;
     };
 
-    typedef Inner::ListIteratorPattern<ConstIteratorTypes> const_iterator;
-    typedef Inner::ListIteratorPattern<IteratorTypes> iterator;
+//    typedef Inner::ListIteratorPattern<ConstIteratorTypes> const_iterator;
+//    typedef Inner::ListIteratorPattern<IteratorTypes> iterator;
+    typedef ListConstIterator<T> const_iterator;
+    typedef ListIterator<T> iterator;
+protected:
+    static typename const_iterator::BaseIterator const& getBaseIterator(const const_iterator& itr);
+    static typename const_iterator::BaseIterator& getBaseIterator(const_iterator& itr);
+};
+//------------------------------------------------------------------------------
+template<class T>
+class ListConstIterator
+{
+public:
+
+    typedef typename ListBase<T>::BaseContainer BaseContainer;
+    typedef typename ListBase<T>::BaseConstIterator BaseIterator;
+
+    typedef typename ListBase<T>::value_type value_type;
+    typedef typename ListBase<T>::const_pointer pointer;
+    typedef typename ListBase<T>::const_reference reference;
+    typedef typename ListBase<T>::difference_type difference_type;
+
+    typedef typename ListConstIterator<T> ThisType;
+
+    ListConstIterator()
+    {
+    }
+
+    ListConstIterator(const BaseIterator& baseIter) : _it(baseIter)
+    {
+    }
+
+    reference operator*() const
+    {
+        return *(*_it);
+    }
+
+    pointer operator->() const
+    {
+        return *_it;
+    }
+
+    ThisType& operator++()
+    {
+        ++_it;
+        return *this;
+    }
+
+    ThisType operator++(int)
+    {
+        ThisType tmp(*this);
+        ++_it;
+        return tmp;
+    }
+
+    ThisType& operator--()
+    {
+        --_it;
+        return *this;
+    }
+
+    ThisType operator--(int)
+    {
+        ThisType tmp(*this);
+        --_it;
+        return tmp;
+    }
+
+    ThisType& operator += (difference_type di)
+    {
+        _it += di;
+        return *this;
+    }
+
+    ThisType& operator -= (difference_type di)
+    {
+        _it -= di;
+        return *this;
+    }
+
+    ThisType operator + (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp += di;
+    }
+
+    ThisType operator - (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp -= di;
+    }
+
+    difference_type operator - (const ThisType& itr) const
+    {
+        return _it - itr._it;
+    }
+
+    reference operator [] (difference_type di) const
+    {
+        return *_it[di];
+    }
+
+    bool operator == (const ThisType& right) const
+    {
+        return _it == right._it;
+    }
+
+    bool operator != (const ThisType& right) const
+    {
+        return !(*this == right);
+    }
+
+    bool operator > (const ThisType& right) const
+    {
+        return _it > right._it;
+    }
+
+    bool operator < (const ThisType& right) const
+    {
+        return _it < right._it;
+    }
+
+    bool operator >= (const ThisType& right) const
+    {
+        return _it >= right._it;
+    }
+
+    bool operator <= (const ThisType& right) const
+    {
+        return _it <= right._it;
+    }
+
+protected:
+    BaseIterator _it;
+
+    friend class ListBase<T>;
+};
+//------------------------------------------------------------------------------
+template<class T>
+typename ListBase<T>::const_iterator::BaseIterator const&
+ListBase<T>::getBaseIterator(
+    const typename ListBase<T>::const_iterator& itr
+    )
+{
+    return itr._it;
+}
+
+template<class T>
+typename ListBase<T>::const_iterator::BaseIterator& 
+ListBase<T>::getBaseIterator(
+    typename ListBase<T>::const_iterator& itr
+    )
+{
+    return itr._it;
+}
+//------------------------------------------------------------------------------
+template<class T>
+class ListIterator: public ListConstIterator<T>
+{
+public:
+
+    typedef typename ListBase<T>::BaseContainer BaseContainer;
+    typedef typename ListBase<T>::BaseConstIterator BaseIterator;
+
+    typedef typename ListBase<T>::value_type value_type;
+    typedef typename ListBase<T>::pointer pointer;
+    typedef typename ListBase<T>::reference reference;
+    typedef typename ListBase<T>::difference_type difference_type;
+
+    typedef typename ListIterator<T> ThisType;
+
+    ListIterator()
+    {
+    }
+
+    ListIterator(const BaseIterator& baseIter) : _it(baseIter)
+    {
+    }
+
+    reference operator [] (difference_type di) const
+    {
+        return *_it[di];
+    }
+
+    reference operator*() const
+    {
+        return *(*_it);
+    }
+
+    pointer operator->() const
+    {
+        return *_it;
+    }
+
+    ThisType& operator++()
+    {
+        ++_it;
+        return *this;
+    }
+
+    ThisType operator++(int)
+    {
+        ThisType tmp(*this);
+        ++_it;
+        return tmp;
+    }
+
+    ThisType& operator--()
+    {
+        --_it;
+        return *this;
+    }
+
+    ThisType operator--(int)
+    {
+        ThisType tmp(*this);
+        --_it;
+        return tmp;
+    }
+
+    ThisType& operator += (difference_type di)
+    {
+        _it += di;
+        return *this;
+    }
+
+    ThisType& operator -= (difference_type di)
+    {
+        _it -= di;
+        return *this;
+    }
+
+    ThisType operator + (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp += di;
+    }
+
+    ThisType operator - (difference_type di) const
+    {
+        ThisType tmp(*this);
+        return tmp -= di;
+    }
+
+
+    /*
+    difference_type operator - (const ThisType& itr) const
+    {
+        return _it - itr._it;
+    }
+    //*/
+
+ /*
+    bool operator == (const ThisType& right) const
+    {
+        return _it == right._it;
+    }
+
+    bool operator != (const ThisType& right) const
+    {
+        return !(*this == right);
+    }
+
+    bool operator > (const ThisType& right) const
+    {
+        return _it > right._it;
+    }
+
+    bool operator < (const ThisType& right) const
+    {
+        return _it < right._it;
+    }
+
+    bool operator >= (const ThisType& right) const
+    {
+        return _it >= right._it;
+    }
+
+    bool operator <= (const ThisType& right) const
+    {
+        return _it <= right._it;
+    }
+//    */
 };
 //------------------------------------------------------------------------------
 template<
