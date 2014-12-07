@@ -1,5 +1,5 @@
-#ifndef PREBIKES_QUEUE_H
-#define PREBIKES_QUEUE_H
+#ifndef INCLUDE_BIKES_ARRAY_QUEUE_H
+#define INCLUDE_BIKES_ARRAY_QUEUE_H
 
 
 namespace Bikes
@@ -188,4 +188,4 @@ namespace Bikes
 }
 
 
-#endif
+#endif // <- INCLUDE_BIKES_ARRAY_QUEUE_H

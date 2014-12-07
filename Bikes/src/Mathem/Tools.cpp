@@ -1,8 +1,11 @@
 #include <Bikes/Mathem/Tools.h>
-#include <math.h>
+#include <cmath>
 
 namespace Bikes
 {
+
+using namespace std;
+
 	
 rnum acosh(rnum a)
 {

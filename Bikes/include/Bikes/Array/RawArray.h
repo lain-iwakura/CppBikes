@@ -23,13 +23,13 @@ const unum defMaxCapacityIncrement()
 
 template<
 	class T,
-	class TCreationSupervisor = SimpleCopyingSupervisor<T>
+	class CreationSupervisorT = SimpleCopyingSupervisor<T>
 	>
 class RawArray
 {
 public:
 
-	typedef TCreationSupervisor CreationSupervisor;
+	typedef CreationSupervisorT CreationSupervisor;
 	
 	RawArray() :
 		_arr(0), 
