@@ -75,22 +75,23 @@ public:
 //	x
 
 // 	vector::at(STL / CLR) // Accesses an element at a specified position.
-	T& at(size_type i)
+	reference at(size_type i)
 	{
 		return *_l.at(i);
 	}
 
-	const T& at(size_type i) const
+	const_reference at(size_type i) const
 	{
 		return *_l.at(i);
 	}
 
 // 	vector::back(STL / CLR) // Accesses the last element.
-	T& back()
+	reference back()
 	{
 		return *_l.back();
 	}
-	const T& back() const
+
+    const_reference back() const
 	{
 		return *_l.back();
 	}
@@ -171,22 +172,23 @@ public:
 	}
 
 //	vector::front(STL / CLR) // Accesses the first element.
-	T& front()
+	reference front()
 	{
 		return *_l.front();
 	}
-	const T& front() const
+
+	const_reference front() const
 	{
 		return *_l.front();
 	}
 
 //  vector::insert(STL / CLR) // Adds elements at a specified position.	
-    void insert(const_iterator iWhere, const T& obj)
+    void insert(const_iterator iWhere, const_reference obj)
     {
         _l.insert(Base::getBaseIterator(iWhere), _createCopy(&obj));
     }
 
-	void insert(size_type iWhere, const T& obj)
+	void insert(size_type iWhere, const_reference obj)
 	{
 		_l.insert(_l.begin() + iWhere, _createCopy(&obj));
 	}
@@ -227,7 +229,7 @@ public:
 
 
 //	vector::push_back(STL / CLR) // Adds a new last element.	
-	void push_back(const T& obj)
+	void push_back(const_reference obj)
 	{
 		_l.push_back(_createCopy(&obj));
 	}
@@ -243,7 +245,7 @@ public:
 			_l[sz1 + i] = _createCopy(arr[i]);
 	}
 
-	void push_front(const T& obj)
+	void push_front(const_reference obj)
 	{
 		_l.insert(_l.begin(), _createCopy(&obj));
 	}
@@ -270,7 +272,7 @@ public:
 	}
 
 //	vector::resize(STL / CLR) // Changes the number of elements.
-	void resize(size_type sz, const T& def)
+	void resize(size_type sz, const_reference def)
 	{
 		size_type csz = _l.size();
 		for (size_type i = sz; i < csz; ++i)
@@ -310,15 +312,15 @@ public:
 
 // QList interface ->
 
-		void	append(const T & obj)
+		void append(const T & obj)
 		{
 			push_back(obj);
 		}
 
 		template<class ArrayT>
-		void	appendArray(const ArrayT & objs)
+		void append(const ArrayT & objs)
 		{
-			push_back_array(objs);			
+			push_back(objs);			
 		}
 
 // 		iterator	begin()
@@ -343,7 +345,7 @@ public:
 			return false;
 		}
 		
-		num	count(const T & obj) const
+		lnum count(const T & obj) const
 		{
 			sznum s = _l.size();
 			int c = 0;
@@ -355,21 +357,21 @@ public:
 			return c;
 		}
 
-		num	count() const
+		lnum count() const
 		{
-			return num(_l.size());
+			return lnum(_l.size());
 		}
 
 
 // 		bool	endsWith(const T & value) const
 
 
-		T &	first()
+		T& first()
 		{
 			return *_l.front();
 		}
 
-		const T & first() const
+		const T& first() const
 		{
 			return *_l.front();
 		}
@@ -402,7 +404,10 @@ public:
 
 // 		int	lastIndexOf(const T & value, int from = -1) const
 
-//		int	length() const	
+        lnum length() const
+        {
+            return count();
+        }
 
 // 		QList<T>	mid(int pos, int length = -1) const
 // 		void	move(int from, int to)
@@ -498,28 +503,23 @@ public:
 		return *_l[i];
 	}
 
-	List<T>& operator += (const T& obj)
+	ThisType& operator += (const T& obj)
 	{
 		push_back(obj);
 		return *this;
 	}
 		
-	List<T>& operator = (const List<T>& objs)
+    template<class ArrayT>
+	ThisType& operator += (const ArrayT& arr)
 	{
-		sznum sz1 = _l.size();
-		sznum sz2 = objs._l.size();
-		for (sznum i = 0; i < sz1; i++)
-			_destroy(_l[i]);
-		_l.resize(sz2);
-		for (sznum i = 0; i < sz2; i++)
-			_l[i] = _createCopy(objs._l[i]);
+        push_back(arr);
 		return *this;
 	}
 
 	template<class ArrayT>
-	List<T>& operator = (const ArrayT& objs)
+	ThisType& operator = (const ArrayT& objs)
 	{
-		fromArray(objs);
+		from_array(objs);
 		return *this;
 	}
 
@@ -554,17 +554,18 @@ public:
 
 	void take_back(T* obj)
 	{
-		_l.push_back(obj);
+        _l.push_back(obj);
 	}
 
-	void take_back(List<T>& objs)
+
+	void take_back(ThisType& arr)
 	{		
 		sznum sz1 = _l.size();
-		sznum sz2 = objs._l.size();
+        sznum sz2 = arr._l.size();
 		_l.resize(sz1 + sz2);
 		for (sznum i = 0; i < sz2; i++)
-			_l[sz1 + i] = objs._l[i];
-		objs._l.clear();
+            _l[sz1 + i] = arr._l[i];
+        arr._l.clear();
 	}
 
 	void take_front(T* obj)
@@ -572,13 +573,13 @@ public:
 		_l.insert(_l.begin(), obj);
 	}
 
-	void take_front(List<T>& objs)
+	void take_front(ThisType& arr)
 	{		
-		sznum sz2 = objs._l.size();
-		_l.insert(_l.begin(), sz2);
+        sznum sz2 = arr._l.size();
+		_l.insert(_l.begin(), sz2, pointer(0));
 		for (sznum i = 0; i < sz2; i++)
-			_l[i] = objs._l[i];
-		objs._l.clear();
+			_l[i] = arr._l[i];
+		arr._l.clear();
 	}
 
 	void take(T* obj, sznum i)
@@ -598,23 +599,28 @@ public:
 	std::vector<T> to_std_vector()
 	{
 		std::vector<T> r;
-		sznum sz = _l.size();
-		r.reserve(sz);
-		for (sznum i = 0; i < sz; i++)
-			r.push_back(*_l[i]);
+        to_std_vector(r);
 		return r;
 	}
 
+    void to_std_vector(std::vector<T>& v)
+    {
+        sznum sz = _l.size();
+        v.reserve(sz);
+        for (sznum i = 0; i < sz; i++)
+            v.push_back(*_l[i]);
+    }
+
 	template<class ArrayT>
-	void from_array(const ArrayT& objs)
+	void from_array(const ArrayT& arr)
 	{
 		sznum sz1 = _l.size();
-		sznum sz2 = objs.size();
+        sznum sz2 = arr.size();
 		for (sznum i = 0; i < sz1; i++)
 			_destroy(_l[i]);
 		_l.resize(sz2);
 		for (sznum i = 0; i < sz2; i++)
-			_l[i] = _createCopy(&objs[i]);
+            _l[i] = _createCopy(&arr[i]);
 	}
 		
 	T& increase()
@@ -623,9 +629,10 @@ public:
 		return *_l.back();
 	}
 
-	T& operator ++ () 
+	ThisType& operator ++() 
 	{		
-		return increase();
+        _l.push_back(_create());
+		return *this;
 	}
 
 	const T & beforeLast () const 
