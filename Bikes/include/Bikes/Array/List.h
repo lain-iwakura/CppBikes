@@ -339,53 +339,65 @@ public:
 //------------------------------------------------------------------------------
 template<
 	class T,
-	class TCreationSupervisor = SimpleCopyingSupervisor<T>
+	class CreationSupervisorT 
 	>
-class List 
+class List: public ListBase<T> 
 {
 public:
    
-    typedef typename ListTypes<T>::value_type value_type;
-    typedef typename ListTypes<T>::size_type size_type;
-    typedef typename ListTypes<T>::difference_type difference_type;
-    typedef typename ListTypes<T>::pointer pointer;
-    typedef typename ListTypes<T>::const_pointer const_pointer;
-    typedef typename ListTypes<T>::reference reference;
-    typedef typename ListTypes<T>::const_reference const_reference;
+    typedef ListBase<T> Base;
+    typedef typename Base::value_type value_type;
+    typedef typename Base::size_type size_type;
+    typedef typename Base::difference_type difference_type;
+    typedef typename Base::pointer pointer;
+    typedef typename Base::const_pointer const_pointer;
+    typedef typename Base::reference reference;
+    typedef typename Base::const_reference const_reference;
 
-    typedef typename ListTypes<T>::const_iterator const_iterator;
-    typedef typename ListTypes<T>::iterator iterator;
+    typedef typename Base::const_iterator const_iterator;
+    typedef typename Base::iterator iterator;
 
-    typedef typename ListTypes<T>::BaseContainer BaseContainer;
-    typedef typename ListTypes<T>::BaseConstIterator BaseConstIterator;
-    typedef typename ListTypes<T>::BaseIterator BaseIterator;
-    typedef List<T, TCreationSupervisor> ThisType;
-    typedef TCreationSupervisor CreationSupervisor;
+    typedef typename Base::BaseContainer BaseContainer;
+    typedef typename Base::BaseConstIterator BaseConstIterator;
+    typedef typename Base::BaseIterator BaseIterator;
+    typedef List<T, CreationSupervisorT> ThisType;
+    typedef CreationSupervisorT CreationSupervisor;
 
 	List()
 	{
 	}
 
-    List(const ThisType& other) : _l(other._l.size())
+    template<class OtherCreationSupervisorT>
+    List(const List<T, OtherCreationSupervisorT>& other) : _l(other._l.size())
     {
-        size_type sz = other.size();
-        for (size_type i = 0; i < sz; i++)
-            _l[i] = _createCopy(other._l[i]);
+        BaseIterator i = _l.begin();
+        BaseConstIterator j = other._l.begin();
+        const BaseIterator& iEnd = _l.end();
+        for (; i != iEnd ; ++i, ++j)
+            *i = _createCopy(*j);
 	}
 
 	template<class ArrayT>
-	List(const ArrayT& objs) :_l(objs.size())
+    List(const ArrayT& arr) :_l(arr.size())
 	{
 		sznum sz = objs.size();
-		for (sznum i = 0; i < sz; i++)
-			_l[i] = _createCopy(&objs[i]);
+		for (sznum i = 0; i < sz; ++i)
+            _l[i] = _createCopy(&arr[i]);
 	}
+
+    template<class RawArrayT>
+    List(const RawArrayT& arr, sznum arrSize) :_l(arrSize)
+    {
+        for (sznum i = 0; i < arrSize; ++i)
+            _l[i] = _createCopy(&arrSize[i]);
+    }
 
 	~List()
 	{
-		sznum c = size();
-		for (sznum i = 0; i < c; i++)
-			_destroy(_l[i]);
+        BaseConstIterator i = _l.begin();
+        const BaseConstIterator& iEnd = _l.end();
+        for (; i != iEnd; ++i)
+            _destroy(*i);
 	}
 
 //..............................................................................
@@ -395,11 +407,12 @@ public:
 //	x
 
 // 	vector::at(STL / CLR) // Accesses an element at a specified position.
-	T& at(sznum i)
+	T& at(size_type i)
 	{
 		return *_l.at(i);
 	}
-	const T & at(sznum i) const
+
+	const T& at(size_type i) const
 	{
 		return *_l.at(i);
 	}
@@ -415,10 +428,18 @@ public:
 	}
 
 // 	vector::begin(STL / CLR) // Designates the beginning of the controlled sequence.
-//	x
+    iterator begin()
+    {
+        return iterator(_l.begin());
+    }
+
+    const_iterator begin() const
+    {
+        return const_iterator(_l.begin());
+    }
 
 // 	vector::capacity(STL / CLR) // Reports the size of allocated storage for the Container.
-	sznum capacity() const
+	size_type capacity() const
 	{
 		return _l.capacity();
 	}
@@ -426,31 +447,57 @@ public:
 // 	vector::clear(STL / CLR) // Removes all elements.
 	void clear()
 	{
-		sznum sz = _l.size();
-		for (sznum i = 0; i < sz; i++) 
-			_destroy(_l[i]);
-		_l.clear();
+        BaseConstIterator i = _l.begin();
+        const BaseConstIterator& iEnd = _l.end();
+        for (; i != iEnd; ++i)
+            _destroy(*i);
+        _l.clear();
 	}
 
 // 	vector::empty(STL / CLR) // Tests whether no elements are present.
 	bool empty() const
 	{
-		return empty();
+		return _l.empty();
 	}
 
 // 	vector::end(STL / CLR) // Designates the end of the controlled sequence.
-//	x
+    iterator end()
+    {
+        return iterator(_l.end());
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(_l.end());
+    }
 
 // 	vector::erase(STL / CLR) // Removes elements at specified positions.
-	void erase(sznum i)
+    iterator erase(const_iterator whereItr)
+    {
+        const const_iterator::BaseIterator& bi = Base::getBaseIterator(whereItr)
+        _destroy(*bi);
+        return iterator(_l.erase(bi));
+    }
+
+	void erase(size_type i)
 	{
-		Deleter::cleanup(_l[i]);
-		_l.erase(_l.begin() + i);
+        const BaseConstIterator& itr = _l.begin() + i;
+        _destroy(*itr);
+		_l.erase(itr);
 	}
 
-	void erase(sznum iFirst, sznum iLast)
+    iterator erase(const_iterator itrFirst, const_iterator itrLast)
+    {
+        const_iterator::BaseIterator i = Base::getBaseIterator(itrFirst);
+        const const_iterator::BaseIterator& iEnd = Base::getBaseIterator(itrLast)
+        for (; i != iEnd; ++i)
+            _destroy(*i);
+        return _l.erase(Base::getBaseIterator(itrFirst), iEnd);
+    }
+
+    void erase(size_type iFirst, size_type iLast)
 	{
-		for (sznum i = iFirst; i < iLast; i++)				
+		for (sznum i = iFirst; i < iLast; ++i)				
 			_destroy(_l[i]);
 		_l.erase(_l.begin()+iFirst,_l.begin()+iLast);
 	}
@@ -466,28 +513,35 @@ public:
 	}
 
 //  vector::insert(STL / CLR) // Adds elements at a specified position.	
-	void	insert(sznum iWhere, const T & obj)
+    void insert(const_iterator iWhere, const T& obj)
+    {
+        _l.insert(Base::getBaseIterator(iWhere), _createCopy(&obj));
+    }
+
+	void insert(size_type iWhere, const T& obj)
 	{
 		_l.insert(_l.begin() + iWhere, _createCopy(&obj));
 	}
 
-	void insert(sznum iWhere, const List<T>& objs)
+    template<class OtherCreationSupervisorT>
+    void insert(const const_iterator& iWhere, const List<T, OtherCreationSupervisorT>& arr)
 	{
-		rnum sz1 = _l.size();
-		rnum sz2 = objs._l.size();
-		_l.insert(_l.begin() + iWhere, sz2, T*(0))
-		for (sznum i = 0; i < sz2; i++)
-			_l[iWhere + i] = _createCopy(objs._l[i]);
+        const_iterator::BaseIterator i = Base::getBaseIterator(iWhere);
+        i = _l.insert(i, arr.size(), pointer(0));
+        const const_iterator::BaseIterator& jEnd = arr._l.end();
+        const_iterator::BaseIterator j = arr._l.begin();
+        for (; j != jEnd; ++i, ++j)
+            *i = _createCopy(*j);
 	}
 	
 	template<class ArrayT>
-	void insert(sznum iWhere, const ArrayT& objs)
+	void insert(size_type iWhere, const ArrayT& arr)
 	{
-		rnum sz1 = _l.size();
-		rnum sz2 = objs.size();
-		_l.insert(_l.begin() + iWhere, sz2, T*(0))
-		for (sznum i = 0; i < sz2; i++)
-			_l[iWhere + i] = _createCopy(&objs[i]);
+		size_type sz1 = _l.size();
+		sznum sz2 = arr.size();
+		_l.insert(_l.begin() + iWhere, sz2, pointer(0))
+		for (sznum i = 0; i < sz2; ++i)
+			_l[iWhere + i] = _createCopy(&arr[i]);
 	}
 
 //	vector::pop_back(STL / CLR) // Removes the last element.
@@ -510,23 +564,15 @@ public:
 		_l.push_back(_createCopy(&obj));
 	}
 
-	void push_back(const List<T> & objs)
+    template<class ArrayT>
+	void push_back(const ArrayT& arr)
 	{		
-		rnum sz1 = _l.size();
-		rnum sz2 = objs._l.size();
+        sznum sz1 = _l.size();
+		sznum sz2 = arr.size();
 		_l.resize(sz1 + sz2);
-		for (sznum i = 0; i < sz2; i++)
-			_l[sz1 + i] = _createCopy(objs._l[i]);
-	}
 
-	template<class ArrayT>
-	void push_back_array(const ArrayT& objs)
-	{
-		rnum sz1 = _l.size();
-		rnum sz2 = objs.size();
-		_l.resize(sz1 + sz2);
-		for (sznum i = 0; i < sz2; i++)
-			_l[sz1 + i] = _createCopy(&objs[i]);
+        for (sznum i = 0; i < sz2; ++i)
+			_l[sz1 + i] = _createCopy(arr[i]);
 	}
 
 	void push_front(const T& obj)
@@ -534,23 +580,13 @@ public:
 		_l.insert(_l.begin(), _createCopy(&obj));
 	}
 
-	void push_front(const List<T>& objs)
-	{
-		rnum sz1 = _l.size();
-		rnum sz2 = objs._l.size();	
-		_l.insert(_l.begin(),sz2,T*(0))
-		for (sznum i = 0; i < sz2; i++)		
-			_l[i] = _createCopy(objs._l[i]);	
-	}
-
 	template<class ArrayT>
-	void push_front_array(const ArrayT& objs)
+	void push_front(const ArrayT& arr)
 	{
-		rnum sz1 = _l.size();
-		rnum sz2 = objs.size();
-		_l.insert(_l.begin(), sz2, T*(0))
-		for (sznum i = 0; i < sz2; i++)
-			_l[i] = _createCopy(&objs[i]);
+        sznum sz2 = arr.size();
+		_l.insert(_l.begin(), sz2, pointer(0))
+		for (sznum i = 0; i < sz2; ++i)
+            _l[i] = _createCopy(&arr[i]);
 	}
 
 //	vector::rbegin(STL / CLR) //Designates the beginning of the reversed controlled sequence.
@@ -560,47 +596,43 @@ public:
 //	x
 
 //	vector::reserve(STL / CLR) // Ensures a minimum growth capacity for the Container.
-	void reserve(sznum cpct)
+	void reserve(size_type cpct)
 	{
 		_l.reserve(cpct);
 	}
 
 //	vector::resize(STL / CLR) // Changes the number of elements.
-	void resize(sznum sz, const T& def)
+	void resize(size_type sz, const T& def)
 	{
-		sznum csz = size();
-		for (sznum i = sz; i < csz; i++)
+		size_type csz = _l.size();
+		for (size_type i = sz; i < csz; ++i)
 			_destroy(_l[i]);
 		_l.resize(sz);
-		for (sznum i = csz; i < sz; i++)
+		for (size_type i = csz; i < sz; ++i)
 			_l[i] = _createCopy(def);
 	}
 
-	void resize(sznum sz)
+	void resize(size_type sz)
 	{
-		sznum csz = size();
-		for (sznum i = sz; i < csz; i++)
+		size_type csz = size();
+		for (size_type i = sz; i < csz; ++i)
 			_destroy(_l[i]);
 		_l.resize(sz);
-		for (sznum i = csz; i < sz; i++)
+		for (size_type i = csz; i < sz; ++i)
 			_l[i] = _create();
 	}
 
 //	vector::size(STL / CLR) // Counts the number of elements.
-	sznum size() const
+	size_type size() const
 	{
 		return _l.size();
 	}
 
 // 	vector::swap(STL / CLR) // Swaps the contents of two Containers.
-	void swap(List<T>& other)
+	void swap(ThisType& other)
 	{
 		_l.swap(other._l);
 	}
-
-
-// 	vector::to_array(STL / CLR) // Copies the controlled sequence to a new array.
-//	x
 
 
 // <- std::vector interface	
