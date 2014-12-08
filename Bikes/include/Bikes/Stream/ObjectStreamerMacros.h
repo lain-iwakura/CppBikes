@@ -1,81 +1,100 @@
 #ifndef INCLUDE_BIKES_STREAM_OBJECTSTREAMERMACROS_H
 #define INCLUDE_BIKES_STREAM_OBJECTSTREAMERMACROS_H
-#include <Bikes/MacrosBikes.h>
 
-
-//=========================================================================
-
-#define BIKES_OBJECTSTREAMER_DECL_EXP(EXP,ObjectStreamerName, ObjClass)		\
-class EXP ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>\
-{																			\
-	typedef ObjClass ObjType;												\
-private:																	\
-struct AuxReader															\
-{																			\
-    template<class T>void add(T &var){bs->read(var);}						\
-    void add(const StreamerInterface& str){bs->read(str);}                   \
-    void read(ObjClass *p);													\
-    Bikes::ByteStream *bs;													\
-};																			\
-struct AuxWriter															\
-{																			\
-	template<class T>void add(const T &var){bs->write(var);}				\
-	void write(const ObjClass *p);											\
-	Bikes::ByteStream *bs;													\
-};																			\
-public:																		\
-	ObjectStreamerName(ObjClass *obj=0);									\
-	ObjectStreamerName(const ObjClass *obj);								\
-	void read(Bikes::ByteStream &bstr) const;								\
-	static void read(Bikes::ByteStream &bstr, ObjClass* p);					\
-	void write(Bikes::ByteStream &bstr) const;								\
-	static void write(Bikes::ByteStream &bstr, const ObjClass* p);			\
+//==============================================================================
+#define BIKES_OBJECTSTREAMER_DECL_EXP(EXP,StreamerName, ObjClass)              \
+class EXP StreamerName:                                                        \
+    public Bikes::AbstractObjectStreamer<ObjClass>                             \
+{                                                                              \
+public:                                                                        \
+    typedef ObjClass ObjectType;                                               \
+                                                                               \
+    StreamerName();                                                            \
+    StreamerName(ObjectType &obj);                                             \
+    StreamerName(const ObjectType& obj);                                       \
+                                                                               \
+    void read(Bikes::ByteStream &bstr) const;                                  \
+    void write(Bikes::ByteStream &bstr) const;                                 \
+                                                                               \
+    static void read(Bikes::ByteStream &bstr, ObjectType& obj);                \
+    static void write(Bikes::ByteStream &bstr, const ObjectType& obj);         \
+                                                                               \
+    const ByteArray& getObjectTypeSignature() const;                           \
+private:                                                                       \
+    struct _AuxReader;                                                         \
+    struct _AuxWriter;                                                         \
 };
-
-#define BIKES_OBJECTSTREAMER_DECL(ObjectStreamerName, ObjClass)				\
-	BIKES_OBJECTSTREAMER_DECL_EXP(,ObjectStreamerName, ObjClass)		
-//-------------------------------------------------------------------------
-
-#define BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ValAccessList, PostReadAction)\
-	ObjectStreamerName::ObjectStreamerName(ObjType *obj):Bikes::AbstractObjectStreamer<ObjType>(obj){}\
-	ObjectStreamerName::ObjectStreamerName(const ObjType *obj):Bikes::AbstractObjectStreamer<ObjType>(obj){}\
-	void ObjectStreamerName::read(Bikes::ByteStream &bstr) const			\
-	{																		\
-		read(bstr,obj_r);													\
-	}																		\
-	void ObjectStreamerName::read(Bikes::ByteStream &bstr, ObjType* p)	\
-	{																		\
-		AuxReader r;r.bs=&bstr;												\
-		r.read(p);															\
-	}																		\
-	void ObjectStreamerName::write(Bikes::ByteStream &bstr) const			\
-	{																		\
-		write(bstr,obj_w);													\
-	}																		\
-	void ObjectStreamerName::write(Bikes::ByteStream &bstr, const ObjType* p)\
-	{																		\
-		AuxWriter w; w.bs=&bstr;											\
-		w.write(p);															\
-	}																		\
-	void ObjectStreamerName::AuxReader::read(ObjType* p)				\
-	{																		\
-		ValAccessList;														\
-		PostReadAction;														\
-	}																		\
-	void ObjectStreamerName::AuxWriter::write(const ObjType* p)		\
-	{																		\
-		ValAccessList;														\
-	}
-
-//-------------------------------------------------------------------------
-
-#define BIKES_OBJECTSTREAMER_DEF(ObjectStreamerName, ValAccessList)			\
-	BIKES_OBJECTSTREAMER_DEF_EXTENDED(ObjectStreamerName, ValAccessList, )
-
-//-------------------------------------------------------------------------
-
-#define BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(ObjectStreamerName, ObjClass, ValAccessList, PostReadAction)\
-class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
+//------------------------------------------------------------------------------
+#define BIKES_OBJECTSTREAMER_DECL(StreamerName, ObjClass)				       \
+    BIKES_OBJECTSTREAMER_DECL_EXP(, StreamerName, ObjClass)
+//------------------------------------------------------------------------------
+#define INNERBIKES_OBJ_ACCES_ALIASES(ObjectType)                               \
+    ObjectType* p = &obj;
+//------------------------------------------------------------------------------
+#define BIKES_OBJECTSTREAMER_DEF_EXTENDED(StreamerName, ValAccessList, PostReadAction)\
+    struct StreamerName::_AuxReader                                            \
+    {                                                                          \
+        _AuxReader(Bikes::ByteStream *_bs) :bs(_bs){}                          \
+        template<class T> void add(T &var) const{ bs->read(var); }             \
+        void add(const Bikes::StreamerInterface& str) const { bs->read(str); } \
+        void read(StreamerName::ObjectType& obj)                               \
+        {                                                                      \
+            INNERBIKES_OBJ_ACCES_ALIASES(StreamerName::ObjectType)             \
+            ValAccessList;                                                     \
+            PostReadAction;                                                    \
+        }                                                                      \
+        Bikes::ByteStream *bs;                                                 \
+    };                                                                         \
+    struct StreamerName::_AuxWriter                                            \
+    {                                                                          \
+        _AuxWriter(Bikes::ByteStream *_bs) :bs(_bs){}                          \
+        template<class T>void add(const T &var){ bs->write(var); }             \
+        void write(const StreamerName::ObjectType& obj)                        \
+        {                                                                      \
+            INNERBIKES_OBJ_ACCES_ALIASES(const StreamerName::ObjectType)       \
+            ValAccessList;                                                     \
+        }                                                                      \
+        Bikes::ByteStream *bs;                                                 \
+    };                                                                         \
+                                                                               \
+    StreamerName::StreamerName(ObjectType& obj):                               \
+        Bikes::AbstractObjectStreamer<ObjectType>(obj)                         \
+    {                                                                          \
+    }                                                                          \
+    StreamerName::StreamerName(const ObjectType& obj):                         \
+        Bikes::AbstractObjectStreamer<ObjectType>(obj)                         \
+    {                                                                          \
+    }                                                                          \
+    void StreamerName::read(Bikes::ByteStream &bstr) const                     \
+    {                                                                          \
+        read(bstr,*obj_r);                                                     \
+    }                                                                          \
+    void StreamerName::read(Bikes::ByteStream &bstr, ObjectType& obj)          \
+    {                                                                          \
+        _AuxReader r(&bstr);                                                   \
+        r.read(obj);                                                           \
+    }                                                                          \
+    void StreamerName::write(Bikes::ByteStream &bstr) const                    \
+    {                                                                          \
+        write(bstr,*obj_w);                                                    \
+    }                                                                          \
+    void StreamerName::write(Bikes::ByteStream &bstr, const ObjectType& obj)   \
+    {                                                                          \
+        _AuxWriter w(&bstr);                                                   \
+        w.write(obj);                                                          \
+    }                                                                          \
+    const Bikes::ByteArray& StreamerName::getObjectTypeSignature() const       \
+    {                                                                          \
+        static const Bikes::ByteArray s(#StreamerName);                        \
+        return s;                                                              \
+    }
+//------------------------------------------------------------------------------
+#define BIKES_OBJECTSTREAMER_DEF(StreamerName, ValAccessList)			       \
+	BIKES_OBJECTSTREAMER_DEF_EXTENDED(StreamerName, ValAccessList, )
+//------------------------------------------------------------------------------
+/*
+#define BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(StreamerName, ObjClass, ValAccessList, PostReadAction)\
+class StreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
 {																			\
 private:																	\
 struct AuxReader															\
@@ -91,8 +110,8 @@ struct AuxWriter															\
 	Bikes::ByteStream *bs;													\
 };																			\
 public:																		\
-	ObjectStreamerName(ObjClass *obj=0){setObject(obj);}					\
-	ObjectStreamerName(const ObjClass *obj){setObject(obj);}				\
+	StreamerName(ObjClass *obj=0){setObject(obj);}					\
+	StreamerName(const ObjClass *obj){setObject(obj);}				\
 	void read(Bikes::ByteStream &bstr) const{read(bstr,obj_r);}				\
 	void write(Bikes::ByteStream &bstr) const{write(bstr,obj_w);}			\
 	static void read(Bikes::ByteStream &bstr, ObjClass* p)					\
@@ -110,8 +129,8 @@ public:																		\
 
 //-------------------------------------------------------------------------
 
-#define BIKES_OBJECTSTREAMER_DECLDEF(ObjectStreamerName, ObjClass, ValAccessList)\
-class ObjectStreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
+#define BIKES_OBJECTSTREAMER_DECLDEF(StreamerName, ObjClass, ValAccessList)\
+class StreamerName: public Bikes::AbstractObjectStreamer<ObjClass>	\
 {																			\
 private:																	\
 struct AuxReader															\
@@ -128,8 +147,8 @@ struct AuxWriter															\
 	Bikes::ByteStream *bs;													\
 };																			\
 public:																		\
-	ObjectStreamerName(ObjClass *obj=0){setObject(obj);}					\
-	ObjectStreamerName(const ObjClass *obj){setObject(obj);}				\
+	StreamerName(ObjClass *obj=0){setObject(obj);}					\
+	StreamerName(const ObjClass *obj){setObject(obj);}				\
 	void read(Bikes::ByteStream &bstr) const{read(bstr,obj_r);}				\
 	void write(Bikes::ByteStream &bstr) const{write(bstr,obj_w);}			\
 	static void read(Bikes::ByteStream &bstr, ObjClass* p)					\
@@ -289,6 +308,6 @@ private:																	\
 	add<Bikes::ValueStreamer<float> >();									\
 	add<Bikes::ValueStreamer<double> >();
 
-
+//*/
 
 #endif // <- INCLUDE_BIKES_STREAM_OBJECTSTREAMERMACROS_H
