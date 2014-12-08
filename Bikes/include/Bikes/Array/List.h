@@ -57,7 +57,7 @@ public:
     List(const RawArrayT& arr, sznum arrSize) :_l(arrSize)
     {
         for (sznum i = 0; i < arrSize; ++i)
-            _l[i] = _createCopy(&arrSize[i]);
+            _l[i] = _createCopy(&arr[i]);
     }
 
 	~List()
