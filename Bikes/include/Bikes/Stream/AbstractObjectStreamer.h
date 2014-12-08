@@ -10,28 +10,22 @@ template<class T>
 class AbstractObjectStreamer : public StreamerInterface
 {
 public:
-    typedef T StreamerType;
+    typedef T ObjectType;
+    typedef AbstractObjectStreamer<T> ThisType;
 
-    AbstractObjectStreamer(T *obj = 0):
-        obj_w(obj), 
-        obj_r(obj)
-    {
-    }
-
-	AbstractObjectStreamer(T &obj) :
-		obj_w(&obj),
-		obj_r(&obj)
-	{
-	}
-
-    AbstractObjectStreamer(const T *obj):
-        obj_w(obj), 
+    AbstractObjectStreamer():
+        obj_w(0), 
         obj_r(0)
     {
     }
 
+    explicit AbstractObjectStreamer(T &obj) :
+        obj_w(&obj),
+        obj_r(&obj)
+    {
+    }
 
-	AbstractObjectStreamer(const T &obj) :
+    explicit AbstractObjectStreamer(const T &obj) :
 		obj_w(&obj),
 		obj_r(0)
 	{
@@ -41,23 +35,11 @@ public:
     {
     }
 
-    void setObject(T *obj)
-    {
-        obj_r = obj;
-        obj_w = obj;
-    }
-
 	void setObject(T &obj)
 	{
 		obj_r = &obj;
 		obj_w = &obj;
 	}
-
-    void setObject(const T *obj)
-    {
-        obj_w = obj;
-		obj_r = 0;
-    }
 
 	void setObject(const T &obj)
 	{
@@ -79,18 +61,20 @@ public:
 
     virtual void write(ByteStream& bs) const = 0;
 
-    void read(ByteStream& bs, T *obj) 
-    {
-        obj_r = obj; 
-        obj_w = obj; 
-        read(bs); 
-    }
+    virtual const ByteArray& getObjectTypeSignature() const = 0;
 
-    void write(ByteStream& bs, const T *obj) 
-    {
-        obj_w = obj; 
-        write(bs); 
-    }
+//     void read(ByteStream& bs, const T& obj) 
+//     {
+//         obj_r = &obj;
+//         obj_w = &obj;
+//         read(bs); 
+//     }
+// 
+//     void write(ByteStream& bs, const T& obj) 
+//     {
+//         obj_w = &obj; 
+//         write(bs); 
+//     }
 
 protected:
     const T *obj_w;
