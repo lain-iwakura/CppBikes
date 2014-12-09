@@ -4,26 +4,32 @@
 namespace Bikes
 {
 
-ByteArray::ByteArray(sznum sz/*=0*/, sznum cap/*=1024*/, unum capInc) :RawArrayBase(sz, cap, capInc), ri(0), wi(0)
+ByteArray::ByteArray(sznum sz/*=0*/, sznum cap/*=1024*/, unum capInc) 
+:RawArrayBase(sz, cap, capInc), 
+_ri(0), 
+_wi(0)
 {
 }
 
-ByteArray::ByteArray(const ByteArray& ba) : RawArrayBase(ba), ri(ba.ri), wi(ba.wi)
+ByteArray::ByteArray(const ByteArray& ba) : 
+RawArrayBase(ba), 
+_ri(ba._ri), 
+_wi(ba._wi)
 {
 }
 
 ByteArray::ByteArray(const char *bt, sznum btSize) : RawArrayBase(bt, btSize)
 {
 	this->setMaxCapacityIncrement(Inner::defMaxByteArrayMemoryIncrement);
-    ri = 0;
-    wi = this->size();
+    _ri = 0;
+    _wi = this->size();
 }
 
 ByteArray::ByteArray(const char *bt) :RawArrayBase(bt, strlen(bt) + 1)
 {
 	this->setMaxCapacityIncrement(Inner::defMaxByteArrayMemoryIncrement);
-    ri = 0;
-    wi = this->size();
+    _ri = 0;
+    _wi = this->size();
 }
 
 
@@ -31,17 +37,17 @@ void ByteArray::readBytes(char *bt, sznum btSize)
 {
     int nr = btSize;
 
-    if (ri + nr > this->size()) 
-        nr = this->size() - ri;
+    if (_ri + nr > this->size()) 
+        nr = this->size() - _ri;
 
 	char* arr = this->data();
-    for (int i = 0; i<nr; i++, ri++)
-        bt[i] = arr[ri];
+    for (int i = 0; i<nr; i++, _ri++)
+        bt[i] = arr[_ri];
 }
 
 void ByteArray::writeBytes(const char *bt, sznum btSize)
 {
-	sznum nsz = wi + btSize;
+	sznum nsz = _wi + btSize;
 	sznum cap = this->capacity();
 	sznum mcap = this->maxCapacityIncrement();
 
@@ -55,38 +61,38 @@ void ByteArray::writeBytes(const char *bt, sznum btSize)
 				this->setCapacity(nsz);
 		}
 
-		this->setSize(wi + btSize);
+		this->setSize(_wi + btSize);
 	}
 
 	char* arr = this->data();
-    for (sznum i = 0; i < btSize; i++, wi++)
-        arr[wi] = bt[i];
+    for (sznum i = 0; i < btSize; i++, _wi++)
+        arr[_wi] = bt[i];
 }
 
 sznum ByteArray::writeIndex() const
 {
-    return wi;
+    return _wi;
 }
 
 sznum ByteArray::readIndex() const
 {
-    return ri;
+    return _ri;
 }
 
 void ByteArray::setWriteIndex(sznum i)
 {
-    wi = inRange<sznum>(i, 0, size());
+    _wi = inRange<sznum>(i, 0, size());
 }
 
 void ByteArray::setReadIndex(sznum i)
 {
-    ri = inRange<sznum>(i, 0, size());
+    _ri = inRange<sznum>(i, 0, size());
 }
 
 void ByteArray::prepareForWrite(sznum byteCapacity)
 {
-    if (wi + byteCapacity > capacity()) 
-        this->setCapacity(wi + byteCapacity);
+    if (_wi + byteCapacity > capacity()) 
+        this->setCapacity(_wi + byteCapacity);
 }
 
 ByteArray& ByteArray::operator=(const char *bt)
@@ -104,8 +110,8 @@ ByteArray& ByteArray::operator=(const ByteArray& ba)
 {
 	RawArrayBase *ra1 = this;
 	*ra1 = ba;
-	ri = ba.ri;
-	wi = ba.wi;
+	_ri = ba._ri;
+	_wi = ba._wi;
 	return *this;
 }
 
@@ -143,7 +149,7 @@ bool ByteArray::operator !=(const ByteArray& ba) const
 
 bool ByteArray::atEnd() const
 {
-    return ri >= size();
+    return _ri >= size();
 }
 
 }

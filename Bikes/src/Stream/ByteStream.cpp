@@ -94,7 +94,7 @@ sznum ByteStreamData::getIndexOfRecurrentData(const ByteArray& data)
 	if (dtsz < indexMap.size())
 	{
 		vector<sznum>& indexes = indexMap[dtsz];		
-		for (vector<sznum>::const_iterator ind = indexes.begin(); ind != indexes.end(); ind++)
+		for (vector<sznum>::const_iterator ind = indexes.begin(); ind != indexes.end(); ++ind)
 		{
 			if (recData[*ind] == data)
 				return *ind;

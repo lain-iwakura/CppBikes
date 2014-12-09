@@ -29,7 +29,18 @@ class RawArray
 {
 public:
 
+    typedef T value_type;
+    typedef T* pointer;
+    typedef T& reference;
+    typedef const T* const_pointer;
+    typedef const T& const_reference;
+    typedef sznum size_type;
+    typedef lnum difference_type;
+    typedef pointer iterator;
+    typedef const_pointer const_iterator;
+
 	typedef CreationSupervisorT CreationSupervisor;
+    typedef RawArray<T, CreationSupervisorT> ThisType;
 	
 	RawArray() :
 		_arr(0), 
@@ -65,7 +76,7 @@ public:
 	{
 	}
 
-	RawArray(const RawArray& ra):
+    RawArray(const ThisType& ra) :
 		_arr(_createArrayCopy(ra._arr,ra._cap,ra._sz)),
 		_cap(ra._cap), 
 		_sz(ra._sz),
@@ -134,6 +145,27 @@ public:
 		return _cap;
 	}
 
+    iterator begin()
+    {
+        return _arr;
+    }
+
+    const_iterator begin() const
+    {
+        return _arr;
+    }
+
+    iterator end()
+    {
+        return _arr + _sz;
+    }
+
+    const_iterator end() const
+    {
+        return _arr + _sz;
+    }
+
+
 	T* data()
 	{
 		return _arr;
@@ -152,7 +184,7 @@ public:
 		 _sz=_cap;
 	}
 
-	void take(RawArray& ra)
+    void take(ThisType& ra)
 	{
 		_destroyArray(_arr);
 		_arr=ra.arr;
@@ -229,8 +261,6 @@ public:
 			return false;
 		for (sznum i = 0; i < _sz; i++)
 		{
-			const T &v1 = _arr[i];
-			const T &v2 = other[i];
 			if (other[i] != _arr[i])
 				return false;
 		}
@@ -242,8 +272,7 @@ public:
 		return !(*this == other);
 	}
 
-private:
-
+protected:
 
 	static T* _createArray(sznum sz)
 	{

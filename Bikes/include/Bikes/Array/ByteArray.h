@@ -57,8 +57,8 @@ public:
     void setReadIndex(sznum i);
 
 private:
-    sznum ri;
-    sznum wi;
+    sznum _ri;
+    sznum _wi;
 };
 
 
