@@ -7,15 +7,15 @@ namespace Bikes
 template<class ElementStreamer, class ArrayClass>
 class ArrayStreamer : public AbstractObjectStreamer<ArrayClass>
 {
-    typedef typename AbstractObjectStreamer<ArrayClass>::StreamerType StreamerType;
+    typedef typename AbstractObjectStreamer<ArrayClass>::ObjectType ObjectType;
 public:
-    ArrayStreamer(StreamerType *obj): 
-	  AbstractObjectStreamer<StreamerType>(obj)
+    ArrayStreamer(ObjectType *obj): 
+	  AbstractObjectStreamer<ObjectType>(obj)
 	{
 	}
 
-    ArrayStreamer(const StreamerType *obj): 
-		AbstractObjectStreamer<StreamerType>(obj)
+    ArrayStreamer(const ObjectType *obj): 
+		AbstractObjectStreamer<ObjectType>(obj)
 	{
 	}
 
@@ -30,7 +30,7 @@ public:
         write(bs, this->obj_w);
     }
 
-    static void read(ByteStream& bs, StreamerType *obj)
+    static void read(ByteStream& bs, ObjectType *obj)
     {
         obj->clear();
         sznum sz;
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    static void write(ByteStream& bs, const StreamerType *obj)
+    static void write(ByteStream& bs, const ObjectType *obj)
     {
         bs.prepareForWrite(obj->size() + sizeof(sznum));
         bs << sznum(obj->size());

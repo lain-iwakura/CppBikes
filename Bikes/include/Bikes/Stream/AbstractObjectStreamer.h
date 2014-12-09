@@ -63,19 +63,6 @@ public:
 
     virtual const ByteArray& getObjectTypeSignature() const = 0;
 
-//     void read(ByteStream& bs, const T& obj) 
-//     {
-//         obj_r = &obj;
-//         obj_w = &obj;
-//         read(bs); 
-//     }
-// 
-//     void write(ByteStream& bs, const T& obj) 
-//     {
-//         obj_w = &obj; 
-//         write(bs); 
-//     }
-
 protected:
     const T *obj_w;
     T* obj_r;
