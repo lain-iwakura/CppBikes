@@ -517,11 +517,31 @@ public:
 	}
 
 	template<class ArrayT>
-	ThisType& operator = (const ArrayT& objs)
+	ThisType& operator = (const ArrayT& arr)
 	{
-		from_array(objs);
+		from_array(arr);
 		return *this;
 	}
+
+    template<class ArrayT>
+    bool operator == (const ArrayT& arr) const
+    {
+        sznum sz1 = _l.size();
+        if (sz1 != arr.size())
+            return false;
+        for (sznum i = 0 i < sz1; ++i)
+        {
+            if (*_l[i] != arr[i])
+                return false;
+        }
+        return true;
+    }
+
+    template<class ArraT>
+    bool operator != (const ArrayT& arr) const
+    {
+        return !(*this == arr);
+    }
 
 //..............................................................................
 
@@ -686,5 +706,6 @@ private:
 	}
 
 };
+//------------------------------------------------------------------------------
 }
 #endif // <- INCLUDE_BIKES_ARRAY_LIST_H
