@@ -5,17 +5,17 @@ namespace Bikes
 {
 //==============================================================================
 template<class ElementStreamer, class ArrayClass>
-class ArrayStreamer : public AbstractObjectStreamer<ArrayClass>
+class ArrayStreamer : public ObjectStreamerBase<ArrayClass>
 {
-    typedef typename AbstractObjectStreamer<ArrayClass>::ObjectType ObjectType;
+    typedef typename ObjectStreamerBase<ArrayClass>::StreamType StreamType;
 public:
-    ArrayStreamer(ObjectType *obj): 
-	  AbstractObjectStreamer<ObjectType>(obj)
+    ArrayStreamer(StreamType *obj): 
+	  ObjectStreamerBase<StreamType>(obj)
 	{
 	}
 
-    ArrayStreamer(const ObjectType *obj): 
-		AbstractObjectStreamer<ObjectType>(obj)
+    ArrayStreamer(const StreamType *obj): 
+		ObjectStreamerBase<StreamType>(obj)
 	{
 	}
 
@@ -30,7 +30,7 @@ public:
         write(bs, this->obj_w);
     }
 
-    static void read(ByteStream& bs, ObjectType *obj)
+    static void read(ByteStream& bs, StreamType *obj)
     {
         obj->clear();
         sznum sz;
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    static void write(ByteStream& bs, const ObjectType *obj)
+    static void write(ByteStream& bs, const StreamType *obj)
     {
         bs.prepareForWrite(obj->size() + sizeof(sznum));
         bs << sznum(obj->size());

@@ -1,5 +1,5 @@
-#ifndef INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H
-#define INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H
+#ifndef INCLUDE_BIKES_STREAM_OBJECTSTREAMERBASE_H
+#define INCLUDE_BIKES_STREAM_OBJECTSTREAMERBASE_H
 
 #include <Bikes/Stream/StreamerInterface.h>
 
@@ -7,31 +7,31 @@ namespace Bikes
 {
 
 template<class T>
-class AbstractObjectStreamer : public StreamerInterface
+class ObjectStreamerBase : public StreamerInterface
 {
 public:
-    typedef T ObjectType;
-    typedef AbstractObjectStreamer<T> ThisType;
+    typedef T StreamType;
+    typedef ObjectStreamerBase<T> ThisType;
 
-    AbstractObjectStreamer():
+    ObjectStreamerBase():
         obj_w(0), 
         obj_r(0)
     {
     }
 
-    explicit AbstractObjectStreamer(T &obj) :
+    explicit ObjectStreamerBase(T &obj) :
         obj_w(&obj),
         obj_r(&obj)
     {
     }
 
-    explicit AbstractObjectStreamer(const T &obj) :
+    explicit ObjectStreamerBase(const T &obj) :
 		obj_w(&obj),
 		obj_r(0)
 	{
 	}
 
-    virtual ~AbstractObjectStreamer()
+    virtual ~ObjectStreamerBase()
     {
     }
 
@@ -70,4 +70,4 @@ protected:
 
 }
 
-#endif // <- INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H
+#endif // <- INCLUDE_BIKES_STREAM_OBJECTSTREAMERBASE_H
