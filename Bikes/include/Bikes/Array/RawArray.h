@@ -92,6 +92,15 @@ public:
 	{
 	}
 
+    ThisType& operator=(const ThisType& ra)
+    {
+        _arr = _createArrayCopy(ra._arr, ra._cap, ra._sz);
+        _cap = ra._cap;
+        _sz = ra._sz;
+        _maxInc = ra._maxInc;
+        return *this;
+    }
+
 	virtual ~RawArray()
 	{
 		_destroyArray(_arr);
@@ -271,6 +280,8 @@ public:
 	{
 		return !(*this == other);
 	}
+
+
 
 protected:
 
