@@ -2,11 +2,10 @@
 #define INCLUDE_BIKES_STREAM_POLYMORPHICSTREAMER_H
 
 #include <Bikes/Stream/ByteStream.h>
-#include <Bikes/Stream/AbstractObjectStreamer.h>
+#include <Bikes/Stream/ObjectStreamerBase.h>
 #include <Bikes/Stream/ObjectStreamerMacros.h>
 #include <Bikes/SmartPtr.h>
 #include <Bikes/Stream/StreamerInterface.h>
-#include <Bikes/TypeInfo.h>
 #include <vector>
 #include <map>
 
@@ -20,9 +19,9 @@ template<class AbstractType>
 class PolymorphicSingleStreamerBase
 {
 public:
-    typedef typename AbstractType StreamTy                                                                               \pe;
+    typedef typename AbstractType StreamType;
 
-    virtual~TypeAbstractStreamer()
+    virtual~PolymorphicSingleStreamerBase()
     {
     }
 
@@ -76,6 +75,7 @@ public:
 //==============================================================================
 } // Inner
 //==============================================================================
+/*
 template<
     class AbstractRegistrableType,
     class AbstractRegistrableTypePtr = AbstractRegistrableType*,
@@ -218,7 +218,7 @@ public:
     ObjectStreamerBase<T>* newObjectStreamer(T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
-        if(ots==0){	/*TODO: exaption*/	}
+        if(ots==0){	}
         return ots->newObjectStreamer(obj);
     }
 
@@ -226,7 +226,7 @@ public:
     ObjectStreamerBase<T>* newObjectStreamer(const T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
-        if(ots==0){	/*TODO: exaption*/ }
+        if(ots==0){	}
         return ots->newObjectStreamer(obj);
     }
 };
@@ -358,7 +358,7 @@ std::vector<Ptr<AbstractOneTypeStreamerCreator>::Shared >    MultiTypeStreamer<T
 
 
 //==============================================================================
-
+//*/
 
 } // Bikes
 

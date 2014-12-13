@@ -7,8 +7,6 @@
 
 namespace Bikes
 {
-
-	class TypeInfo;
 	class ByteStreamData;
 	class ByteArray;
     	
