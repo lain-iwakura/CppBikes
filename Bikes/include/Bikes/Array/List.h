@@ -537,7 +537,7 @@ public:
         return true;
     }
 
-    template<class ArraT>
+    template<class ArrayT>
     bool operator != (const ArrayT& arr) const
     {
         return !(*this == arr);
