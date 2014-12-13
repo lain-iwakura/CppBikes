@@ -12,6 +12,7 @@ Bikes::sznum TypeInfoBase::typeCount()
 sznum& TypeInfoBase::_typeCount()
 {
     static sznum tc = 0;
+    return tc;
 }
 
 }
