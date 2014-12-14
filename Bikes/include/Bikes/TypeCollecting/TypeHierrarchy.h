@@ -40,5 +40,47 @@ struct TypeEqual<T, T>
     };
 };
 //==============================================================================
+enum Relation
+{
+    NoRelation = 0,
+    EqualRealtion,
+    ChildRealtion,
+    ParentRealtion
+};
+
+template<class LeftT, class RightT>
+struct TypeRelation
+{
+    enum{
+        leftRelation = 
+            (TypeHierrarchy<LeftT, RightT>::exists) ? (ParentRealtion) :
+            ((TypeHierrarchy<RightT, LeftT>::exists) ? (ChildRealtion) :
+            ((TypeEqual<RightT, LeftT>::result) ? (EqualRealtion) :
+            (NoRelation))),
+
+        rightRelation =  
+            (leftRelation == ChildRealtion) ? (ParentRealtion) :
+            ((leftRelation == ParentRealtion) ? (ChildRealtion) :
+            ((leftRelation == EqualRealtion) ? (EqualRealtion) :
+            (NoRelation)))
+    };
+    //static const Relation rightRelation;
+};
+
+// template<class LeftT,class RightT>
+// const Relation TypeRelation<LeftT, RightT>::leftRelation =
+//     (TypeHierrarchy<LeftT, RightT>::exists) ? (ParentRealtion) :
+//     ((TypeHierrarchy<RightT, LeftT>::exists) ? (ChildRealtion) :
+//     ((TypeEqual<RightT, LeftT>::result) ? (EqualRealtion) :
+//     (NoRelation)));
+// 
+// template<class LeftT, class RightT>
+// const Relation TypeRelation<LeftT,RightT>::rightRelation = 
+//     (leftRelation == ChildRealtion) ? (ParentRealtion) :
+//     ((leftRelation == ParentRealtion) ? (ChildRealtion) :
+//     ((leftRelation == EqualRealtion) ? (EqualRealtion) :
+//     (NoRelation)));
+
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPECOLLECTING_TYPEHIERRARCHY_H
+
