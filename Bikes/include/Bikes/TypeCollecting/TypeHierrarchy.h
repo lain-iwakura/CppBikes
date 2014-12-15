@@ -13,9 +13,12 @@ private:
     static Inner::BigType _isChildType(void*);
 public:
     enum{
-        exists = sizeof(_isChildType((ChildType—andidate*)0)) == sizeof(Inner::SmallType)
+        exists = 
+            sizeof(_isChildType((ChildType—andidate*)0)) == 
+            sizeof(Inner::SmallType)
     };    
 };
+//------------------------------------------------------------------------------
 template<class T>
 class TypeHierrarchy<T,T>
 {
@@ -32,6 +35,7 @@ struct TypeEqual
         result = false
     };
 };
+//------------------------------------------------------------------------------
 template<class T>
 struct TypeEqual<T, T>
 {
@@ -40,46 +44,19 @@ struct TypeEqual<T, T>
     };
 };
 //==============================================================================
-enum Relation
-{
-    NoRelation = 0,
-    EqualRealtion,
-    ChildRealtion,
-    ParentRealtion
-};
-
-template<class LeftT, class RightT>
-struct TypeRelation
+template<class T1, class T2>
+struct CompareByHierrarchy
 {
     enum{
-        leftRelation = 
-            (TypeHierrarchy<LeftT, RightT>::exists) ? (ParentRealtion) :
-            ((TypeHierrarchy<RightT, LeftT>::exists) ? (ChildRealtion) :
-            ((TypeEqual<RightT, LeftT>::result) ? (EqualRealtion) :
-            (NoRelation))),
-
-        rightRelation =  
-            (leftRelation == ChildRealtion) ? (ParentRealtion) :
-            ((leftRelation == ParentRealtion) ? (ChildRealtion) :
-            ((leftRelation == EqualRealtion) ? (EqualRealtion) :
-            (NoRelation)))
+        greater = TypeHierrarchy<T1, T2>::exists,
+        less = TypeHierrarchy<T2, T1>::exists,
+        equal = TypeEqual<T1, T2>::result,
+        greater_or_equal = greater || equal,
+        less_or_equal = less || equal,
+        disparate = !greater && !less && !equal
     };
-    //static const Relation rightRelation;
 };
-
-// template<class LeftT,class RightT>
-// const Relation TypeRelation<LeftT, RightT>::leftRelation =
-//     (TypeHierrarchy<LeftT, RightT>::exists) ? (ParentRealtion) :
-//     ((TypeHierrarchy<RightT, LeftT>::exists) ? (ChildRealtion) :
-//     ((TypeEqual<RightT, LeftT>::result) ? (EqualRealtion) :
-//     (NoRelation)));
-// 
-// template<class LeftT, class RightT>
-// const Relation TypeRelation<LeftT,RightT>::rightRelation = 
-//     (leftRelation == ChildRealtion) ? (ParentRealtion) :
-//     ((leftRelation == ParentRealtion) ? (ChildRealtion) :
-//     ((leftRelation == EqualRealtion) ? (EqualRealtion) :
-//     (NoRelation)));
+//==============================================================================
 
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPECOLLECTING_TYPEHIERRARCHY_H
