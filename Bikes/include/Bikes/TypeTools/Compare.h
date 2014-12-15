@@ -1,35 +1,35 @@
-#ifndef INCLUDE_BIKES_TYPECOLLECTING_TYPEHIERRARCHY_H
-#define INCLUDE_BIKES_TYPECOLLECTING_TYPEHIERRARCHY_H
-#include <Bikes/TypeCollecting/NullTypes.h>
+#ifndef INCLUDE_BIKES_TYPETOOLS_COMPARE_H
+#define INCLUDE_BIKES_TYPETOOLS_COMPARE_H
+#include <Bikes/TypeTools/NullTypes.h>
 
-namespace Bikes
-{
+namespace Bikes{
+namespace TT{
 //==============================================================================
-template<class BaseType, class ChildType—andidate>
-class TypeHierrarchy
+template<class BaseType, class ChildType>
+class HierrarchyExists
 {
 private:
-    static Inner::SmallType _isChildType(BaseType*);
-    static Inner::BigType _isChildType(void*);
+    static SmallType _isChildType(BaseType*);
+    static BigType _isChildType(void*);
 public:
     enum{
-        exists = 
-            sizeof(_isChildType((ChildType—andidate*)0)) == 
-            sizeof(Inner::SmallType)
+        result = 
+            sizeof(_isChildType((ChildType*)0)) ==
+            sizeof(SmallType)
     };    
 };
 //------------------------------------------------------------------------------
 template<class T>
-class TypeHierrarchy<T,T>
+class HierrarchyExists<T,T>
 {
 public:
     enum{
-        exists = false
+        result = false
     };
 };
 //==============================================================================
 template<class T1, class T2>
-struct TypeEqual
+struct Equal
 {
     enum{
         result = false
@@ -37,7 +37,7 @@ struct TypeEqual
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct TypeEqual<T, T>
+struct Equal<T, T>
 {
     enum{
         result = true
@@ -48,16 +48,15 @@ template<class T1, class T2>
 struct CompareByHierrarchy
 {
     enum{
-        greater = TypeHierrarchy<T1, T2>::exists,
-        less = TypeHierrarchy<T2, T1>::exists,
-        equal = TypeEqual<T1, T2>::result,
+        greater = HierrarchyExists<T1, T2>::result,
+        less = HierrarchyExists<T2, T1>::result,
+        equal = Equal<T1, T2>::result,
         greater_or_equal = greater || equal,
         less_or_equal = less || equal,
-        disparate = !greater && !less && !equal
+        disparate = !(greater || less || equal)
     };
 };
 //==============================================================================
-
+} // TT
 } // Bikes
-#endif // <- INCLUDE_BIKES_TYPECOLLECTING_TYPEHIERRARCHY_H
-
+#endif // <- INCLUDE_BIKES_TYPETOOLS_COMPARE_H

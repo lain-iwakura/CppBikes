@@ -1,43 +1,26 @@
-#ifndef INCLUDE_BIKES_TYPECOLLECTING_TYPESTACK_H
-#define INCLUDE_BIKES_TYPECOLLECTING_TYPESTACK_H
-#include <Bikes/TypeCollecting/NullTypes.h>
+#ifndef INCLUDE_BIKES_TYPETOOLS_STACK_H
+#define INCLUDE_BIKES_TYPETOOLS_STACK_H
+#include <Bikes/TypeTools/NullTypes.h>
+#include <Bikes/TypeTools/Select.h>
+#include <Bikes/TypeTools/Detect.h>
 
 
+#define BIKES_TYPESTACK_1(T1) Bikes::TT::Stack::Element<T1,Bikes::NullType>
+#define BIKES_TYPESTACK_2(T1,T2) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_1(T2) >
+#define BIKES_TYPESTACK_3(T1,T2,T3) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_2(T2,T3) >
+#define BIKES_TYPESTACK_4(T1,T2,T3,T4) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_3(T2,T3,T4) >
+#define BIKES_TYPESTACK_5(T1,T2,T3,T4,T5) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_4(T2,T3,T4,T5) >
+#define BIKES_TYPESTACK_6(T1,T2,T3,T4,T5,T6) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_5(T2,T3,T4,T5,T6) >
+#define BIKES_TYPESTACK_7(T1,T2,T3,T4,T5,T6,T7) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_6(T2,T3,T4,T5,T6,T7) >
+#define BIKES_TYPESTACK_8(T1,T2,T3,T4,T5,T6,T7,T8) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_7(T2,T3,T4,T5,T6,T7,T8) >
+#define BIKES_TYPESTACK_9(T1,T2,T3,T4,T5,T6,T7,T8,T9) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_8(T2,T3,T4,T5,T6,T7,T8,T9) > 
 
-
-#define BIKES_TYPESTACK_1(T1) Bikes::TypeStack::Element<T1,Bikes::NullType>
-#define BIKES_TYPESTACK_2(T1,T2) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_1(T2) >
-#define BIKES_TYPESTACK_3(T1,T2,T3) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_2(T2,T3) >
-#define BIKES_TYPESTACK_4(T1,T2,T3,T4) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_3(T2,T3,T4) >
-#define BIKES_TYPESTACK_5(T1,T2,T3,T4,T5) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_4(T2,T3,T4,T5) >
-#define BIKES_TYPESTACK_6(T1,T2,T3,T4,T5,T6) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_5(T2,T3,T4,T5,T6) >
-#define BIKES_TYPESTACK_7(T1,T2,T3,T4,T5,T6,T7) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_6(T2,T3,T4,T5,T6,T7) >
-#define BIKES_TYPESTACK_8(T1,T2,T3,T4,T5,T6,T7,T8) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_7(T2,T3,T4,T5,T6,T7,T8) >
-#define BIKES_TYPESTACK_9(T1,T2,T3,T4,T5,T6,T7,T8,T9) Bikes::TypeStack::Element<T1,BIKES_TYPESTACK_8(T2,T3,T4,T5,T6,T7,T8,T9) > 
-
-#define MACROSBIKES_TYPESTACK_T9 Bikes::TypeStack::Element<T1, Bikes::TypeStack::Element<T2, Bikes::TypeStack::Element<T3, Bikes::TypeStack::Element<T4, Bikes::TypeStack::Element<T5, Bikes::TypeStack::Element<T6, Bikes::TypeStack::Element<T7, Bikes::TypeStack::Element<T8, Bikes::TypeStack::Element<T9,Bikes::NullType> > > > > > > > >
+#define MACROSBIKES_TYPESTACK_T9 Bikes::TT::Stack::Element<T1, Bikes::TT::Stack::Element<T2, Bikes::TT::Stack::Element<T3, Bikes::TT::Stack::Element<T4, Bikes::TT::Stack::Element<T5, Bikes::TT::Stack::Element<T6, Bikes::TT::Stack::Element<T7, Bikes::TT::Stack::Element<T8, Bikes::TT::Stack::Element<T9,Bikes::NullType> > > > > > > > >
 
 
 namespace Bikes{
-namespace TypeStack{
-//==============================================================================
-template<class LeftT, class  RightT>
-struct Element;
-//==============================================================================
-template<class T>
-struct Detector
-{
-    enum{
-        isTypeStack = false
-    };
-};
-template<class T1, class T2>
-struct Detector<Element<T1, T2> >
-{
-    enum{
-        isTypeStack = true
-    };
-};
+namespace TT{
+namespace Stack{
 //==============================================================================
 template<class T>
 struct NotNull
@@ -47,8 +30,8 @@ struct NotNull
 template<class T1, class T2>
 struct NotNull<Element<T1,T2> >
 {
-    typedef typename SelectType<
-        TypeEqual<typename Element<T1, T2>::Head, NullType>::result,
+    typedef typename Select<
+        IsNullType<typename Element<T1, T2>::Head>::result,
         NullType,
         Element<T1, T2>
         >
@@ -61,8 +44,8 @@ struct Element
     typedef LeftT Head;
     typedef Element<RightT,NullType> Tail;
 
-//     typedef typename SelectType<
-//         Detector<RightT>::isTypeStack || TypeEqual<RightT, NullType>::result,
+//     typedef typename Select<
+//         Detector<RightT>::isTypeStack || Equal<RightT, NullType>::result,
 //         RightT,
 //         Element<RightT, NullType>
 //     >
@@ -107,8 +90,8 @@ template<class T1, class T2, class T3 >
 struct Element<Element<T1, T2>, T3>
 {
 
-    typedef typename SelectType<
-    TypeEqual<typename Element<T1, T2>::Head, NullType>::result,
+    typedef typename Select<
+    Equal<typename Element<T1, T2>::Head, NullType>::result,
     T3,
     typename Element<T1, T2>::Head
     >
@@ -127,15 +110,15 @@ struct Element<Element<T1, T2>, NullType>
 template<class T1, class T2, class T3, class T4>
 struct Element<Element<T1, T2>, Element<T3,T4> >
 {
-    typedef typename SelectType<
-    TypeEqual<typename Element<T1, T2>::Head, NullType>::result,
+    typedef typename Select<
+    Equal<typename Element<T1, T2>::Head, NullType>::result,
     typename Element<T3, T4>::Head,
     typename Element<T1, T2>::Head
     >
     ::ResultType Head;
 
-    typedef typename SelectType<
-        TypeEqual<typename Element<T1, T2>::Head, NullType>::result,
+    typedef typename Select<
+        Equal<typename Element<T1, T2>::Head, NullType>::result,
         typename Element<T3, T4>::Tail,
         Element<typename Element<T1, T2>::Tail, Element<T3, T4> >
         >
@@ -180,7 +163,7 @@ struct IndexOf<T1, Element<T2,T3> >
 {
     enum{
         result = 
-            (TypeEqual<typename Element<T2, T3>::Head, T1>::result) ? (0) : (
+            (Equal<typename Element<T2, T3>::Head, T1>::result) ? (0) : (
                 (IndexOf<T1, typename Element<T2, T3>::Tail>::result == -1)? 
                 (-1) : 
                 (IndexOf<T1, typename Element<T2, T3>::Tail>::result + 1)
@@ -205,7 +188,7 @@ struct TypeAt
 template<class T1, class T2, num i>
 struct TypeAt<Element<T1,T2>, i>
 {
-    typedef typename SelectType<
+    typedef typename Select<
     i < 0,
     NullType,
     typename TypeAt<typename Element<T1, T2>::Tail, i - 1 >::ResultType
@@ -228,8 +211,8 @@ struct Remove
 template<class T1, class T2, class RemoveT>
 struct Remove<Element<T1, T2>, RemoveT>
 {
-    typedef typename SelectType<
-        TypeEqual<typename Element<T1, T2>::Head, RemoveT>::result
+    typedef typename Select<
+        Equal<typename Element<T1, T2>::Head, RemoveT>::result
         ,
         typename Element<T1, T2>::Tail
         ,
@@ -250,7 +233,7 @@ struct RemoveDuplicates
 template<class T1, class T2>
 struct RemoveDuplicates<Element<T1,T2> >
 {
-    typedef typename SelectType<
+    typedef typename Select<
         IndexOf<
             typename Element<T1, T2>::Tail, 
             typename Element<T1, T2>::Head
@@ -283,7 +266,7 @@ struct FindMinimum
 template<class T1, class T2, template <class, class> class CompareT>
 struct FindMinimum<Element<T1,T2>, CompareT>
 {
-    typedef typename SelectType<
+    typedef typename Select<
         IsNullType<typename Element<T1, T2>::Tail>::result
         ,
         typename Element<T1, T2>::Head
@@ -305,7 +288,7 @@ struct FindMaximum
 template<class T1, class T2, template <class, class> class CompareT>
 struct FindMaximum<Element<T1, T2>, CompareT>
 {
-    typedef typename SelectType<
+    typedef typename Select<
         IsNullType<typename Element<T1, T2>::Tail>::result
         ,
         typename Element<T1, T2>::Head
@@ -327,7 +310,7 @@ struct SortDescending
 template<class T1, class T2, template <class, class> class CompareT >
 struct SortDescending<Element<T1,T2>, CompareT>
 {
-    typedef typename SelectType <
+    typedef typename Select <
         IsNullType<typename Element<T1, T2>::Tail >::result
         ,
         Element<T1, T2>
@@ -355,7 +338,7 @@ struct SortAscending
 template<class T1, class T2, template <class, class> class CompareT >
 struct SortAscending<Element<T1, T2>, CompareT>
 {
-    typedef typename SelectType <
+    typedef typename Select <
         IsNullType<typename Element<T1, T2>::Tail >::result
         ,
         Element<T1, T2>
@@ -374,9 +357,8 @@ struct SortAscending<Element<T1, T2>, CompareT>
         > ::ResultType ResultStack;
 };
 //==============================================================================
-} // TypeStack
+} // Stack
+} // TT
 } // Bikes
 
-#endif // <- INCLUDE_BIKES_TYPECOLLECTING_TYPESTACK_H
-
-
+#endif // <- INCLUDE_BIKES_TYPETOOLS_STACK_H

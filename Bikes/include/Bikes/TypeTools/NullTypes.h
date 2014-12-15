@@ -1,19 +1,17 @@
-#ifndef INCLUDE_BIKES_TYPECOLLECTING_NULLTYPES_H
-#define INCLUDE_BIKES_TYPECOLLECTING_NULLTYPES_H
+#ifndef INCLUDE_BIKES_TYPETOOLS_NULLTYPES_H
+#define INCLUDE_BIKES_TYPETOOLS_NULLTYPES_H
 
-namespace Bikes
-{
+namespace Bikes{
+namespace TT{
 //==============================================================================
 struct NullType;
 //------------------------------------------------------------------------------
 struct EmptyType{};
 //==============================================================================
-namespace Inner{
-//------------------------------------------------------------------------------
 typedef char SmallType;
-struct BigType { char c[2]; };
 //------------------------------------------------------------------------------
-} //Inner
+struct BigType { char c[2]; };
 //==============================================================================
+} // TT
 } // Bikes
-#endif // <- INCLUDE_BIKES_TYPECOLLECTING_NULLTYPES_H
+#endif // <- INCLUDE_BIKES_TYPETOOLS_NULLTYPES_H
