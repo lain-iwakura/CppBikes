@@ -53,6 +53,42 @@ struct SelectType<false,LeftT,RightT>
     typedef RightT ResultType;
 };
 //==============================================================================
+template<class T1, class T2, template <class,class> class CompareT>
+struct MinType
+{
+    typedef typename SelectType<
+        CompareT<T1,T2>::greater,
+        T2,
+        T1
+        >::ResultType ResultType;
+};
+//==============================================================================
+template<class T1, class T2, template <class, class> class CompareT>
+struct MaxType
+{
+    typedef typename SelectType<
+        CompareT<T1, T2>::less,
+        T2,
+        T1
+        >::ResultType ResultType;
+};
+//==============================================================================
+template<class T>
+struct IsNullType
+{
+    enum{
+        result = TypeEqual<T, NullType>::result
+    };
+};
+//==============================================================================
+template<class T>
+struct IsEmptyType
+{
+    enum{
+        result = TypeEqual<T, EmptyType>::result
+    };
+};
+//==============================================================================
 }
 
 #endif // <- INCLUDE_BIKES_TYPECOLLECTING_TYPETOOLS_H
