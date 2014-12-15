@@ -56,53 +56,53 @@ namespace Bikes
 
 #define AUXBIKES_QUICK_ARRAY(N)\
 	template<class T>\
-	QuickArray<T,N> quick_array(MACROSBIKES_TCRP##N)\
+	QuickArray<T,N> quick_array(TBIKES_TCRP##N)\
 	{\
 		QuickArray<T,N> arr;\
 		AUXBIKES_QUICKARRAY_FILL_##N(arr,par);\
 		return arr;\
 	}
 
-MACROSBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_ARRAY)
+MBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_ARRAY)
 
 //===================================================================
 
 #define AUXBIKES_QUICK_ARRAY_VAL(N)\
 	template<class T>\
-	QuickArray<T,N> quick_array_val(MACROSBIKES_TP##N)\
+	QuickArray<T,N> quick_array_val(TBIKES_TP##N)\
 {\
 	QuickArray<T,N> arr;\
 	AUXBIKES_QUICKARRAY_FILL_##N(arr,par);\
 	return arr;\
 }
 
-MACROSBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_ARRAY_VAL)
+MBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_ARRAY_VAL)
 
 //===================================================================
 
 #define AUXBIKES_QUICK_VECTOR(N)\
 	template<class T>\
-	std::vector<T> quick_vector(MACROSBIKES_TCRP##N)\
+	std::vector<T> quick_vector(TBIKES_TCRP##N)\
 	{\
 	std::vector<T> arr(N);\
 	AUXBIKES_QUICKARRAY_FILL_##N(arr,par);\
 	return arr;\
 	}
 
-MACROSBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_VECTOR)
+MBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_VECTOR)
 
 //===================================================================
 
 #define AUXBIKES_QUICK_VECTOR_VAL(N)\
 	template<class T>\
-	std::vector<T> quick_vector_val(MACROSBIKES_TP##N)\
+	std::vector<T> quick_vector_val(TBIKES_TP##N)\
 	{\
 		std::vector<T> arr(N);\
 		AUXBIKES_QUICKARRAY_FILL_##N(arr,par);\
 		return arr;\
 	}
 
-MACROSBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_VECTOR_VAL)
+MBIKES_FOREACHPARAMLIST(AUXBIKES_QUICK_VECTOR_VAL)
 
 } 
 #endif // <- INCLUDE_BIKES_ARRAY_QUICKARRAY_H
