@@ -119,27 +119,6 @@ struct IsEmptyType<EmptyType>
     };
 };
 //==============================================================================
-namespace Stack{
-template<class LeftT, class  RightT>
-struct Element;
-}
-//------------------------------------------------------------------------------
-template<class T>
-struct IsTypeStack
-{
-    enum{
-        result = false
-    };
-};
-//------------------------------------------------------------------------------
-template<class T1, class T2>
-struct IsTypeStack<Stack::Element<T1, T2> >
-{
-    enum{
-        result = true
-    };
-};
-//==============================================================================
 } // TT
 } // Bikes
 

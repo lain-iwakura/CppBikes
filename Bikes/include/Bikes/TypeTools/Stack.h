@@ -2,10 +2,9 @@
 #define INCLUDE_BIKES_TYPETOOLS_STACK_H
 #include <Bikes/TypeTools/NullTypes.h>
 #include <Bikes/TypeTools/Select.h>
-#include <Bikes/TypeTools/Detect.h>
+#include <Bikes/MacrosBikes.h>
 
-
-#define BIKES_TYPESTACK_1(T1) Bikes::TT::Stack::Element<T1,Bikes::NullType>
+#define BIKES_TYPESTACK_1(T1) Bikes::TT::Stack::Element<T1,Bikes::TT::NullType>
 #define BIKES_TYPESTACK_2(T1,T2) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_1(T2) >
 #define BIKES_TYPESTACK_3(T1,T2,T3) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_2(T2,T3) >
 #define BIKES_TYPESTACK_4(T1,T2,T3,T4) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_3(T2,T3,T4) >
@@ -15,41 +14,24 @@
 #define BIKES_TYPESTACK_8(T1,T2,T3,T4,T5,T6,T7,T8) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_7(T2,T3,T4,T5,T6,T7,T8) >
 #define BIKES_TYPESTACK_9(T1,T2,T3,T4,T5,T6,T7,T8,T9) Bikes::TT::Stack::Element<T1,BIKES_TYPESTACK_8(T2,T3,T4,T5,T6,T7,T8,T9) > 
 
-#define MACROSBIKES_TYPESTACK_T9 Bikes::TT::Stack::Element<T1, Bikes::TT::Stack::Element<T2, Bikes::TT::Stack::Element<T3, Bikes::TT::Stack::Element<T4, Bikes::TT::Stack::Element<T5, Bikes::TT::Stack::Element<T6, Bikes::TT::Stack::Element<T7, Bikes::TT::Stack::Element<T8, Bikes::TT::Stack::Element<T9,Bikes::NullType> > > > > > > > >
+#define TBIKES_TYPESTACK_T9 BIKES_TYPESTACK_9(T1,T2,T3,T4,T5,T6,T7,T8,T9)
+
+#define INNERBIKES_TO_S(T) \
+    typename Bikes::TT::Inner::ToStackToStack<T>::ResultStack
+
+#define TBIKES_TO_TYPESTACK_T9 \
+    BIKES_TYPESTACK_9(INNERBIKES_TO_S(T1), INNERBIKES_TO_S(T2), INNERBIKES_TO_S(T3), INNERBIKES_TO_S(T4), INNERBIKES_TO_S(T5), INNERBIKES_TO_S(T6), INNERBIKES_TO_S(T7), INNERBIKES_TO_S(T8), INNERBIKES_TO_S(T9))
 
 
 namespace Bikes{
 namespace TT{
 namespace Stack{
 //==============================================================================
-template<class T>
-struct NotNull
-{
-    typedef T ResultType;
-};
-template<class T1, class T2>
-struct NotNull<Element<T1,T2> >
-{
-    typedef typename Select<
-        IsNullType<typename Element<T1, T2>::Head>::result,
-        NullType,
-        Element<T1, T2>
-        >
-        ::ResultType ResultType;
-};
-//==============================================================================
 template<class LeftT, class  RightT>
 struct Element
 {
     typedef LeftT Head;
     typedef Element<RightT,NullType> Tail;
-
-//     typedef typename Select<
-//         Detector<RightT>::isTypeStack || Equal<RightT, NullType>::result,
-//         RightT,
-//         Element<RightT, NullType>
-//     >
-//     ::ResultType Tail;
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -77,7 +59,11 @@ template<class T1, class T2, class T3 >
 struct Element<T1,Element<T2, T3> >
 {
     typedef T1 Head;
-    typedef typename NotNull<Element<T2, T3> >::ResultType Tail;
+    typedef typename Select<
+        IsNullType<typename Element<T2, T3>::Head>::result,
+        NullType,
+        Element<T2, T3>
+        >::ResultType Tail;    
 };
 template<class T1, class T2 >
 struct Element<NullType, Element<T1, T2> >
@@ -126,7 +112,7 @@ struct Element<Element<T1, T2>, Element<T3,T4> >
 };
 //==============================================================================
 template<class T>
-struct Length
+struct Count
 {
     enum{
         result = 1
@@ -134,7 +120,7 @@ struct Length
 };
 //------------------------------------------------------------------------------
 template<>
-struct Length<NullType>
+struct Count<NullType>
 {
     enum{
         result = 0
@@ -142,11 +128,11 @@ struct Length<NullType>
 };
 //------------------------------------------------------------------------------
 template<class LeftT, class RightT>
-struct Length<Element<LeftT, RightT> >
+struct Count<Element<LeftT, RightT> >
 {
     enum{
-        result = Length<typename Element<LeftT, RightT>::Head>::result
-        + Length<typename Element<LeftT, RightT>::Tail >::result
+        result = Count<typename Element<LeftT, RightT>::Head>::result
+        + Count<typename Element<LeftT, RightT>::Tail >::result
     };
 };
 //==============================================================================
@@ -258,13 +244,13 @@ struct Append
 };
 //==============================================================================
 template<class StackT, template <class,class> class CompareT> 
-struct FindMinimum
+struct FindMin
 {
     typedef StackT ResultType;
 };
 //------------------------------------------------------------------------------
 template<class T1, class T2, template <class, class> class CompareT>
-struct FindMinimum<Element<T1,T2>, CompareT>
+struct FindMin<Element<T1,T2>, CompareT>
 {
     typedef typename Select<
         IsNullType<typename Element<T1, T2>::Tail>::result
@@ -272,7 +258,7 @@ struct FindMinimum<Element<T1,T2>, CompareT>
         typename Element<T1, T2>::Head
         ,
         typename MinType<            
-            typename FindMinimum<typename Element<T1, T2>::Tail,CompareT>::ResultType,
+            typename FindMin<typename Element<T1, T2>::Tail,CompareT>::ResultType,
             typename Element<T1, T2>::Head,
             CompareT
             >::ResultType 
@@ -280,13 +266,13 @@ struct FindMinimum<Element<T1,T2>, CompareT>
 };
 //==============================================================================
 template<class StackT, template <class, class> class CompareT>
-struct FindMaximum
+struct FindMax
 {
     typedef StackT ResultType;
 };
 //------------------------------------------------------------------------------
 template<class T1, class T2, template <class, class> class CompareT>
-struct FindMaximum<Element<T1, T2>, CompareT>
+struct FindMax<Element<T1, T2>, CompareT>
 {
     typedef typename Select<
         IsNullType<typename Element<T1, T2>::Tail>::result
@@ -294,7 +280,7 @@ struct FindMaximum<Element<T1, T2>, CompareT>
         typename Element<T1, T2>::Head
         ,
         typename MaxType<            
-            typename FindMaximum<typename Element<T1, T2>::Tail, CompareT>::ResultType,
+            typename FindMax<typename Element<T1, T2>::Tail, CompareT>::ResultType,
             typename Element<T1, T2>::Head,
             CompareT
             >::ResultType
@@ -316,12 +302,12 @@ struct SortDescending<Element<T1,T2>, CompareT>
         Element<T1, T2>
         ,
         Element<
-            typename FindMaximum<Element<T1, T2>, CompareT>::ResultType
+            typename FindMax<Element<T1, T2>, CompareT>::ResultType
             ,
             typename SortDescending< 
                 typename Remove<
                     Element<T1, T2>, 
-                    typename FindMaximum<Element<T1, T2>, CompareT>::ResultType
+                    typename FindMax<Element<T1, T2>, CompareT>::ResultType
                     >::ResultStack,
                 CompareT
                 >::ResultStack
@@ -344,12 +330,12 @@ struct SortAscending<Element<T1, T2>, CompareT>
         Element<T1, T2>
         ,
         Element<
-            typename FindMinimum<Element<T1, T2>, CompareT>::ResultType
+            typename FindMin<Element<T1, T2>, CompareT>::ResultType
             ,
             typename SortAscending<
                 typename Remove<
                     Element<T1, T2>,
-                    typename FindMinimum<Element<T1, T2>, CompareT>::ResultType
+                    typename FindMin<Element<T1, T2>, CompareT>::ResultType
                     >::ResultStack,
                 CompareT
                 >::ResultStack
@@ -358,6 +344,28 @@ struct SortAscending<Element<T1, T2>, CompareT>
 };
 //==============================================================================
 } // Stack
+//============================================================================== 
+template<TBIKES_CT9_DEFTYPE(NullType)> struct ToStack;
+//============================================================================== 
+namespace Inner{
+    template<class T>
+    struct ToStackToStack
+    {
+        typedef T ResultStack;
+    };
+    template<class T1, class T2>
+    struct ToStackToStack<ToStack<T1, T2> >
+    {
+        typedef typename ToStack<T1, T2>::ResultStack ResultStack;
+    };
+}
+//============================================================================== 
+template<TBIKES_CT9>
+struct ToStack
+{
+    typedef TBIKES_TO_TYPESTACK_T9 ResultStack;
+};
+//============================================================================== 
 } // TT
 } // Bikes
 
