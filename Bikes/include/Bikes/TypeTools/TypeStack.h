@@ -6,7 +6,7 @@
 
 namespace Bikes{
 namespace TT{
-namespace Stack{
+namespace TypeStack{
 //==============================================================================
 template<class LeftT, class  RightT>
 struct Element
