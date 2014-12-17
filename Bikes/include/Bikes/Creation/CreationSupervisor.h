@@ -45,29 +45,92 @@ public:
 	}
 };
 
+
+template<class T>
+struct SimpleCreationSupervisor
+{
+    typedef CreationSupervisor<
+        Bikes::SimpleCopier<T>, 
+        Bikes::SimpleCreator<T>, 
+        Bikes::SimpleDeleter<T>
+        > Copier;
+
+    typedef CreationSupervisor<
+        Bikes::SimpleCloner<T>, 
+        Bikes::SimpleCreator<T>, 
+        Bikes::SimpleDeleter<T>
+        > Cloner;
+
+    typedef CreationSupervisor<
+        Bikes::SafetyCopier<T>, 
+        Bikes::SimpleCreator<T>, 
+        Bikes::SafetyDeleter<T>
+        > SafetyCopier;
+
+    typedef CreationSupervisor<
+        Bikes::SafetyCloner<T>, 
+        Bikes::SimpleCreator<T>,
+        Bikes::SafetyDeleter<T>
+        > SafetyCloner;
+
+    typedef CreationSupervisor<
+        Bikes::SafetyCopier<T>, 
+        Bikes::NullCreator<T>, 
+        Bikes::SafetyDeleter<T>
+        > NullCopier;
+
+    typedef CreationSupervisor<
+        Bikes::SafetyCloner<T>, 
+        Bikes::NullCreator<T>, 
+        Bikes::SafetyDeleter<T>
+        > NullCloner;
+    
+    typedef CreationSupervisor<
+        Bikes::NullCloner<T>, 
+        Bikes::NullCreator<T>, 
+        Bikes::SafetyDeleter<T>
+        > NullDeleter;
+
+    typedef CreationSupervisor<
+        Bikes::NullCloner<T>, 
+        Bikes::NullCreator<T>, 
+        Bikes::NullDeleter<T>
+        > Null;
+
+};
+
 template<class T>
 class SimpleCopyingSupervisor: 
 	public CreationSupervisor<SimpleCopier<T>,SimpleCreator<T>,SimpleDeleter<T> >
 {
-public:
-// 	typedef typename CreationSupervisor<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> > Base;
-// 	typedef typename Base::value_type value_type;
-// 	typedef typename Base::Cloner Cloner;
-// 	typedef typename Base::Creator Creator;
-// 	typedef typename Base::Deleter Deleter;
+};
+
+template<class T>
+class SafetyCopyingSupervisor:
+    public CreationSupervisor<SafetyCopier<T>, SimpleCreator<T>, SafetyDeleter<T> >
+{
 };
 
 template<class T>
 class SimpleCloningSupervisor :
 	public CreationSupervisor<SimpleCloner<T>, SimpleCreator<T>, SimpleDeleter<T> >
 {
-public:
-// 	typedef typename CreationSupervisor<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> > Base;
-// 	typedef typename Base::value_type value_type;
-// 	typedef typename Base::Cloner Cloner;
-// 	typedef typename Base::Creator Creator;
-// 	typedef typename Base::Deleter Deleter;
 };
+
+template<class T>
+class SafetyCloningSupervisor :
+    public CreationSupervisor<SafetyCloner<T>, SimpleCreator<T>, SafetyDeleter<T> >
+{
+};
+
+
+template<class T>
+class NullCloningSupervisor :
+    public CreationSupervisor<SafetyCloner<T>, NullCreator<T>, SafetyDeleter<T> >
+{
+};
+
+
 
 
 }	
