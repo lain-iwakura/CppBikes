@@ -35,6 +35,15 @@ public:
 	{
 	}
 
+    explicit List(size_type sz):
+        _l(sz)
+    {
+        BaseIterator i = _l.begin(); 
+        const BaseIterator& iEnd = _l.end();
+        for (; i != iEnd; ++i)
+            *i = _create();
+    }
+
     template<class OtherCreationSupervisorT>
     List(const List<T, OtherCreationSupervisorT>& other) : _l(other._l.size())
     {
@@ -46,7 +55,7 @@ public:
 	}
 
 	template<class ArrayT>
-    List(const ArrayT& arr) :_l(arr.size())
+    explicit List(const ArrayT& arr) :_l(arr.size())
 	{
 		sznum sz = objs.size();
 		for (sznum i = 0; i < sz; ++i)
@@ -474,9 +483,9 @@ public:
 
 		void replace(sznum i, const T & obj)
 		{
-			_destroy(_l[i]);
-			_l[i] = _createCopy(&obj);
+		    retake(_createCopy(&obj));
 		}
+
 
 // 		bool	startsWith(const T & value) const
 		void swap(sznum i, sznum j)
@@ -612,6 +621,11 @@ public:
 		take_back(obj);
 	}
 	
+    void retake(sznum i, T* pObj)
+    {
+        _destroy(_l[i]);
+        _l[i] = pObj;
+    }
 
 	// 		std::list<T>	toStdList() const
 	// 		QVector<T>	toVector() const
