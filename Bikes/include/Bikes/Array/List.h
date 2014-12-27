@@ -6,7 +6,7 @@
 namespace Bikes{
 //------------------------------------------------------------------------------
 template<
-    class OtherTT,
+    class T,
 	class CreationSupervisorT 
 	>
 class List: public ListBase<T> 
@@ -202,8 +202,8 @@ public:
 		_l.insert(_l.begin() + iWhere, _createCopy(&obj));
 	}
 
-    template<class OtherCreationSupervisorT>
-    void insert(const const_iterator& iWhere, const List<T, OtherCreationSupervisorT>& arr)
+    template<class OhterT, class OtherCreationSupervisorT>
+    void insert(const const_iterator& iWhere, const List<OhterT, OtherCreationSupervisorT>& arr)
 	{
         const_iterator::BaseIterator i = Base::getBaseIterator(iWhere);
         i = _l.insert(i, arr.size(), pointer(0));
@@ -215,7 +215,7 @@ public:
 	
 
     template<class OtherT, class OtherSupervisorT>
-    void insert(const List<OtherT, OtherSupervisorT>& arr)
+    void insert(size_type iWhere, const List<OtherT, OtherSupervisorT>& arr)
     {
 		size_type sz1 = _l.size();
 		sznum sz2 = arr.size();
@@ -717,7 +717,7 @@ private:
 	BaseContainer _l;
 
     template<class OtherT>
-    static OtherT* _createCopy(const OtherT* obj)
+    static T* _createCopy(const OtherT* obj)
 	{
 		//return Cloner::createCopy(obj);
 		return CreationSupervisor::createCopy(obj);
@@ -729,8 +729,7 @@ private:
 		return CreationSupervisor::create();
 	}
 
-    template<class OtherT>
-    static void _destroy(OtherT* obj)
+    static void _destroy(T* obj)
 	{
 		//Deleter::destroy(obj);
 		return CreationSupervisor::destroy(obj);
