@@ -2,7 +2,7 @@
 #define PREBIKES_RAWARRAY_H
 #include <Bikes/Types.h>
 #include <Bikes/Mathem/Tools.h>
-#include <Bikes/Creation/CreationSupervisor.h>
+#include <Bikes/Creation/CreationManager.h>
 #include <vector>
 
 namespace Bikes

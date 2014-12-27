@@ -11,7 +11,7 @@ template<
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
     template<class> class CreationSupervisorT = SafetyCloningSupervisor,
     class BaseCreationSupervisorT = 
-        CreationSupervisor<
+        CreationManager<
             SafetyCloner<ObjectBaseT>,
             NullCreator<ObjectBaseT>,
             SafetyDeleter<ObjectBaseT>
@@ -69,7 +69,7 @@ template<
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
     template<class> class CreationSupervisorT = SafetyCloningSupervisor,
     class BaseCreationSupervisorT =
-        CreationSupervisor<
+        CreationManager<
             SafetyCloner<ObjectBaseT>,
             NullCreator<ObjectBaseT>,
             SafetyDeleter<ObjectBaseT>

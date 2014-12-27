@@ -7,7 +7,7 @@ namespace Bikes{
 //------------------------------------------------------------------------------
 template<
     class T,
-	class CreationSupervisorT 
+	class CreationManagerT 
 	>
 class List: public ListBase<T> 
 {
@@ -28,8 +28,8 @@ public:
     typedef typename Base::BaseContainer BaseContainer;
     typedef typename Base::BaseConstIterator BaseConstIterator;
     typedef typename Base::BaseIterator BaseIterator;
-    typedef List<T, CreationSupervisorT> ThisType;
-    typedef CreationSupervisorT CreationSupervisor;
+    typedef List<T, CreationManagerT> ThisType;
+    typedef CreationManagerT CreationManager;
 
 	List()
 	{
@@ -720,19 +720,19 @@ private:
     static T* _createCopy(const OtherT* obj)
 	{
 		//return Cloner::createCopy(obj);
-		return CreationSupervisor::createCopy(obj);
+		return CreationManager::createCopy(obj);
 	}
 
 	static T* _create()
 	{
 		//return Creator::create();
-		return CreationSupervisor::create();
+		return CreationManager::create();
 	}
 
     static void _destroy(T* obj)
 	{
 		//Deleter::destroy(obj);
-		return CreationSupervisor::destroy(obj);
+		return CreationManager::destroy(obj);
 	}
 
 };

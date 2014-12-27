@@ -1,5 +1,5 @@
-#ifndef INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
-#define INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
+#ifndef INCLUDE_BIKES_CREATION_CREATIONMANAGER_H
+#define INCLUDE_BIKES_CREATION_CREATIONMANAGER_H
 
 #include <Bikes/Creation/Cloner.h>
 #include <Bikes/Creation/Creator.h>
@@ -7,11 +7,10 @@
 
 namespace Bikes
 {						
-
-
+    
 
 template<class TCloner, class TCreator, class TDeleter>
-class CreationSupervisor
+class CreationManager
 {
 public:
 	typedef TCloner Cloner;
@@ -49,49 +48,49 @@ public:
 template<class T>
 struct SimpleCreationSupervisor
 {
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SimpleCopier<T>, 
         Bikes::SimpleCreator<T>, 
         Bikes::SimpleDeleter<T>
         > Copier;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SimpleCloner<T>, 
         Bikes::SimpleCreator<T>, 
         Bikes::SimpleDeleter<T>
         > Cloner;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SafetyCopier<T>, 
         Bikes::SimpleCreator<T>, 
         Bikes::SafetyDeleter<T>
         > SafetyCopier;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SafetyCloner<T>, 
         Bikes::SimpleCreator<T>,
         Bikes::SafetyDeleter<T>
         > SafetyCloner;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SafetyCopier<T>, 
         Bikes::NullCreator<T>, 
         Bikes::SafetyDeleter<T>
         > NullCopier;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::SafetyCloner<T>, 
         Bikes::NullCreator<T>, 
         Bikes::SafetyDeleter<T>
         > NullCloner;
     
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::NullCloner<T>, 
         Bikes::NullCreator<T>, 
         Bikes::SafetyDeleter<T>
         > NullDeleter;
 
-    typedef CreationSupervisor<
+    typedef CreationManager<
         Bikes::NullCloner<T>, 
         Bikes::NullCreator<T>, 
         Bikes::NullDeleter<T>
@@ -101,32 +100,32 @@ struct SimpleCreationSupervisor
 
 template<class T>
 class SimpleCopyingSupervisor: 
-	public CreationSupervisor<SimpleCopier<T>,SimpleCreator<T>,SimpleDeleter<T> >
+	public CreationManager<SimpleCopier<T>,SimpleCreator<T>,SimpleDeleter<T> >
 {
 };
 
 template<class T>
 class SafetyCopyingSupervisor:
-    public CreationSupervisor<SafetyCopier<T>, SimpleCreator<T>, SafetyDeleter<T> >
+    public CreationManager<SafetyCopier<T>, SimpleCreator<T>, SafetyDeleter<T> >
 {
 };
 
 template<class T>
 class SimpleCloningSupervisor :
-	public CreationSupervisor<SimpleCloner<T>, SimpleCreator<T>, SimpleDeleter<T> >
+	public CreationManager<SimpleCloner<T>, SimpleCreator<T>, SimpleDeleter<T> >
 {
 };
 
 template<class T>
 class SafetyCloningSupervisor :
-    public CreationSupervisor<SafetyCloner<T>, SimpleCreator<T>, SafetyDeleter<T> >
+    public CreationManager<SafetyCloner<T>, SimpleCreator<T>, SafetyDeleter<T> >
 {
 };
 
 
 template<class T>
 class NullCloningSupervisor :
-    public CreationSupervisor<SafetyCloner<T>, NullCreator<T>, SafetyDeleter<T> >
+    public CreationManager<SafetyCloner<T>, NullCreator<T>, SafetyDeleter<T> >
 {
 };
 
@@ -135,4 +134,4 @@ class NullCloningSupervisor :
 
 }	
 
-#endif // <- INCLUDE_BIKES_CREATION_CREATIONSUPERVISOR_H
+#endif // <- INCLUDE_BIKES_CREATION_CREATIONMANAGER_H

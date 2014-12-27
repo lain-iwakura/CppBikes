@@ -1,7 +1,7 @@
 #ifndef INCLUDE_BIKES_ARRAY_LISTBASE_H
 #define INCLUDE_BIKES_ARRAY_LISTBASE_H
 
-#include <Bikes/Creation/CreationSupervisor.h>
+#include <Bikes/Creation/CreationManager.h>
 #include <vector>
 
 namespace Bikes{
