@@ -324,7 +324,7 @@ struct SortAscending<Element<T1, T2>, CompareT>
         > ::ResultType ResultStack;
 };
 //==============================================================================
-} // Stack
+} // TypeStack
 } // TT
 } // Bikes
 

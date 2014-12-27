@@ -61,8 +61,6 @@ public:
 
     virtual void write(ByteStream& bs) const = 0;
 
-    virtual const ByteArray& getObjectTypeSignature() const = 0;
-
 protected:
     const T *obj_w;
     T* obj_r;

@@ -4,7 +4,7 @@
 #include <Bikes/TypeTools/TypeStack.h>
 
 namespace Bikes{
-//namespace TT{
+namespace TT{
 //==============================================================================
 template<
     class StackT,
@@ -191,7 +191,7 @@ template<class StackT, class HolderBaseT >
 typename TypeStackHolder<StackT, HolderBaseT>::InnerStackHolder
 TypeStackHolder<StackT, HolderBaseT>::_holder;
 //==============================================================================
-//} // TT
+} // TT
 } // Bikes
 
 #endif

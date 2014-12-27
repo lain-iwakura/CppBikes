@@ -24,7 +24,7 @@
 
 
 namespace Bikes{
-//namespace TT{
+namespace TT{
 //============================================================================== 
 template<TBIKES_CT9_DEFTYPE(TT::NullType)> struct ToTypeStack;
 //============================================================================== 
@@ -47,6 +47,6 @@ struct ToTypeStack
     typedef TBIKES_TO_TYPESTACK_T9 ResultStack;
 };
 //==============================================================================
-//} // TT
+} // TT
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPETOOLS_STACKTOOLS_H

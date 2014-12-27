@@ -24,7 +24,7 @@ public:                                                                        \
     static void read(Bikes::ByteStream &bstr, StreamType& obj);                \
     static void write(Bikes::ByteStream &bstr, const StreamType& obj);         \
                                                                                \
-    const ByteArray& getObjectTypeSignature() const;                           \
+    static const ByteArray& typeSignature();                                   \
     {                                                                          \
         static const ByteArray s(#ObjClass);                                   \
         return s;                                                              \
@@ -137,7 +137,7 @@ public:                                                                        \
         w.write(obj);                                                          \
     }                                                                          \
                                                                                \
-    const ByteArray& getObjectTypeSignature() const;                           \
+    static const ByteArray& typeSignature() const;                             \
     {                                                                          \
         static const ByteArray s(#ObjClass);                                   \
         return s;                                                              \

@@ -4,10 +4,11 @@
 #include <Bikes/Stream/ByteStream.h>
 #include <Bikes/Stream/ObjectStreamerBase.h>
 #include <Bikes/Stream/ObjectStreamerMacros.h>
-#include <Bikes/SmartPtr.h>
 #include <Bikes/Stream/StreamerInterface.h>
 #include <vector>
 #include <map>
+#include <memory>
+#include <Bikes/TypeTools/Info.h>
 
 
 namespace Bikes
@@ -19,23 +20,33 @@ template<class AbstractType>
 class PolymorphicSingleStreamerBase
 {
 public:
-    typedef typename AbstractType StreamType;
+    typedef typename AbstractType StreamType;    
+
+    typedef PolymorphicSingleStreamerBase<AbstractType> ThisType;
 
     virtual~PolymorphicSingleStreamerBase()
     {
     }
 
-    virtual void read(ByteStream &bs, AbstractType* aobj) const = 0;
+    virtual void read(ByteStream &bs, AbstractType& aobj) const = 0;
 
-    virtual void write(ByteStream &bs, const AbstractType* aobj) const = 0;
+    virtual bool tryWrite(ByteStream &bs, const AbstractType& aobj) const = 0;
 
     virtual AbstractType* newObject() const = 0;
+
+    virtual ThisType* clone() const = 0;
+
+    virtual const ByteArray& typeSignature() const = 0;
+
+    virtual bool operator ==(const ThisType&) const = 0;
+
+    //virtual
 };
 //==============================================================================
 template<
     class AbstractType,
     class ChildTypeStreamer,
-    class CreatorT = SimpleCreator<ChildTypeStreamer::StreamType>
+    class CreatorT = SimpleCreator<typename ChildTypeStreamer::StreamType>
     >
 class PolymorphicSingleStreamer: 
     public PolymorphicSingleStreamerBase<AbstractType>
@@ -45,59 +56,170 @@ public:
     typedef typename ChildTypeStreamer::StreamType StreamType;
     typedef CreatorT Creator;
 
-    void read(ByteStream &bs, AbstractType* aobj) const
+    typedef PolymorphicSingleStreamerBase<AbstractType> Base;
+    typedef PolymorphicSingleStreamer<AbstractType, ChildTypeStreamer, CreatorT> ThisType;
+
+    void read(ByteStream &bs, AbstractType& aobj) const
     {
-        if(StreamType *obj=dynamic_cast<StreamType *>(aobj))
+        if(StreamType *obj=dynamic_cast<StreamType *>(&aobj))
         {
-            ChildTypeStreamer::read(bs,obj);
+            ChildTypeStreamer::read(bs,*obj);
         }else
         {
             //exception
         }
     }
 
-    void write(ByteStream &bs,const AbstractType* aobj) const
+    bool tryWrite(ByteStream &bs, const AbstractType& aobj) const
     {
-        if(const StreamerType *obj=dynamic_cast<const StreamerType *>(aobj))
+        if(const StreamType *obj=dynamic_cast<const StreamType *>(&aobj))
         {
-            ChildTypeStreamer::write(bs,obj);
-        }else
-        {
-            //exception
+            ChildTypeStreamer::write(bs,*obj);
+            return true;
         }
+        return false;
     }
 
     AbstractType* newObject() const
     {
         return Creator::create();
     }
+
+    ThisType* clone() const
+    {
+        return new ThisType(/* *this */);
+    }
+
+    const ByteArray& typeSignature() const
+    {
+        return ChildTypeStreamer::typeSignature();
+    }
+    
+    bool operator == (const Base& other) const
+    {
+        const ByteArray& s1 = ChildTypeStreamer::typeSignature();
+        const ByteArray& s2 = other.typeSignature();
+        return (&s1 == &s2) || (s1 == s2);
+    }
 };
+//==============================================================================
+// template<class AbstractTypeT
+// class PolymorphicStreamerHolder
+// {
+// public:
+// 
+// };
 //==============================================================================
 } // Inner
 //==============================================================================
+
+template<
+    class AbstractTypeT,
+    class StremersTypeStackT,
+    class AbstractTypePtrT = AbstractTypeT*
+    >
+class PolymorphicStreamer:
+    public ObjectStreamerBase<AbstractTypePtrT>
+{
+    //typedef Inner::PolymorphicSingleStreamerBase<>
+    typedef TT::ConstObjectsHolder<>
+
+public:
+
+    typedef AbstractTypePtrT StreamType;
+    typedef ObjectStreamerBase<AbstractTypePtrT> Base;
+
+    PolymorphicStreamer(AbstractTypePtrT& pObj) :
+        Base(pObj)
+    {
+    }
+
+    PolymorphicStreamer(const AbstractTypePtrT& pObj) :
+        Base(pObj)
+    {
+    }
+
+
+
+    void read(ByteStream& bs)
+    {
+        if (obj_r)
+            read(bs, *obj_r);
+        else
+        { 
+            //?
+        }
+    }
+
+    void write(ByteStream& bs)
+    {
+        if (obj_w)
+            write(bs, *obj_r);
+        else
+        {
+            //?
+        }
+    }
+
+    static void read(ByteStream& bs, AbstractTypePtrT& pAObj)
+    {
+    }
+
+    static void write(ByteStream& bs, AbstractTypePtrT& pAObj)
+    {
+    }
+};
 /*
 template<
-    class AbstractRegistrableType,
-    class AbstractRegistrableTypePtr = AbstractRegistrableType*,
-    class Collector = AbstractRegistrableType 
+    class AbstractTypeT,
+    class AbstractTypePtrT = AbstractTypeT*,
+    class CollectorT = AbstractTypeT 
     >
 class PolymorphicStreamer: 
-    public ObjectStreamerBase<AbstractRegistrableTypePtr>
+    public ObjectStreamerBase<AbstractTypePtrT>
 {
+    static List<
+        Inner::PolymorphicSingleStreamerBase, 
+        SimpleCloningSupervisor<Inner::PolymorphicSingleStreamerBase>
+        > streamers;
 public:
+
+    typedef AbstractType* StreamType;
 
     virtual ~PolymorphicStreamer(){}
 
-        void read(ByteStream& bs) const{read(bs,this->obj_r);}
-        void write(ByteStream& bs) const{write(bs,this->obj_w);}
+    void read(ByteStream& bs) const {read(bs,*this->obj_r);}
+    void write(ByteStream& bs) const {write(bs,*this->obj_w);}
 
-    template<class ObjectStreamer>
+    template<
+        class ObjectStreamerT,
+        class CreatorT = SimpleCreator<typename ObjectStreamerT::StreamType> 
+        >
     static void add()
-    {
-        streamers[ObjectStreamer::StreamerType::typeName()].reset(new PolymorphicSingleStreamer<AbstractRegistrableType,ObjectStreamer>());
+    {        
+        typedef typename ObjectStreamerT::StreamType NewStreamType;
+        if (Hierrarchy<AbstractTypeT,NewStreamType>::exists)
+        {
+            Inner::PolymorphicSingleStreamer<ObjectStreamerT> str;
+            for (sznum i = 0; i < streamers.size())
+            {
+
+            }
+        }
+        else if (Equal<AbstractTypeT, NewStreamType>::result)
+        {
+            if (streamers.size() != 0)
+            {
+                //if (streamers)
+            }
+        }
+        else
+        {
+            //?
+        }
     }
 
-    static void read(ByteStream& bs, AbstractRegistrableTypePtr * ppAObj)
+    static void read(ByteStream& bs, AbstractTypePtr& pAObj)
     {
         ByteArray bastr(100,10);
         ByteStream bstr(&bastr);
@@ -111,8 +233,8 @@ public:
         if(ch=='\0')
         {
             const char *str=bastr.data();
-                        typename std::map<const char*,typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared > ::iterator pItr;
-            typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared stre;
+                        typename std::map<const char*,typename Ptr<PolymorphicSingleStreamerBase<AbstractType> >::Shared > ::iterator pItr;
+            typename Ptr<PolymorphicSingleStreamerBase<AbstractType> >::Shared stre;
 
             for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
                 if(bastr==pItr->first)
@@ -123,7 +245,7 @@ public:
 
             if(stre.get())
             {
-                (*ppAObj)=AbstractRegistrableTypePtr(stre->newObject());
+                (*ppAObj)=AbstractTypePtr(stre->newObject());
                 stre->read(bs,getP(ppAObj));
             }else
             {
@@ -135,15 +257,15 @@ public:
         }
     }
 
-    static void write(ByteStream& bs, const AbstractRegistrableTypePtr* ppAObj)
+    static void write(ByteStream& bs, const AbstractTypePtr* ppAObj)
     {
 
         if(ppAObj&&(getP(ppAObj)))
         {
             ByteArray bastr((*ppAObj)->getTypeName());
 
-                        typename std::map<const char*,typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared >::iterator pItr;
-            typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared stre;
+                        typename std::map<const char*,typename Ptr<PolymorphicSingleStreamerBase<AbstractType> >::Shared >::iterator pItr;
+            typename Ptr<PolymorphicSingleStreamerBase<AbstractType> >::Shared stre;
 
             for(pItr=streamers.begin(); pItr!=streamers.end(); pItr++)
                 if(bastr==pItr->first)
@@ -169,21 +291,25 @@ public:
     static int streamersCount(){return streamers.size();}
 
 private:
-        typedef AbstractRegistrableType* AbstractRegistrableTypeP;
-
+        
     template<class TPtr>
-        static AbstractRegistrableType * getP(const TPtr* ptr){return Ptr<AbstractRegistrableType>::get(*ptr);}
+        static AbstractType * getP(const TPtr* ptr){return Ptr<AbstractType>::get(*ptr);}
 
-    static std::map<const char*,typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared > streamers;
+//     static std::map<
+//         const char*,
+//         std::auto_ptr<PolymorphicSingleStreamerBase<AbstractType> >
+//         > streamers;
 };
 
-//template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector>
-//template<>
-//AbstractRegistrableType *AbstractTypeStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::getP<>( AbstractRegistrableType *const *ptr)
-//{return *ptr;}
+// 
+// template<class AbstractType, class AbstractTypePtr, class Collector>
+// std::map<
+//     const char*, 
+//     auto_ptr<PolymorphicSingleStreamerBase<AbstractType> >
+//     > 
+//     PolymorphicStreamer<AbstractType,AbstractTypePtr,Collector>::streamers;
 
-template<class AbstractRegistrableType, class AbstractRegistrableTypePtr, class Collector>
-std::map<const char*, typename Ptr<PolymorphicSingleStreamerBase<AbstractRegistrableType> >::Shared > PolymorphicStreamer<AbstractRegistrableType,AbstractRegistrableTypePtr,Collector>::streamers;
+/*
 
 //-------------------------------------------------------------------------
 

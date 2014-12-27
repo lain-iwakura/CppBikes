@@ -50,27 +50,12 @@ namespace Bikes
 		template<class T>
 		void read(T& val)
 		{
-			if(StreamerInterface *as=dynamic_cast<StreamerInterface *>(&val))
-			{
-				as->read(*this);
-			}else
-			{	
-				readValue(val);
-				//exception
-			}
+    		readValue(val);
 		}
 
-		template<class T>
-		void read(const T& val)
+        void read(const StreamerInterface& si)
 		{
-			if(const StreamerInterface *as=dynamic_cast<const StreamerInterface *>(&val))
-			{
-				as->read(*this);
-			}else
-			{
-				//?
-				//exception
-			}
+            si.read(*this);
 		}
 
 		
@@ -83,16 +68,14 @@ namespace Bikes
 	
 		template<class T>
 		void write(const T& val)
-		{			
-			if(const StreamerInterface *as=dynamic_cast<const StreamerInterface*>(&val))
-			{
-				as->write(*this);
-			}else
-			{
-				writeValue(val);
-				//exception
-			}
+		{
+		    writeValue(val);
 		}
+
+        void write(const StreamerInterface& si)
+        {
+            si.write(*this);
+        }
 
 		template<class T>
 		void writeValue(const T& val)
