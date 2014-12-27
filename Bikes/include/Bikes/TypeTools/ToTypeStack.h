@@ -47,6 +47,35 @@ struct ToTypeStack
     typedef TBIKES_TO_TYPESTACK_T9 ResultStack;
 };
 //==============================================================================
+template<class TypeStackT, template <class> class TypeConverterT> 
+struct TypeStackToTypeStack
+{
+    typedef TypeStack::Element<typename TypeConverterT<TypeStackT>::ResultType, NullType>
+    ResultStack;
+};
+//------------------------------------------------------------------------------
+template<template <class> class TypeConverterT>
+struct TypeStackToTypeStack<NullType, TypeConverterT>
+{
+    typedef NullType ResultStack;
+};
+//------------------------------------------------------------------------------
+template<class T1, class T2, template <class> class TypeConverterT>
+struct TypeStackToTypeStack<TypeStack::Element<T1, T2>, TypeConverterT>
+{
+    typedef TypeStack::Element<
+        typename TypeConverterT<
+            typename TypeStack::Element<T1, T2>::Head
+            >:: ResultType
+        ,
+        typename TypeStackToTypeStack<
+            typename TypeStack::Element<T1, T2>::Tail,
+            TypeConverterT
+            >::ResultStack
+        >
+        ResultStack;
+};
+//==============================================================================
 } // TT
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPETOOLS_STACKTOOLS_H
