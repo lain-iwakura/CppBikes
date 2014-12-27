@@ -6,7 +6,7 @@
 namespace Bikes{
 //------------------------------------------------------------------------------
 template<
-	class T,
+    class OtherTT,
 	class CreationSupervisorT 
 	>
 class List: public ListBase<T> 
@@ -44,8 +44,8 @@ public:
             *i = _create();
     }
 
-    template<class OtherCreationSupervisorT>
-    List(const List<T, OtherCreationSupervisorT>& other) : _l(other._l.size())
+    template<class OtherT, class OtherCreationSupervisorT>
+    List(const List<OtherT, OtherCreationSupervisorT>& other) : _l(other._l.size())
     {
         BaseIterator i = _l.begin();
         BaseConstIterator j = other._l.begin();
@@ -213,9 +213,10 @@ public:
             *i = _createCopy(*j);
 	}
 	
-	template<class ArrayT>
-	void insert(size_type iWhere, const ArrayT& arr)
-	{
+
+    template<class OtherT, class OtherSupervisorT>
+    void insert(const List<OtherT, OtherSupervisorT>& arr)
+    {
 		size_type sz1 = _l.size();
 		sznum sz2 = arr.size();
 		_l.insert(_l.begin() + iWhere, sz2, pointer(0))
@@ -243,8 +244,8 @@ public:
 		_l.push_back(_createCopy(&obj));
 	}
 
-    template<class ArrayT>
-	void push_back(const ArrayT& arr)
+    template<class OtherT, class OtherSupervisorT>
+    void push_back(const List<OtherT, OtherSupervisorT>& arr)
 	{		
         sznum sz1 = _l.size();
 		sznum sz2 = arr.size();
@@ -259,8 +260,8 @@ public:
 		_l.insert(_l.begin(), _createCopy(&obj));
 	}
 
-	template<class ArrayT>
-	void push_front(const ArrayT& arr)
+    template<class OtherT, class OtherSupervisorT>
+    void push_front(const List<OtherT, OtherSupervisorT>& arr)
 	{
         sznum sz2 = arr.size();
 		_l.insert(_l.begin(), sz2, pointer(0))
@@ -326,10 +327,10 @@ public:
 			push_back(obj);
 		}
 
-		template<class ArrayT>
-		void append(const ArrayT & objs)
+        template<class OtherT, class OtherSupervisorT>
+        void append(const List<OtherT, OtherSupervisorT>& arr)
 		{
-			push_back(objs);			
+			push_back(arr);			
 		}
 
 // 		iterator	begin()
@@ -517,23 +518,37 @@ public:
 		push_back(obj);
 		return *this;
 	}
-		
-    template<class ArrayT>
-	ThisType& operator += (const ArrayT& arr)
+	
+    template<class OtherT, class OtherSupervisorT>
+	ThisType& operator += (const List<OtherT, OtherSupervisorT>& arr)
 	{
         push_back(arr);
 		return *this;
 	}
 
-	template<class ArrayT>
-	ThisType& operator = (const ArrayT& arr)
+    ThisType& operator << (const T& obj)
+    {
+        push_back(obj);
+        return *this;
+    }
+
+    template<class OtherT, class OtherSupervisorT>
+    ThisType& operator << (const List<OtherT, OtherSupervisorT>& arr)
+    {
+        push_back(arr);
+        return *this;
+    }
+    
+    template<class OtherT, class OtherSupervisorT>
+    ThisType& operator = (const List<OtherT, OtherSupervisorT>& arr)
 	{
 		from_array(arr);
 		return *this;
 	}
 
-    template<class ArrayT>
-    bool operator == (const ArrayT& arr) const
+
+    template<class OtherT, class OtherSupervisorT>
+    bool operator == (const List<OtherT, OtherSupervisorT>& arr) const
     {
         sznum sz1 = _l.size();
         if (sz1 != arr.size())
@@ -546,8 +561,8 @@ public:
         return true;
     }
 
-    template<class ArrayT>
-    bool operator != (const ArrayT& arr) const
+    template<class OtherT, class OtherSupervisorT>
+    bool operator != (const List<OtherT, OtherSupervisorT>& arr) const
     {
         return !(*this == arr);
     }
@@ -701,7 +716,8 @@ private:
 
 	BaseContainer _l;
 
-	static T* _createCopy(const T* obj)
+    template<class OtherT>
+    static OtherT* _createCopy(const OtherT* obj)
 	{
 		//return Cloner::createCopy(obj);
 		return CreationSupervisor::createCopy(obj);
@@ -713,7 +729,8 @@ private:
 		return CreationSupervisor::create();
 	}
 
-	static void _destroy(T* obj)
+    template<class OtherT>
+    static void _destroy(OtherT* obj)
 	{
 		//Deleter::destroy(obj);
 		return CreationSupervisor::destroy(obj);

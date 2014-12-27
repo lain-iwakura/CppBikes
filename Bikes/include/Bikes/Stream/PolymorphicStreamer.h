@@ -122,7 +122,7 @@ class PolymorphicStreamer:
     public ObjectStreamerBase<AbstractTypePtrT>
 {
     //typedef Inner::PolymorphicSingleStreamerBase<>
-    typedef TT::ConstObjectsHolder<>
+    //typedef TT::ConstObjectsHolder<>
 
 public:
 
