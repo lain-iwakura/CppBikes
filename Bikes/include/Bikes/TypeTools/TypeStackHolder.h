@@ -2,6 +2,7 @@
 #define INCLUDE_BIKES_TYPETOOLS_TYPESTACKHOLDER_H
 
 #include <Bikes/TypeTools/TypeStack.h>
+#include <Bikes/Array/List.h>
 
 namespace Bikes{
 namespace TT{

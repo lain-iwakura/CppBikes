@@ -9,6 +9,8 @@
 #include <map>
 #include <memory>
 #include <Bikes/TypeTools/Info.h>
+#include <Bikes/TypeTools/ToTypeStack.h>
+#include <Bikes/TypeTools/TypeStackHolder.h>
 
 
 namespace Bikes
@@ -103,6 +105,39 @@ public:
     }
 };
 //==============================================================================
+template<class AbstractTypeT>
+struct ToPolymorphicSingleStreamer
+{
+    template<class StreamerTypeT>
+    struct Converter
+    {    
+        typedef PolymorphicSingleStreamer<
+            AbstractTypeT,
+            StreamerTypeT
+            > ResultType;
+    };
+};
+
+template<class AbstractTypeT>
+template<class StreamerTypeT, class CreatorT>
+struct ToPolymorphicSingleStreamer<AbstractTypeT>::
+    Converter<PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> >
+{
+    typedef PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> 
+    ResultType;
+};
+
+
+template<class AbstractTypeT, class StreamersTypeStackT>
+class ToPolymorphicStreamerStack
+{
+public:
+    typedef TT::TypeStackToTypeStack<
+        StreamersTypeStackT, 
+        typename ToPolymorphicSingleStreamer<AbstractTypeT>::template Converter
+        > ResultStack;
+};
+//==============================================================================
 // template<class AbstractTypeT
 // class PolymorphicStreamerHolder
 // {
@@ -121,8 +156,20 @@ template<
 class PolymorphicStreamer:
     public ObjectStreamerBase<AbstractTypePtrT>
 {
-    //typedef Inner::PolymorphicSingleStreamerBase<>
-    //typedef TT::ConstObjectsHolder<>
+    typedef typename  Inner::ToPolymorphicStreamerStack<AbstractTypeT,StremersTypeStackT>
+        ::ResultStack PolymorphicStreamerStack;
+
+    typedef TT::ConstObjectsHolder<
+        PolymorphicStreamerStack,
+        Inner::PolymorphicSingleStreamerBase<AbstractTypeT>
+        > 
+        PolymorphicStreamerHolder;
+
+    typedef TT::TypeStackHolder<
+        PolymorphicStreamerStack,
+        PolymorphicStreamerHolder
+        > 
+        PolymorphicStreamerStackHolder;
 
 public:
 
