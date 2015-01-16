@@ -23,7 +23,7 @@ const unum defMaxCapacityIncrement()
 
 template<
 	class T,
-	class CreationSupervisorT = SimpleCopyingSupervisor<T>
+	class CreationManagerT = SimpleCopyingManager<T>
 	>
 class RawArray
 {
@@ -39,8 +39,8 @@ public:
     typedef pointer iterator;
     typedef const_pointer const_iterator;
 
-	typedef CreationSupervisorT CreationSupervisor;
-    typedef RawArray<T, CreationSupervisorT> ThisType;
+	typedef CreationManagerT CreationManager;
+    typedef RawArray<T, CreationManagerT> ThisType;
 	
 	RawArray() :
 		_arr(0), 
@@ -289,14 +289,14 @@ protected:
 	{
 		if (sz == 0)
 			return 0;
-		return CreationSupervisor::createArray(sz);
+		return CreationManager::createArray(sz);
 	}
 
 	static T* _createArrayCopy(const T* arr, sznum cap, sznum sz)
 	{
 		if (cap == 0)
 			return 0;
-		T* carr = CreationSupervisor::createArray(cap);
+		T* carr = CreationManager::createArray(cap);
 		if (arr)
 		{
 			for (sznum i = 0; i < sz; i++)
@@ -308,7 +308,7 @@ protected:
 	static void _destroyArray(T* arr)
 	{
 		if (arr)
-			CreationSupervisor::destroyArray(arr);
+			CreationManager::destroyArray(arr);
 	}
 
 	T *_arr;

@@ -8,7 +8,7 @@ namespace Bikes{
 //------------------------------------------------------------------------------
 template<class T> class ListConstIterator;
 template<class T> class ListIterator;
-template<class T, class CreationSupervisorT = SimpleCopyingSupervisor<T> > class List;
+template<class T, class CreationManagerT = SimpleCopyingManager<T> > class List;
 //------------------------------------------------------------------------------
 template<class T>
 class ListBase

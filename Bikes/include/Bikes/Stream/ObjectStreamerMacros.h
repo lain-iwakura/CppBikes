@@ -8,11 +8,11 @@
 //==============================================================================
 #define BIKES_OBJECTSTREAMER_DECL_EXP(EXP, StreamerName, ObjClass)             \
 class EXP StreamerName:                                                        \
-    public Bikes::ObjectStreamerBase<ObjClass>                                 \
+    public Bikes::AbstractObjectStreamer<ObjClass>                                 \
 {                                                                              \
 public:                                                                        \
     typedef ObjClass StreamType;                                               \
-    typedef Bikes::ObjectStreamerBase<ObjClass> Base;                          \
+    typedef Bikes::AbstractObjectStreamer<ObjClass> Base;                          \
                                                                                \
     StreamerName();                                                            \
     StreamerName(StreamType &obj);                                             \
@@ -99,11 +99,11 @@ private:                                                                       \
 //------------------------------------------------------------------------------
 #define BIKES_OBJECTSTREAMER_DECLDEF_EXTENDED(StreamerName, ObjClass)          \
 class StreamerName:                                                            \
-    public Bikes::ObjectStreamerBase<ObjClass>                                 \
+    public Bikes::AbstractObjectStreamer<ObjClass>                                 \
 {                                                                              \
 public:                                                                        \
     typedef ObjClass StreamType;                                               \
-    typedef Bikes::ObjectStreamerBase<ObjClass> Base;                          \
+    typedef Bikes::AbstractObjectStreamer<ObjClass> Base;                          \
                                                                                \
     StreamerName()                                                             \
     {                                                                          \

@@ -2,7 +2,7 @@
 #define INCLUDE_BIKES_STREAM_POLYMORPHICSTREAMER_H
 
 #include <Bikes/Stream/ByteStream.h>
-#include <Bikes/Stream/ObjectStreamerBase.h>
+#include <Bikes/Stream/AbstractObjectStreamer.h>
 #include <Bikes/Stream/ObjectStreamerMacros.h>
 #include <Bikes/Stream/StreamerInterface.h>
 #include <vector>
@@ -30,11 +30,13 @@ public:
     {
     }
 
-    virtual void read(ByteStream &bs, AbstractType& aobj) const = 0;
+    //virtual void read(ByteStream &bs, AbstractType& aobj) const = 0;
+
+    virtual AbstractType* readAndCreate(ByteStream &bs) const = 0;
 
     virtual bool tryWrite(ByteStream &bs, const AbstractType& aobj) const = 0;
 
-    virtual AbstractType* newObject() const = 0;
+    virtual AbstractType* createObject() const = 0;
 
     virtual ThisType* clone() const = 0;
 
@@ -61,28 +63,26 @@ public:
     typedef PolymorphicSingleStreamerBase<AbstractType> Base;
     typedef PolymorphicSingleStreamer<AbstractType, ChildTypeStreamer, CreatorT> ThisType;
 
-    void read(ByteStream &bs, AbstractType& aobj) const
+
+    StreamType* readAndCreate(ByteStream &bs) const
     {
-        if(StreamType *obj=dynamic_cast<StreamType *>(&aobj))
-        {
-            ChildTypeStreamer::read(bs,*obj);
-        }else
-        {
-            //exception
-        }
+        StreamType* pObj = createObject();
+        ChildTypeStreamer::read(bs, *pObj);
+        return  pObj;
     }
 
     bool tryWrite(ByteStream &bs, const AbstractType& aobj) const
     {
         if(const StreamType *obj=dynamic_cast<const StreamType *>(&aobj))
         {
+            bs.writeRecurrentData(typeSignature());
             ChildTypeStreamer::write(bs,*obj);
             return true;
         }
         return false;
     }
 
-    AbstractType* newObject() const
+    StreamType* createObject() const
     {
         return Creator::create();
     }
@@ -117,7 +117,7 @@ struct ToPolymorphicSingleStreamer
             > ResultType;
     };
 };
-
+//------------------------------------------------------------------------------
 template<class AbstractTypeT>
 template<class StreamerTypeT, class CreatorT>
 struct ToPolymorphicSingleStreamer<AbstractTypeT>::
@@ -126,8 +126,7 @@ struct ToPolymorphicSingleStreamer<AbstractTypeT>::
     typedef PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> 
     ResultType;
 };
-
-
+//------------------------------------------------------------------------------
 template<class AbstractTypeT, class StreamersTypeStackT>
 class ToPolymorphicStreamerStack
 {
@@ -138,13 +137,6 @@ public:
         > ResultStack;
 };
 //==============================================================================
-// template<class AbstractTypeT
-// class PolymorphicStreamerHolder
-// {
-// public:
-// 
-// };
-//==============================================================================
 } // Inner
 //==============================================================================
 
@@ -154,7 +146,7 @@ template<
     class AbstractTypePtrT = AbstractTypeT*
     >
 class PolymorphicStreamer:
-    public ObjectStreamerBase<AbstractTypePtrT>
+    public AbstractObjectStreamer<AbstractTypePtrT>
 {
     typedef typename  Inner::ToPolymorphicStreamerStack<AbstractTypeT,StremersTypeStackT>
         ::ResultStack PolymorphicStreamerStack;
@@ -163,18 +155,22 @@ class PolymorphicStreamer:
         PolymorphicStreamerStack,
         Inner::PolymorphicSingleStreamerBase<AbstractTypeT>
         > 
-        PolymorphicStreamerHolder;
+        PolymorphicStreamerHolderBase;
 
     typedef TT::TypeStackHolder<
         PolymorphicStreamerStack,
-        PolymorphicStreamerHolder
+        PolymorphicStreamerHolderBase
         > 
-        PolymorphicStreamerStackHolder;
+        PolymorphicStreamerHolder;
+
+    typedef typename PolymorphicStreamerHolder::HeldType PolymorphicStreamerArray;
 
 public:
 
+    typedef AbstractTypeT AbstractType;
     typedef AbstractTypePtrT StreamType;
-    typedef ObjectStreamerBase<AbstractTypePtrT> Base;
+
+    typedef AbstractObjectStreamer<AbstractTypePtrT> Base;
 
     PolymorphicStreamer(AbstractTypePtrT& pObj) :
         Base(pObj)
@@ -201,7 +197,7 @@ public:
     void write(ByteStream& bs)
     {
         if (obj_w)
-            write(bs, *obj_r);
+            write(bs, *obj_w);
         else
         {
             //?
@@ -210,10 +206,36 @@ public:
 
     static void read(ByteStream& bs, AbstractTypePtrT& pAObj)
     {
+        PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
+        
     }
 
-    static void write(ByteStream& bs, AbstractTypePtrT& pAObj)
+    static void write(ByteStream& bs, const AbstractTypePtrT& ptrObj)
     {
+        PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
+
+        const AbstractType* pObj = getPtr(ptrObj);
+
+        if (pObj)
+        {
+            for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
+            {
+                if (s->tryWrite(bs, *pObj))
+                    break;
+            }
+        }
+        else
+        {
+            //?
+        }
+    }
+
+
+private:
+
+    static const AbstractType* getPtr(const AbstractTypePtrT& pAObj)
+    {
+        return &(*pAObj);
     }
 };
 /*
@@ -223,11 +245,11 @@ template<
     class CollectorT = AbstractTypeT 
     >
 class PolymorphicStreamer: 
-    public ObjectStreamerBase<AbstractTypePtrT>
+    public AbstractObjectStreamer<AbstractTypePtrT>
 {
     static List<
         Inner::PolymorphicSingleStreamerBase, 
-        SimpleCloningSupervisor<Inner::PolymorphicSingleStreamerBase>
+        SimpleCloningManager<Inner::PolymorphicSingleStreamerBase>
         > streamers;
 public:
 
@@ -388,7 +410,7 @@ public:
     virtual~AbstractOneTypeStreamerCreator(){}
 
     template<class T>
-    ObjectStreamerBase<T>* newObjectStreamer(T *obj)
+    AbstractObjectStreamer<T>* newObjectStreamer(T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
         if(ots==0){	}
@@ -396,7 +418,7 @@ public:
     }
 
     template<class T>
-    ObjectStreamerBase<T>* newObjectStreamer(const T *obj)
+    AbstractObjectStreamer<T>* newObjectStreamer(const T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
         if(ots==0){	}
@@ -409,19 +431,19 @@ class OneTypeStreamerCreator: public AbstractOneTypeStreamerCreator
 {
 public:
     virtual ~OneTypeStreamerCreator(){}
-    virtual ObjectStreamerBase<T>* newObjectStreamer(T *obj) = 0;
-    virtual ObjectStreamerBase<T>* newObjectStreamer(const T *obj) = 0;
+    virtual AbstractObjectStreamer<T>* newObjectStreamer(T *obj) = 0;
+    virtual AbstractObjectStreamer<T>* newObjectStreamer(const T *obj) = 0;
 };
 //-------------------------------------------------------------------------
 template<class ObjectStreamer>
 class OneTypeObjectStreamerCreator: public OneTypeStreamerCreator<typename ObjectStreamer::StreamerType>
 {
 public:
-    ObjectStreamerBase<typename ObjectStreamer::StreamerType>* newObjectStreamer(typename ObjectStreamer::StreamerType *obj)
+    AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(typename ObjectStreamer::StreamerType *obj)
     {
         return new ObjectStreamer(obj);
     }
-    ObjectStreamerBase<typename ObjectStreamer::StreamerType>* newObjectStreamer(const typename ObjectStreamer::StreamerType *obj)
+    AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(const typename ObjectStreamer::StreamerType *obj)
     {
         return new ObjectStreamer(obj);
     }

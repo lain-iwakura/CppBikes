@@ -10,7 +10,7 @@ namespace TT{
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class CreationSupervisorT = SafetyCloningSupervisor,
+    template<class> class CreationManagerT = SafetyCloningManager,
     class BaseCreationSupervisorT = 
         CreationManager<
             SafetyCloner<ObjectBaseT>,
@@ -49,16 +49,14 @@ protected:
     void initialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        static const sznum _i = i;
-        objects.retake(_i,CreationSupervisorT<CurType>::create());
+        objects.retake(sznum(i),CreationManagerT<CurType>::create());
     }
 
     template<num i>
     void deinitialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        static const sznum _i = i;
-        CreationSupervisorT<CurType>::destroy(static_cast<CurType*>(objects.pass(_i)));
+        CreationManagerT<CurType>::destroy(static_cast<CurType*>(objects.pass(sznum(i))));
     }
 
 private:
@@ -68,7 +66,7 @@ private:
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class CreationSupervisorT = SafetyCloningSupervisor,
+    template<class> class CreationManagerT = SafetyCloningManager,
     class BaseCreationSupervisorT =
         CreationManager<
             SafetyCloner<ObjectBaseT>,
@@ -107,8 +105,7 @@ protected:
     void initialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        const sznum _i = i;
-        objects.retake(CreationSupervisorT<CurType>::create());
+        objects.retake(sznum(i),CreationManagerT<CurType>::create());
     }
 
     template<num i>
@@ -172,6 +169,9 @@ template<class StackT, class HolderBaseT = ConstObjectsHolder<StackT> >
 class TypeStackHolder
 {
 public:
+
+    typedef typename HolderBaseT::HeldType HeldType;
+
     typedef typename Inner::TypeStackHolder<
         StackT,
         TT::TypeStack::Count<StackT>::result - 1,
@@ -179,7 +179,7 @@ public:
         >
         InnerStackHolder;
 
-    static typename HolderBaseT::HeldType& get()
+    static HeldType& get()
     {
         return _holder.get();
     }

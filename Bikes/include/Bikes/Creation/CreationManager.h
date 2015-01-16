@@ -44,7 +44,7 @@ public:
 	}
 };
 
-
+/*
 template<class T>
 struct SimpleCreationSupervisor
 {
@@ -95,36 +95,36 @@ struct SimpleCreationSupervisor
         Bikes::NullCreator<T>, 
         Bikes::NullDeleter<T>
         > Null;
-
 };
+*/
 
 template<class T>
-class SimpleCopyingSupervisor: 
-	public CreationManager<SimpleCopier<T>,SimpleCreator<T>,SimpleDeleter<T> >
+class SimpleCopyingManager: 
+	public CreationManager<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> >
 {
 };
 
 template<class T>
-class SafetyCopyingSupervisor:
+class SafetyCopyingManager:
     public CreationManager<SafetyCopier<T>, SimpleCreator<T>, SafetyDeleter<T> >
 {
 };
 
 template<class T>
-class SimpleCloningSupervisor :
+class SimpleCloningManager :
 	public CreationManager<SimpleCloner<T>, SimpleCreator<T>, SimpleDeleter<T> >
 {
 };
 
 template<class T>
-class SafetyCloningSupervisor :
+class SafetyCloningManager :
     public CreationManager<SafetyCloner<T>, SimpleCreator<T>, SafetyDeleter<T> >
 {
 };
 
 
 template<class T>
-class NullCloningSupervisor :
+class NullCloningManager :
     public CreationManager<SafetyCloner<T>, NullCreator<T>, SafetyDeleter<T> >
 {
 };

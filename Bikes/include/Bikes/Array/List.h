@@ -684,6 +684,7 @@ public:
 		return *this;
 	}
 
+    /*
 	const T & beforeLast () const 
 	{
 		return *_l[_l.size()-2]; 
@@ -693,6 +694,7 @@ public:
 	{ 
 		return *_l[_l.size()-2]; 
 	}
+    */
 
 	void invert()
 	{		

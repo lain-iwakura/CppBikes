@@ -4,6 +4,7 @@
 #include <Bikes/TypeTools/Detect.h>
 #include <Bikes/TypeTools/Compare.h>
 #include <Bikes/TypeTools/Modify.h>
+#include <Bikes/Array/ByteArray.h>
 
 namespace Bikes{
 namespace TT{
@@ -12,6 +13,15 @@ class InfoBase
 {
 public:
     static sznum typeCount();
+
+    template<class T>
+    static ByteArray getTypeSignature()
+    {
+        ByteArray ba;
+        
+        return ba;
+    }
+
 protected:
     static sznum& _typeCount();
 };
@@ -44,6 +54,8 @@ public:
     };
 
     static const sznum id;
+
+    static const ByteArray signature;
 };
 template<class T>
 const sznum Info<T>::id = InfoBase::_typeCount()++;

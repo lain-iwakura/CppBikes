@@ -7,17 +7,17 @@ namespace Bikes
 {
 //==============================================================================
 template<class ValueType>
-class ValueStreamer : public ObjectStreamerBase<ValueType>
+class ValueStreamer : public AbstractObjectStreamer<ValueType>
 {
 public:
 
     ValueStreamer(const ValueType * val):
-        ObjectStreamerBase<ValueType>(val)
+        AbstractObjectStreamer<ValueType>(val)
     {
     }
 
     ValueStreamer(ValueType * val):
-        ObjectStreamerBase<ValueType>(val)
+        AbstractObjectStreamer<ValueType>(val)
     {
     }
 
