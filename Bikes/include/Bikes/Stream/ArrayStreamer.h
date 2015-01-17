@@ -1,23 +1,23 @@
 #ifndef INCLUDE_BIKES_STREAM_ARRAYSTREAMER_H
 #define INCLUDE_BIKES_STREAM_ARRAYSTREAMER_H
 
-#include <Bikes/Stream/AbstractObjectStreamer.h>
+#include <Bikes/Stream/ObjectStreamer.h>
 
 namespace Bikes
 {
 //==============================================================================
 template<class ElementStreamer, class ArrayClass>
-class ArrayStreamer : public AbstractObjectStreamer<ArrayClass>
+class ArrayStreamer : public ObjectStreamer<ArrayClass>
 {
-    typedef typename AbstractObjectStreamer<ArrayClass>::StreamType StreamType;
+    typedef typename ObjectStreamer<ArrayClass>::StreamType StreamType;
 public:
     ArrayStreamer(StreamType *obj): 
-	  AbstractObjectStreamer<StreamType>(obj)
+	  ObjectStreamer<StreamType>(obj)
 	{
 	}
 
     ArrayStreamer(const StreamType *obj): 
-		AbstractObjectStreamer<StreamType>(obj)
+		ObjectStreamer<StreamType>(obj)
 	{
 	}
 

@@ -2,7 +2,7 @@
 #define INCLUDE_BIKES_STREAM_POLYMORPHICSTREAMER_H
 
 #include <Bikes/Stream/ByteStream.h>
-#include <Bikes/Stream/AbstractObjectStreamer.h>
+#include <Bikes/Stream/ObjectStreamer.h>
 #include <Bikes/Stream/ObjectStreamerMacros.h>
 #include <Bikes/Stream/StreamerInterface.h>
 #include <vector>
@@ -108,24 +108,27 @@ public:
 template<class AbstractTypeT>
 struct ToPolymorphicSingleStreamer
 {
+    typedef ObjectStreamer < AbstractTypeT, NullCloningManager<AbstractTypeT> >
+        BaseObjectStreamer;
+
     template<class StreamerTypeT>
     struct Converter
     {    
-        typedef PolymorphicSingleStreamer<
-            AbstractTypeT,
+        typedef ObjectStreamerAdapter<
+            BaseObjectStreamer,
             StreamerTypeT
             > ResultType;
     };
 };
 //------------------------------------------------------------------------------
-template<class AbstractTypeT>
-template<class StreamerTypeT, class CreatorT>
-struct ToPolymorphicSingleStreamer<AbstractTypeT>::
-    Converter<PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> >
-{
-    typedef PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> 
-    ResultType;
-};
+// template<class AbstractTypeT>
+// template<class StreamerTypeT, class CreatorT>
+// struct ToPolymorphicSingleStreamer<AbstractTypeT>::
+//     Converter<PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> >
+// {
+//     typedef PolymorphicSingleStreamer<AbstractTypeT, StreamerTypeT, CreatorT> 
+//     ResultType;
+// };
 //------------------------------------------------------------------------------
 template<class AbstractTypeT, class StreamersTypeStackT>
 class ToPolymorphicStreamerStack
@@ -146,14 +149,14 @@ template<
     class AbstractTypePtrT = AbstractTypeT*
     >
 class PolymorphicStreamer:
-    public AbstractObjectStreamer<AbstractTypePtrT>
+    public ObjectStreamer<AbstractTypePtrT>
 {
     typedef typename  Inner::ToPolymorphicStreamerStack<AbstractTypeT,StremersTypeStackT>
         ::ResultStack PolymorphicStreamerStack;
 
     typedef TT::ConstObjectsHolder<
         PolymorphicStreamerStack,
-        Inner::PolymorphicSingleStreamerBase<AbstractTypeT>
+        ObjectStreamerInterface<AbstractTypeT>
         > 
         PolymorphicStreamerHolderBase;
 
@@ -170,7 +173,7 @@ public:
     typedef AbstractTypeT AbstractType;
     typedef AbstractTypePtrT StreamType;
 
-    typedef AbstractObjectStreamer<AbstractTypePtrT> Base;
+    typedef ObjectStreamer<AbstractTypePtrT> Base;
 
     PolymorphicStreamer(AbstractTypePtrT& pObj) :
         Base(pObj)
@@ -182,35 +185,12 @@ public:
     {
     }
 
-
-
-    void read(ByteStream& bs)
-    {
-        if (obj_r)
-            read(bs, *obj_r);
-        else
-        { 
-            //?
-        }
-    }
-
-    void write(ByteStream& bs)
-    {
-        if (obj_w)
-            write(bs, *obj_w);
-        else
-        {
-            //?
-        }
-    }
-
-    static void read(ByteStream& bs, AbstractTypePtrT& pAObj)
+    bool tryRead(ByteStream& bs, AbstractTypePtrT& pAObj) const
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
-        
     }
 
-    static void write(ByteStream& bs, const AbstractTypePtrT& ptrObj)
+    bool tryWrite(ByteStream& bs, const AbstractTypePtrT& ptrObj) const
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
 
@@ -220,14 +200,11 @@ public:
         {
             for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
             {
-                if (s->tryWrite(bs, *pObj))
-                    break;
+                if (s->tryWriteWhithSign(bs, *pObj))
+                    return true;
             }
-        }
-        else
-        {
-            //?
-        }
+        }         
+        return false;
     }
 
 
@@ -245,7 +222,7 @@ template<
     class CollectorT = AbstractTypeT 
     >
 class PolymorphicStreamer: 
-    public AbstractObjectStreamer<AbstractTypePtrT>
+    public ObjectStreamer<AbstractTypePtrT>
 {
     static List<
         Inner::PolymorphicSingleStreamerBase, 
@@ -410,7 +387,7 @@ public:
     virtual~AbstractOneTypeStreamerCreator(){}
 
     template<class T>
-    AbstractObjectStreamer<T>* newObjectStreamer(T *obj)
+    ObjectStreamer<T>* newObjectStreamer(T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
         if(ots==0){	}
@@ -418,7 +395,7 @@ public:
     }
 
     template<class T>
-    AbstractObjectStreamer<T>* newObjectStreamer(const T *obj)
+    ObjectStreamer<T>* newObjectStreamer(const T *obj)
     {
         OneTypeStreamerCreator<T>* ots=dynamic_cast<OneTypeStreamerCreator<T>*>(this);
         if(ots==0){	}
@@ -431,19 +408,19 @@ class OneTypeStreamerCreator: public AbstractOneTypeStreamerCreator
 {
 public:
     virtual ~OneTypeStreamerCreator(){}
-    virtual AbstractObjectStreamer<T>* newObjectStreamer(T *obj) = 0;
-    virtual AbstractObjectStreamer<T>* newObjectStreamer(const T *obj) = 0;
+    virtual ObjectStreamer<T>* newObjectStreamer(T *obj) = 0;
+    virtual ObjectStreamer<T>* newObjectStreamer(const T *obj) = 0;
 };
 //-------------------------------------------------------------------------
 template<class ObjectStreamer>
 class OneTypeObjectStreamerCreator: public OneTypeStreamerCreator<typename ObjectStreamer::StreamerType>
 {
 public:
-    AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(typename ObjectStreamer::StreamerType *obj)
+    ObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(typename ObjectStreamer::StreamerType *obj)
     {
         return new ObjectStreamer(obj);
     }
-    AbstractObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(const typename ObjectStreamer::StreamerType *obj)
+    ObjectStreamer<typename ObjectStreamer::StreamerType>* newObjectStreamer(const typename ObjectStreamer::StreamerType *obj)
     {
         return new ObjectStreamer(obj);
     }
