@@ -57,7 +57,7 @@ template<class T>
 struct IsReference
 {
     enum{
-        isReference = false
+        result = false
     };
     typedef T NotReference;
 };
@@ -66,7 +66,7 @@ template<class T>
 struct IsReference<T&>
 {
     enum{
-        isReference = true
+        result = true
     };
     typedef T NotReference;
 };
@@ -75,7 +75,7 @@ template<class T>
 struct IsConstReference
 {
     enum{
-        isConstReference = false
+        result = false
     };
 };
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ template<class T>
 struct IsConstReference<const T&>
 {
     enum{
-        isConstReference = true
+        result = true
     };
 };
 //==============================================================================

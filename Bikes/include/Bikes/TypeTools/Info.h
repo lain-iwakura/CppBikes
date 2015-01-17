@@ -5,6 +5,8 @@
 #include <Bikes/TypeTools/Compare.h>
 #include <Bikes/TypeTools/Modify.h>
 #include <Bikes/Array/ByteArray.h>
+#include <Bikes/Testing.h>
+#include <typeinfo.h>
 
 namespace Bikes{
 namespace TT{
@@ -13,14 +15,6 @@ class InfoBase
 {
 public:
     static sznum typeCount();
-
-    template<class T>
-    static ByteArray getTypeSignature()
-    {
-        ByteArray ba;
-        
-        return ba;
-    }
 
 protected:
     static sznum& _typeCount();
@@ -35,11 +29,11 @@ public:
     typedef typename Clear<T>::ResultType Clear;
 
     enum{
-        isReference = IsReference<T>::isReference,
-        isConstReference = IsConstReference<T>::isConstReference,
-        isPointer = IsPointer<T>::isPointer,
-        isConstPointer = IsConstPointer<T>::isConstPointer,
-        isConst = IsConst<T>::isConst,        
+        isReference = IsReference<T>::result,
+        isConstReference = IsConstReference<T>::result,
+        isPointer = IsPointer<T>::result,
+        isConstPointer = IsConstPointer<T>::result,
+        isConst = IsConst<T>::result,
     };
 
     template<class OtherT>
@@ -53,13 +47,18 @@ public:
         };
     };
 
-    static const sznum id;
+    static const sznum id; //no work in templates
 
-    static const ByteArray signature;
+    static const char* name;
 };
+
 template<class T>
 const sznum Info<T>::id = InfoBase::_typeCount()++;
+
+template<class T>
+const char Info<T>::name = typeid(T).name();
 //==============================================================================
+
 } // TT
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPETOOLS_INFO_H
