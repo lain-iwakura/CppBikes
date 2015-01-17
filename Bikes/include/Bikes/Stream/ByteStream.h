@@ -83,12 +83,21 @@ namespace Bikes
 			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
+        // InOutInterface ->
 		void readBytes(char *bt, sznum btSize);
 
 		void writeBytes(const char *bt, sznum btSize);
 
 		void prepareForWrite(sznum byteCapacity);
 
+        bool atEnd() const;
+
+        bool isRandomAccess() const;
+
+        bool setAccessPosition(sznum pos);
+
+        sznum getAccessPosition() const;
+        // <- InOutInterface
 
         void read(bool &val);
         void read(char &val);
@@ -123,7 +132,6 @@ namespace Bikes
 
 	private:
 		ByteStreamData *_d;
-		InOutInterface *io_;
 	};
 
 

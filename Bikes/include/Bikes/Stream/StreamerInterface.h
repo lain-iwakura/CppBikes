@@ -17,6 +17,16 @@ public:
     virtual void read(ByteStream& bs) const = 0;
 
     virtual void write(ByteStream& bs) const = 0;
+
+    virtual bool tryRead(ByteStream& bs) const
+    {
+        return false;
+    }
+
+    virtual bool tryWrite(ByteStream& bs) const
+    {
+        return false;
+    }
 };
 
 }

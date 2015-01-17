@@ -157,20 +157,6 @@ InOutInterface* ByteStream::getIO() const
 	return _d->io;
 }
 
-void ByteStream::readBytes( char *bt, sznum btSize )
-{
-	_d->io->readBytes(bt,btSize);
-}
-
-void ByteStream::writeBytes(const char *bt, sznum btSize )
-{
-	_d->io->writeBytes(bt,btSize);
-}
-
-void ByteStream::prepareForWrite( sznum byteCapacity )
-{
-	_d->io->prepareForWrite(byteCapacity);
-}
 
 void ByteStream::read(bool &val){
     readValue(val);
@@ -336,6 +322,43 @@ void ByteStream::writeRecurrentData(const ByteArray& data)
 		writeBytes(data.data(), data.size());
 	}
 }
+
+void ByteStream::readBytes(char *bt, sznum btSize)
+{
+    _d->io->readBytes(bt, btSize);
+}
+
+void ByteStream::writeBytes(const char *bt, sznum btSize)
+{
+    _d->io->writeBytes(bt, btSize);
+}
+
+void ByteStream::prepareForWrite(sznum byteCapacity)
+{
+    _d->io->prepareForWrite(byteCapacity);
+}
+
+bool ByteStream::atEnd() const
+{
+    return _d->io->atEnd();
+}
+
+bool ByteStream::isRandomAccess() const
+{
+    return _d->io->isRandomAccess();
+}
+
+bool ByteStream::setAccessPosition(sznum pos)
+{
+    return _d->io->setAccessPosition(pos);
+}
+
+Bikes::sznum ByteStream::getAccessPosition() const
+{
+    return _d->io->getAccessPosition();
+}
+
+
 
 
 

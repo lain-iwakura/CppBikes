@@ -27,6 +27,26 @@ public:
         return false; 
     }
 
+    virtual bool isRandomAccess() const
+    {
+        return false;
+    }
+
+    bool isSequential() const
+    {
+        return !isRandomAccess();
+    }
+
+    virtual bool setAccessPosition(sznum pos)
+    {
+        return false;
+    }
+
+    virtual sznum getAccessPosition() const
+    {
+        return 0;
+    }
+
     //... 
 };
 
