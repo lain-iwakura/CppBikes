@@ -123,13 +123,52 @@ public:
 		_sz = sz;
 	}
 
-	void push_back(const T& val)
+	void push_back(T val)
 	{
 		if (_cap == _sz)
 			setCapacity(_cap + inRange<sznum>(_cap, 1, _maxInc));
 		_sz+=1;
 		_arr[_sz-1]=val;
 	}
+
+    void push_back(const ThisType& arr)
+    {
+        if (_cap < _sz + arr._sz)
+            setCapacity(_cap + ((arr._sz < _maxInc) ? (inRange<sznum>(_cap, arr._sz, _maxInc)) : (arr._sz)));
+
+        for (sznum i = 0; i < arr._sz; ++i)
+            _arr[_sz + i] = arr._arr[i];
+
+        _sz += arr._sz;
+    }
+
+    ThisType& operator += (T val)
+    {
+        push_back(val);
+        return *this;
+    }
+
+    ThisType& operator += (const ThisType& arr)
+    {
+        push_back(arr);
+        return *this;
+    }
+
+    ThisType operator + (T val) const
+    {
+        ThisType r(sznum(0),_sz+1);
+        r.push_back(*this);
+        r.push_back(val);
+        return r;
+    }
+
+    ThisType operator + (const ThisType& arr)
+    {
+        ThisType r(sznum(0),_sz + arr._sz);
+        r.push_back(*this);
+        r.push_back(arr);
+        return r;
+    }
 
 	void pop_back()
 	{
