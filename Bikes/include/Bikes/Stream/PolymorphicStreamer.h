@@ -12,98 +12,13 @@
 #include <Bikes/TypeTools/ToTypeStack.h>
 #include <Bikes/TypeTools/TypeStackHolder.h>
 
+#include <memory>
+
 
 namespace Bikes
 {
 //==============================================================================
 namespace Inner{
-//==============================================================================
-template<class AbstractType>
-class PolymorphicSingleStreamerBase
-{
-public:
-    typedef typename AbstractType StreamType;    
-
-    typedef PolymorphicSingleStreamerBase<AbstractType> ThisType;
-
-    virtual~PolymorphicSingleStreamerBase()
-    {
-    }
-
-    //virtual void read(ByteStream &bs, AbstractType& aobj) const = 0;
-
-    virtual AbstractType* readAndCreate(ByteStream &bs) const = 0;
-
-    virtual bool tryWrite(ByteStream &bs, const AbstractType& aobj) const = 0;
-
-    virtual AbstractType* createObject() const = 0;
-
-    virtual ThisType* clone() const = 0;
-
-    virtual const ByteArray& typeSignature() const = 0;
-
-    virtual bool operator ==(const ThisType&) const = 0;
-
-    //virtual
-};
-//==============================================================================
-template<
-    class AbstractType,
-    class ChildTypeStreamer,
-    class CreatorT = SimpleCreator<typename ChildTypeStreamer::StreamType>
-    >
-class PolymorphicSingleStreamer: 
-    public PolymorphicSingleStreamerBase<AbstractType>
-{
-public:
-
-    typedef typename ChildTypeStreamer::StreamType StreamType;
-    typedef CreatorT Creator;
-
-    typedef PolymorphicSingleStreamerBase<AbstractType> Base;
-    typedef PolymorphicSingleStreamer<AbstractType, ChildTypeStreamer, CreatorT> ThisType;
-
-
-    StreamType* readAndCreate(ByteStream &bs) const
-    {
-        StreamType* pObj = createObject();
-        ChildTypeStreamer::read(bs, *pObj);
-        return  pObj;
-    }
-
-    bool tryWrite(ByteStream &bs, const AbstractType& aobj) const
-    {
-        if(const StreamType *obj=dynamic_cast<const StreamType *>(&aobj))
-        {
-            bs.writeRecurrentData(typeSignature());
-            ChildTypeStreamer::write(bs,*obj);
-            return true;
-        }
-        return false;
-    }
-
-    StreamType* createObject() const
-    {
-        return Creator::create();
-    }
-
-    ThisType* clone() const
-    {
-        return new ThisType(/* *this */);
-    }
-
-    const ByteArray& typeSignature() const
-    {
-        return ChildTypeStreamer::typeSignature();
-    }
-    
-    bool operator == (const Base& other) const
-    {
-        const ByteArray& s1 = ChildTypeStreamer::typeSignature();
-        const ByteArray& s2 = other.typeSignature();
-        return (&s1 == &s2) || (s1 == s2);
-    }
-};
 //==============================================================================
 template<class AbstractTypeT>
 struct ToPolymorphicSingleStreamer
@@ -185,26 +100,38 @@ public:
     {
     }
 
-    bool tryRead(ByteStream& bs, AbstractTypePtrT& pAObj) const
+    void read(ByteStream& bs, AbstractTypePtrT& pAObj) const
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
+
+        ByteArray typeSign;
+        bs.readRecurrentData(typeSign);
+
     }
 
-    bool tryWrite(ByteStream& bs, const AbstractTypePtrT& ptrObj) const
+    void write(ByteStream& bs, const AbstractTypePtrT& ptrObj) const
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
+
+        BIKES_CHECK_INSTANCE(ptrObj)
 
         const AbstractType* pObj = getPtr(ptrObj);
 
-        if (pObj)
+        BIKES_CHECK_INSTANCE(pObj)
+        
+        for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
         {
-            for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
+            try
             {
-                if (s->tryWriteWhithSign(bs, *pObj))
-                    return true;
+                s->writeWhithSign(bs, *pObj);
+                return;
             }
-        }         
-        return false;
+            catch(Exception::UnexpectedStreamType& e)
+            {
+            }
+        }
+        
+        throw Exception::UnexpectedStreamType(std::string(typeid(*pObj).name()) + " for " + std::string(typeid(*this).name()))
     }
 
 

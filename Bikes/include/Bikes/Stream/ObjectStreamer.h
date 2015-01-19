@@ -4,6 +4,7 @@
 #include <Bikes/Stream/StreamerInterface.h>
 #include <Bikes/Creation/CreationManager.h>
 #include <Bikes/TypeTools/Info.h>
+#include <Bikes/Exception.h>
 
 namespace Bikes
 {
@@ -36,14 +37,6 @@ public:
 
     virtual void writeWhithSign(ByteStream& bs) const = 0;    
 
-    virtual bool tryRead(ByteStream& bs) const = 0;
-
-    virtual StreamType* tryReadAndCreate(ByteStream& bs) const = 0;    
-
-    virtual bool tryWrite(ByteStream& bs) const = 0;
-
-    bool tryWriteWhithSign(ByteStream& bs) const = 0;
-
     virtual StreamType* createObject() const = 0;
 
     virtual void destroyObject(StreamType* obj) const = 0;
@@ -62,12 +55,6 @@ public:
 
     virtual void writeWithSign(ByteStream& bs, const StreamType& obj) const = 0;
 
-    virtual bool tryRead(ByteStream& bs, const StreamType& obj) const = 0;
-
-    virtual bool tryWrite(ByteStream& bs, const StreamType& obj) const = 0;
-    
-    virtual bool tryWriteWithSign(ByteStream& bs, const StreamType& obj) const = 0;
-    
 };
 //==============================================================================
 template<
@@ -128,63 +115,39 @@ public:
 
     void read(ByteStream& bs) const
     {
-        if (obj_r)
-            read(bs, *obj_r);
+        BIKES_CHECK_INSTANCE(obj_r);
+        read(bs, *obj_r);
     }
 
-    virtual StreamType* readAndCreate(ByteStream& bs) const
+    virtual StreamType* readAndCreate(ByteStream& bs) const //?
     {
         StreamType* obj = createObject();
         if (obj)
-            read(bs, *obj);
+        {
+            try
+            {
+                read(bs, *obj);
+            }
+            catch(...)
+            {
+                destroyObject(obj);
+                throw;
+            }
+        }
         return obj;
     }
     
     void write(ByteStream& bs) const
     {
-        if (obj_w)
-            write(bs, *obj_w);       
+        BIKES_CHECK_INSTANCE(obj_w);
+        write(bs, *obj_w);
+
     }
 
     void writeWhithSign(ByteStream& bs) const
     {
-        if (obj_w)
-            writeWhithSign(bs, *obj_w);
-    }
-
-    bool tryRead(ByteStream& bs) const //?
-    {
-        if (obj_r)
-            return tryRead(bs, *obj_r);
-        return false;
-    }
-
-    virtual StreamType* tryReadAndCreate(ByteStream& bs) const
-    {
-        StreamType* obj = createObject();
-        if (obj)
-        {
-            if (!tryRead(bs, *obj))
-            {
-                destroyObject(obj);
-                obj = 0;
-            }
-        }
-        return obj;
-    }
-
-    bool tryWrite(ByteStream& bs) const
-    {
-        if (obj_w)
-            return tryWrite(bs, obj_w);
-        return false;
-    }
-
-    bool tryWriteWhithSign(ByteStream& bs) const
-    {
-        if (obj_w)
-            return tryWriteWhithSign(bs, *obj_w);
-        return false;
+        BIKES_CHECK_INSTANCE(obj_w);
+        writeWhithSign(bs, *obj_w);
     }
 
     virtual StreamType* createObject() const
@@ -217,37 +180,18 @@ public:
 
     virtual void read(ByteStream& bs, StreamType& obj) const
     {
-        tryRead(bs, obj);
+        bs >> obj;
     }
 
     virtual void write(ByteStream& bs, const StreamType& obj) const
     {
-        tryWrite(bs, obj);
+        bs << obj;
     }
 
     virtual void writeWithSign(ByteStream& bs, const StreamType& obj) const
     {        
-        tryWriteWithSign(bs, obj);
-    }
-
-
-    virtual bool tryRead(ByteStream& bs, const StreamType& obj) const
-    {
-        bs >> obj;
-        return true;
-    }
-
-    virtual bool tryWrite(ByteStream& bs, const StreamType& obj) const
-    {
-        bs << obj;
-        return true;
-    }
-
-    virtual bool tryWriteWithSign(ByteStream& bs, const StreamType& obj) const
-    {
         bs.writeRecurrentData(typeSignature());
         write(bs, obj);
-        return true;
     }
 
 private:
@@ -291,32 +235,53 @@ public:
         return _objStr.typeSignature();
     }
 
-    bool tryRead(ByteStream&bs, StreamType& obj) const 
+    void read(ByteStream&bs, StreamType& obj) const 
     {
         if (AdaptebleStreamType* adObj = dynamic_cast<AdaptebleStreamType*>(&obj))
-        {
-            return _objStr.tryRead(bs, *adObj);
-        }
-        return false;
+            _objStr.read(bs, *adObj);
+        else
+            unexpectedRead(bs, obj);
     }
 
-    bool tryWrite(ByteStream& bs, const StreamType& obj) const 
+    void write(ByteStream& bs, const StreamType& obj) const 
     {
         if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
-        {
-            return _objStr.tryWrite(bs, *adObj);            
-        }
-        return false;
+            _objStr.write(bs, *adObj);
+        else
+            unexpectedWrite(bs, obj);
     }
 
-    bool tryWriteWhithSign(ByteStream& bs, const StreamType& obj) const 
+    void writeWhithSign(ByteStream& bs, const StreamType& obj) const 
     {
         if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
         {
             bs.writeRecurrentData(typeSignature());
-            return _objStr.tryWrite(bs, *adObj);            
+            _objStr.tryWrite(bs, *adObj);
         }
-        return false;
+        else
+            unexpectedWriteWithSign(bs, obj);
+    }
+
+protected:
+
+    virtual void unexpectedRead(ByteStream&bs, StreamType& obj) const
+    {
+        unexpectedType(obj);
+    }
+
+    virtual void unexpectedWrite(ByteStream&bs, const StreamType& obj) const
+    {
+        unexpectedType(obj);
+    }
+
+    virtual void unexpectedWriteWithSign(ByteStream&bs, const StreamType& obj) const
+    {
+        unexpectedType(obj);
+    }
+
+    virtual void unexpectedType(const StreamType& obj) const
+    {
+        Inner::throwUnexpectedStreamType(obj, *this);
     }
 
 private:
