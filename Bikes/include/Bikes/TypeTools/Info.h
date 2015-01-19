@@ -4,9 +4,8 @@
 #include <Bikes/TypeTools/Detect.h>
 #include <Bikes/TypeTools/Compare.h>
 #include <Bikes/TypeTools/Modify.h>
-#include <Bikes/Array/ByteArray.h>
-#include <Bikes/Testing.h>
-#include <typeinfo.h>
+
+#include <typeinfo>
 
 namespace Bikes{
 namespace TT{
