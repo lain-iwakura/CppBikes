@@ -10,12 +10,12 @@ namespace Bikes
 
 namespace Inner{
 
-const unum defMaxMemoryIncrement = 64*1024;
+const sznum defMaxMemoryIncrement = 64*1024;
 
 template<typename T>
-const unum defMaxCapacityIncrement()
+const sznum defMaxCapacityIncrement()
 {
-	static const unum inc = noLess<unum>(defMaxMemoryIncrement / sizeof(T), 1);
+	static const sznum inc = noLess<unum>(defMaxMemoryIncrement / sizeof(T), 1);
 	return inc;
 }
 
@@ -264,7 +264,7 @@ public:
 		return _arr[i];
 	}
 
-	const T& operator [](sznum i) const
+	T operator [](sznum i) const
 	{
 		return _arr[i];
 	}
@@ -277,28 +277,28 @@ public:
 		return _arr[i];
 	}
 
-	const T& at(sznum i) const
+	T at(sznum i) const
 	{
 		return _arr[i];
 	}
 
 	
-	unum maxCapacityIncrement() const
+	sznum maxCapacityIncrement() const
 	{
 		return _maxInc;
 	}
 
-	unum maxMemoryIncrement() const
+	sznum maxMemoryIncrement() const
 	{
 		return _maxInc*sizeof(T);
 	}
 
-	void setMaxCapacityIncrement(unum inc_size)
+	void setMaxCapacityIncrement(sznum inc_size)
 	{
-		_maxInc = noLess<unum>(inc_size, 1);
+		_maxInc = noLess<sznum>(inc_size, 1);
 	}
 
-	void setMaxMemoryIncrement(unum inc_bytes)
+	void setMaxMemoryIncrement(sznum inc_bytes)
 	{
 		_maxInc = setMaxCapacityIncrement(inc_bytes / sizeof(T));
 	}
@@ -353,7 +353,7 @@ protected:
 	T *_arr;
 	sznum _cap;	
 	sznum _sz;
-	unum _maxInc;
+	sznum _maxInc;
 };
 
 

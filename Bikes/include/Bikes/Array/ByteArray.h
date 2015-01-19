@@ -20,7 +20,11 @@ public:
 
 	typedef RawArray<char> RawArrayBase;
 
-	ByteArray(sznum sz = 0, sznum cap = 1024, unum maxCapInc = Inner::defMaxByteArrayMemoryIncrement);
+	ByteArray(
+        sznum sz = 0,
+        sznum cap = 1024,
+        unum maxCapInc = Inner::defMaxByteArrayMemoryIncrement
+        );
 
     ByteArray(const ByteArray& ba);
 
