@@ -9,13 +9,13 @@ template<class BaseType, class ChildType>
 class HierrarchyExists
 {
 private:
-    static SmallType _isChildType(BaseType*);
-    static BigType _isChildType(void*);
+    static SmallType _baseType(BaseType*);
+    static BigType _baseType(void*);
 public:
     enum{
         result = 
-            sizeof(_isChildType((ChildType*)0)) ==
-            sizeof(SmallType)
+            sizeof(_baseType((ChildType*)0)) ==
+            sizeof(_baseType((BaseType*)0))
     };    
 };
 //------------------------------------------------------------------------------
@@ -25,6 +25,20 @@ class HierrarchyExists<T,T>
 public:
     enum{
         result = false
+    };
+};
+//==============================================================================
+template<class FromType, class ToType>
+class ConversionExists
+{
+private:
+    static SmallType _toType(ToType);
+    static BigType _toType(...);
+public:
+    enum{
+        result =
+            sizeof(_toType( *((FromType*)0)) ) ==
+            sizeof(_toType( *((ToType*)0)) )
     };
 };
 //==============================================================================
