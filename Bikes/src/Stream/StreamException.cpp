@@ -6,8 +6,7 @@ namespace Exception{
 
 StreamException::StreamException():
     BikesException("StreamException",""),
-    _posRest(false),
-    _final(true)
+    _posRest(false)
 {
 }
 
@@ -15,8 +14,7 @@ StreamException::StreamException(
     const std::string& exceptionMessage, 
     bool _positionRestored):
     BikesException("StreamException", exceptionMessage),
-    _posRest(_positionRestored),
-    _final(true)
+    _posRest(_positionRestored)
 {
 }
 
@@ -25,14 +23,8 @@ StreamException::StreamException(
     const std::string& exceptionMessage, 
     bool _positionRestored):
     BikesException("StreamException : " + exceptionName, exceptionMessage),
-    _posRest(_positionRestored),
-    _final(false)
+    _posRest(_positionRestored)
 {
-}
-
-bool StreamException::isFinal() const throw()
-{
-    return _final;
 }
 
 bool StreamException::positionRestored() const throw()

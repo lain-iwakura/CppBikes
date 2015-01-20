@@ -17,11 +17,8 @@ public:
 
     StreamException(
         const std::string& exceptionMessage,
-
         bool _positionRestored
         );
-        
-    bool isFinal() const throw();
 
     bool positionRestored() const throw();
 
@@ -36,7 +33,6 @@ protected:
     bool _posRest;
 
 private:
-    const bool _final;
     friend class StreamPositionSaver;
 };
 
@@ -46,22 +42,15 @@ class ExceptionName : public BaseException                                     \
 public:                                                                        \
                                                                                \
     ExceptionName():                                                           \
-        BaseException("ExceptionName","",false),                               \
-        _final(true)                                                           \
+        BaseException("ExceptionName","",false)                                \
     {}                                                                         \
                                                                                \
     ExceptionName(                                                             \
         const std::string& exceptionMessage,                                   \
         bool _positionRestored                                                 \
         ):                                                                     \
-        BaseException("ExceptionName", exceptionMessage, _positionRestored),   \
-        _final(true)                                                           \
+        BaseException("ExceptionName", exceptionMessage, _positionRestored)    \
     {}                                                                         \
-                                                                               \
-    bool isFinal() const throw()                                               \
-    {                                                                          \
-        return _final;                                                         \
-    }                                                                          \
                                                                                \
 protected:                                                                     \
                                                                                \
@@ -74,12 +63,9 @@ protected:                                                                     \
             "ExceptionName : " + exceptionName,                                \
             exceptionMessage,                                                  \
             _positionRestored                                                  \
-            ),                                                                 \
-            _final(false)                                                      \
+            )                                                                  \
     {}                                                                         \
                                                                                \
-private:                                                                       \
-    const bool _final;                                                         \
 };
 
 

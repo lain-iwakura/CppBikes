@@ -12,8 +12,7 @@ AssertionFaild::AssertionFaild(
     ) :
     BikesException("AssertionFaild",msg),
     _file(atFile),
-    _line(atLine),
-    _final(true)
+    _line(atLine)
 {
     if(!atFile.empty())
     {
@@ -30,8 +29,7 @@ AssertionFaild::AssertionFaild(
 
 AssertionFaild::AssertionFaild() :
     BikesException("AssertionFaild", std::string()),
-    _line(-1),
-    _final(true)
+    _line(-1)
 {
 }
 
@@ -42,8 +40,7 @@ AssertionFaild::AssertionFaild(
     const std::string& atFile,
     int atLine
     ):
-    BikesException("AssertionFaild : " + exceptionName, msg),
-    _final(false)
+    BikesException("AssertionFaild : " + exceptionName, msg)
 {
     if (!atFile.empty())
     {
@@ -68,10 +65,6 @@ const std::string& AssertionFaild::file() const throw()
     return _file;
 }
 
-bool AssertionFaild::isFinal() const throw()
-{
-    return _final;
-}
 
 }
 }

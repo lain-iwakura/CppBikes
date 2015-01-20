@@ -42,8 +42,6 @@ public:
         int atLine = -1
         );
 
-    bool isFinal() const throw();
-
     const std::string& file() const throw();
 
     int line() const throw();
@@ -60,16 +58,14 @@ protected:
 private:
     std::string _file;
     int _line;
-    const bool _final;
 };
 
-#define BIKES_ASSERTEXCEPTION_DECLDEF(ExceptionName, AsertionFaildName)\
+#define BIKES_ASSERTEXCEPTION_DECLDEF(ExceptionName, AsertionFaildName)        \
     class ExceptionName : public AsertionFaildName                             \
     {                                                                          \
     public:                                                                    \
         ExceptionName() :                                                      \
-        AsertionFaildName(#ExceptionName, std::string(), std::string(), -1),   \
-            _final(true)                                                       \
+        AsertionFaildName(#ExceptionName, std::string(), std::string(), -1)    \
         {}                                                                     \
                                                                                \
         ExceptionName(                                                         \
@@ -77,14 +73,8 @@ private:
             const std::string& atFile = std::string(),                         \
             int atLine = -1                                                    \
             ) :                                                                \
-            AsertionFaildName(#ExceptionName, msg, atFile, atLine),            \
-            _final(true)                                                       \
+            AsertionFaildName(#ExceptionName, msg, atFile, atLine)             \
         {}                                                                     \
-                                                                               \
-        bool isFinal() const throw()                                           \
-        {                                                                      \
-            return _final;                                                     \
-        }                                                                      \
                                                                                \
     protected:                                                                 \
         ExceptionName(                                                         \
@@ -97,12 +87,8 @@ private:
                 std::string(#ExceptionName) + " : " + exceptionName,           \
                 msg, atFile, atLine                                            \
                 )                                                              \
-            ,                                                                  \
-            _final(false)                                                      \
         {}                                                                     \
                                                                                \
-    private:                                                                   \
-        const bool _final;                                                     \
     };
 
 BIKES_ASSERTEXCEPTION_DECLDEF(InvalidInstance, AssertionFaild)

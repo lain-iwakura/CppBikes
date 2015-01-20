@@ -17,9 +17,7 @@ public:
 
     const char* what() const throw();
 
-    const std::string& messageString() const throw();
-
-    bool isFinal() const throw();
+    const std::string& whatStr() const throw();
 
 protected:
 
@@ -29,9 +27,6 @@ protected:
         );
 
     std::string _msg;
-
-private:
-    const bool _final;
 };
 
 #define BIKES_EXCEPTION_DECLDEF(ExceptionName, BeseException)                  \
@@ -40,18 +35,11 @@ class ExceptionName : public BeseException                                     \
 public:                                                                        \
     ExceptionName() :                                                          \
         BeseException(#ExceptionName, std::string()),                          \
-        _final(true)                                                           \
     {}                                                                         \
                                                                                \
     ExceptionName(const std::string& exceptionMessage) :                       \
         BeseException(#ExceptionName, exceptionMessage),                       \
-        _final(true)                                                           \
     {}                                                                         \
-                                                                               \
-    bool isFinal() const throw()                                               \
-    {                                                                          \
-        return _final;                                                         \
-    }                                                                          \
                                                                                \
 protected:                                                                     \
     ExceptionName(                                                             \
@@ -61,14 +49,15 @@ protected:                                                                     \
         BeseException(                                                         \
             std::string(#ExceptionName) + " : " + exceptionName,               \
             exceptionMessage                                                   \
-            ),                                                                 \
-        _final(false)                                                          \
+            )                                                                  \
     {}                                                                         \
-                                                                               \
-private:                                                                       \
-    const bool _final;                                                         \
 };          
 
+namespace Bikes{
+namespace Exception{
+
+} // Exception
+} // Bikes
 
 
 #endif // <- INCLUDE_BIKES_BIKESEXCEPTION_H

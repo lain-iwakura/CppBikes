@@ -3,14 +3,12 @@
 
 
 BikesException::BikesException() :
-_msg("BikesException : Unknown error"),
-_final(true)
+_msg("BikesException : Unknown error")
 {
 }
 
 BikesException::BikesException(const std::string& exceptionMessage) :
-_msg("BikesException : " + exceptionMessage),
-_final(true)
+_msg("BikesException : " + exceptionMessage)
 {
 }
 
@@ -19,8 +17,7 @@ _msg(
 "BikesException : " +
 (exceptionMessage.empty() ? (exceptionName) : (
 exceptionName + " : " + exceptionMessage))
-),
-_final(false)
+)
 {
 }
 
@@ -33,13 +30,9 @@ const char* BikesException::what() const throw()
     return _msg.c_str();
 }
 
-const std::string& BikesException::messageString() const throw()
+const std::string& BikesException::whatStr() const throw()
 {
     return _msg;
 }
 
-bool BikesException::isFinal() const throw()
-{
-    return _final;
-}
 
