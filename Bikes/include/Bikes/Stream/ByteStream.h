@@ -94,9 +94,9 @@ namespace Bikes
 
         bool isRandomAccess() const;
 
-        bool setAccessPosition(sznum pos);
+        bool setPosition(sznum pos);
 
-        sznum getAccessPosition() const;
+        sznum getPosition() const;
         // <- InOutInterface
 
         void read(bool &val);

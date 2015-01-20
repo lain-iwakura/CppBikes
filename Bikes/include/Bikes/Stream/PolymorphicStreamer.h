@@ -113,12 +113,14 @@ public:
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
 
-        BIKES_CHECK_INSTANCE(ptrObj)
+        //BIKES_CHECK_INSTANCE(ptrObj)
 
         const AbstractType* pObj = getPtr(ptrObj);
 
-        BIKES_CHECK_INSTANCE(pObj)
-        
+        BIKES_CHECK_INSTANCE(pObj);
+
+        StreamPositionSaver sp(&bs);
+
         for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
         {
             try
@@ -126,12 +128,18 @@ public:
                 s->writeWhithSign(bs, *pObj);
                 return;
             }
-            catch(Exception::UnexpectedStreamType& e)
+            catch(Exception::StreamException& e)
             {
+                 if ( (!e.positionRestored()) &&  (!sp.tryRestore(e)) )
+                     throw;
             }
-        }
-        
-        throw Exception::UnexpectedStreamType(std::string(typeid(*pObj).name()) + " for " + std::string(typeid(*this).name()))
+            catch(BikesException& e)
+            {
+                if (!sp.tryRestore())
+                    throw;
+            }
+        }        
+        Inner::throwUnexpectedStreamType(*pObj, *this, true);
     }
 
 

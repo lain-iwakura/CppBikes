@@ -37,12 +37,12 @@ public:
         return !isRandomAccess();
     }
 
-    virtual bool setAccessPosition(sznum pos)
+    virtual bool setPosition(sznum pos)
     {
         return false;
     }
 
-    virtual sznum getAccessPosition() const
+    virtual sznum getPosition() const
     {
         return 0;
     }

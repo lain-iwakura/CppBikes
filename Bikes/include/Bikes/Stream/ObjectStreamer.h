@@ -4,7 +4,8 @@
 #include <Bikes/Stream/StreamerInterface.h>
 #include <Bikes/Creation/CreationManager.h>
 #include <Bikes/TypeTools/Info.h>
-#include <Bikes/Exception.h>
+#include <Bikes/Stream/StreamException.h>
+#include <Bikes/Stream/StreamPositionSaver.h>
 
 namespace Bikes
 {
@@ -240,7 +241,7 @@ public:
         if (AdaptebleStreamType* adObj = dynamic_cast<AdaptebleStreamType*>(&obj))
             _objStr.read(bs, *adObj);
         else
-            unexpectedRead(bs, obj);
+            unexpectedType(obj);
     }
 
     void write(ByteStream& bs, const StreamType& obj) const 
@@ -248,40 +249,32 @@ public:
         if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
             _objStr.write(bs, *adObj);
         else
-            unexpectedWrite(bs, obj);
+            unexpectedType(obj);
     }
 
     void writeWhithSign(ByteStream& bs, const StreamType& obj) const 
     {
         if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
         {
-            bs.writeRecurrentData(typeSignature());
-            _objStr.tryWrite(bs, *adObj);
+            StreamPositionSaver sp(&bs);            
+            try{
+                bs.writeRecurrentData(typeSignature());
+                _objStr.write(bs, *adObj);
+            }
+            catch(Exception::StreamException& e){
+                sp.tryRestore(e);
+                throw;
+            }
         }
         else
-            unexpectedWriteWithSign(bs, obj);
+            unexpectedType(obj);
     }
 
 protected:
 
-    virtual void unexpectedRead(ByteStream&bs, StreamType& obj) const
-    {
-        unexpectedType(obj);
-    }
-
-    virtual void unexpectedWrite(ByteStream&bs, const StreamType& obj) const
-    {
-        unexpectedType(obj);
-    }
-
-    virtual void unexpectedWriteWithSign(ByteStream&bs, const StreamType& obj) const
-    {
-        unexpectedType(obj);
-    }
-
     virtual void unexpectedType(const StreamType& obj) const
     {
-        Inner::throwUnexpectedStreamType(obj, *this);
+        Inner::throwUnexpectedStreamType(obj, *this, true);
     }
 
 private:

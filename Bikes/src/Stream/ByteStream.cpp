@@ -348,14 +348,14 @@ bool ByteStream::isRandomAccess() const
     return _d->io->isRandomAccess();
 }
 
-bool ByteStream::setAccessPosition(sznum pos)
+bool ByteStream::setPosition(sznum pos)
 {
-    return _d->io->setAccessPosition(pos);
+    return _d->io->setPosition(pos);
 }
 
-Bikes::sznum ByteStream::getAccessPosition() const
+Bikes::sznum ByteStream::getPosition() const
 {
-    return _d->io->getAccessPosition();
+    return _d->io->getPosition();
 }
 
 
