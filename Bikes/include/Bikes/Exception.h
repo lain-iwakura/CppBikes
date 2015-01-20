@@ -31,7 +31,7 @@ protected:
     std::string _msg;
 
 private:
-    bool _final;
+    const bool _final;
 };
 
 #define BIKES_EXCEPTION_DECLDEF(ExceptionName, BeseException)                  \
@@ -66,113 +66,9 @@ protected:                                                                     \
     {}                                                                         \
                                                                                \
 private:                                                                       \
-    bool _final;                                                               \
+    const bool _final;                                                         \
 };          
 
-       
 
-namespace Bikes {
-namespace Exception{
-
-    class AssertionFaild : public BikesException
-    {
-    public:
-
-        AssertionFaild();
-
-        AssertionFaild(
-            const std::string& msg, 
-            const std::string& atFile = std::string(), 
-            int atLine = -1
-            );
-
-        bool isFinal() const throw();
-
-        const std::string& file() const throw();
-
-        int line() const throw();
-
-    protected:
-
-        AssertionFaild(
-            const std::string& exceptionName,
-            const std::string& msg,
-            const std::string& atFile,
-            int atLine
-            );
-        
-    private:
-        std::string _file;
-        int _line;
-        bool _final;
-    };
-
-#define BIKES_EXCEPTION_ASSERTIONFAILD_DECLDEF(ExceptionName, AsertionFaildName)\
-    class ExceptionName : public AsertionFaildName                             \
-    {                                                                          \
-    public:                                                                    \
-        ExceptionName() :                                                      \
-        AsertionFaildName(#ExceptionName, std::string(), std::string(), -1),   \
-            _final(true)                                                       \
-        {}                                                                     \
-                                                                               \
-        ExceptionName(                                                         \
-            const std::string& msg,                                            \
-            const std::string& atFile = std::string(),                         \
-            int atLine = -1                                                    \
-            ) :                                                                \
-            AsertionFaildName(#ExceptionName, msg, atFile, atLine),            \
-            _final(true)                                                       \
-        {}                                                                     \
-                                                                               \
-        bool isFinal() const throw()                                           \
-        {                                                                      \
-            return _final;                                                     \
-        }                                                                      \
-                                                                               \
-    protected:                                                                 \
-        ExceptionName(                                                         \
-            const std::string& exceptionName,                                  \
-            const std::string& msg,                                            \
-            const std::string& atFile,                                         \
-            int atLine                                                         \
-            ) :                                                                \
-            AsertionFaildName(                                                 \
-                std::string(#ExceptionName) + " : " + exceptionName,           \
-                msg, atFile, atLine                                            \
-                )                                                              \
-            ,                                                                  \
-            _final(false)                                                      \
-        {}                                                                     \
-                                                                               \
-    private:                                                                   \
-        bool _final;                                                           \
-    };
-
-
-    BIKES_EXCEPTION_ASSERTIONFAILD_DECLDEF(InvalidInstance, AssertionFaild)
-
-// Stream Exception ->
-
-    BIKES_EXCEPTION_DECLDEF(StreamException, BikesException)
-
-    BIKES_EXCEPTION_DECLDEF(UnexpectedStreamType, StreamException)
-
-// <- Stream Exception 
-
-} // Exception
-
-namespace Inner{
-template<class StreamType, class StreamerT>
-void throwUnexpectedStreamType(const StreamType& obj, const StreamerT& str)
-{
-    throw UnexpectedStreamType(
-        std::string(typeid(obj).name()) +
-        " for " +
-        std::string(typeid(str).name())
-        );
-}
-} // Inner
-} // Bikes
 
 #endif // <- INCLUDE_BIKES_BIKESEXCEPTION_H
