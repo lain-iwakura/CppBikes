@@ -50,14 +50,19 @@ public:
 
     static const char* name;
 };
-
+//------------------------------------------------------------------------------
 template<class T>
 const sznum Info<T>::id = InfoBase::_typeCount()++;
-
+//------------------------------------------------------------------------------
 template<class T>
 const char Info<T>::name = typeid(T).name();
 //==============================================================================
-
+template<class T>
+bool isFinalType(const T& obj)
+{
+    return typeid(T) == typeid(obj);
+}
+//==============================================================================
 } // TT
 } // Bikes
 #endif // <- INCLUDE_BIKES_TYPETOOLS_INFO_H
