@@ -1,134 +1,33 @@
 #ifndef INCLUDE_BIKES_CREATION_CREATIONMANAGER_H
 #define INCLUDE_BIKES_CREATION_CREATIONMANAGER_H
 
-#include <Bikes/Creation/Cloner.h>
 #include <Bikes/Creation/Creator.h>
+#include <Bikes/Creation/Copier.h>
 #include <Bikes/Creation/Deleter.h>
 
 namespace Bikes
 {						
-    
-
-template<class TCloner, class TCreator, class TDeleter>
-class CreationManager
+//==============================================================================
+template<class T>
+class CreationManagerInterface: 
+    public CreatorInterface<T>,
+    public CopierInterface<T>,
+    public DeleterInterface<T>
 {
 public:
-	typedef TCloner Cloner;
-	typedef TCreator Creator;
-	typedef TDeleter Deleter;
-	typedef typename Cloner::value_type value_type;
+    virtual T* create() const = 0;
+    virtual T* create(sznum sz) const = 0; // create array
+    virtual T* copy(const T* pObj) const = 0;
+    virtual T* copy(const T* pObj, sznum sz) const = 0; // create array
+    virtual void destroy(const T* pObj) const = 0;
+    virtual void destroy(const T* pObj, sznum sz) const = 0; // destroy array
 
-	static value_type* createCopy(const value_type* obj)
-	{
-		return Cloner::createCopy(obj);
-	}
-
-	static value_type* create()
-	{
-		return Creator::create();
-	}
-
-	static value_type* createArray(sznum sz)
-	{
-		return Creator::createArray(sz);
-	}
-
-	static void destroy(value_type* obj)
-	{			
-		Deleter::destroy(obj);
-	}
-
-	static void destroyArray(value_type* obj)
-	{
-		Deleter::destroyArray(obj);
-	}
+protected:
+    virtual ~CreationManagerInterface() {}
+private:
+    CreationManagerInterface& operator = (const CreationManagerInterface&) { return *this; }
 };
-
-/*
-template<class T>
-struct SimpleCreationSupervisor
-{
-    typedef CreationManager<
-        Bikes::SimpleCopier<T>, 
-        Bikes::SimpleCreator<T>, 
-        Bikes::SimpleDeleter<T>
-        > Copier;
-
-    typedef CreationManager<
-        Bikes::SimpleCloner<T>, 
-        Bikes::SimpleCreator<T>, 
-        Bikes::SimpleDeleter<T>
-        > Cloner;
-
-    typedef CreationManager<
-        Bikes::SafetyCopier<T>, 
-        Bikes::SimpleCreator<T>, 
-        Bikes::SafetyDeleter<T>
-        > SafetyCopier;
-
-    typedef CreationManager<
-        Bikes::SafetyCloner<T>, 
-        Bikes::SimpleCreator<T>,
-        Bikes::SafetyDeleter<T>
-        > SafetyCloner;
-
-    typedef CreationManager<
-        Bikes::SafetyCopier<T>, 
-        Bikes::NullCreator<T>, 
-        Bikes::SafetyDeleter<T>
-        > NullCopier;
-
-    typedef CreationManager<
-        Bikes::SafetyCloner<T>, 
-        Bikes::NullCreator<T>, 
-        Bikes::SafetyDeleter<T>
-        > NullCloner;
-    
-    typedef CreationManager<
-        Bikes::NullCloner<T>, 
-        Bikes::NullCreator<T>, 
-        Bikes::SafetyDeleter<T>
-        > NullDeleter;
-
-    typedef CreationManager<
-        Bikes::NullCloner<T>, 
-        Bikes::NullCreator<T>, 
-        Bikes::NullDeleter<T>
-        > Null;
-};
-*/
-
-template<class T>
-class SimpleCopyingManager: 
-	public CreationManager<SimpleCopier<T>, SimpleCreator<T>, SimpleDeleter<T> >
-{
-};
-
-template<class T>
-class SafetyCopyingManager:
-    public CreationManager<SafetyCopier<T>, SimpleCreator<T>, SafetyDeleter<T> >
-{
-};
-
-template<class T>
-class SimpleCloningManager :
-	public CreationManager<SimpleCloner<T>, SimpleCreator<T>, SimpleDeleter<T> >
-{
-};
-
-template<class T>
-class SafetyCloningManager :
-    public CreationManager<SafetyCloner<T>, SimpleCreator<T>, SafetyDeleter<T> >
-{
-};
-
-
-template<class T>
-class NullCloningManager :
-    public CreationManager<SafetyCloner<T>, NullCreator<T>, SafetyDeleter<T> >
-{
-};
-
+//==============================================================================
 
 
 
