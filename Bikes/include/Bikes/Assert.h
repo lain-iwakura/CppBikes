@@ -6,8 +6,8 @@
 #include <typeinfo>
 
 
-#define BIKES_COMPILE_TIME_ASSERT(assertion)                                   \
-    ::Bikes::CompileTimeAssert<(assertion)!=0>();
+#define BIKES_STATIC_ASSERT(assertion)                                         \
+    ::Bikes::StaticAssert<(assertion) != 0>();
 
 #define BIKES_ASSERT_WITH_EXCEPTION(assertion)                                 \
     ::Bikes::assertWithException(                                              \
@@ -121,10 +121,10 @@ struct InstanceChecker<false>
 } // Inner
 
 template<bool>
-struct CompileTimeAssert;
+struct StaticAssert;
 
 template<>
-struct CompileTimeAssert<true> {};
+struct StaticAssert<true> {};
 
 inline void assertWithException(
     bool assertion, 
