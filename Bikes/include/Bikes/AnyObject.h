@@ -10,15 +10,28 @@
 
 namespace Bikes{
 namespace Inner{
+//==============================================================================
+class AnyObjectBase
+{
+public:
+    virtual ~AnyObjectBase()
+    {}
 
+    virtual AnyObjectBase* clone() const = 0;
+
+    virtual void* getVoid() = 0;
+
+    virtual const void* getVoid() const = 0;
+};
+//==============================================================================
 template<class T>
-class ArbitaryObjectInterface
+class AnyObjectInterface
 {
 public:
 
     typedef typename T ObjectType;
 
-    virtual ~ArbitaryObjectInterface()
+    virtual ~AnyObjectInterface()
     {}
 
     virtual ObjectType* get() = 0;
@@ -26,30 +39,19 @@ public:
     virtual const ObjectType* get() const = 0;
 };
 //==============================================================================
-class ArbitaryObjectBase
-{
-public:
-    virtual ~ArbitaryObjectBase()
-    {}
-
-    virtual void* getVoid() = 0;
-
-    virtual const void* getVoid() const = 0;
-};
-//==============================================================================
 template<class T, class HintT = NullType>
-class ArbitaryObjectWrapper : public ArbitaryObjectInterface<HintT>
+class AnyObjectWrapper : public AnyObjectInterface<HintT>
 {
 public:
-    virtual ~ArbitaryObjectWrapper()
+    virtual ~AnyObjectWrapper()
     {}
 
     typedef HintT ObjectType;
 
     ObjectType* get()
     {
-        ArbitaryObjectWrapper<T>* p = 
-            dynamic_cast<ArbitaryObjectWrapper<T>*>(this);
+        AnyObjectWrapper<T>* p = 
+            dynamic_cast<AnyObjectWrapper<T>*>(this);
 
         if (p)
             return optimum_cast<ObjectType*>(p->get());
@@ -58,8 +60,8 @@ public:
 
     const ObjectType* get() const
     {
-        const ArbitaryObjectWrapper<T>* p = 
-            dynamic_cast<const ArbitaryObjectWrapper<T>*>(this);
+        const AnyObjectWrapper<T>* p = 
+            dynamic_cast<const AnyObjectWrapper<T>*>(this);
 
         if (p)
             return optimum_cast<const ObjectType*>(p->get());
@@ -68,18 +70,25 @@ public:
 };
 //------------------------------------------------------------------------------
 template<class T>
-class ArbitaryObjectWrapper<T,TT::NullType> :
-    public ArbitaryObjectBase,
-    public ArbitaryObjectInterface<T>
+class AnyObjectWrapper<T,TT::NullType> :
+    public AnyObjectBase,
+    public AnyObjectInterface<T>
 {
 public:
 
-    ArbitaryObjectWrapper(T* pObj):
+    typedef AnyObjectWrapper<T, TT::NullType> ThisType;
+
+    AnyObjectWrapper(T* pObj):
         _obj(pObj)
     {
     }
 
-    virtual ~ArbitaryObjectWrapper()
+    AnyObjectWrapper(const ThisType& other) :
+        _obj( (other._obj) ? (new T(_obj)) : (0) ) //?
+    {
+    }
+
+    virtual ~AnyObjectWrapper()
     {
         if (_obj)
             delete _obj;
@@ -107,50 +116,63 @@ public:
         return _obj;
     }
 
+    CBIKES_CLONE_DECLDEF
+
 private:
     T* _obj;
 };
 //------------------------------------------------------------------------------
 template<class T, class T1, class T2>
-class ArbitaryObjectWrapper<T, TT::TypeStack::Element<T1,T2> > :
+class AnyObjectWrapper<T, TT::TypeStack::Element<T1,T2> > :
     public TT::Select<
         TT::IsNullType<typename TT::TypeStack::Element<T1, T2>::Head>::result,
         TT::EmptyType,
-        ArbitaryObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Head>
+        AnyObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Head>
         >::ResultType,
-    public ArbitaryObjectWrapper<T, typename TT::TypeStack::Element<T1,T2>::Tail>
+    public AnyObjectWrapper<T, typename TT::TypeStack::Element<T1,T2>::Tail>
 {
 public:
-    ArbitaryObjectWrapper(T *pObj):
-        ArbitaryObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Tail>(pObj)
+
+    typedef AnyObjectWrapper<T, TT::TypeStack::Element<T1, T2> > ThisType;
+
+    AnyObjectWrapper(T *pObj):
+        AnyObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Tail>(pObj)
     {}
+
+    CBIKES_CLONE_DECLDEF
 };
 //==============================================================================
 }
-
-class ArbitaryObject
+//==============================================================================
+class AnyObject
 {
 public:
 
-    ArbitaryObject():
+    typedef AnyObject ThisType;
+
+    AnyObject():
         _aObj(0)
     {}
 
+    AnyObject(const AnyObject& anyObj) :
+        _aObj(anyObj._aObj ? anyObj._aObj->clone() : 0)
+    {}
+
     template<class T>
-    ArbitaryObject(const T& obj):
+    AnyObject(const T& obj):
         _aObj(0)
     {
         set(obj);
     }
 
     template<class T>
-    ArbitaryObject(T* obj) :
+    AnyObject(T* obj) :
         _aObj(0)
     {
         set(obj);
     }
 
-    ~ArbitaryObject()
+    ~AnyObject()
     {
         if (_aObj)
             delete _aObj;
@@ -159,8 +181,8 @@ public:
     template<class T>
     T* get()
     {
-        Inner::ArbitaryObjectInterface<T>* p = 
-            dynamic_cast<Inner::ArbitaryObjectInterface<T>*>(_aObj);
+        Inner::AnyObjectInterface<T>* p = 
+            dynamic_cast<Inner::AnyObjectInterface<T>*>(_aObj);
         if (p)
             return p->get();
         return 0;
@@ -169,8 +191,8 @@ public:
     template<class T>
     const T* get() const
     {
-        const Inner::ArbitaryObjectInterface<T>* p =
-            dynamic_cast<const Inner::ArbitaryObjectInterface<T>*>(_aObj);
+        const Inner::AnyObjectInterface<T>* p =
+            dynamic_cast<const Inner::AnyObjectInterface<T>*>(_aObj);
         if (p)
             return p->get();
         return 0;
@@ -209,7 +231,7 @@ public:
         if (_aObj)
             delete _aObj;
 
-        _aObj = new Inner::ArbitaryObjectWrapper<
+        _aObj = new Inner::AnyObjectWrapper<
             T, 
             typename TT::ToTypeStack<
                 Hint1,Hint2,Hint3,Hint4,Hint5,Hint6,Hint7,Hint8,Hint9
@@ -230,7 +252,7 @@ public:
 
         if(obj)
         {
-            _aObj = new Inner::ArbitaryObjectWrapper<
+            _aObj = new Inner::AnyObjectWrapper<
                 T, 
                 typename TT::ToTypeStack<
                     Hint1,Hint2,Hint3,Hint4,Hint5,Hint6,Hint7,Hint8,Hint9
@@ -243,11 +265,26 @@ public:
         }
     }
 
+    template<class T>
+    AnyObject& operator = (const T& obj)
+    {
+        set(obj);
+        return *this;
+    }
+
+    template<class T>
+    AnyObject& operator = (T* obj)
+    {
+        set(obj);
+        return *this;
+    }
+
+    CBIKES_CLONE_DECLDEF
+
 private:
-    Inner::ArbitaryObjectBase* _aObj;
+    Inner::AnyObjectBase* _aObj;
 };
-
-
+//==============================================================================
 } // Bikes
 
 #endif // <- INCLUDE_BIKES_ARBITARYOBJECT_H
