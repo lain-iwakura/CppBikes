@@ -10,7 +10,7 @@ namespace Bikes
 template<
     class FromType,
     class ToType,
-    bool staticConv = ConversionExists<FromType, ToType>::result
+    bool staticConv = HierrarchyExists<ToType, FromType>::result || Equal<FromType, ToType>::result
 >
 struct Optimum—onversion
 {
