@@ -29,16 +29,16 @@ protected:
     std::string _msg;
 };
 
-#define BIKES_EXCEPTION_DECLDEF(ExceptionName, BeseException)                  \
+#define BIKES_EXCEPTION_DECLDEF(ExceptionName,BeseException)                   \
 class ExceptionName : public BeseException                                     \
 {                                                                              \
 public:                                                                        \
     ExceptionName() :                                                          \
-        BeseException(#ExceptionName, std::string()),                          \
+        BeseException(#ExceptionName, std::string())                           \
     {}                                                                         \
                                                                                \
     ExceptionName(const std::string& exceptionMessage) :                       \
-        BeseException(#ExceptionName, exceptionMessage),                       \
+        BeseException(#ExceptionName, exceptionMessage)                        \
     {}                                                                         \
                                                                                \
 protected:                                                                     \
@@ -55,7 +55,7 @@ protected:                                                                     \
 
 namespace Bikes{
 namespace Exception{
-
+    BIKES_EXCEPTION_DECLDEF(ProhibitedAction, BikesException);
 } // Exception
 } // Bikes
 
