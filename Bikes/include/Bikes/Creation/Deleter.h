@@ -51,12 +51,12 @@ public:
         return i;
     }
 
-    void destroy(T* obj) const
+    void destroy(value_type* obj) const
     {
         delete_instance(obj);
     }
 
-    static void delete_instance(T* obj)
+    static void delete_instance(value_type* obj)
     {
         SingleDestructionPolicyT::delete_instance(obj);
     }
@@ -78,12 +78,12 @@ public:
         return i;
     }
 
-    void destroy(T* obj, sznum sz) const
+    void destroy(value_type* obj, sznum sz) const
     {
         delete_instance(obj, sz);
     }
 
-    static void delete_instance(T* obj,sznum sz)
+    static void delete_instance(value_type* obj, sznum sz)
     {
         ArrayDestructionPolicyT::delete_instance(obj,sz);
     }
@@ -105,22 +105,22 @@ public:
         return i;
     }
 
-    void destroy(T* obj) const
+    void destroy(value_type* obj) const
     {
         delete_instance(obj);
     }
 
-    void destroy(T* obj, sznum sz) const
+    void destroy(value_type* obj, sznum sz) const
     {
         delete_instance(obj, sz);
     }
 
-    static void delete_instance(T* obj)
+    static void delete_instance(value_type* obj)
     {
         ArrayDestructionPolicyT::delete_instance(obj);
     }
 
-    static void delete_instance(T* obj, sznum sz)
+    static void delete_instance(value_type* obj, sznum sz)
     {
         DestructionPolicyT::delete_instance(obj, sz);
     }

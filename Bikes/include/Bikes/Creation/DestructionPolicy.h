@@ -112,7 +112,7 @@ struct ByDelete
 };
 //==============================================================================
 template<class SingleDestructionPolicyT, class ArrayDestructionPolicyT>
-struct Pair
+struct Union
 {
     typedef typename SingleDestructionPolicyT::value_type value_type;
 
@@ -123,6 +123,7 @@ struct Pair
 
     static void delete_instance(T* obj, sznum sz)
     {
+        StaticAssert<TT::Equal<value_type, typename ArrayDestructionPolicyT::value_type>::result>()
         SingleDestructionPolicyT::delete_instance(obj, sz);
     }
 };

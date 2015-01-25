@@ -234,7 +234,7 @@ struct BySafetyClone
 };
 //==============================================================================
 template<class SingleCopyingPolicyT, class ArrayCopyingPolicyT>
-struct Pair
+struct Union
 {
     typedef typename SingleCopyingPolicyT::value_type value_type;
 
@@ -245,7 +245,7 @@ struct Pair
 
     static value_type* new_copy(const value_type* otherArray, sznum sz)
     {
-        BIKES_STATIC_ASSERT(TT::Equal<value_type, ArrayCopyingPolicyT::value_type>::result);
+        StaticAssert<TT::Equal<value_type, ArrayCopyingPolicyT::value_type>::result>();
         return ArrayCopyingPolicyT::new_copy(otherArray,sz);
     }
 };

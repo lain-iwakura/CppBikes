@@ -107,7 +107,7 @@ struct Null
 };
 //==============================================================================
 template<class SingleCreationPolicyT, class ArrayCreationPolicyT>
-struct Pair
+struct Union
 {
     typedef typename SingleCreationPolicyT::value_type value_type;
 
@@ -118,7 +118,7 @@ struct Pair
 
     static value_type* new_instance(sznum sz)
     {
-        BIKES_STATIC_ASSERT(TT::Equal<value_type, ArrayCreationPolicyT::value_type>::result);
+        StaticAssert<TT::Equal<value_type, ArrayCreationPolicyT::value_type>::result>();
         return ArrayCreationPolicyT::new_instance(sz);
     }
 };
