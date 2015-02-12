@@ -239,6 +239,23 @@ public:
         return true;
     }
 
+    template<class T>
+    T value() const
+    {
+        T* val = get<T>();
+        if (val)
+            return *val;
+        return T();
+    }
+
+    template<class T>
+    T value(const T& defaultValue)
+    {
+        T* val = get<T>();
+        if (val)
+            return *val;
+        return defaultValue;
+    }
 
     template< 
         class T, 
