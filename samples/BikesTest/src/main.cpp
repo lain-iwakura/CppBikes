@@ -8,6 +8,7 @@
 #include <Bikes/Testing.h>
 #include <Bikes/TypeTools/ToTypeStack.h>
 #include <Bikes/TypeTools/TypeStackHolder.h>
+#include <Bikes/AnyObject.h>
 
 using namespace Bikes;
 using namespace TT;
@@ -59,6 +60,9 @@ class ChildAClass : public AClass
 
 class BClass
 {
+public:
+    BClass() :bbb(777){}
+    int bbb;
 };
 
 
@@ -83,28 +87,6 @@ typedef TT::TypeStack::Element<
 
 typedef RemoveDuplicates<AClassStack>::ResultStack AClassStackD;
 typedef SortDescending<AClassStackD, CompareByHierrarchy>::ResultStack AClassSortStack;
-// template<class TMR, TMR _rval>
-// class TestTMR
-// {
-// public:
-//     static TMR rval;
-// };
-// 
-// template<class ValT, class ClassT, ValT ClassT::* _rval>
-// class TestTMR<ValT ClassT::*, _rval>
-// {
-// public:
-//     typedef ValT ValType;
-//     typedef ClassT ClassType;
-//     static ValT ClassT::* rval;
-// };
-// 
-// template<class ValT, class ClassT, ValT ClassT::* _rval>
-// ValT ClassT::*  TestTMR<ValT ClassT::*, _rval>::rval = _rval;
-// 
-// template<class TMR, TMR _rval>
-// TMR TestTMR<TMR, _rval>::rval = _rval;
-
 
 #define COMMA ,
 
@@ -168,7 +150,21 @@ using namespace std;
 int main()
 {
 
-    testFindBaseT<AClassBase>((AClass2*)(0), (AClass*)(0));
+    AnyObject anyObj;
+
+    anyObj.set<ABClass, AClass, BClass, AClassBase, AClass2 >(new ABClass);
+
+    BClass* instB = anyObj.get<BClass>();
+    AClass2* instA2 = anyObj.get<AClass2>();
+    ABClass* instAB = anyObj.get<ABClass>();
+    double* instDouble = anyObj.get<double>();
+
+    double dval = 112345;
+    anyObj = dval;
+
+    double* _dval = anyObj.get<double>();
+
+    //testFindBaseT<AClassBase>((AClass2*)(0), (AClass*)(0));
 
 
 
