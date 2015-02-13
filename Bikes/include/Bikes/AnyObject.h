@@ -31,9 +31,6 @@ public:
 
     typedef typename T ObjectType;
 
-    virtual ~AnyObjectInterface()
-    {}
-
     virtual ObjectType* get() = 0;
 
     virtual const ObjectType* get() const = 0;
@@ -43,15 +40,13 @@ template<class T, class HintT>
 class AnyObjectWrapper : public AnyObjectInterface<HintT>
 {
 public:
-    virtual ~AnyObjectWrapper()
-    {}
 
     typedef HintT ObjectType;
 
     ObjectType* get()
     {
-        AnyObjectWrapper<T, TT::NullType>* p =
-            dynamic_cast<AnyObjectWrapper<T, TT::NullType>*>(this);
+        AnyObjectInterface<T>* p =
+            dynamic_cast<AnyObjectInterface<T>*>(this);
 
         if (p)
             return optimum_cast<ObjectType*>(p->get());
@@ -60,8 +55,8 @@ public:
 
     const ObjectType* get() const
     {
-        const AnyObjectWrapper<T, TT::NullType>* p =
-            dynamic_cast<const AnyObjectWrapper<T, TT::NullType>*>(this);
+        const AnyObjectInterface<T>* p =
+            dynamic_cast<const AnyObjectInterface<T>*>(this);
 
         if (p)
             return optimum_cast<const ObjectType*>(p->get());
@@ -70,31 +65,62 @@ public:
 };
 //------------------------------------------------------------------------------
 template<class T>
-class AnyObjectWrapper<T,TT::NullType> :
+class AnyObjectWrapper<T,TT::NullType>
+{
+public:
+};
+//==============================================================================
+template<class T, class HintT>
+class AnyObjectHolder: 
+    public AnyObjectHolder<T,TT::NullType>,
+    public AnyObjectInterface<HintT>
+{
+public:
+
+    typedef HintT ObjectType;
+
+    AnyObjectHolder(T *pObj) :
+        AnyObjectHolder<T, TT::NullType>(pObj)
+    {}
+
+
+    virtual ObjectType* get()
+    {
+        return optimum_cast<ObjectType*>(AnyObjectHolder<T, TT::NullType>::get());
+    }
+
+    virtual const ObjectType* get() const
+    {
+        return optimum_cast<const ObjectType*>(AnyObjectHolder<T, TT::NullType>::get());
+    }
+};
+//------------------------------------------------------------------------------
+template<class T>
+class AnyObjectHolder<T, TT::NullType>:
     public AnyObjectBase,
     public AnyObjectInterface<T>
 {
 public:
 
-    typedef AnyObjectWrapper<T, TT::NullType> ThisType;
+    typedef AnyObjectHolder<T, TT::NullType> ThisType;
 
-    AnyObjectWrapper(T* pObj):
+    typedef T ObjectType;
+
+    AnyObjectHolder(T* pObj) :
         _obj(pObj)
     {
     }
 
-    AnyObjectWrapper(const ThisType& other) :
-        _obj((other._obj) ? (new T(*other._obj)) : (0)) //?
+    AnyObjectHolder(const ThisType& other) :
+        _obj( (other._obj) ? (new T(*other._obj)) : (0) ) //?
     {
     }
 
-    virtual ~AnyObjectWrapper()
+    virtual ~AnyObjectHolder()
     {
         if (_obj)
             delete _obj;
     }
-
-    typedef T ObjectType;
 
     ObjectType* get()
     {
@@ -123,20 +149,14 @@ private:
 };
 //------------------------------------------------------------------------------
 template<class T, class T1, class T2>
-class AnyObjectWrapper<T, TT::TypeStack::Element<T1,T2> > :
-    public TT::Select<
-        TT::IsNullType<typename TT::TypeStack::Element<T1, T2>::Head>::result,
-        TT::EmptyType,
-        AnyObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Head>
-        >::ResultType,
-    public AnyObjectWrapper<T, typename TT::TypeStack::Element<T1,T2>::Tail>
+class AnyObjectHolder<T, TT::TypeStack::Element<T1, T2> > :
+    public AnyObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Head>,
+    public AnyObjectHolder<T, typename TT::TypeStack::Element<T1, T2>::Tail>
 {
 public:
 
-    typedef AnyObjectWrapper<T, TT::TypeStack::Element<T1, T2> > ThisType;
-
-    AnyObjectWrapper(T *pObj):
-        AnyObjectWrapper<T, typename TT::TypeStack::Element<T1, T2>::Tail>(pObj)
+    AnyObjectHolder(T *pObj) :
+        AnyObjectHolder<T, typename TT::TypeStack::Element<T1, T2>::Tail>(pObj)
     {}
 
     CBIKES_CLONE_DECLDEF
@@ -219,6 +239,23 @@ public:
         return true;
     }
 
+    template<class T>
+    T value() const
+    {
+        T* val = get<T>();
+        if (val)
+            return *val;
+        return T();
+    }
+
+    template<class T>
+    T value(const T& defaultValue)
+    {
+        T* val = get<T>();
+        if (val)
+            return *val;
+        return defaultValue;
+    }
 
     template< 
         class T, 
@@ -228,15 +265,7 @@ public:
         >
     void set(const T& obj)
     {
-        if (_aObj)
-            delete _aObj;
-
-        _aObj = new Inner::AnyObjectWrapper<
-            T, 
-            typename TT::ToTypeStack<
-                Hint1,Hint2,Hint3,Hint4,Hint5,Hint6,Hint7,Hint8,Hint9
-                >::ResultStack 
-            >(new T(obj));
+        set<T, Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9>(new T(obj));
     }
 
     template< 
@@ -252,11 +281,11 @@ public:
 
         if(obj)
         {
-            _aObj = new Inner::AnyObjectWrapper<
+            _aObj = new Inner::AnyObjectHolder<
                 T, 
-                typename TT::ToTypeStack<
-                    Hint1,Hint2,Hint3,Hint4,Hint5,Hint6,Hint7,Hint8,Hint9
-                    >::ResultStack 
+                 typename TT::ToTypeStack<
+                     Hint1,Hint2,Hint3,Hint4,Hint5,Hint6,Hint7,Hint8,Hint9
+                     >::ResultStack 
                 >(obj);
         }
         else
