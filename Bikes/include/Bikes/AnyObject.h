@@ -39,7 +39,7 @@ public:
     virtual const ObjectType* get() const = 0;
 };
 //==============================================================================
-template<class T, class HintT = NullType>
+template<class T, class HintT>
 class AnyObjectWrapper : public AnyObjectInterface<HintT>
 {
 public:
@@ -50,8 +50,8 @@ public:
 
     ObjectType* get()
     {
-        AnyObjectWrapper<T>* p = 
-            dynamic_cast<AnyObjectWrapper<T>*>(this);
+        AnyObjectWrapper<T, TT::NullType>* p =
+            dynamic_cast<AnyObjectWrapper<T, TT::NullType>*>(this);
 
         if (p)
             return optimum_cast<ObjectType*>(p->get());
@@ -60,8 +60,8 @@ public:
 
     const ObjectType* get() const
     {
-        const AnyObjectWrapper<T>* p = 
-            dynamic_cast<const AnyObjectWrapper<T>*>(this);
+        const AnyObjectWrapper<T, TT::NullType>* p =
+            dynamic_cast<const AnyObjectWrapper<T, TT::NullType>*>(this);
 
         if (p)
             return optimum_cast<const ObjectType*>(p->get());
@@ -84,7 +84,7 @@ public:
     }
 
     AnyObjectWrapper(const ThisType& other) :
-        _obj( (other._obj) ? (new T(_obj)) : (0) ) //?
+        _obj((other._obj) ? (new T(*other._obj)) : (0)) //?
     {
     }
 

@@ -8,6 +8,12 @@
 #include <Bikes/Testing.h>
 #include <Bikes/TypeTools/ToTypeStack.h>
 #include <Bikes/TypeTools/TypeStackHolder.h>
+#include <Bikes/Exception.h>
+#include <Bikes/Assert.h>
+#include <Bikes/Conversion.h>
+#include <Bikes/AnyObject.h>
+
+//#include <memory>
 
 using namespace Bikes;
 using namespace TT;
@@ -54,6 +60,21 @@ class AClass2 : public AClassBase
 
 class ChildAClass : public AClass
 {
+public:
+    static ChildAClass* create()
+    {
+       return new ChildAClass();
+    }
+
+    operator bool() const
+    {
+        return false;
+    }
+
+private:
+    ChildAClass()
+    {
+    }
 };
 
 
@@ -164,19 +185,112 @@ void testFindBaseT(const T* p1, const T* p2)
     BIKES_COUT_TYPE(T);
 }
 
+struct BaseType1
+{
+    int bt1;
+};
+
+struct BaseType2
+{
+    int bt2;
+};
+
+struct ChildType1 : public BaseType1
+{
+    int ch1;
+};
+
+struct ChildType2 : public BaseType2
+{
+    int ch2;
+};
+
+struct ChildType12 : public ChildType1, public ChildType2
+{
+    int ch12;
+};
+
 using namespace std;
 int main()
 {
 
+    ChildAClass* aObj(0);
+    AClassBase* abObj(0);
+
+  AnyObject anyObj(ChildAClass::create());
+
+    aObj = anyObj.get<ChildAClass>();
+    abObj = anyObj.get<AClassBase>();
+
+    anyObj.set<ChildAClass, AClassBase>(ChildAClass::create());
+    /*
+    aObj = anyObj.get<ChildAClass>();
+    abObj = anyObj.get<AClassBase>();
+
+
+    std::auto_ptr<int> smrtPtr1(new int(0));
+    std::auto_ptr<int> smrtPtr2;
+
+    aObj = ChildAClass::create();
+
+    
+    
+    AClassBase* aObjPtr1 = 0;
+    AClassBase* aObjPtr2 = aObj;
+
+    AClassBase* conv1 = optimum_cast<AClassBase*>(aObj);
+    ChildAClass* conv2 = optimum_cast<ChildAClass*>(conv1);
+    
+
+    BIKES_COUT_VAR(isFinalType(aObj));
+    BIKES_COUT_VAR(isFinalType(*aObj));
+    BIKES_COUT_VAR(isFinalType(aObjPtr1));
+//    BIKES_COUT_VAR(isFinalType(*aObjPtr1));
+    BIKES_COUT_VAR(isFinalType(aObjPtr2));
+    BIKES_COUT_VAR(isFinalType(*aObjPtr2));
+
+ //   BIKES_COMPILE_TIME_ASSERT(sizeof(char) < sizeof(double))
+ */
+
+    int checkVar = 1;
+    try
+    {
+        //BIKES_ASSERT_WITH_EXCEPTION(checkVar==0);
+
+        BIKES_ASSERT_WITH_EXCEPTION(1 == 0);
+
+//         BIKES_CHECK_INSTANCE(smrtPtr1);
+//         BIKES_CHECK_INSTANCE(aObj);
+//         BIKES_CHECK_INSTANCE(*aObj);
+        
+        
+        //(checkVar==0)?():(throw ::Bikes::Exception::AssertionFaild("fail"));
+
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;        
+    }
+
+//     catch (UnexpectedStreamType& e)
+//     {
+//         std::cout << "UnexpectedStreamType&";
+//     }
+//     catch (...)
+//     {
+//         std::cout << "wtf exception";
+//     }
+
+
+
     testFindBaseT<AClassBase>((AClass2*)(0), (AClass*)(0));
 
-
-
+    
     typedef ToTypeStack<AClass2, AClass, ChildAClass, ABClass, AClassBase, AClass>::ResultStack AFamilyStack;
 
-    auto& aObjects = TypeStackHolder<AFamilyStack>::get();
+   // auto& aObjects = TypeStackHolder<AFamilyStack>::get();
 
-    auto& ob = TypeStackHolder<NullType>::get();
+   // auto& ob = TypeStackHolder<NullType>::get();
 
     typedef ToTypeStack<double, AClassStack, ToTypeStack<float, int>, char >::ResultStack TStack;
 
@@ -185,7 +299,7 @@ int main()
     PRINT_STACK(TStack);
 
 
-    std::vector<int>& arr = TypeStackHolder<TStack, MyStackHolder<int, TStack> >::get();
+//    std::vector<int>& arr = TypeStackHolder<TStack, MyStackHolder<int, TStack> >::get();
    
        
     AClass* a = new AClass;

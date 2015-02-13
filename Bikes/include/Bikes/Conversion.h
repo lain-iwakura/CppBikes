@@ -41,7 +41,7 @@ struct Optimum—onversion<FromType, ToType, false>
         return dynamic_cast<const ToType*>(obj);
     }
 };
-//------------------------------------------------------------------------------
+//==============================================================================
 template <class ToTypePtr, class FromType>
 ToTypePtr optimum_cast(FromType* p)
 {
@@ -50,7 +50,7 @@ ToTypePtr optimum_cast(FromType* p)
         typename TT::Clear<ToTypePtr>::ResultType
         >::cast(p);
 }
-
+//==============================================================================
 }
 
 #endif // <- INCLUDE_BIKES_CONVERSION_H

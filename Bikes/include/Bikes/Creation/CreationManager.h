@@ -10,18 +10,18 @@ namespace Bikes
 {
 
 template<class T>
-class SingleCreationManagerInterface :
-    public SingleCreatorInterface<T>,
-    public SingleCopierInterface<T>,
-    public SingleDeleterInterface<T>
+class ObjectCreationManagerInterface :
+    public ObjectCreatorInterface<T>,
+    public ObjectCopierInterface<T>,
+    public ObjectDeleterInterface<T>
 {
 public:
-//     virtual T* create() const = 0;
-//     virtual T* copy(const T* pObj) const = 0;
-//     virtual void destroy(T* pObj) const = 0;
+//     virtual T* createObject() const = 0;
+//     virtual T* copyObject(const T* pObj) const = 0;
+//     virtual void destroyObject(T* pObj) const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleCreationManagerInterface)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreationManagerInterface)
 };
 //==============================================================================
 template<class T>
@@ -31,9 +31,9 @@ class ArrayCreationManagerInterface:
     public ArrayDeleterInterface<T>
 {
 public:
-//     virtual T* create(sznum sz) const = 0;
-//     virtual T* copy(const T* pObj, sznum sz) const = 0; 
-//     virtual void destroy(T* pObj, sznum sz) const = 0; 
+//     virtual T* createArray(sznum sz) const = 0;
+//     virtual T* copyArray(const T* pObj, sznum sz) const = 0; 
+//     virtual void destroyArray(T* pObj, sznum sz) const = 0; 
 
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ArrayCreationManagerInterface)
@@ -41,67 +41,67 @@ protected:
 //==============================================================================
 template<class T>
 class CreationManagerInterface :
-    public SingleCreationManagerInterface<T>,
+    public ObjectCreationManagerInterface<T>,
     public ArrayCreationManagerInterface<T>
 {
 public:
-//     virtual T* create() const = 0;
-//     virtual T* create(sznum sz) const = 0; 
-//     virtual T* copy(const T* pObj) const = 0;
-//     virtual T* copy(const T* pObj, sznum sz) const = 0;
-//     virtual void destroy(const T* pObj) const = 0;
-//     virtual void destroy(const T* pObj, sznum sz) const = 0;
+//     virtual T* createObject() const = 0;
+//     virtual T* createArray(sznum sz) const = 0; 
+//     virtual T* copyObject(const T* pObj) const = 0;
+//     virtual T* copyArray(const T* pObj, sznum sz) const = 0;
+//     virtual void destroyObject(const T* pObj) const = 0;
+//     virtual void destroyArray(const T* pObj, sznum sz) const = 0;
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(CreationManagerInterface)
 };
 //==============================================================================
-template<class SingleCreationManagmentPolicyT>
-class SingleCreationManager:
-    public SingleCreationManagerInterface<typename SingleCreationManagmentPolicyT::value_type>
+template<class ObjectCreationManagmentPolicyT>
+class ObjectCreationManager:
+    public ObjectCreationManagerInterface<typename ObjectCreationManagmentPolicyT::value_type>
 {
 public:
-    typedef SingleCreationManagmentPolicyT Policy;
+    typedef ObjectCreationManagmentPolicyT Policy;
     typedef typename Policy::value_type value_type;
-    typedef SingleCreationManagerInterface<value_type> Interface;
+    typedef ObjectCreationManagerInterface<value_type> Interface;
 
-    static const SingleCreationManager& instance()
+    static const ObjectCreationManager& instance()
     {
-        static const SingleCreationManager i;
+        static const ObjectCreationManager i;
         return i;
     }
 
-    value_type* create() const
+    value_type* createObject() const
     {
-        return new_instance();
+        return new_object();
     }
 
-    value_type* copy(const value_type* otherObj) const
+    value_type* copyObject(const value_type* otherObj) const
     {
-        return new_copy(otherObj);
+        return new_object(otherObj);
     }
 
-    void destroy(value_type* pObj) const
+    void destroyObject(value_type* pObj) const
     {
-        delete_instance(pObj);
+        delete_object(pObj);
     }
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return Policy::new_instance();
+        return Policy::new_object();
     }
 
-    static value_type* new_copy(const value_type* otherObj)
+    static value_type* new_object(const value_type* otherObj)
     {
-        return Policy::new_copy(otherObj);
+        return Policy::new_object(otherObj);
     }
 
-    static void delete_instance(value_type* obj)
+    static void delete_object(value_type* obj)
     {
-        Policy::delete_instance(obj);
+        Policy::delete_object(obj);
     }
 
 private:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleCreationManager)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreationManager)
 };
 //==============================================================================
 template<class ArrayCreationManagmentPolicyT>
@@ -119,34 +119,34 @@ public:
         return i;
     }
 
-    value_type* create(sznum sz) const
+    value_type* createArray(sznum sz) const
     {
-        return new_instance(sz);
+        return new_array(sz);
     }
 
-    value_type* copy(const value_type* otherObj, sznum sz) const
+    value_type* copyArray(const value_type* arr, sznum sz) const
     {
-        return new_copy(otherObj,sz);
+        return new_array(arr, sz);
     }
 
-    void destroy(value_type* pObj, sznum sz) const
+    void destroyArray(value_type* arr, sznum sz) const
     {
-        delete_instance(pObj,sz);
+        delete_array(arr, sz);
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return Policy::new_instance(sz);
+        return Policy::new_array(sz);
     }
 
-    static value_type* new_copy(const value_type* otherObj, sznum sz)
+    static value_type* new_array(const value_type* arr, sznum sz)
     {
-        return Policy::new_copy(otherObj,sz);
+        return Policy::new_array(arr, sz);
     }
 
-    static void delete_instance(value_type* obj, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
-        Policy::delete_instance(obj,sz);
+        Policy::delete_array(arr, sz);
     }
 
 private:
@@ -169,64 +169,64 @@ public:
         return i;
     }
 
-    value_type* create() const
+    value_type* createObject() const
     {
-        return new_instance();
+        return new_object();
     }
 
-    value_type* create(sznum sz) const
+    value_type* createArray(sznum sz) const
     {
-        return new_instance(sz);
+        return new_array(sz);
     }
 
-    value_type* copy(const value_type* otherObj) const
+    value_type* copyObject(const value_type* otherObj) const
     {
-        return new_copy(otherObj);
+        return new_object(otherObj);
     }
 
-    value_type* copy(const value_type* otherObj, sznum sz) const
+    value_type* copyArray(const value_type* arr, sznum sz) const
     {
-        return new_copy(otherObj, sz);
+        return new_array(arr, sz);
     }
 
-    void destroy(value_type* pObj) const
+    void destroyObject(value_type* pObj) const
     {
-        delete_instance(pObj);
+        delete_object(pObj);
     }
 
-    void destroy(value_type* pObj, sznum sz) const
+    void destroyArray(value_type* arr, sznum sz) const
     {
-        delete_instance(pObj, sz);
+        delete_array(arr, sz);
     }
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return Policy::new_instance();
+        return Policy::new_object();
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return Policy::new_instance(sz);
+        return Policy::new_array(sz);
     }
 
-    static value_type* new_copy(const value_type* otherObj)
+    static value_type* new_object(const value_type* otherObj)
     {
-        return Policy::new_copy(otherObj);
+        return Policy::new_object(otherObj);
     }
 
-    static value_type* new_copy(const value_type* otherObj, sznum sz)
+    static value_type* new_array(const value_type* arr, sznum sz)
     {
-        return Policy::new_copy(otherObj, sz);
+        return Policy::new_array(arr, sz);
     }
 
-    static void delete_instance(value_type* obj)
+    static void delete_object(value_type* obj)
     {
-        Policy::delete_instance(obj);
+        Policy::delete_object(obj);
     }
 
-    static void delete_instance(value_type* obj, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
-        Policy::delete_instance(obj, sz);
+        Policy::delete_array(arr, sz);
     }
 
 private:

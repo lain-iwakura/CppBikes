@@ -10,19 +10,14 @@ namespace TT{
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class CreationManagerT = SafetyCloningManager,
-    class BaseCreationSupervisorT = 
-        CreationManager<
-            SafetyCloner<ObjectBaseT>,
-            NullCreator<ObjectBaseT>,
-            SafetyDeleter<ObjectBaseT>
-            >
+    template<class> class ChildCreationManagmentT = CreationManagment::PolimorphObject,
+    class BaseCreationManagmentT = CreationManagment::AbstractObject<ObjectBaseT>
     >
 class ConstObjectsHolder
 {
 public:
-    typedef List<ObjectBaseT,BaseCreationSupervisorT> Container;
-    typedef BaseCreationSupervisorT BaseCreationSupervisor;
+    typedef List<ObjectBaseT, BaseCreationManagmentT> Container;
+    typedef BaseCreationManagmentT BaseCreationManagment;
 
     typedef StackT TypeStack;
 
@@ -49,14 +44,14 @@ protected:
     void initialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        objects.retake(sznum(i),CreationManagerT<CurType>::create());
+        objects.retake(sznum(i), ChildCreationManagmentT<CurType>::new_object());
     }
 
     template<num i>
     void deinitialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        CreationManagerT<CurType>::destroy(static_cast<CurType*>(objects.pass(sznum(i))));
+        ChildCreationManagmentT<CurType>::delete_object(static_cast<CurType*>(objects.pass(sznum(i))));
     }
 
 private:
@@ -66,19 +61,14 @@ private:
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class CreationManagerT = SafetyCloningManager,
-    class BaseCreationSupervisorT =
-        CreationManager<
-            SafetyCloner<ObjectBaseT>,
-            NullCreator<ObjectBaseT>,
-            SafetyDeleter<ObjectBaseT>
-            >
+    template<class> class ChildCreationManagmentT = CreationManagment::PolimorphObject,
+    class BaseCreationManagmentT = CreationManagment::AbstractObject<ObjectBaseT>
     >
 class ObjectsHolder
 {
 public:
-    typedef List<ObjectBaseT, BaseCreationSupervisorT> Container;
-    typedef BaseCreationSupervisorT BaseCreationSupervisor;
+    typedef List<ObjectBaseT, BaseCreationManagmentT> Container;
+    typedef BaseCreationManagmentT BaseCreationManagment;
 
     typedef StackT TypeStack;
 
@@ -105,7 +95,7 @@ protected:
     void initialize()
     {
         typedef typename TT::TypeStack::TypeAt<StackT, i>::ResultType CurType;
-        objects.retake(sznum(i),CreationManagerT<CurType>::create());
+        objects.retake(sznum(i), ChildCreationManagmentT<CurType>::create());
     }
 
     template<num i>
@@ -191,6 +181,38 @@ private:
 template<class StackT, class HolderBaseT >
 typename TypeStackHolder<StackT, HolderBaseT>::InnerStackHolder
 TypeStackHolder<StackT, HolderBaseT>::_holder;
+//==============================================================================
+template<class T = NullType>
+struct MultiType : public T, public MultiType<>
+{
+    typedef T Base;
+    typedef MultiType<> MultiBase;
+
+    virtual ~MultiType()
+    {}
+};
+//------------------------------------------------------------------------------
+template<class T1, class T2>
+struct MultiType<TypeStack::Element<T1,T2> > :
+    public TypeStack::Element<T1, T2>::Head,
+    public MultiType<typename TypeStack::Element<T1, T2>::Tail>
+{
+    typedef typename TypeStack::Element<T1, T2>::Head Base;
+    typedef typename MultiType<typename TypeStack::Element<T1, T2>::Tail> MultiBase;
+
+    virtual ~MultiType()
+    {}
+};
+//------------------------------------------------------------------------------
+template<>
+struct MultiType<NullType>
+{
+    typedef NullType Base;
+    typedef NullType MultiBase;
+
+    virtual ~MultiType()
+    {}
+};
 //==============================================================================
 } // TT
 } // Bikes

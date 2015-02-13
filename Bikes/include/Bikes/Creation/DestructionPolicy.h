@@ -1,15 +1,29 @@
 #ifndef INCLUDE_BIKES_CREATION_DESTRUCTIONPOLICY_H
 #define INCLUDE_BIKES_CREATION_DESTRUCTIONPOLICY_H
 
+//==============================================================================
+#define CBIKES_DELETE_OBJECT_DECLDEF(Policy)                                   \
+    static void                                                                \
+    delete_object(value_type* obj){                                            \
+        Policy::delete_object(obj);                                            \
+    }
+//------------------------------------------------------------------------------
+#define CBIKES_DELETE_ARRAY_DECLDEF(Policy)                                    \
+    static void                                                                \
+    delete_array(value_type* arr, sznum sz){                                   \
+        Policy::delete_array(arr,sz);                                          \
+    }
+//==============================================================================
+
 namespace Bikes{
-namespace DestructionPolicy{
+namespace Destruction{
 //==============================================================================
 template<class T>
 struct ObjectByDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* obj)
+    static void delete_object(T* obj)
     {
         delete obj;
     }
@@ -20,10 +34,20 @@ struct ObjectBySafetyDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* obj)
+    static void delete_object(T* obj)
     {
         if(obj)
             delete obj;
+    }
+};
+//------------------------------------------------------------------------------
+template<class T>
+struct NullObject
+{
+    typedef T value_type;
+
+    static void delete_object(T* obj)
+    {
     }
 };
 //------------------------------------------------------------------------------
@@ -33,7 +57,7 @@ struct ObjectByPlacementDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* obj)
+    static void delete_object(T* obj)
     {
         obj->~T();
         delete obj;
@@ -46,7 +70,7 @@ struct ArrayByDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* arr, sznum)
+    static void delete_array(T* arr, sznum)
     {
         delete[] arr;
     }
@@ -57,7 +81,7 @@ struct ArrayBySafetyDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* arr, sznum)
+    static void delete_array(T* arr, sznum)
     {
         if(arr)
             delete[] arr;
@@ -69,7 +93,7 @@ struct ArrayByPlacementDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* arr, sznum sz)
+    static void delete_array(T* arr, sznum sz)
     {
         for (sznum i = 0; i < sz; i++)
             arr->~T();
@@ -83,7 +107,7 @@ struct ArrayBySafetyPlacementDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* arr, sznum sz)
+    static void delete_array(T* arr, sznum sz)
     {
         if (!arr)
             return;
@@ -94,37 +118,49 @@ struct ArrayBySafetyPlacementDelete
         delete[] arr;
     }
 };
+//------------------------------------------------------------------------------
+template<class T>
+struct NullArray
+{
+    typedef T value_type;
+
+    static void delete_array(T* obj, sznum sz)
+    {
+    }
+};
+//==============================================================================
+template<class T>
+struct Null
+{
+    typedef T value_type;
+
+    CBIKES_DELETE_OBJECT_DECLDEF(NullObject<T>)
+    CBIKES_DELETE_ARRAY_DECLDEF(NullArray<T>)
+};
 //==============================================================================
 template<class T>
 struct ByDelete
 {
     typedef T value_type;
 
-    static void delete_instance(T* obj)
-    {
-        ObjectByDelete::delete_instance(obj);
-    }
-
-    static void delete_instance(T* obj, sznum sz)
-    {
-        ArrayByDelete::delete_instance(obj,sz);
-    }
+    CBIKES_DELETE_OBJECT_DECLDEF(ObjectByDelete<T>)
+    CBIKES_DELETE_ARRAY_DECLDEF(ArrayByDelete<T>)
 };
 //==============================================================================
-template<class SingleDestructionPolicyT, class ArrayDestructionPolicyT>
+template<class ObjectDestructionPolicyT, class ArrayDestructionPolicyT>
 struct Union
 {
-    typedef typename SingleDestructionPolicyT::value_type value_type;
+    typedef typename ObjectDestructionPolicyT::value_type value_type;
 
-    static void delete_instance(T* obj)
+    static void delete_object(value_type* obj)
     {
-        SingleDestructionPolicyT::delete_instance(obj);
+        ObjectDestructionPolicyT::delete_object(obj);
     }
 
-    static void delete_instance(T* obj, sznum sz)
+    static void delete_array(value_type* obj, sznum sz)
     {
         StaticAssert<TT::Equal<value_type, typename ArrayDestructionPolicyT::value_type>::result>()
-        SingleDestructionPolicyT::delete_instance(obj, sz);
+        ObjectDestructionPolicyT::delete_array(obj, sz);
     }
 };
 //==============================================================================

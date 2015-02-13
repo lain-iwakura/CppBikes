@@ -5,14 +5,14 @@ namespace Bikes
 {
 //==============================================================================
 template<class T>
-class SingleDeleterInterface
+class ObjectDeleterInterface
 {
 public:
 
-    virtual void destroy(T* obj) const = 0;
+    virtual void destroyObject(T* obj) const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleDeleterInterface)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectDeleterInterface)
 };
 //------------------------------------------------------------------------------	
 template<class T>
@@ -20,7 +20,7 @@ class ArrayDeleterInterface
 {
 public:
 
-    virtual void destroy(T* obj, sznum sz) const = 0;
+    virtual void destroyArray(T* arr, sznum sz) const = 0;
 
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ArrayDeleterInterface)
@@ -28,41 +28,41 @@ protected:
 //------------------------------------------------------------------------------	
 template<class T>
 class DeleterInterface:
-    public SingleDeleterInterface<T>,
+    public ObjectDeleterInterface<T>,
     public ArrayDeleterInterface<T>
 {
 public:
-//  virtual void destroy(T* obj) const = 0;
-//  virtual void destroy(T* obj, sznum sz) const = 0;
+//  virtual void destroyObject(T* obj) const = 0;
+//  virtual void destroyArray(T* obj, sznum sz) const = 0;
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(DeleterInterface)
 };
 //==============================================================================
-template<class SingleDestructionPolicyT>
-class SingleDeleter:
-    public SingleDeleterInterface<typename SingleDestructionPolicyT::value_type>
+template<class ObjectDestructionPolicyT>
+class ObjectDeleter:
+    public ObjectDeleterInterface<typename ObjectDestructionPolicyT::value_type>
 {
 public:
-    typedef typename SingleDestructionPolicyT::value_type value_type;
+    typedef typename ObjectDestructionPolicyT::value_type value_type;
 
-    static const SingleDeleter& instance()
+    static const ObjectDeleter& instance()
     {
-        static const SingleDeleter i;
+        static const ObjectDeleter i;
         return i;
     }
 
-    void destroy(value_type* obj) const
+    void destroyObject(value_type* obj) const
     {
-        delete_instance(obj);
+        delete_object(obj);
     }
 
-    static void delete_instance(value_type* obj)
+    static void delete_object(value_type* obj)
     {
-        SingleDestructionPolicyT::delete_instance(obj);
+        ObjectDestructionPolicyT::delete_object(obj);
     }
 
 private:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleDeleter)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectDeleter)
 };
 //==============================================================================
 template<class ArrayDestructionPolicyT>
@@ -78,14 +78,14 @@ public:
         return i;
     }
 
-    void destroy(value_type* obj, sznum sz) const
+    void destroyArray(value_type* arr, sznum sz) const
     {
-        delete_instance(obj, sz);
+        delete_array(arr, sz);
     }
 
-    static void delete_instance(value_type* obj, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
-        ArrayDestructionPolicyT::delete_instance(obj,sz);
+        ArrayDestructionPolicyT::delete_array(arr,sz);
     }
 
 private:
@@ -105,24 +105,24 @@ public:
         return i;
     }
 
-    void destroy(value_type* obj) const
+    void destroyObject(value_type* obj) const
     {
-        delete_instance(obj);
+        delete_object(obj);
     }
 
-    void destroy(value_type* obj, sznum sz) const
+    void destroyArray(value_type* arr, sznum sz) const
     {
-        delete_instance(obj, sz);
+        delete_array(arr, sz);
     }
 
-    static void delete_instance(value_type* obj)
+    static void delete_object(value_type* obj)
     {
-        ArrayDestructionPolicyT::delete_instance(obj);
+        ArrayDestructionPolicyT::delete_object(obj);
     }
 
-    static void delete_instance(value_type* obj, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
-        DestructionPolicyT::delete_instance(obj, sz);
+        DestructionPolicyT::delete_array(arr, sz);
     }
 
 private:

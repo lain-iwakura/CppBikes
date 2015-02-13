@@ -2,7 +2,7 @@
 #define PREBIKES_RAWARRAY_H
 #include <Bikes/Types.h>
 #include <Bikes/Mathem/Tools.h>
-#include <Bikes/Creation/CreationManager.h>
+#include <Bikes/Creation/CreationManagmentPolicy.h>
 #include <vector>
 
 namespace Bikes
@@ -23,7 +23,7 @@ const sznum defMaxCapacityIncrement()
 
 template<
 	class T,
-	class CreationManagerT = SimpleCopyingManager<T>
+	class CreationManagmentT = CreationManagment::SimpleArray<T>
 	>
 class RawArray
 {
@@ -39,8 +39,8 @@ public:
     typedef pointer iterator;
     typedef const_pointer const_iterator;
 
-	typedef CreationManagerT CreationManager;
-    typedef RawArray<T, CreationManagerT> ThisType;
+    typedef CreationManagmentT CrMngPolicy;
+    typedef RawArray<T, CrMngPolicy> ThisType;
 	
 	RawArray() :
 		_arr(0), 
@@ -57,11 +57,11 @@ public:
 		_maxInc(Inner::defMaxCapacityIncrement<T>())
 	{
 		if(sz>0)
-			_arr = _createArray(sz);
+			_arr = _create(sz);
 	}
 
 	RawArray(sznum sz, sznum cap):
-		_arr(_createArray(cap)),
+		_arr(_create(cap)),
 		_cap(cap),
 		_sz(noGreater<sznum>(sz,cap)),
 		_maxInc(Inner::defMaxCapacityIncrement<T>())
@@ -69,7 +69,7 @@ public:
 	}
 
 	RawArray(sznum sz, sznum cap, sznum maxCapInc) :
-		_arr(_createArray(cap)),
+		_arr(_create(cap)),
 		_cap(cap),
 		_sz(noGreater<sznum>(sz, cap)),
 		_maxInc(maxCapInc)
@@ -77,7 +77,7 @@ public:
 	}
 
     RawArray(const ThisType& ra) :
-		_arr(_createArrayCopy(ra._arr,ra._cap,ra._sz)),
+		_arr(_createCopy(ra._arr,ra._cap,ra._sz)),
 		_cap(ra._cap), 
 		_sz(ra._sz),
 		_maxInc(ra._maxInc)
@@ -85,7 +85,7 @@ public:
 	}
 
 	RawArray(const T* arr, sznum sz):
-		_arr(_createArrayCopy(arr,sz,sz)),
+		_arr(_createCopy(arr,sz,sz)),
 		_cap(sz),
 		_sz(sz),
 		_maxInc(Inner::defMaxCapacityIncrement<T>())
@@ -94,7 +94,7 @@ public:
 
     ThisType& operator=(const ThisType& ra)
     {
-        _arr = _createArrayCopy(ra._arr, ra._cap, ra._sz);
+        _arr = _createCopy(ra._arr, ra._cap, ra._sz);
         _cap = ra._cap;
         _sz = ra._sz;
         _maxInc = ra._maxInc;
@@ -103,16 +103,16 @@ public:
 
 	virtual ~RawArray()
 	{
-		_destroyArray(_arr);
+		_destroyArray(_arr,_cap);
 	}
 
 	void setCapacity(sznum cap)
 	{
-		_cap = cap;
 		if (_sz > cap)
 			_sz = cap;
-		T *narr=_createArrayCopy(_arr,cap,_sz);
-		_destroyArray(_arr);
+		T *narr=_createCopy(_arr,cap,_sz);
+		_destroyArray(_arr,_cap);
+        _cap = cap;
 		_arr = narr;
 	}
 
@@ -226,7 +226,7 @@ public:
 
 	void take(T* d, sznum sz)
 	{
-		_destroyArray(_arr);
+		_destroyArray(_arr,_cap);
 		 _arr=d;
 		 _cap=sz;
 		 _sz=_cap;
@@ -234,7 +234,7 @@ public:
 
     void take(ThisType& ra)
 	{
-		_destroyArray(_arr);
+		_destroyArray(_arr,_cap);
 		_arr=ra.arr;
 		_cap=ra._cap;
 		_sz=ra._sz;
@@ -324,30 +324,27 @@ public:
 
 protected:
 
-	static T* _createArray(sznum sz)
+	static T* _create(sznum sz)
 	{
 		if (sz == 0)
 			return 0;
-		return CreationManager::createArray(sz);
+		return CrMngPolicy::new_array(sz);
 	}
 
-	static T* _createArrayCopy(const T* arr, sznum cap, sznum sz)
+	static T* _createCopy(const T* arr, sznum cap, sznum sz)
 	{
 		if (cap == 0)
 			return 0;
-		T* carr = CreationManager::createArray(cap);
-		if (arr)
-		{
-			for (sznum i = 0; i < sz; i++)
-				carr[i] = arr[i];
-		}
+        T* carr = CrMngPolicy::new_array(cap);
+        for (sznum i = 0; i < sz; i++)
+            carr[i] = arr[i];
 		return carr;
 	}
 
-	static void _destroyArray(T* arr)
+	static void _destroyArray(T* arr, sznum cap)
 	{
 		if (arr)
-			CreationManager::destroyArray(arr);
+            CrMngPolicy::delete_array(arr, cap);
 	}
 
 	T *_arr;

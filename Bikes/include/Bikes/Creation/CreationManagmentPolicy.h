@@ -1,40 +1,77 @@
 #ifndef INCLUDE_BIKES_CREATION_CREATIONMANAGMENTPOLICY_H
 #define INCLUDE_BIKES_CREATION_CREATIONMANAGMENTPOLICY_H
 
+#include <Bikes/Creation/CreationPolicy.h>
+#include <Bikes/Creation/CopyingPolicy.h>
+#include <Bikes/Creation/DestructionPolicy.h>
+
 namespace Bikes{
-namespace CreationManagmentPolicy{
+namespace CreationManagment{
 //==============================================================================
 template<
     class SignleCreationPolicyT, 
-    class SingleCopyingPolicyT, 
-    class SingleDestructionPolicyT
+    class ObjectCopyingPolicyT, 
+    class ObjectDestructionPolicyT
     >
 struct ObjectUnion
 {
-    template typename SignleCreationPolicyT::value_type value_type;
+    typedef typename SignleCreationPolicyT::value_type value_type;
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return SignleCreationPolicyT::new_instance();
+        return SignleCreationPolicyT::new_object();
     }
 
-    static value_type* new_copy(const value_type* otherObject)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename SingleCopyingPolicyT::value_type>
-            ::result >();
-
-        return SingleCopyingPolicyT::new_copy(otherObject);
-    }
-
-    static void delete_instance(value_type* object)
+    static value_type* new_object(const value_type* otherObject)
     {
         StaticAssert<
-            TT::Equal<value_type, typename SingleDestructionPolicyT::value_type>
+            TT::Equal<value_type, typename ObjectCopyingPolicyT::value_type>
             ::result >();
 
-        SingleDestructionPolicyT::delete_instance(object);
+        return ObjectCopyingPolicyT::new_object(otherObject);
     }
+
+    static void delete_object(value_type* object)
+    {
+        StaticAssert<
+            TT::Equal<value_type, typename ObjectDestructionPolicyT::value_type>
+            ::result >();
+
+        ObjectDestructionPolicyT::delete_object(object);
+    }
+};
+//==============================================================================
+template<class T>
+struct SimpleObject
+{
+    typedef T value_type;
+
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::ByNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ByNew<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ByDelete<T>)
+};
+
+template<class T>
+struct AbstractObject
+{
+    typedef T value_type;
+
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::NullObject<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ObjectBySafetyClone<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ObjectBySafetyDelete<T>)
+};
+
+template<class T>
+struct PolimorphObject:
+    Creation::ObjectByNew<T>,
+    Copying::ObjectByClone<T>,
+    Destruction::ObjectByDelete<T>
+{
+    typedef T value_type;
+
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::ObjectByNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ObjectByClone<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ObjectByDelete<T>)
 };
 //==============================================================================
 template<
@@ -44,77 +81,100 @@ template<
 >
 struct ArrayUnion
 {
-    template typename ArrayCreationPolicyT::value_type value_type;
+    typedef typename ArrayCreationPolicyT::value_type value_type;
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return SignleCreationPolicyT::new_instance(sz);
+        return SignleCreationPolicyT::new_array(sz);
     }
 
-    static value_type* new_copy(const value_type* otherArray, sznum sz)
+    static value_type* new_array(const value_type* otherArray, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename ArrayCopyingPolicyT::value_type>
             ::result >();
 
-        return ArrayCreationPolicyT::new_copy(otherArray, sz);
+        return ArrayCreationPolicyT::new_array(otherArray, sz);
     }
 
-    static void delete_instance(value_type* arr, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename ArrayDestructionPolicyT::value_type>
             ::result >();
 
-        ArrayDestructionPolicyT::delete_instance(arr, sz);
+        ArrayDestructionPolicyT::delete_array(arr, sz);
     }
 };
 //==============================================================================
-template<class ObjectUnionT, class ArrayUnionT>
+template<class T>
+struct SimpleArray
+{
+    typedef T value_type;
+
+    CBIKES_NEW_ARRAY_DECLDEF(Creation::ArrayByNew<T>)
+    CBIKES_NEW_ARRAY_CPY_DECLDEF(Copying::ArrayByNew<T>)
+    CBIKES_DELETE_ARRAY_DECLDEF(Destruction::ArrayByDelete<T>)
+};
+//------------------------------------------------------------------------------
+template<class T>
+struct PlacementArray
+{
+    typedef T value_type;
+
+    CBIKES_NEW_ARRAY_DECLDEF(Creation::ArrayByPlacementNew<T>)
+    CBIKES_NEW_ARRAY_CPY_DECLDEF(Copying::ArrayByPlacementNew<T>)
+    CBIKES_DELETE_ARRAY_DECLDEF(Destruction::ArrayByPlacementDelete<T>)
+};
+//==============================================================================
+template<
+    class ObjectUnionT, 
+    class ArrayUnionT
+    >
 struct UnionBy2Way
 {
     typedef typename ObjectUnionT::value_type value_type;
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return ObjectUnionT::new_instance();
+        return ObjectUnionT::new_object();
     }
 
-    static value_type* new_copy(const value_type* otherObject)
+    static value_type* new_object(const value_type* otherObject)
     {
-        return ObjectUnionT::new_copy(otherObject);
+        return ObjectUnionT::new_object(otherObject);
     }
 
-    static void delete_instance(value_type* object)
+    static void delete_object(value_type* object)
     {
-        ObjectUnionT::delete_instance(object);
+        ObjectUnionT::delete_object(object);
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename ArrayUnionT::value_type>
             ::result >();
 
-        return SignleCreationPolicyT::new_instance(sz);
+        return SignleCreationPolicyT::new_array(sz);
     }
 
-    static value_type* new_copy(const value_type* otherArray, sznum sz)
+    static value_type* new_array(const value_type* otherArray, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename ArrayUnionT::value_type>
             ::result >();
 
-        return ArrayUnionT::new_copy(otherArray, sz);
+        return ArrayUnionT::new_array(otherArray, sz);
     }
 
-    static void delete_instance(value_type* arr, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename ArrayUnionT::value_type>
             ::result >();
 
-        ArrayUnionT::delete_instance(arr, sz);
+        ArrayUnionT::delete_array(arr, sz);
     }
 };
 //==============================================================================
@@ -127,50 +187,50 @@ struct UnionBy3Way
 {
     typedef typename CreationUnionT::value_type value_type;
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return CreationUnionT::new_instance();
+        return CreationUnionT::new_object();
     }
 
-    static value_type* new_copy(const value_type* otherObject)
+    static value_type* new_object(const value_type* otherObject)
     {
         StaticAssert<
             TT::Equal<value_type, typename CopyingUnionT::value_type>
             ::result >();
 
-        return CopyingUnionT::new_copy(otherObject);
+        return CopyingUnionT::new_object(otherObject);
     }
 
-    static void delete_instance(value_type* object)
+    static void delete_object(value_type* object)
     {
         StaticAssert<
             TT::Equal<value_type, typename DestructionUnionT::value_type>
             ::result >();
 
-        DestructionUnionT::delete_instance(object);
+        DestructionUnionT::delete_object(object);
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return CreationUnionT::new_instance(sz);
+        return CreationUnionT::new_array(sz);
     }
 
-    static value_type* new_copy(const value_type* otherArray, sznum sz)
+    static value_type* new_array(const value_type* otherArray, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename CopyingUnionT::value_type>
             ::result >();
 
-        return CopyingUnionT::new_copy(otherArray, sz);
+        return CopyingUnionT::new_array(otherArray, sz);
     }
 
-    static void delete_instance(value_type* arr, sznum sz)
+    static void delete_array(value_type* arr, sznum sz)
     {
         StaticAssert<
             TT::Equal<value_type, typename DestructionUnionT::value_type>
             ::result >();
 
-        DestructionUnionT::delete_instance(arr, sz);
+        DestructionUnionT::delete_array(arr, sz);
     }
 };
 //==============================================================================

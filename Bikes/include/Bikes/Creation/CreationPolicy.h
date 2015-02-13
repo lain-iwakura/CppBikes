@@ -4,15 +4,27 @@
 #include <Bikes/Types.h>
 #include <Bikes/Assert.h>
 
+
+//==============================================================================
+#define CBIKES_NEW_OBJECT_DECLDEF(Policy)                                      \
+    static value_type* new_object(){                                           \
+        return Policy::new_object();                                           \
+    }
+//------------------------------------------------------------------------------
+#define CBIKES_NEW_ARRAY_DECLDEF(Policy)                                       \
+    static value_type* new_array(sznum sz){                                    \
+        return Policy::new_array(sz);                                          \
+    }
+//==============================================================================
 namespace Bikes{
-namespace CreationPolicy{
+namespace Creation{
 //==============================================================================
 template<class T>
 struct ObjectByNew
 {
     typedef T value_type;
 
-    static T* new_instance()
+    static T* new_object()
     {
         return new T;
     }
@@ -24,7 +36,7 @@ struct ObjectByPlacementNew
 {
     typedef T value_type;
 
-    static T* new_instance()
+    static T* new_object()
     {
         T *obj = static_cast<T*>(new(sizeof(T)))
         new (obj) T();
@@ -32,13 +44,24 @@ struct ObjectByPlacementNew
     }
 };
 #endif
+//------------------------------------------------------------------------------
+template<class T>
+struct NullObject
+{
+    typedef T value_type;
+
+    static T* new_object()
+    {
+        return 0;
+    }
+};
 //==============================================================================
 template<class T>
 struct ArrayByNew
 {
     typedef T value_type;
 
-    static T* new_instance(sznum sz)
+    static T* new_array(sznum sz)
     {
         return new T[sz];
     }
@@ -49,7 +72,7 @@ struct ArrayByPlacementNew
 {
     typedef T value_type;
 
-    static T* new_instance(sznum sz)
+    static T* new_array(sznum sz)
     {
         T* arr = static_cast<T*>(new(sizeof(T)*sz));
         for (sznum i = 0; i < sz; i++)
@@ -57,21 +80,25 @@ struct ArrayByPlacementNew
         return arr;
     }
 };
+//------------------------------------------------------------------------------
+template<class T>
+struct NullArray
+{
+    typedef T value_type;
+
+    static T* new_array(sznum sz)
+    {
+        return 0;
+    }
+};
 //==============================================================================
 template<class T>
 struct ByNew
 {
-    typedef T value_type;
+    typedef T value_type;    
 
-    static value_type* new_instance()
-    {
-        return ObjectByNew<T>::new_instance();
-    }
-
-    static value_type* new_instance(sznum sz)
-    {
-        return ArrayByNew<T>::new_instance(sz);
-    }
+    CBIKES_NEW_OBJECT_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_ARRAY_DECLDEF(ArrayByNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -79,15 +106,8 @@ struct ByPlacementNew
 {
     typedef T value_type;
 
-    static value_type* new_instance()
-    {
-        return ObjectByNew<T>::new_instance(); // (?) (!)
-    }
-
-    static value_type* new_instance(sznum sz)
-    {
-        return ArrayByPlacementNew<T>::new_instance(sz);
-    }
+    CBIKES_NEW_OBJECT_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_ARRAY_DECLDEF(ArrayByPlacementNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -95,31 +115,24 @@ struct Null
 {
     typedef T value_type;
 
-    static T* new_instance()
-    {
-        return 0;
-    }
-
-    static T* new_instance(sznum sz)
-    {
-        return 0;
-    }
+    CBIKES_NEW_OBJECT_DECLDEF(NullObject<T>)
+    CBIKES_NEW_ARRAY_DECLDEF(NullArray<T>)
 };
 //==============================================================================
-template<class SingleCreationPolicyT, class ArrayCreationPolicyT>
+template<class ObjectCreationPolicyT, class ArrayCreationPolicyT>
 struct Union
 {
-    typedef typename SingleCreationPolicyT::value_type value_type;
+    typedef typename ObjectCreationPolicyT::value_type value_type;
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return SingleCreationPolicyT::new_instance();
+        return ObjectCreationPolicyT::new_object();
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
         StaticAssert<TT::Equal<value_type, ArrayCreationPolicyT::value_type>::result>();
-        return ArrayCreationPolicyT::new_instance(sz);
+        return ArrayCreationPolicyT::new_array(sz);
     }
 };
 //==============================================================================

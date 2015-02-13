@@ -1,14 +1,17 @@
 #ifndef INCLUDE_BIKES_ARRAY_LISTBASE_H
 #define INCLUDE_BIKES_ARRAY_LISTBASE_H
 
-#include <Bikes/Creation/CreationManager.h>
+#include <Bikes/Creation/CreationManagmentPolicy.h>
 #include <vector>
 
 namespace Bikes{
 //------------------------------------------------------------------------------
 template<class T> class ListConstIterator;
 template<class T> class ListIterator;
-template<class T, class CreationManagerT = SimpleCopyingManager<T> > class List;
+template<
+    class T, 
+    class CreationManagmentT = CreationManagment::SimpleObject<T> 
+    > class List;
 //------------------------------------------------------------------------------
 template<class T>
 class ListBase

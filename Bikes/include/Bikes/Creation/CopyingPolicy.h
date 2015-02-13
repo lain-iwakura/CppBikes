@@ -1,15 +1,28 @@
 #ifndef INCLUDE_BIKES_CREATION_ÑOPYINGPOLICY_H
 #define INCLUDE_BIKES_CREATION_ÑOPYINGPOLICY_H
 
+//==============================================================================
+#define CBIKES_NEW_OBJECT_CPY_DECLDEF(Policy)                                  \
+    static value_type*                                                         \
+    new_object(const value_type* other){                                       \
+        return Policy::new_object(other);                                      \
+    }
+//------------------------------------------------------------------------------
+#define CBIKES_NEW_ARRAY_CPY_DECLDEF(Policy)                                   \
+    static value_type*                                                         \
+    new_array(const value_type* other, sznum sz){                              \
+        return Policy::new_array(other,sz);                                    \
+    }
+//==============================================================================
 namespace Bikes{
-namespace CopyingPolicy{
+namespace Copying{
 //==============================================================================
 template<class T>
 struct ObjectByNew
 {    
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
+    static T* new_object(const T* otherObject)
     {
         return new T(*otherObject);
     }
@@ -20,7 +33,7 @@ struct ObjectBySafetyNew
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
+    static T* new_object(const T* otherObject)
     {
         if (otherObject)
             return new T(*otherObject);
@@ -33,7 +46,7 @@ struct ObjectByClone
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
+    static T* new_object(const T* otherObject)
     {
         return otherObject->clone();
     }
@@ -44,7 +57,7 @@ struct ObjectBySafetyClone
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
+    static T* new_object(const T* otherObject)
     {
         if(otherObject)
             return otherObject->clone();
@@ -58,7 +71,7 @@ struct ObjectByPlacementNew
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
+    static T* new_object(const T* otherObject)
     {
         T * obj = static_cast<T*>(new(sizeof(T)));
         return new T(*otherObject);
@@ -71,7 +84,7 @@ struct ArrayByNew // copying with T::operator=()
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         T* arr = new T[sz];
         for (sznum i = 0; i < sz; i++)
@@ -85,7 +98,7 @@ struct ArrayBySafetyNew // copying with T::operator=()
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         if (otherArray == 0)
             return 0;
@@ -102,7 +115,7 @@ struct ArrayByPlacementNew // copying with T()
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         T* arr = static_cast<T*>( new(sizeof(T)*sz) );
         for (sznum i = 0; i < sz; i++)
@@ -116,7 +129,7 @@ struct ArrayBySafetyPlacementNew // copying with T()
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         if (otherArray == 0)
             return 0;
@@ -133,31 +146,18 @@ struct ByNew
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
-    {        
-        return ObjectByNew<T>::new_copy(otherObject);
-    }
-
-    static T* new_copy(const T* otherArray, sznum sz)
-    {        
-        return ArrayByNew<T>::new_copy(otherArray, sz);
-    }
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayByNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct BySafetyNew
+struct BySafetyNew 
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
-    {
-        return ObjectBySafetyNew<T>::new_copy(otherObject);
-    }
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectBySafetyNew<T>)
+    CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayBySafetyNew<T>)
 
-    static T* new_copy(const T* otherArray, sznum sz)
-    {
-        return ArrayBySafetyNew<T>::new_copy(otherArray, sz);
-    }
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -165,31 +165,9 @@ struct ByPlacementNew
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
-    {
-        return ObjectByNew<T>::new_copy(otherObject); // (?) (!)
-    }
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayByPlacementNew<T>)
 
-    static T* new_copy(const T* otherArray, sznum sz)
-    {
-        return ArrayByPlacementNew<T>::new_copy(otherArray, sz);
-    }
-};
-//------------------------------------------------------------------------------
-template<class T>
-struct BySafetyPlacementNew
-{
-    typedef T value_type;
-
-    static T* new_copy(const T* otherObject)
-    {
-        return ObjectBySafetyNew<T>::new_copy(otherObject); // (?) (!)
-    }
-
-    static T* new_copy(const T* otherArray, sznum sz)
-    {
-        return ArrayBySafetyPlacementNew<T>::new_copy(otherArray, sz);
-    }
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -197,15 +175,12 @@ struct ByClone
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
-    {
-        return ObjectByClone<T>::new_copy(otherObject); 
-    }
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByClone<T>)
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         throw Exception::ProhibitedAction(
-            std::string("ByClone<T>::new_copy() with T = ") + typeid(T).name()
+            std::string("ByClone<T>::new_array() with T = ") + typeid(T).name()
             );
 
         return 0;
@@ -217,36 +192,33 @@ struct BySafetyClone
 {
     typedef T value_type;
 
-    static T* new_copy(const T* otherObject)
-    {
-        return ObjectBySafetyClone<T>::new_copy(otherObject);
-    }
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectBySafetyClone<T>)
 
-    static T* new_copy(const T* otherArray, sznum sz)
+    static T* new_array(const T* otherArray, sznum sz)
     {
         if (otherArray != 0)
             throw Exception::ProhibitedAction(
-                std::string("BySafetyClone<T>::new_copy() with T = ") + typeid(T).name()
+                std::string("BySafetyClone<T>::new_array() with T = ") + typeid(T).name()
                 );
 
         return 0;
     }
 };
 //==============================================================================
-template<class SingleCopyingPolicyT, class ArrayCopyingPolicyT>
+template<class ObjectCopyingPolicyT, class ArrayCopyingPolicyT>
 struct Union
 {
-    typedef typename SingleCopyingPolicyT::value_type value_type;
+    typedef typename ObjectCopyingPolicyT::value_type value_type;
 
-    static value_type* new_copy(const value_type* otherObject)
+    static value_type* new_object(const value_type* otherObject)
     {
-        return SingleCopyingPolicyT::new_copy(otherObject);
+        return ObjectCopyingPolicyT::new_object(otherObject);
     }
 
-    static value_type* new_copy(const value_type* otherArray, sznum sz)
+    static value_type* new_array(const value_type* otherArray, sznum sz)
     {
         StaticAssert<TT::Equal<value_type, ArrayCopyingPolicyT::value_type>::result>();
-        return ArrayCopyingPolicyT::new_copy(otherArray,sz);
+        return ArrayCopyingPolicyT::new_array(otherArray,sz);
     }
 };
 //==============================================================================

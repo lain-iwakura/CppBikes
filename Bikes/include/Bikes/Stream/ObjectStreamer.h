@@ -38,11 +38,11 @@ public:
 
     virtual void writeWhithSign(ByteStream& bs) const = 0;    
 
-    virtual StreamType* createObject() const = 0;
+    virtual StreamType* create() const = 0;
 
     virtual void destroyObject(StreamType* obj) const = 0;
     
-    virtual StreamType* copyObject(StreamType* obj) const = 0;    
+    virtual StreamType* copy(const StreamType* obj) const = 0;    
 
     virtual const ByteArray& typeSignature() const = 0;    
 
@@ -60,15 +60,15 @@ public:
 //==============================================================================
 template<
     class StreamTypeT,
-    class CreationManagerT = SimpleCopyingManager<StreamTypeT>
+    class CrMngPolicyT = CreationManagment::SimpleObject<StreamTypeT>
 >
 class ObjectStreamer : public ObjectStreamerInterface<StreamTypeT>
 {
 public:
 
     typedef StreamTypeT StreamType;
-    typedef ObjectStreamer<StreamTypeT, CreationManagerT> ThisType;
-    typedef CreationManagerT CreationManager;
+    typedef ObjectStreamer<StreamTypeT, CrMngPolicyT> ThisType;
+    typedef CrMngPolicyT CrMngPolicy;
 
     ObjectStreamer():
         obj_w(0), 
@@ -122,7 +122,7 @@ public:
 
     virtual StreamType* readAndCreate(ByteStream& bs) const //?
     {
-        StreamType* obj = createObject();
+        StreamType* obj = create();
         if (obj)
         {
             try
@@ -151,19 +151,19 @@ public:
         writeWhithSign(bs, *obj_w);
     }
 
-    virtual StreamType* createObject() const
+    virtual StreamType* create() const
     {
-        return CreationManager::create();
+        return CrMngPolicy::new_object();
     }
 
     virtual void destroyObject(StreamType* obj) const
     {
-        CreationManager::destroy(obj);
+        CrMngPolicy::delete_object(obj);
     }
 
-    virtual StreamType* copyObject(StreamType* obj) const
+    virtual StreamType* copy(const StreamType* obj) const
     {
-        return CreationManager::createCopy(obj);
+        return CreationManager::new_object(obj);
     }
 
     virtual const ByteArray& typeSignature() const
@@ -203,7 +203,7 @@ private:
 template<
     class BaseObjectStreamerT,
     class AdaptebleObjectStreamerT,
-    class CreationManagerT = typename AdaptebleObjectStreamerT::CreationManager
+    class CrMngPolicyT = typename AdaptebleObjectStreamerT::CrMngPolicy
     >
 class ObjectStreamerAdapter:
     public BaseObjectStreamerT
@@ -214,21 +214,21 @@ public:
     typedef typename BaseObjectStreamerT::StreamType StreamType;
     typedef AdaptebleObjectStreamerT AdaptebleObjectStreamer;
     typedef typename AdaptebleObjectStreamerT::StreamType AdaptebleStreamType;
-    typedef CreationManagerT CreationManager;
+    typedef CrMngPolicyT CrMngPolicy;
 
-    StreamType* createObject() const 
+    StreamType* create() const 
     {
-        return CreationManager::create();
+        return CrMngPolicy::new_object();
     }
 
     void destroyObject(StreamType* obj) const 
     {
-        CreationManager::destroy(obj);
+        CrMngPolicy::delete_object(obj);
     }
 
-    virtual StreamType* copyObject(StreamType* obj) const
+    virtual StreamType* copy(const StreamType* obj) const
     {
-        return CreationManager::createCopy(obj);
+        return CrMngPolicy::new_object(obj);
     }
 
     const ByteArray& typeSignature() const 

@@ -8,14 +8,14 @@ namespace Bikes
 {
 //==============================================================================
 template<class T>
-class SingleCreatorInterface
+class ObjectCreatorInterface
 {
 public:
 
-    virtual T* create() const = 0;
+    virtual T* createObject() const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleCreatorInterface)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreatorInterface)
 };
 //==============================================================================
 template<class T>
@@ -23,7 +23,7 @@ class ArrayCreatorInterface
 {
 public:
 
-    virtual T* create(sznum sz) const = 0;
+    virtual T* createArray(sznum sz) const = 0;
 
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ArrayCreatorInterface)
@@ -31,42 +31,42 @@ protected:
 //==============================================================================
 template<class T>
 class CreatorInterface : 
-    public SingleCreatorInterface<T>,
+    public ObjectCreatorInterface<T>,
     public ArrayCreatorInterface<T>
 {
 public: 
-//  virtual T* create() const = 0;
-//  virtual T* create(sznum sz) const = 0;
+//  virtual T* createObject() const = 0;
+//  virtual T* createArray(sznum sz) const = 0;
 
 protected:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(CreatorInterface)
 };
 //==============================================================================
-template<class SingleCreationPolicyT>
-class SingleCreator : 
-    public SingleCreatorInterface<typename SingleCreationPolicyT::value_type>
+template<class ObjectCreationPolicyT>
+class ObjectCreator : 
+    public ObjectCreatorInterface<typename ObjectCreationPolicyT::value_type>
 {
 public:
-    typedef typename SingleCreationPolicyT::value_type value_type;
+    typedef typename ObjectCreationPolicyT::value_type value_type;
 
-    static const SingleCreator& instance()
+    static const ObjectCreator& instance()
     {
-        static const SingleCreator i;
+        static const ObjectCreator i;
         return i;
     }
 
-    value_type* create() const
+    value_type* createObject() const
     {
-        return new_instance();
+        return new_object();
     }
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return SingleCreationPolicyT::new_instance();
+        return ObjectCreationPolicyT::new_object();
     }
 
 private:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(SingleCreator)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreator)
 };
 //==============================================================================
 template<class ArrayCreationPolicyT>
@@ -82,14 +82,14 @@ public:
         return i;
     }
 
-    value_type* create(sznum sz) const
+    value_type* createArray(sznum sz) const
     {
-        return new_instance(sz);
+        return new_array(sz);
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return ArrayCreationPolicyT::new_instance(sz);
+        return ArrayCreationPolicyT::new_array(sz);
     }
 
 private:
@@ -108,24 +108,24 @@ public:
         return i;
     }
     
-    value_type* create() const
+    value_type* createObject() const
     {        
-        return new_instance();
+        return new_object();
     }
 
-    value_type* create(sznum sz) const
+    value_type* createArray(sznum sz) const
     {
-        return new_instance(sz);
+        return new_array(sz);
     }
 
-    static value_type* new_instance()
+    static value_type* new_object()
     {
-        return CreationPolicyT::new_instance();
+        return CreationPolicyT::new_object();
     }
 
-    static value_type* new_instance(sznum sz)
+    static value_type* new_array(sznum sz)
     {
-        return CreationPolicyT::new_instance(sz);
+        return CreationPolicyT::new_array(sz);
     }
 
 private:
