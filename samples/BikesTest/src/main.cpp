@@ -222,19 +222,16 @@ int main()
     aObj = anyObj.get<ChildAClass>();
     abObj = anyObj.get<AClassBase>();
 
-    anyObj.set<ChildAClass, AClassBase>(ChildAClass::create());
-    /*
+    anyObj.take<ChildAClass, AClassBase>(ChildAClass::create());
+
     aObj = anyObj.get<ChildAClass>();
     abObj = anyObj.get<AClassBase>();
-
 
     std::auto_ptr<int> smrtPtr1(new int(0));
     std::auto_ptr<int> smrtPtr2;
 
     aObj = ChildAClass::create();
 
-    
-    
     AClassBase* aObjPtr1 = 0;
     AClassBase* aObjPtr2 = aObj;
 
@@ -250,7 +247,7 @@ int main()
     BIKES_COUT_VAR(isFinalType(*aObjPtr2));
 
  //   BIKES_COMPILE_TIME_ASSERT(sizeof(char) < sizeof(double))
- */
+
 
     int checkVar = 1;
     try

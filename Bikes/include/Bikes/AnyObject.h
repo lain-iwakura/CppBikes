@@ -265,7 +265,9 @@ public:
         >
     void set(const T& obj)
     {
-        set<T, Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9>(new T(obj));
+        take<T, 
+            Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
+        >(new T(obj));
     }
 
     template< 
@@ -274,7 +276,7 @@ public:
         class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
         class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
         >
-    void set(T* obj)
+    void take(T* obj)
     {
         if (_aObj)
             delete _aObj;
@@ -304,7 +306,7 @@ public:
     template<class T>
     AnyObject& operator = (T* obj)
     {
-        set(obj);
+        take(obj);
         return *this;
     }
 
