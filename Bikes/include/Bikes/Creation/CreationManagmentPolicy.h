@@ -9,17 +9,17 @@ namespace Bikes{
 namespace CreationManagment{
 //==============================================================================
 template<
-    class SignleCreationPolicyT, 
+    class ObjectCreationPolicyT, 
     class ObjectCopyingPolicyT, 
     class ObjectDestructionPolicyT
     >
 struct ObjectUnion
 {
-    typedef typename SignleCreationPolicyT::value_type value_type;
+    typedef typename ObjectCreationPolicyT::value_type value_type;
 
     static value_type* new_object()
     {
-        return SignleCreationPolicyT::new_object();
+        return ObjectCreationPolicyT::new_object();
     }
 
     static value_type* new_object(const value_type* otherObject)
@@ -49,6 +49,16 @@ struct SimpleObject
     CBIKES_NEW_OBJECT_DECLDEF(Creation::ByNew<T>)
     CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ByNew<T>)
     CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ByDelete<T>)
+};
+
+template<class T>
+struct NullObject
+{
+    typedef T value_type;
+
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::NullObject<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::NullObject<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::NullObject<T>)
 };
 
 template<class T>
@@ -85,7 +95,7 @@ struct ArrayUnion
 
     static value_type* new_array(sznum sz)
     {
-        return SignleCreationPolicyT::new_array(sz);
+        return ObjectCreationPolicyT::new_array(sz);
     }
 
     static value_type* new_array(const value_type* otherArray, sznum sz)
@@ -156,7 +166,7 @@ struct UnionBy2Way
             TT::Equal<value_type, typename ArrayUnionT::value_type>
             ::result >();
 
-        return SignleCreationPolicyT::new_array(sz);
+        return ObjectCreationPolicyT::new_array(sz);
     }
 
     static value_type* new_array(const value_type* otherArray, sznum sz)

@@ -12,7 +12,7 @@ public:
     virtual void destroyObject(T* obj) const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectDeleterInterface)
+//    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectDeleterInterface)
 };
 //------------------------------------------------------------------------------	
 template<class T>

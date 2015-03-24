@@ -26,6 +26,13 @@
         __LINE__                                                               \
         );
 
+#define BIKES_ASSERT_NEVER_REACH()                                             \
+    ::Bikes::assertWithException(                                              \
+        false,                                                                 \
+        "never reach faile",                                                   \
+        __FILE__,                                                              \
+        __LINE__                                                               \
+        );
 
 namespace Bikes{
 namespace Exception{    

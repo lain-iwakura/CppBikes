@@ -239,8 +239,8 @@ struct FindMin<Element<T1,T2>, CompareT>
         typename Element<T1, T2>::Head
         ,
         typename MinType<            
-            typename FindMin<typename Element<T1, T2>::Tail,CompareT>::ResultType,
             typename Element<T1, T2>::Head,
+            typename FindMin<typename Element<T1, T2>::Tail,CompareT>::ResultType,
             CompareT
             >::ResultType 
         >::ResultType ResultType;
@@ -261,8 +261,8 @@ struct FindMax<Element<T1, T2>, CompareT>
         typename Element<T1, T2>::Head
         ,
         typename MaxType<            
-            typename FindMax<typename Element<T1, T2>::Tail, CompareT>::ResultType,
             typename Element<T1, T2>::Head,
+            typename FindMax<typename Element<T1, T2>::Tail, CompareT>::ResultType,
             CompareT
             >::ResultType
         >::ResultType ResultType;

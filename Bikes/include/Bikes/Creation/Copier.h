@@ -14,7 +14,8 @@ public:
     virtual T* copyObject(const T* otherObject) const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCopierInterface)
+
+//    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCopierInterface)
 };
 //------------------------------------------------------------------------------
 template<class T>

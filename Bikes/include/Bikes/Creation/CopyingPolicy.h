@@ -53,6 +53,17 @@ struct ObjectByClone
 };
 //------------------------------------------------------------------------------
 template<class T>
+struct NullObject
+{
+    typedef T value_type;
+
+    static T* new_object(const T* otherObject)
+    {
+        return 0;
+    }
+};
+//------------------------------------------------------------------------------
+template<class T>
 struct ObjectBySafetyClone
 {
     typedef T value_type;
