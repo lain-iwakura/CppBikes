@@ -15,7 +15,7 @@ public:
     virtual T* createObject() const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreatorInterface)
+//    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreatorInterface)
 };
 //==============================================================================
 template<class T>
