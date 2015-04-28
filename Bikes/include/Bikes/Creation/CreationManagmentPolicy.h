@@ -72,10 +72,7 @@ struct AbstractObject
 };
 
 template<class T>
-struct PolimorphObject:
-    Creation::ObjectByNew<T>,
-    Copying::ObjectByClone<T>,
-    Destruction::ObjectByDelete<T>
+struct PolimorphObject
 {
     typedef T value_type;
 

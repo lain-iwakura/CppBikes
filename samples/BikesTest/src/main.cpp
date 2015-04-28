@@ -12,6 +12,7 @@
 #include <Bikes/Assert.h>
 #include <Bikes/Conversion.h>
 #include <Bikes/AnyObject.h>
+#include <Bikes/MacrosBikes.h>
 
 //#include <memory>
 
@@ -31,6 +32,9 @@ struct Str
 class AClassBase
 {
 public:
+    virtual ~AClassBase(){}
+
+    virtual AClassBase* clone() const = 0;
 
     virtual bool operator == (int b) const
     {
@@ -44,6 +48,8 @@ class AClass : public AClassBase
 public:
     AClass() :var(42){}
 
+    CBIKES_CLONE_DECLDEF(AClass)
+
     bool operator ==(int b) const
     {
         return b == var;
@@ -56,6 +62,8 @@ private:
 
 class AClass2 : public AClassBase
 {
+public:
+    CBIKES_CLONE_DECLDEF(AClass2)
 };
 
 class ChildAClass : public AClass
@@ -65,6 +73,8 @@ public:
     {
        return new ChildAClass();
     }
+    
+    CBIKES_CLONE_DECLDEF(ChildAClass)
 
     operator bool() const
     {
@@ -80,6 +90,8 @@ private:
 
 class BClass
 {
+public:
+    CBIKES_CLONE_DECLDEF(BClass)
 };
 
 
@@ -87,6 +99,8 @@ class ABClass:
     public AClass, 
     public BClass
 {
+public:
+    CBIKES_CLONE_DECLDEF(ABClass)
 };
 
 typedef TT::TypeStack::Element<
@@ -179,11 +193,6 @@ private:
 };
 
 
-template<class T>
-void testFindBaseT(const T* p1, const T* p2)
-{
-    BIKES_COUT_TYPE(T);
-}
 
 struct BaseType1
 {
@@ -217,15 +226,26 @@ int main()
     ChildAClass* aObj(0);
     AClassBase* abObj(0);
 
-  AnyObject anyObj(ChildAClass::create());
+    {
+        AnyObject anyObj(ChildAClass::create());
 
-    aObj = anyObj.get<ChildAClass>();
-    abObj = anyObj.get<AClassBase>();
+        aObj = anyObj.get<ChildAClass>();
+        abObj = anyObj.get<AClassBase>();
 
-    anyObj.take<ChildAClass, AClassBase>(ChildAClass::create());
+        anyObj.take<ChildAClass, AClassBase>(
+            ChildAClass::create(),
+            ObjectCreationManager<CreationManagment::AbstractObject<ChildAClass>>::instance()
+            );
 
-    aObj = anyObj.get<ChildAClass>();
-    abObj = anyObj.get<AClassBase>();
+        aObj = anyObj.get<ChildAClass>();
+        abObj = anyObj.get<AClassBase>();
+
+        AnyObject anyObjCopy(anyObj);
+
+        aObj = anyObjCopy.get<ChildAClass>();
+        abObj = anyObjCopy.get<AClassBase>();
+        
+    }
 
     std::auto_ptr<int> smrtPtr1(new int(0));
     std::auto_ptr<int> smrtPtr2;
@@ -279,9 +299,6 @@ int main()
 //     }
 
 
-
-    testFindBaseT<AClassBase>((AClass2*)(0), (AClass*)(0));
-
     
     typedef ToTypeStack<AClass2, AClass, ChildAClass, ABClass, AClassBase, AClass>::ResultStack AFamilyStack;
 
@@ -293,7 +310,7 @@ int main()
 
     int c = TT::TypeStack::Count<TStack>::result;
 
-    PRINT_STACK(TStack);
+//    PRINT_STACK(TStack);
 
 
 //    std::vector<int>& arr = TypeStackHolder<TStack, MyStackHolder<int, TStack> >::get();

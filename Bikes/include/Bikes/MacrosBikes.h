@@ -144,8 +144,9 @@
 #define TBIKES_PP8 par1,par2,par3,par4,par5,par6,par7,par8
 #define TBIKES_PP9 par1,par2,par3,par4,par5,par6,par7,par8,par9
 
-#define CBIKES_CLONE_DECLDEF virtual ThisType* clone() const { return new ThisType(*this); }
+#define CBIKES_THISTYPE_CLONE_DECLDEF virtual ThisType* clone() const { return new ThisType(*this); }
 
+#define CBIKES_CLONE_DECLDEF(ClassName) virtual ClassName* clone() const { return new ClassName(*this); }
 
 #define CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ClassName)                      \
 ClassName(){}                                                                  \
