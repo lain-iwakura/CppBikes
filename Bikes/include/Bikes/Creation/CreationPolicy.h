@@ -20,7 +20,7 @@ namespace Bikes{
 namespace Creation{
 //==============================================================================
 template<class T>
-struct ObjectByNew
+struct ByNew
 {
     typedef T value_type;
 
@@ -32,7 +32,7 @@ struct ObjectByNew
 //------------------------------------------------------------------------------
 #if 0
 template<class T>
-struct ObjectByPlacementNew
+struct ByPlacementNew
 {
     typedef T value_type;
 
@@ -46,7 +46,7 @@ struct ObjectByPlacementNew
 #endif
 //------------------------------------------------------------------------------
 template<class T>
-struct NullObject
+struct Null
 {
     typedef T value_type;
 
@@ -93,29 +93,29 @@ struct NullArray
 };
 //==============================================================================
 template<class T>
-struct ByNew
+struct UniounByNew
 {
     typedef T value_type;    
 
-    CBIKES_NEW_OBJECT_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(ByNew<T>)
     CBIKES_NEW_ARRAY_DECLDEF(ArrayByNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ByPlacementNew
+struct UnionByPlacementNew
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(ByNew<T>)
     CBIKES_NEW_ARRAY_DECLDEF(ArrayByPlacementNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct Null
+struct NullUnion
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_DECLDEF(NullObject<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(Null<T>)
     CBIKES_NEW_ARRAY_DECLDEF(NullArray<T>)
 };
 //==============================================================================

@@ -19,7 +19,7 @@ namespace Bikes{
 namespace Destruction{
 //==============================================================================
 template<class T>
-struct ObjectByDelete
+struct ByDelete
 {
     typedef T value_type;
 
@@ -30,7 +30,7 @@ struct ObjectByDelete
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ObjectBySafetyDelete
+struct BySafetyDelete
 {
     typedef T value_type;
 
@@ -42,7 +42,7 @@ struct ObjectBySafetyDelete
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct NullObject
+struct Null
 {
     typedef T value_type;
 
@@ -53,7 +53,7 @@ struct NullObject
 //------------------------------------------------------------------------------
 #if 0
 template<class T>
-struct ObjectByPlacementDelete
+struct ByPlacementDelete
 {
     typedef T value_type;
 
@@ -130,20 +130,20 @@ struct NullArray
 };
 //==============================================================================
 template<class T>
-struct Null
+struct NullUnion
 {
     typedef T value_type;
 
-    CBIKES_DELETE_OBJECT_DECLDEF(NullObject<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Null<T>)
     CBIKES_DELETE_ARRAY_DECLDEF(NullArray<T>)
 };
 //==============================================================================
 template<class T>
-struct ByDelete
+struct UnionByDelete
 {
     typedef T value_type;
 
-    CBIKES_DELETE_OBJECT_DECLDEF(ObjectByDelete<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(ByDelete<T>)
     CBIKES_DELETE_ARRAY_DECLDEF(ArrayByDelete<T>)
 };
 //==============================================================================
@@ -166,7 +166,4 @@ struct Union
 //==============================================================================
 } // DestructionPolicy
 } // Bikes
-
-
-
 #endif // <- INCLUDE_BIKES_CREATION_DESTRUCTIONPOLICY_H

@@ -52,13 +52,13 @@ struct SimpleObject
 };
 
 template<class T>
-struct NullObject
+struct Null
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_DECLDEF(Creation::NullObject<T>)
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::NullObject<T>)
-    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::NullObject<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::Null<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::Null<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::Null<T>)
 };
 
 template<class T>
@@ -66,9 +66,9 @@ struct AbstractObject
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_DECLDEF(Creation::NullObject<T>)
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ObjectBySafetyClone<T>)
-    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ObjectBySafetyDelete<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::Null<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::BySafetyClone<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::BySafetyDelete<T>)
 };
 
 template<class T>
@@ -76,9 +76,9 @@ struct PolimorphObject
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_DECLDEF(Creation::ObjectByNew<T>)
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ObjectByClone<T>)
-    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ObjectByDelete<T>)
+    CBIKES_NEW_OBJECT_DECLDEF(Creation::ByNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(Copying::ByClone<T>)
+    CBIKES_DELETE_OBJECT_DECLDEF(Destruction::ByDelete<T>)
 };
 //==============================================================================
 template<

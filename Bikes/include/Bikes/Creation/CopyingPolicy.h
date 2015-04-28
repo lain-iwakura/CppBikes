@@ -18,7 +18,7 @@ namespace Bikes{
 namespace Copying{
 //==============================================================================
 template<class T>
-struct ObjectByNew
+struct ByNew
 {    
     typedef T value_type;
 
@@ -29,7 +29,7 @@ struct ObjectByNew
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ObjectBySafetyNew
+struct BySafetyNew
 {
     typedef T value_type;
 
@@ -42,7 +42,7 @@ struct ObjectBySafetyNew
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ObjectByClone
+struct ByClone
 {
     typedef T value_type;
 
@@ -53,7 +53,7 @@ struct ObjectByClone
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct NullObject
+struct Null
 {
     typedef T value_type;
 
@@ -64,7 +64,7 @@ struct NullObject
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ObjectBySafetyClone
+struct BySafetyClone
 {
     typedef T value_type;
 
@@ -78,7 +78,7 @@ struct ObjectBySafetyClone
 //------------------------------------------------------------------------------
 #if 0
 template<class T>
-struct ObjectByPlacementNew
+struct ByPlacementNew
 {
     typedef T value_type;
 
@@ -153,40 +153,40 @@ struct ArrayBySafetyPlacementNew // copying with T()
 };
 //==============================================================================
 template<class T>
-struct ByNew
+struct UnionByNew
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ByNew<T>)
     CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayByNew<T>)
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct BySafetyNew 
+struct UnionBySafetyNew 
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectBySafetyNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(BySafetyNew<T>)
     CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayBySafetyNew<T>)
 
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ByPlacementNew
+struct UnionByPlacementNew
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByNew<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ByNew<T>)
     CBIKES_NEW_ARRAY_CPY_DECLDEF(ArrayByPlacementNew<T>)
 
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct ByClone
+struct UnionByClone
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectByClone<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(ByClone<T>)
 
     static T* new_array(const T* otherArray, sznum sz)
     {
@@ -199,11 +199,11 @@ struct ByClone
 };
 //------------------------------------------------------------------------------
 template<class T>
-struct BySafetyClone
+struct UnionBySafetyClone
 {
     typedef T value_type;
 
-    CBIKES_NEW_OBJECT_CPY_DECLDEF(ObjectBySafetyClone<T>)
+    CBIKES_NEW_OBJECT_CPY_DECLDEF(BySafetyClone<T>)
 
     static T* new_array(const T* otherArray, sznum sz)
     {
