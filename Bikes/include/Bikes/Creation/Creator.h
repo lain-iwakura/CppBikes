@@ -8,54 +8,41 @@ namespace Bikes
 {
 //==============================================================================
 template<class T>
-class ObjectCreatorInterface
+class ICreator
 {
 public:
 
-    virtual T* createObject() const = 0;
+    virtual T* create() const = 0;
 
 protected:
-//    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreatorInterface)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ICreator)
 };
 //==============================================================================
 template<class T>
-class ArrayCreatorInterface
+class IArrayCreator
 {
 public:
 
     virtual T* createArray(sznum sz) const = 0;
 
 protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ArrayCreatorInterface)
-};
-//==============================================================================
-template<class T>
-class CreatorInterface : 
-    public ObjectCreatorInterface<T>,
-    public ArrayCreatorInterface<T>
-{
-public: 
-//  virtual T* createObject() const = 0;
-//  virtual T* createArray(sznum sz) const = 0;
-
-protected:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(CreatorInterface)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(IArrayCreator)
 };
 //==============================================================================
 template<class ObjectCreationPolicyT>
-class ObjectCreator : 
-    public ObjectCreatorInterface<typename ObjectCreationPolicyT::value_type>
+class Creator : 
+    public ICreator<typename ObjectCreationPolicyT::value_type>
 {
 public:
     typedef typename ObjectCreationPolicyT::value_type value_type;
 
-    static const ObjectCreator& instance()
+    static const Creator& instance()
     {
-        static const ObjectCreator i;
+        static const Creator i;
         return i;
     }
 
-    value_type* createObject() const
+    value_type* create() const
     {
         return new_object();
     }
@@ -66,12 +53,12 @@ public:
     }
 
 private:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ObjectCreator)
+    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(Creator)
 };
 //==============================================================================
 template<class ArrayCreationPolicyT>
 class ArrayCreator : 
-    public ArrayCreatorInterface<typename ArrayCreationPolicyT::value_type>
+    public IArrayCreator<typename ArrayCreationPolicyT::value_type>
 {
 public:
     typedef typename ArrayCreationPolicyT::value_type value_type;
@@ -94,42 +81,6 @@ public:
 
 private:
     CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(ArrayCreator)
-};
-//==============================================================================
-template<class CreationPolicyT>
-class Creator : public CreatorInterface<typename CreationPolicyT::value_type>
-{
-public:
-    typedef typename CreationPolicyT::value_type value_type;
-
-    static const ArrayCreator& instance()
-    {
-        static const Creator i;
-        return i;
-    }
-    
-    value_type* createObject() const
-    {        
-        return new_object();
-    }
-
-    value_type* createArray(sznum sz) const
-    {
-        return new_array(sz);
-    }
-
-    static value_type* new_object()
-    {
-        return CreationPolicyT::new_object();
-    }
-
-    static value_type* new_array(sznum sz)
-    {
-        return CreationPolicyT::new_array(sz);
-    }
-
-private:
-    CBIKES_DEFAULTDEFINITIONS_NULL_DECLDEF(Creator)
 };
 //==============================================================================
 }

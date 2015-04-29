@@ -92,50 +92,6 @@ struct NullArray
     }
 };
 //==============================================================================
-template<class T>
-struct UniounByNew
-{
-    typedef T value_type;    
-
-    CBIKES_NEW_OBJECT_DECLDEF(ByNew<T>)
-    CBIKES_NEW_ARRAY_DECLDEF(ArrayByNew<T>)
-};
-//------------------------------------------------------------------------------
-template<class T>
-struct UnionByPlacementNew
-{
-    typedef T value_type;
-
-    CBIKES_NEW_OBJECT_DECLDEF(ByNew<T>)
-    CBIKES_NEW_ARRAY_DECLDEF(ArrayByPlacementNew<T>)
-};
-//------------------------------------------------------------------------------
-template<class T>
-struct NullUnion
-{
-    typedef T value_type;
-
-    CBIKES_NEW_OBJECT_DECLDEF(Null<T>)
-    CBIKES_NEW_ARRAY_DECLDEF(NullArray<T>)
-};
-//==============================================================================
-template<class ObjectCreationPolicyT, class ArrayCreationPolicyT>
-struct Union
-{
-    typedef typename ObjectCreationPolicyT::value_type value_type;
-
-    static value_type* new_object()
-    {
-        return ObjectCreationPolicyT::new_object();
-    }
-
-    static value_type* new_array(sznum sz)
-    {
-        StaticAssert<TT::Equal<value_type, ArrayCreationPolicyT::value_type>::result>();
-        return ArrayCreationPolicyT::new_array(sz);
-    }
-};
-//==============================================================================
 } // CreationPolicy
 } // Bikes
 

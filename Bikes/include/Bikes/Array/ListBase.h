@@ -10,7 +10,7 @@ template<class T> class ListConstIterator;
 template<class T> class ListIterator;
 template<
     class T, 
-    class CreationManagmentT = CreationManagment::SimpleObject<T> 
+    class CreationManagmentT = CreationManagment::Simple<T> 
     > class List;
 //------------------------------------------------------------------------------
 template<class T>

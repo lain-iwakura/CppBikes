@@ -7,7 +7,7 @@ namespace Bikes{
 //------------------------------------------------------------------------------
 template<
     class T,
-	class CreationManagmentT //= CreationManagment::SimpleObject<T> 
+	class CreationManagmentT //= CreationManagment::Simple<T> 
 	>
 class List: public ListBase<T> 
 {

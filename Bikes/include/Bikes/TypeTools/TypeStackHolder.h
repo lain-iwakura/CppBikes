@@ -10,8 +10,8 @@ namespace TT{
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class ChildCreationManagmentT = CreationManagment::PolimorphObject,
-    class BaseCreationManagmentT = CreationManagment::AbstractObject<ObjectBaseT>
+    template<class> class ChildCreationManagmentT = CreationManagment::Polimorph,
+    class BaseCreationManagmentT = CreationManagment::Abstract<ObjectBaseT>
     >
 class ConstObjectsHolder
 {
@@ -61,8 +61,8 @@ private:
 template<
     class StackT,
     class ObjectBaseT = typename TT::TypeStack::FindMax<StackT, CompareByHierrarchy>::ResultType,
-    template<class> class ChildCreationManagmentT = CreationManagment::PolimorphObject,
-    class BaseCreationManagmentT = CreationManagment::AbstractObject<ObjectBaseT>
+    template<class> class ChildCreationManagmentT = CreationManagment::Polimorph,
+    class BaseCreationManagmentT = CreationManagment::Abstract<ObjectBaseT>
     >
 class ObjectsHolder
 {

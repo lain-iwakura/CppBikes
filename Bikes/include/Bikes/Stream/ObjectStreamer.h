@@ -40,7 +40,7 @@ public:
 
     virtual StreamType* create() const = 0;
 
-    virtual void destroyObject(StreamType* obj) const = 0;
+    virtual void destroy(StreamType* obj) const = 0;
     
     virtual StreamType* copy(const StreamType* obj) const = 0;    
 
@@ -60,7 +60,7 @@ public:
 //==============================================================================
 template<
     class StreamTypeT,
-    class CrMngPolicyT = CreationManagment::SimpleObject<StreamTypeT>
+    class CrMngPolicyT = CreationManagment::Simple<StreamTypeT>
 >
 class ObjectStreamer : public ObjectStreamerInterface<StreamTypeT>
 {
@@ -131,7 +131,7 @@ public:
             }
             catch(...)
             {
-                destroyObject(obj);
+                destroy(obj);
                 throw;
             }
         }
@@ -156,14 +156,14 @@ public:
         return CrMngPolicy::new_object();
     }
 
-    virtual void destroyObject(StreamType* obj) const
+    virtual void destroy(StreamType* obj) const
     {
         CrMngPolicy::delete_object(obj);
     }
 
     virtual StreamType* copy(const StreamType* obj) const
     {
-        return CreationManager::new_object(obj);
+        return MultiCreationManager::new_object(obj);
     }
 
     virtual const ByteArray& typeSignature() const
@@ -221,7 +221,7 @@ public:
         return CrMngPolicy::new_object();
     }
 
-    void destroyObject(StreamType* obj) const 
+    void destroy(StreamType* obj) const 
     {
         CrMngPolicy::delete_object(obj);
     }

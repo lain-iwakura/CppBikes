@@ -36,7 +36,7 @@ public:
 
     virtual const ObjectType* get() const = 0;
 
-    virtual const CreationManagerInterface<T>* getCreationManagerInterface() const = 0;
+    virtual const ICreationManager<T>* getCreationManager() = 0;
 };
 //==============================================================================
 template<class T, class HintT>
@@ -66,7 +66,7 @@ public:
         return 0;
     }
 
-    const CreationManagerInterface<HintT>* getCreationManagerInterface() const
+    const ICreationManager<HintT>* getCreationManager() 
     {
         const AnyObjectInterface<T>* p =
             dynamic_cast<const AnyObjectInterface<T>*>(this);
@@ -109,7 +109,7 @@ public:
         return optimum_cast<const ObjectType*>(AnyObjectHolder<T, TT::NullType>::get());
     }
 
-    const CreationManagerInterface<HintT>* getCreationManagerInterface() const
+    const ICreationManager<HintT>* getCreationManager() 
     {
         return 0; //?
     }
@@ -126,14 +126,14 @@ public:
 
     typedef T ObjectType;
 
-    AnyObjectHolder(T* pObj, const ObjectCreationManagerInterface<T>& crMng) :
+    AnyObjectHolder(T* pObj, const ICreationManager<T>& crMng) :
         _obj(pObj),
         _crMng(&crMng)
     {
     }
 
     AnyObjectHolder(const ThisType& other) :
-        _obj(( other._obj && other._crMng) ? (other._crMng->copyObject(other._obj)) : (0)), //?
+        _obj(( other._obj && other._crMng) ? (other._crMng->copy(other._obj)) : (0)), //?
         _crMng(other._crMng)
     {
     }
@@ -141,7 +141,7 @@ public:
     virtual ~AnyObjectHolder()
     {
         if (_obj)
-            _crMng->destroyObject(_obj);
+            _crMng->destroy(_obj);
     }
 
     ObjectType* get()
@@ -164,7 +164,7 @@ public:
         return _obj;
     }
 
-    const CreationManagerInterface<T>* getCreationManagerInterface() const
+    const ICreationManager<T>* getCreationManager() 
     {
         return 0; //_crMng;
     }
@@ -176,7 +176,7 @@ public:
    
 private:
     T* _obj;
-    const ObjectCreationManagerInterface<T>* _crMng;
+    const ICreationManager<T>* _crMng;
 };
 //------------------------------------------------------------------------------
 template<class T, class T1, class T2>
@@ -188,7 +188,7 @@ public:
 
     typedef AnyObjectHolder<T, TT::TypeStack::Element<T1, T2> > ThisType;
 
-    AnyObjectHolder(T *pObj, const ObjectCreationManagerInterface<T>& crMng) :
+    AnyObjectHolder(T *pObj, const ICreationManager<T>& crMng) :
         AnyObjectHolder<T, typename TT::TypeStack::Element<T1, T2>::Tail>(pObj, crMng)
     {}
 
@@ -198,7 +198,7 @@ public:
     }
 };
 //==============================================================================
-}
+} // Inner
 //==============================================================================
 class AnyObject
 {
@@ -255,12 +255,12 @@ public:
     }
 
     template<class T>
-    const ObjectCreationManagerInterface<T>* getCreationManagerInterface() const
+    const ICreationManager<T>* getCreationManager() const
     {
         const Inner::AnyObjectInterface<T>* p =
             dynamic_cast<const Inner::AnyObjectInterface<T>*>(_aObj);
         if (p)
-            return p->getCreationManagerInterface();
+            return p->getCreationManager();
         return 0;
     }
 
@@ -313,7 +313,7 @@ public:
     {
         set<T, 
             Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(obj, ObjectCreationManager<CreationManagment::SimpleObject<T> >::instance());
+        >(obj, CreationManager<CreationManagment::Simple<T> >::instance());
     }
 
     template< 
@@ -322,11 +322,11 @@ public:
         class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
         class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
         >
-    void set(const T& obj, const ObjectCreationManagerInterface<T>& crMng)
+    void set(const T& obj, const ICreationManager<T>& crMng)
     {
         take<T, 
             Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(crMng.copyObject(&obj),crMng);
+        >(crMng.copy(&obj),crMng);
     }
         
     template< 
@@ -339,7 +339,7 @@ public:
     {
         take<T,
             Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(obj, ObjectCreationManager<CreationManagment::SimpleObject<T> >::instance());
+        >(obj, CreationManager<CreationManagment::Simple<T> >::instance());
     }
 
     template<
@@ -348,7 +348,7 @@ public:
         class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
         class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
     >
-    void take(T* obj, const ObjectCreationManagerInterface<T>& crMng)
+    void take(T* obj, const ICreationManager<T>& crMng)
     {
         if (_aObj)
             delete _aObj;

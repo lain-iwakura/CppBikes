@@ -234,7 +234,7 @@ int main()
 
         anyObj.take<ChildAClass, AClassBase>(
             ChildAClass::create(),
-            ObjectCreationManager<CreationManagment::AbstractObject<ChildAClass>>::instance()
+            CreationManager<CreationManagment::Abstract<ChildAClass> >::instance()
             );
 
         aObj = anyObj.get<ChildAClass>();

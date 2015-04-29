@@ -129,41 +129,6 @@ struct NullArray
     }
 };
 //==============================================================================
-template<class T>
-struct NullUnion
-{
-    typedef T value_type;
-
-    CBIKES_DELETE_OBJECT_DECLDEF(Null<T>)
-    CBIKES_DELETE_ARRAY_DECLDEF(NullArray<T>)
-};
-//==============================================================================
-template<class T>
-struct UnionByDelete
-{
-    typedef T value_type;
-
-    CBIKES_DELETE_OBJECT_DECLDEF(ByDelete<T>)
-    CBIKES_DELETE_ARRAY_DECLDEF(ArrayByDelete<T>)
-};
-//==============================================================================
-template<class ObjectDestructionPolicyT, class ArrayDestructionPolicyT>
-struct Union
-{
-    typedef typename ObjectDestructionPolicyT::value_type value_type;
-
-    static void delete_object(value_type* obj)
-    {
-        ObjectDestructionPolicyT::delete_object(obj);
-    }
-
-    static void delete_array(value_type* obj, sznum sz)
-    {
-        StaticAssert<TT::Equal<value_type, typename ArrayDestructionPolicyT::value_type>::result>()
-        ObjectDestructionPolicyT::delete_array(obj, sz);
-    }
-};
-//==============================================================================
 } // DestructionPolicy
 } // Bikes
 #endif // <- INCLUDE_BIKES_CREATION_DESTRUCTIONPOLICY_H

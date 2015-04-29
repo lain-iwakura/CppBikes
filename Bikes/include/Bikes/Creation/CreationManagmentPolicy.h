@@ -13,7 +13,7 @@ template<
     class ObjectCopyingPolicyT, 
     class ObjectDestructionPolicyT
     >
-struct ObjectUnion
+struct Union
 {
     typedef typename ObjectCreationPolicyT::value_type value_type;
 
@@ -42,7 +42,7 @@ struct ObjectUnion
 };
 //==============================================================================
 template<class T>
-struct SimpleObject
+struct Simple
 {
     typedef T value_type;
 
@@ -62,7 +62,7 @@ struct Null
 };
 
 template<class T>
-struct AbstractObject
+struct Abstract
 {
     typedef T value_type;
 
@@ -72,7 +72,7 @@ struct AbstractObject
 };
 
 template<class T>
-struct PolimorphObject
+struct Polimorph
 {
     typedef T value_type;
 
@@ -132,113 +132,6 @@ struct PlacementArray
     CBIKES_NEW_ARRAY_DECLDEF(Creation::ArrayByPlacementNew<T>)
     CBIKES_NEW_ARRAY_CPY_DECLDEF(Copying::ArrayByPlacementNew<T>)
     CBIKES_DELETE_ARRAY_DECLDEF(Destruction::ArrayByPlacementDelete<T>)
-};
-//==============================================================================
-template<
-    class ObjectUnionT, 
-    class ArrayUnionT
-    >
-struct UnionBy2Way
-{
-    typedef typename ObjectUnionT::value_type value_type;
-
-    static value_type* new_object()
-    {
-        return ObjectUnionT::new_object();
-    }
-
-    static value_type* new_object(const value_type* otherObject)
-    {
-        return ObjectUnionT::new_object(otherObject);
-    }
-
-    static void delete_object(value_type* object)
-    {
-        ObjectUnionT::delete_object(object);
-    }
-
-    static value_type* new_array(sznum sz)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename ArrayUnionT::value_type>
-            ::result >();
-
-        return ObjectCreationPolicyT::new_array(sz);
-    }
-
-    static value_type* new_array(const value_type* otherArray, sznum sz)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename ArrayUnionT::value_type>
-            ::result >();
-
-        return ArrayUnionT::new_array(otherArray, sz);
-    }
-
-    static void delete_array(value_type* arr, sznum sz)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename ArrayUnionT::value_type>
-            ::result >();
-
-        ArrayUnionT::delete_array(arr, sz);
-    }
-};
-//==============================================================================
-template<
-    class CreationUnionT, 
-    class CopyingUnionT,
-    class DestructionUnionT
-    >
-struct UnionBy3Way
-{
-    typedef typename CreationUnionT::value_type value_type;
-
-    static value_type* new_object()
-    {
-        return CreationUnionT::new_object();
-    }
-
-    static value_type* new_object(const value_type* otherObject)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename CopyingUnionT::value_type>
-            ::result >();
-
-        return CopyingUnionT::new_object(otherObject);
-    }
-
-    static void delete_object(value_type* object)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename DestructionUnionT::value_type>
-            ::result >();
-
-        DestructionUnionT::delete_object(object);
-    }
-
-    static value_type* new_array(sznum sz)
-    {
-        return CreationUnionT::new_array(sz);
-    }
-
-    static value_type* new_array(const value_type* otherArray, sznum sz)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename CopyingUnionT::value_type>
-            ::result >();
-
-        return CopyingUnionT::new_array(otherArray, sz);
-    }
-
-    static void delete_array(value_type* arr, sznum sz)
-    {
-        StaticAssert<
-            TT::Equal<value_type, typename DestructionUnionT::value_type>
-            ::result >();
-
-        DestructionUnionT::delete_array(arr, sz);
-    }
 };
 //==============================================================================
 }

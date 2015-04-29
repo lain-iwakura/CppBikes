@@ -23,7 +23,7 @@ namespace Inner{
 template<class AbstractTypeT>
 struct ToPolymorphicSingleStreamer
 {
-    typedef ObjectStreamer < AbstractTypeT, CreationManagment::AbstractObject<AbstractTypeT> >
+    typedef ObjectStreamer < AbstractTypeT, CreationManagment::Abstract<AbstractTypeT> >
         BaseObjectStreamer;
 
     template<class StreamerTypeT>
