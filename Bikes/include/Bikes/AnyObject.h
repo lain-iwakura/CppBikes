@@ -46,6 +46,20 @@ public:
 
     typedef HintT ObjectType;
 
+    AnyObjectWrapper():_cm(0)
+    {
+    }
+
+    AnyObjectWrapper(const AnyObjectWrapper& other) :_cm(0)
+    {
+    }
+
+    ~AnyObjectWrapper()
+    {
+        if (_cm)
+            delete _cm;
+    }
+    
     HintT* get()
     {
         AnyObjectInterface<T>* p =
@@ -68,16 +82,21 @@ public:
 
     const ICreationManager<HintT>* getCreationManager() 
     {
-        const AnyObjectInterface<T>* p =
-            dynamic_cast<const AnyObjectInterface<T>*>(this);
-
-        if (p)
+        if (!_cm)
         {
-           // getCreationManagerInterface()
-             //...
+            AnyObjectInterface<T>* p =
+                dynamic_cast<AnyObjectInterface<T>*>(this);
+            if (p)
+            {
+                const ICreationManager<T>* cm0 = p->getCreationManager();
+                if(cm0)
+                    _cm = new CreationManagerWrapper<T, HintT>(cm0);
+            }
         }
-        return 0;
+        return _cm;
     }
+private:
+    CreationManagerWrapper<T, HintT>* _cm;
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -95,9 +114,11 @@ public:
 
     typedef HintT ObjectType;
 
-    AnyObjectHolder(T *pObj) :
-        AnyObjectHolder<T, TT::NullType>(pObj)
-    {}
+    AnyObjectHolder(T *pObj, const ICreationManager<T>& crMng) :
+        AnyObjectHolder<T, TT::NullType>(pObj,crMng),
+        _cm(&crMng)
+    {
+    }
 
     virtual ObjectType* get()
     {
@@ -111,8 +132,22 @@ public:
 
     const ICreationManager<HintT>* getCreationManager() 
     {
-        return 0; //?
+        if (!_cm)
+        {
+            ICreationManager<T>* cm0 = AnyObjectHolder<T, TT::NullType>::getCreationManager();
+            if (cm0)
+                _cm = new CreationManagerWrapper<T, HintT>(cm0);           
+        }
+        return _cm;
     }
+
+    AnyObjectBase* clone() const
+    {
+        return new AnyObjectHolder(*this);
+    }
+
+private:
+    CreationManagerWrapper<T, HintT> _cm;
 };
 //------------------------------------------------------------------------------
 template<class T>
@@ -166,7 +201,7 @@ public:
 
     const ICreationManager<T>* getCreationManager() 
     {
-        return 0; //_crMng;
+        return _crMng;
     }
 
     AnyObjectBase* clone() const
@@ -257,8 +292,8 @@ public:
     template<class T>
     const ICreationManager<T>* getCreationManager() const
     {
-        const Inner::AnyObjectInterface<T>* p =
-            dynamic_cast<const Inner::AnyObjectInterface<T>*>(_aObj);
+        Inner::AnyObjectInterface<T>* p =
+            dynamic_cast<Inner::AnyObjectInterface<T>*>(_aObj);
         if (p)
             return p->getCreationManager();
         return 0;

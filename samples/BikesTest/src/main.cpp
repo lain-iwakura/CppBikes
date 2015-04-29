@@ -240,6 +240,11 @@ int main()
         aObj = anyObj.get<ChildAClass>();
         abObj = anyObj.get<AClassBase>();
 
+        const auto* crMng = anyObj.getCreationManager<AClassBase>();
+
+        crMng->create();
+        crMng->destroy(crMng->copy(abObj));
+
         AnyObject anyObjCopy(anyObj);
 
         aObj = anyObjCopy.get<ChildAClass>();
