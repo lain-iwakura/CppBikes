@@ -23,6 +23,8 @@ public:
     virtual void* getVoid() = 0;
 
     virtual const void* getVoid() const = 0;
+
+    virtual sznum getSize() const = 0;
 };
 //==============================================================================
 template<class T>
@@ -199,6 +201,11 @@ public:
         return _obj;
     }
 
+    sznum getSize() const
+    {
+        return sizeof(T);
+    }
+
     const ICreationManager<T>* getCreationManager() 
     {
         return _crMng;
@@ -310,6 +317,13 @@ public:
     {
         if (_aObj)
             return _aObj->getVoid();
+        return 0;
+    }
+
+    sznum getSize() const
+    {
+        if (_aObj)
+            return _aObj->getSize();
         return 0;
     }
 
