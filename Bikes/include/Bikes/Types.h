@@ -31,13 +31,6 @@ namespace Bikes
 
 	typedef rnum tannum;
 
-	enum ApproximationMethodType
-	{
-		ApproxMethod_avg,
-		ApproxMethod_max,
-		ApproxMethod_min        
-	};
-
 	enum ValSign
 	{
 		positiveSign,
