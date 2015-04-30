@@ -146,8 +146,9 @@ bool isEqualAngle(rnum a1, rnum a2, rnum O /*= ANGLE_O*/)
 rnum normalDistribution( rnum x )
 {
 	static const rnum m = 1.0/sqrt(PIm2);
+    static const rnum sqre = sqrt(E);
 
-	return m*pow(E,-x*x/2.0);
+	return m*pow(sqre,-x*x);
 }
 
 
