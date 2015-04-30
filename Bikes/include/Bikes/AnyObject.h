@@ -267,7 +267,7 @@ public:
     AnyObject(T* obj) :
         _aObj(0)
     {
-        set(obj);
+        take(obj);
     }
 
     ~AnyObject()
@@ -421,6 +421,19 @@ public:
     AnyObject& operator = (T* obj)
     {
         take(obj);
+        return *this;
+    }
+
+    AnyObject& operator= (const AnyObject& other)
+    {
+        if (_aObj)
+            delete _aObj;
+
+        if (other._aObj)
+            _aObj = other._aObj->clone();
+        else
+            _aObj = 0;
+
         return *this;
     }
 
