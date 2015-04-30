@@ -227,7 +227,10 @@ int main()
     AClassBase* abObj(0);
 
     {
-        AnyObject anyObj(ChildAClass::create());
+        AnyObject anyObj(
+            ChildAClass::create(),
+            CreationManager<CreationManagment::Abstract<ChildAClass> >::instance()
+            );
 
         aObj = anyObj.get<ChildAClass>();
         abObj = anyObj.get<AClassBase>();

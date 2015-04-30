@@ -264,10 +264,25 @@ public:
     }
 
     template<class T>
+    AnyObject(const T& obj,const ICreationManager<T>& crMng) :
+        _aObj(0)
+    {
+        set(obj,crMng);
+    }
+
+
+    template<class T>
     AnyObject(T* obj) :
         _aObj(0)
     {
         take(obj);
+    }
+
+    template<class T>
+    AnyObject(T* obj, const ICreationManager<T>& crMng) :
+        _aObj(0)
+    {
+        take(obj,crMng);
     }
 
     ~AnyObject()
