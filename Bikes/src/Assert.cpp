@@ -5,7 +5,7 @@ namespace Bikes{
 namespace Exception{
     
 
-AssertionFaild::AssertionFaild(
+AssertionFailed::AssertionFailed(
     const std::string& msg, 
     const std::string& atFile /*= std::string()*/, 
     int atLine /*= -1 */
@@ -27,14 +27,14 @@ AssertionFaild::AssertionFaild(
     }
 }
 
-AssertionFaild::AssertionFaild() :
+AssertionFailed::AssertionFailed() :
     BikesException("AssertionFaild", std::string()),
     _line(-1)
 {
 }
 
 
-AssertionFaild::AssertionFaild(
+AssertionFailed::AssertionFailed(
     const std::string& exceptionName,
     const std::string& msg,
     const std::string& atFile,
@@ -55,12 +55,12 @@ AssertionFaild::AssertionFaild(
     }
 }
 
-int AssertionFaild::line() const throw()
+int AssertionFailed::line() const throw()
 {
     return _line;
 }
 
-const std::string& AssertionFaild::file() const throw()
+const std::string& AssertionFailed::file() const throw()
 {
     return _file;
 }

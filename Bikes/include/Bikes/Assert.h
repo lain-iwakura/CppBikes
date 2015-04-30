@@ -29,7 +29,7 @@
 #define BIKES_ASSERT_NEVER_REACH()                                             \
     ::Bikes::assertWithException(                                              \
         false,                                                                 \
-        "never reach faile",                                                   \
+        "never reach assertion failed",                                        \
         __FILE__,                                                              \
         __LINE__                                                               \
         );
@@ -37,13 +37,13 @@
 namespace Bikes{
 namespace Exception{    
 
-class AssertionFaild : public BikesException
+class AssertionFailed : public BikesException
 {
 public:
 
-    AssertionFaild();
+    AssertionFailed();
 
-    AssertionFaild(
+    AssertionFailed(
         const std::string& msg, 
         const std::string& atFile = std::string(), 
         int atLine = -1
@@ -55,7 +55,7 @@ public:
 
 protected:
 
-    AssertionFaild(
+    AssertionFailed(
         const std::string& exceptionName,
         const std::string& msg,
         const std::string& atFile,
@@ -98,7 +98,7 @@ private:
                                                                                \
     };
 
-BIKES_ASSERTEXCEPTION_DECLDEF(InvalidInstance, AssertionFaild)
+BIKES_ASSERTEXCEPTION_DECLDEF(InvalidInstance, AssertionFailed)
 
 } // Exception
 
@@ -141,7 +141,7 @@ inline void assertWithException(
     )
 {
     if(!assertion)
-        throw Exception::AssertionFaild(msg,atFile,atLine);
+        throw Exception::AssertionFailed(msg,atFile,atLine);
 }
 
 template<class T>
