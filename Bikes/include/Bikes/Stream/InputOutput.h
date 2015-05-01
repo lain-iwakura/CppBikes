@@ -1,16 +1,16 @@
-#ifndef INCLUDE_BIKES_STREAM_INOUTINTERFACE_H
-#define INCLUDE_BIKES_STREAM_INOUTINTERFACE_H
+#ifndef INCLUDE_BIKES_STREAM_INPUTOUTPUT_H
+#define INCLUDE_BIKES_STREAM_INPUTOUTPUT_H
 
 #include <Bikes/Types.h>
 
 namespace Bikes
 {
 
-class InOutInterface
+class InputOutput
 {
 public:
 
-    virtual ~InOutInterface()
+    virtual ~InputOutput()
     {
     }
 
@@ -52,4 +52,4 @@ public:
 
 
 }
-#endif // <- INCLUDE_BIKES_STREAM_INOUTINTERFACE_H
+#endif // <- INCLUDE_BIKES_STREAM_INPUTOUTPUT_H

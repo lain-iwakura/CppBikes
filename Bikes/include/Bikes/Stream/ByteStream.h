@@ -2,8 +2,8 @@
 #define INCLUDE_BIKES_STREAM_BYTESTREAM_H
 
 #include <Bikes/Types.h>
-#include <Bikes/Stream/StreamerInterface.h>
-#include <Bikes/Stream/InOutInterface.h>
+#include <Bikes/Stream/IStreamer.h>
+#include <Bikes/Stream/InputOutput.h>
 
 namespace Bikes
 {
@@ -11,7 +11,7 @@ namespace Bikes
 	class ByteArray;
     	
 //=========================================================================
-	class ByteStream: public InOutInterface
+	class ByteStream: public InputOutput
 	{
 	public:
 
@@ -19,11 +19,11 @@ namespace Bikes
 
 		ByteStream();
 
-		ByteStream(InOutInterface* io);
+		ByteStream(InputOutput* io);
 
-		void setIO(InOutInterface* io);		
+		void setIO(InputOutput* io);		
 
-		InOutInterface* getIO() const;
+		InputOutput* getIO() const;
 		
 
 		template<class T>
@@ -53,7 +53,7 @@ namespace Bikes
     		readValue(val);
 		}
 
-        void read(const StreamerInterface& si)
+        void read(const IStreamer& si)
 		{
             si.read(*this);
 		}
@@ -72,7 +72,7 @@ namespace Bikes
 		    writeValue(val);
 		}
 
-        void write(const StreamerInterface& si)
+        void write(const IStreamer& si)
         {
             si.write(*this);
         }
@@ -83,7 +83,7 @@ namespace Bikes
 			writeBytes(reinterpret_cast<const char*>(&val),sizeof(T));
 		}
 
-        // InOutInterface ->
+        // InputOutput ->
 		void readBytes(char *bt, sznum btSize);
 
 		void writeBytes(const char *bt, sznum btSize);
@@ -97,7 +97,7 @@ namespace Bikes
         bool setPosition(sznum pos);
 
         sznum getPosition() const;
-        // <- InOutInterface
+        // <- InputOutput
 
         void read(bool &val);
         void read(char &val);

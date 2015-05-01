@@ -74,7 +74,7 @@ AbstractUnsignedValueStreamer* uvalStreamerFor(sznum val)
 class ByteStreamData
 {
 public:
-	ByteStreamData(InOutInterface* _io=0) :io(_io)
+	ByteStreamData(InputOutput* _io=0) :io(_io)
 	{
 	}
 
@@ -83,7 +83,7 @@ public:
 	void takeRecurrentData(ByteArray* data);
 
 
-	InOutInterface *io;
+	InputOutput *io;
 	List<ByteArray> recData;
 	List< vector<sznum> > indexMap;
 };
@@ -139,20 +139,20 @@ _d(new ByteStreamData)
 }
 
 
-ByteStream::ByteStream( InOutInterface* io ):
+ByteStream::ByteStream( InputOutput* io ):
 _d(new ByteStreamData(io))
 {
 }
 
 
-void ByteStream::setIO( InOutInterface* io)
+void ByteStream::setIO( InputOutput* io)
 {		
 	_d->io=io;
 	_d->recData.clear();
 	_d->indexMap.clear();
 }
 
-InOutInterface* ByteStream::getIO() const
+InputOutput* ByteStream::getIO() const
 {
 	return _d->io;
 }

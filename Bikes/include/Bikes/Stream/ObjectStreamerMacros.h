@@ -42,7 +42,7 @@ private:                                                                       \
     {                                                                          \
         _AuxReader(Bikes::ByteStream *_bs) :bs(_bs){}                          \
         template<class T> void add(T &var) const{ bs->read(var); }             \
-        void add(const Bikes::StreamerInterface& str) const { bs->read(str); } \
+        void add(const Bikes::IStreamer& str) const { bs->read(str); } \
         void read(StreamerName::StreamType& obj)                               \
         {                                                                      \
             INNERBIKES_OBJ_ACCES_ALIASES(StreamerName::StreamType)             \
@@ -152,7 +152,7 @@ private:                                                                       \
         {                                                                      \
             bs->read(var);                                                     \
         }                                                                      \
-        void add(const Bikes::StreamerInterface& str) const                    \
+        void add(const Bikes::IStreamer& str) const                    \
         {                                                                      \
             bs->read(str);                                                     \
         }                                                                      \
@@ -270,17 +270,17 @@ private:																	\
 	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DECL(AbstractTypeStreamerName,TypeStreamerName)\
 	namespace Aux															\
 	{																		\
-		typedef AbstractTypeStreamerName TypeStreamerName_##StreamerInterface;\
+		typedef AbstractTypeStreamerName TypeStreamerName_##IStreamer;\
 	}
 
 
 #define BIKES_TYPESTREAMER_DEF_EXTENDED(TypeStreamerName, TypeClass, ValAccessList, PostReadAction)\
 	BIKES_OBJECTSTREAMER_DEF_EXTENDED(TypeStreamerName,TypeClass,ValAccessList,PostReadAction)\
-	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DEF(Aux::TypeStreamerName_##StreamerInterface,TypeStreamerName)
+	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DEF(Aux::TypeStreamerName_##IStreamer,TypeStreamerName)
 
 #define BIKES_TYPESTREAMER_DEF(TypeStreamerName, TypeClass, ValAccessList)\
 	BIKES_OBJECTSTREAMER_DEF(TypeStreamerName,TypeClass)\
-	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DEF(Aux::TypeStreamerName_##StreamerInterface,TypeStreamerName)
+	BIKES_ABSTRACTTYPESTREAMER_ADDSTREAMER_DEF(Aux::TypeStreamerName_##IStreamer,TypeStreamerName)
 	
 //=========================================================================
 

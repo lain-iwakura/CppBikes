@@ -9,13 +9,13 @@ namespace Exception{
 class StreamException;
 }
 
-class InOutInterface;
+class InputOutput;
 
 class StreamPositionSaver
 {
 public:
 
-    StreamPositionSaver(InOutInterface* io);
+    StreamPositionSaver(InputOutput* io);
     
     void save();
 
@@ -24,7 +24,7 @@ public:
     bool tryRestore(Exception::StreamException& strEx) const;
 
 private:
-    InOutInterface* _io;
+    InputOutput* _io;
     sznum _spos;
 };
 

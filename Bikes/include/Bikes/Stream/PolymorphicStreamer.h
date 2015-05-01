@@ -4,15 +4,15 @@
 #include <Bikes/Stream/ByteStream.h>
 #include <Bikes/Stream/ObjectStreamer.h>
 #include <Bikes/Stream/ObjectStreamerMacros.h>
-#include <Bikes/Stream/StreamerInterface.h>
-#include <vector>
-#include <map>
-#include <memory>
+#include <Bikes/Stream/IStreamer.h>
 #include <Bikes/TypeTools/Info.h>
 #include <Bikes/TypeTools/ToTypeStack.h>
 #include <Bikes/TypeTools/TypeStackHolder.h>
+#include <Bikes/Conversion.h>
 
-#include <memory>
+#include <vector>
+#include <map>
+//#include <memory>
 
 
 namespace Bikes
@@ -71,7 +71,7 @@ class PolymorphicStreamer:
 
     typedef TT::ConstObjectsHolder<
         PolymorphicStreamerStack,
-        ObjectStreamerInterface<AbstractTypeT>
+        IObjectStreamer<AbstractTypeT>
         > 
         PolymorphicStreamerHolderBase;
 
@@ -113,9 +113,7 @@ public:
     {
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
 
-        //BIKES_CHECK_INSTANCE(ptrObj)
-
-        const AbstractType* pObj = getPtr(ptrObj);
+        const AbstractType* pObj = getPtr<const AbstractType*>(ptrObj);
 
         BIKES_CHECK_INSTANCE(pObj);
 
@@ -144,11 +142,6 @@ public:
 
 
 private:
-
-    static const AbstractType* getPtr(const AbstractTypePtrT& pAObj)
-    {
-        return &(*pAObj);
-    }
 };
 /*
 template<
@@ -369,7 +362,7 @@ public:
 
 
 template<class TypesCollection>
-class MultiTypeStreamer: public StreamerInterface
+class MultiTypeStreamer: public IStreamer
 {
 public:
 
@@ -455,7 +448,7 @@ public:
     }
 
 private:
-    Ptr<StreamerInterface>::Auto curStr;
+    Ptr<IStreamer>::Auto curStr;
     static std::vector<Ptr<AbstractOneTypeStreamerCreator>::Shared > strCreators;
 };
 

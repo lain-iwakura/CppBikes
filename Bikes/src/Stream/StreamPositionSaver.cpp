@@ -5,7 +5,7 @@
 namespace Bikes
 {
 
-StreamPositionSaver::StreamPositionSaver(InOutInterface* io) :
+StreamPositionSaver::StreamPositionSaver(InputOutput* io) :
     _io(io),
     _spos(io->getPosition())
 {

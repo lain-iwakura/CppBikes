@@ -1,16 +1,16 @@
-#ifndef INCLUDE_BIKES_STREAM_STREAMERINTERFACE_H
-#define INCLUDE_BIKES_STREAM_STREAMERINTERFACE_H
+#ifndef INCLUDE_BIKES_STREAM_ISTREAMER_H
+#define INCLUDE_BIKES_STREAM_ISTREAMER_H
 
 namespace Bikes
 {
 
 class ByteStream;
 
-class StreamerInterface
+class IStreamer
 {
 public:
 
-    virtual ~StreamerInterface()
+    virtual ~IStreamer()
     {
     }
 
@@ -32,4 +32,4 @@ public:
 }
 
 
-#endif // <- INCLUDE_BIKES_STREAM_STREAMERINTERFACE_H
+#endif // <- INCLUDE_BIKES_STREAM_ISTREAMER_H

@@ -1,7 +1,7 @@
 #ifndef INCLUDE_BIKES_ARRAY_BYTEARRAY_H
 #define INCLUDE_BIKES_ARRAY_BYTEARRAY_H
 
-#include <Bikes/Stream/InOutInterface.h>
+#include <Bikes/Stream/InputOutput.h>
 #include <Bikes/Array/RawArray.h>
 
 namespace Bikes
@@ -13,7 +13,7 @@ namespace Bikes
 	}
     
 class ByteArray: 
-    public InOutInterface, 
+    public InputOutput, 
     public RawArray<char>
 {	
 public:

@@ -1,7 +1,7 @@
 #ifndef INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H
 #define INCLUDE_BIKES_STREAM_ABSTRACTOBJECTSTREAMER_H
 
-#include <Bikes/Stream/StreamerInterface.h>
+#include <Bikes/Stream/IStreamer.h>
 #include <Bikes/Creation/CreationManager.h>
 #include <Bikes/TypeTools/Info.h>
 #include <Bikes/Stream/StreamException.h>
@@ -11,14 +11,14 @@ namespace Bikes
 {
 
 template<class StreamTypeT>
-class ObjectStreamerInterface: public StreamerInterface
+class IObjectStreamer: public IStreamer
 {
 public:
 
     typedef StreamTypeT StreamType;
-    typedef ObjectStreamerInterface<StreamTypeT> ThisType;
+    typedef IObjectStreamer<StreamTypeT> ThisType;
 
-    virtual ~ObjectStreamerInterface()
+    virtual ~IObjectStreamer()
     {
     }
 
@@ -62,7 +62,7 @@ template<
     class StreamTypeT,
     class CrMngPolicyT = CreationManagment::Simple<StreamTypeT>
 >
-class ObjectStreamer : public ObjectStreamerInterface<StreamTypeT>
+class ObjectStreamer : public IObjectStreamer<StreamTypeT>
 {
 public:
 
