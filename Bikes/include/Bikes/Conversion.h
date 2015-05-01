@@ -51,6 +51,12 @@ ToTypePtr optimum_cast(FromType* p)
         >::cast(p);
 }
 //==============================================================================
+template<class ToPtr, class FromPtr>
+ToPtr getPtr(FromPtr& p)
+{
+    return &(*p);
+}
+//==============================================================================
 }
 
 #endif // <- INCLUDE_BIKES_CONVERSION_H
