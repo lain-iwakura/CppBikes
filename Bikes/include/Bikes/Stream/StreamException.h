@@ -36,20 +36,24 @@ private:
     friend class StreamPositionSaver;
 };
 
-#define BIKES_STREAMEXCEPTION_DECLDEF(EsceptionName,BaseException)             \
+#define BIKES_STREAMEXCEPTION_DECLDEF(ExceptionName,BaseException)             \
 class ExceptionName : public BaseException                                     \
 {                                                                              \
 public:                                                                        \
                                                                                \
     ExceptionName():                                                           \
-        BaseException("ExceptionName","",false)                                \
+        BaseException(#ExceptionName,"",false)                                 \
     {}                                                                         \
                                                                                \
     ExceptionName(                                                             \
         const std::string& exceptionMessage,                                   \
         bool _positionRestored                                                 \
         ):                                                                     \
-        BaseException("ExceptionName", exceptionMessage, _positionRestored)    \
+        BaseException(                                                         \
+            std::string(#ExceptionName),                                       \
+            exceptionMessage,                                                  \
+            _positionRestored                                                  \
+            )                                                                  \
     {}                                                                         \
                                                                                \
 protected:                                                                     \
@@ -60,7 +64,7 @@ protected:                                                                     \
         bool _positionRestored                                                 \
         ):                                                                     \
         BaseException(                                                         \
-            "ExceptionName : " + exceptionName,                                \
+        std::string(#ExceptionName) + " : " + exceptionName,                   \
             exceptionMessage,                                                  \
             _positionRestored                                                  \
             )                                                                  \
