@@ -102,11 +102,40 @@ public:
 
     void read(ByteStream& bs, AbstractTypePtrT& pAObj) const
     {
+        StreamPositionSaver sp0(&bs);
+
         PolymorphicStreamerArray& pstr = PolymorphicStreamerHolder::get();
 
         ByteArray typeSign;
         bs.readRecurrentData(typeSign);
+        StreamPositionSaver sp1(&bs);
 
+        for (PolymorphicStreamerArray::iterator s = pstr.begin(); s != pstr.end(); ++s)
+        {
+            if(s->signature() == typeSign)
+            {
+                try
+                {
+                    pAObj = AbstractTypePtrT(s->readAndCreate(bs));
+                    return;
+                }
+                catch (Exception::StreamException& e)
+                {
+                    if ((!e.positionRestored()) && (!sp1.tryRestore(e)))
+                        throw;
+                }
+                catch (std::exception& e)
+                {
+                    if (!sp1.tryRestore())
+                        throw;
+                }
+            }
+        }
+
+        throw UnexpectedStreamType(
+            std::string(typeSign.data()),
+            sp0.tryRestore();
+            );
     }
 
     void write(ByteStream& bs, const AbstractTypePtrT& ptrObj) const
@@ -131,7 +160,7 @@ public:
                  if ( (!e.positionRestored()) &&  (!sp.tryRestore(e)) )
                      throw;
             }
-            catch(BikesException& e)
+            catch (std::exception& e)
             {
                 if (!sp.tryRestore())
                     throw;
