@@ -9,66 +9,28 @@
 
 namespace Bikes
 {
-
-template<class StreamTypeT>
-class IObjectStreamer: public IStreamer
-{
-public:
-
-    typedef StreamTypeT StreamType;
-    typedef IObjectStreamer<StreamTypeT> ThisType;
-
-    virtual ~IObjectStreamer()
-    {
-    }
-
-    virtual  void setObject(StreamType& obj) = 0;
-
-    virtual void setObject(const StreamType& obj) = 0;
-
-    virtual StreamType* rObject() const = 0;
-
-    virtual const StreamType* wObject() const = 0;
-
-    virtual void read(ByteStream& bs) const = 0;
-
-    virtual StreamType* readAndCreate(ByteStream& bs) const = 0;
-
-    virtual void write(ByteStream& bs) const = 0;
-
-    virtual void writeWhithSign(ByteStream& bs) const = 0;    
-
-    virtual StreamType* create() const = 0;
-
-    virtual void destroy(StreamType* obj) const = 0;
-    
-    virtual StreamType* copy(const StreamType* obj) const = 0;    
-
-    virtual const ByteArray& typeSignature() const = 0;    
-
-    virtual ThisType* clone() const = 0;
-
-//protected:
-
-    virtual void read(ByteStream& bs, StreamType& obj) const = 0;    
-
-    virtual void write(ByteStream& bs, const StreamType& obj) const = 0;
-
-    virtual void writeWithSign(ByteStream& bs, const StreamType& obj) const = 0;
-
-};
 //==============================================================================
+#define BIKES_OBJECTSTREAMER_CONSTRUCTORS_DECLDEF(ThisObjectStreamer,BaseStreamer)\
+    explicit ThisObjectStreamer(StreamType& obj) :                             \
+        BaseStreamer(obj)                                                      \
+    {}                                                                         \
+    explicit ThisObjectStreamer(const StreamType& obj) :                       \
+        BaseStreamer(obj)                                                      \
+    {}
+//------------------------------------------------------------------------------
 template<
     class StreamTypeT,
     class CrMngPolicyT = CreationManagment::Simple<StreamTypeT>
 >
-class ObjectStreamer : public IObjectStreamer<StreamTypeT>
+class ObjectStreamer : 
+    public IStreamer,
+    public ICreationManager<StreamTypeT>
 {
 public:
 
     typedef StreamTypeT StreamType;
     typedef ObjectStreamer<StreamTypeT, CrMngPolicyT> ThisType;
-    typedef CrMngPolicyT CrMngPolicy;
+    typedef CrMngPolicyT CreationManagmentPolicy;
 
     ObjectStreamer():
         obj_w(0), 
@@ -119,6 +81,33 @@ public:
         BIKES_CHECK_INSTANCE(obj_r);
         read(bs, *obj_r);
     }
+     
+    void write(ByteStream& bs) const
+    {
+        BIKES_CHECK_INSTANCE(obj_w);
+        write(bs, *obj_w);
+    }
+
+    StreamType* create() const
+    {
+        return CreationManagmentPolicy::new_object();
+    }
+
+    void destroy(StreamType* obj) const
+    {
+        CreationManagmentPolicy::delete_object(obj);
+    }
+
+    StreamType* copy(const StreamType* obj) const
+    {
+        return CreationManagmentPolicy::new_object(obj);
+    }
+
+    virtual const ByteArray& signature() const
+    {
+        static const ByteArray sig(TT::Info<StreamType>::name);
+        return sig;
+    }
 
     virtual StreamType* readAndCreate(ByteStream& bs) const //?
     {
@@ -129,7 +118,7 @@ public:
             {
                 read(bs, *obj);
             }
-            catch(...)
+            catch (std::exception&)
             {
                 destroy(obj);
                 throw;
@@ -137,39 +126,11 @@ public:
         }
         return obj;
     }
-    
-    void write(ByteStream& bs) const
-    {
-        BIKES_CHECK_INSTANCE(obj_w);
-        write(bs, *obj_w);
-
-    }
 
     void writeWhithSign(ByteStream& bs) const
     {
         BIKES_CHECK_INSTANCE(obj_w);
         writeWhithSign(bs, *obj_w);
-    }
-
-    virtual StreamType* create() const
-    {
-        return CrMngPolicy::new_object();
-    }
-
-    virtual void destroy(StreamType* obj) const
-    {
-        CrMngPolicy::delete_object(obj);
-    }
-
-    virtual StreamType* copy(const StreamType* obj) const
-    {
-        return MultiCreationManager::new_object(obj);
-    }
-
-    virtual const ByteArray& typeSignature() const
-    {
-        static const ByteArray sig(TT::Info<StreamType>::name);
-        return sig;
     }
         
     virtual ThisType* clone() const //?
@@ -179,19 +140,13 @@ public:
 
 //protected:
 
-    virtual void read(ByteStream& bs, StreamType& obj) const
-    {
-        bs >> obj;
-    }
+    virtual void read(ByteStream& bs, StreamType& obj) const = 0;
 
-    virtual void write(ByteStream& bs, const StreamType& obj) const
-    {
-        bs << obj;
-    }
+    virtual void write(ByteStream& bs, const StreamType& obj) const = 0;
 
     virtual void writeWithSign(ByteStream& bs, const StreamType& obj) const
     {        
-        bs.writeRecurrentData(typeSignature());
+        bs.writeRecurrentData(signature());
         write(bs, obj);
     }
 
@@ -216,6 +171,8 @@ public:
     typedef typename AdaptebleObjectStreamerT::StreamType AdaptebleStreamType;
     typedef CrMngPolicyT CrMngPolicy;
 
+    BIKES_OBJECTSTREAMER_CONSTRUCTORS_DECLDEF(ObjectStreamerAdapter,BaseObjectStreamerT)
+
     StreamType* create() const 
     {
         return CrMngPolicy::new_object();
@@ -231,14 +188,14 @@ public:
         return CrMngPolicy::new_object(obj);
     }
 
-    const ByteArray& typeSignature() const 
+    const ByteArray& signature() const 
     {
-        return _objStr.typeSignature();
+        return _objStr.signature();
     }
 
     void read(ByteStream&bs, StreamType& obj) const 
     {
-        if (AdaptebleStreamType* adObj = dynamic_cast<AdaptebleStreamType*>(&obj))
+        if (AdaptebleStreamType* adObj = optimum_cast<AdaptebleStreamType*>(&obj))
             _objStr.read(bs, *adObj);
         else
             unexpectedType(obj);
@@ -246,7 +203,7 @@ public:
 
     void write(ByteStream& bs, const StreamType& obj) const 
     {
-        if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
+        if (const AdaptebleStreamType* adObj = optimum_cast<const AdaptebleStreamType*>(&obj))
             _objStr.write(bs, *adObj);
         else
             unexpectedType(obj);
@@ -254,18 +211,8 @@ public:
 
     void writeWhithSign(ByteStream& bs, const StreamType& obj) const 
     {
-        if (const AdaptebleStreamType* adObj = dynamic_cast<const AdaptebleStreamType*>(&obj))
-        {
-            StreamPositionSaver sp(&bs);            
-            try{
-                bs.writeRecurrentData(typeSignature());
-                _objStr.write(bs, *adObj);
-            }
-            catch(Exception::StreamException& e){
-                sp.tryRestore(e);
-                throw;
-            }
-        }
+        if (const AdaptebleStreamType* adObj = optimum_cast<const AdaptebleStreamType*>(&obj))
+            _objStr.writeWhithSign(bs, *adObj);   
         else
             unexpectedType(obj);
     }
@@ -278,11 +225,8 @@ protected:
     }
 
 private:
-    static const AdaptebleObjectStreamer _objStr;
+    const AdaptebleObjectStreamer _objStr;
 };
-
-template< class B, class A, class C >
-const A ObjectStreamerAdapter<B, A, C >::_objStr;
 
 }
 

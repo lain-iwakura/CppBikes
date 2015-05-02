@@ -23,9 +23,8 @@ class UnsignedValueStreamer : public AbstractUnsignedValueStreamer
 {
 public:
 
-	sznum maxNumber() const	{
-		static const sznum mn = intPow<sznum,sznum>(2, sizeof(T)*8) - 1;
-		return mn;
+	sznum maxNumber() const	{		
+        return std::numeric_limits<T>::max();
 	}
 
 	void read(ByteStream& bs, sznum& rval) const{
@@ -358,36 +357,4 @@ Bikes::sznum ByteStream::getPosition() const
     return _d->io->getPosition();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-}
+} //Bikes
