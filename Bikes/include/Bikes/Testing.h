@@ -22,10 +22,10 @@
     }
 
 #define BIKES_COUT_VAR(VAR)                                                    \
-    cout << #VAR << " = " << (VAR) << endl << endl;
+    std::cout << #VAR << " = " << (VAR) << std::endl << std::endl;
 
 #define BIKES_COUT_TYPE(T)                                                    \
-    cout << #T << " = " << typeid(T()).name() << endl << endl;
+    std::cout << #T << " = " << typeid(T()).name() << std::endl << std::endl;
 
 	
 #endif // <- INCLUDE_BIKES_TESTING_H

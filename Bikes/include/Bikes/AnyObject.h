@@ -7,8 +7,6 @@
 #include <Bikes/MacrosBikes.h>
 #include <Bikes/Creation/CreationManager.h>
 
-#include <memory>
-
 namespace Bikes{
 namespace Inner{
 //==============================================================================
@@ -367,61 +365,66 @@ public:
         return defaultValue;
     }
 
-    template< 
-        class T, 
-        class Hint1 = TT::NullType, class Hint2 = TT::NullType, class Hint3 = TT::NullType, 
-        class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
-        class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
-        >
+    template<class T>
     void set(const T& obj)
     {
-        set<T, 
-            Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(obj, CreationManager<CreationManagment::Simple<T> >::instance());
+        set<T>(obj, CreationManager<CreationManagment::Simple<T> >::instance());
     }
 
-    template< 
-        class T, 
-        class Hint1 = TT::NullType, class Hint2 = TT::NullType, class Hint3 = TT::NullType, 
-        class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
-        class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
-        >
+    template<class HintTypeStackT, class T>
+    void setWithHints(const T& obj)
+    {
+        setWithHints<HintTypeStackT,T>(
+            obj,
+            CreationManager<CreationManagment::Simple<T> >::instance()
+            );
+    }
+
+    template<class T>
     void set(const T& obj, const ICreationManager<T>& crMng)
     {
-        take<T, 
-            Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(crMng.copy(&obj),crMng);
-    }
-        
-    template< 
-        class T, 
-        class Hint1 = TT::NullType, class Hint2 = TT::NullType, class Hint3 = TT::NullType, 
-        class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
-        class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
-        >
-    void take(T* obj)
-    {
-        take<T,
-            Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-        >(obj, CreationManager<CreationManagment::Simple<T> >::instance());
+        take<T>(crMng.copy(&obj),crMng);
     }
 
-    template<
-        class T,
-        class Hint1 = TT::NullType, class Hint2 = TT::NullType, class Hint3 = TT::NullType,
-        class Hint4 = TT::NullType, class Hint5 = TT::NullType, class Hint6 = TT::NullType,
-        class Hint7 = TT::NullType, class Hint8 = TT::NullType, class Hint9 = TT::NullType
-    >
+    template<class HintTypeStackT, class T>
+    void setWithHints(const T& obj, const ICreationManager<T>& crMng)
+    {
+        takeWithHints<HintTypeStackT,T>(crMng.copy(&obj),crMng);
+    }
+        
+    template<class T>
+    void take(T* obj)
+    {
+        take<T>(obj, CreationManager<CreationManagment::Simple<T> >::instance());
+    }
+
+    template<class HintTypeStackT,  class T>
+    void takeWithHints(T* obj)
+    {
+        take<HintTypeStackT, T>(
+            obj,CreationManager<CreationManagment::Simple<T> >::instance()
+            );
+    }
+
+
+    template<class T >
     void take(T* obj, const ICreationManager<T>& crMng)
     {
         if (_aObj)
             delete _aObj;
 
-            _aObj = new Inner::AnyObjectHolder<
-                T,
-                typename TT::ToTypeStack<
-                Hint1, Hint2, Hint3, Hint4, Hint5, Hint6, Hint7, Hint8, Hint9
-                >::ResultStack
+        _aObj = new Inner::AnyObjectHolder<T,TT::NullType>(obj,crMng);
+    }
+
+    template<class HintTypeStackT,  class T>
+    void takeWithHints(T* obj, const ICreationManager<T>& crMng)
+    {
+        if (_aObj)
+            delete _aObj;
+
+        _aObj = new Inner::AnyObjectHolder<
+            T,
+            TT::ToTypeStack<HintTypeStackT>::ResultStack
             >(obj,crMng);
     }
 

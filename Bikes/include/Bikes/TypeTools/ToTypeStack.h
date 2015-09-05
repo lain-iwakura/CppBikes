@@ -34,10 +34,10 @@ struct ToStackToStack
 {
     typedef T ResultStack;
 };
-template<class T1, class T2>
-struct ToStackToStack<ToTypeStack<T1, T2> >
+template<TBIKES_CT9>
+struct ToStackToStack<ToTypeStack<TBIKES_TT9> >
 {
-    typedef typename ToTypeStack<T1, T2>::ResultStack ResultStack;
+    typedef typename ToTypeStack<TBIKES_TT9>::ResultStack ResultStack;
 };
 }
 //============================================================================== 

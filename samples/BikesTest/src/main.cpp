@@ -222,9 +222,15 @@ struct ChildType12 : public ChildType1, public ChildType2
 using namespace std;
 int main()
 {
+    test_virtualclass();
+
+    return 0;
+    test_stream();
 
     ChildAClass* aObj(0);
     AClassBase* abObj(0);
+    AClass* _aObj(0);
+    BClass* bObj(0);
 
     {
         AnyObject anyObj(
@@ -235,18 +241,32 @@ int main()
         aObj = anyObj.get<ChildAClass>();
         abObj = anyObj.get<AClassBase>();
 
-        anyObj.take<ChildAClass, AClassBase>(
+        anyObj.takeWithHints<TT::ToTypeStack<AClassBase,AClass,BClass> >(
             ChildAClass::create(),
             CreationManager<CreationManagment::Abstract<ChildAClass> >::instance()
             );
 
         aObj = anyObj.get<ChildAClass>();
+        _aObj = anyObj.get<AClass>();
+        bObj = anyObj.get<BClass>();
         abObj = anyObj.get<AClassBase>();
 
-        const auto* crMng = anyObj.getCreationManager<AClassBase>();
+        const auto* crMng = anyObj.getCreationManager<BClass>();
 
         crMng->create();
-        crMng->destroy(crMng->copy(abObj));
+        crMng->destroy(crMng->copy(bObj));
+
+        anyObj.take(
+            ChildAClass::create(),
+            CreationManager<CreationManagment::Abstract<ChildAClass> >::instance()
+            );
+
+        aObj = anyObj.get<ChildAClass>();
+        _aObj = anyObj.get<AClass>();
+        bObj = anyObj.get<BClass>();
+        abObj = anyObj.get<AClassBase>();
+
+      
 
         AnyObject anyObjCopy(anyObj);
 
