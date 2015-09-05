@@ -7,8 +7,7 @@
 namespace Bikes
 {
 class VectorPair;
-
-
+//==============================================================================
 class IConstBasis
 {
 public:
@@ -20,7 +19,7 @@ public:
     virtual Vector const& k() const = 0;
 
 };
-
+//==============================================================================
 class IBasis: public IConstBasis
 {
 public:
@@ -31,43 +30,85 @@ public:
     virtual Vector& j() = 0;
     virtual Vector& k() = 0;
 
+    virtual void normalize();
+
+    virtual void setScale(rnum scale);
+
+    virtual void scale(rnum scaleFactor);
+
+    virtual void setRightOrtonormal(const Vector& vi, const Vector& vj);
+
+    virtual void setRightOrtonormal(const VectorPair& ij);
+
+    virtual void setLeftOrtonormal(const Vector& vi, const Vector& vj);
+
+    virtual void setLeftOrtonormal(const VectorPair& ij);
 };
-
-class Basis //: public IBasis
+//==============================================================================
+class Basis: public IBasis
 {
-public:
-	Vector i;
-	Vector j;
-	Vector k;
-
 	Basis(const Vector& vi, const Vector& vj, const Vector& vk);	
 
 	Basis(const VectorPair& pair_ij, const Vector& vk);
 
 	Basis(const Vector& vi, const VectorPair& pair_jk);
 
-	Basis(const Basis& ijk);
+    Basis(const IConstBasis& ijk);
 
 	Basis(const Vector& vi, const Vector& vj, bool right=true);
 
 	Basis(const VectorPair& pair_ij, bool right=true);
 
-	virtual ~Basis();
+    Vector const& i() const;
+    Vector const& j() const;
+    Vector const& k() const;
 
-	void normalize();
+    Vector& i();
+    Vector& j();
+    Vector& k();
 
-	void setScale(rnum scale);
-
-	void scaling(rnum scaleFactor);
-
-	void setOrtonormalByIJ(const Vector& vi, const Vector& vj, bool right=true);
-
-	void setOrtonormalByIJ(const VectorPair& ij, bool right=true);
-
+protected:
+    Vector _i;
+    Vector _j;
+    Vector _k;
 };
+//==============================================================================
+class TransientConstBasis: public IConstBasis
+{
+public:
 
+    TransientConstBasis(const Vector& vi, const Vector& vj, const Vector& vk);
 
+    Vector const& i() const;
+    Vector const& j() const;
+    Vector const& k() const;    
 
+protected:
+    const Vector& _i;
+    const Vector& _j;
+    const Vector& _k;
+};
+//==============================================================================
+class TransientBasis : public IBasis
+{
+public:
+
+    TransientBasis(Vector& vi, Vector& vj, Vector& vk);
+
+    Vector const& i() const;
+    Vector const& j() const;
+    Vector const& k() const;
+
+    Vector& i();
+    Vector& j();
+    Vector& k();
+
+protected:
+    Vector& _i;
+    Vector& _j;
+    Vector& _k;
+};
+//==============================================================================
 }
 
 #endif // <- INCLUDE_BIKES_GEOM_BASIS_H

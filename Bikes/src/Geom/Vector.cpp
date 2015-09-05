@@ -8,153 +8,157 @@ namespace Bikes
 {
 //=============================================================================
 Vector::Vector( rnum globalX /*= 0*/, rnum globalY /*= 0*/, rnum globalZ /*= 0*/ ):
-	gx(globalX),
-	gy(globalY),
-	gz(globalZ)
+	_gx(globalX),
+	_gy(globalY),
+	_gz(globalZ)
 {
 }
 //-----------------------------------------------------------------------------
-Vector::Vector( rnum localX, rnum localY, rnum localZ, const Basis& b ):
-	gx ( b.i.gx*localX + b.j.gx*localY + b.k.gx*localZ ),
-	gy ( b.i.gy*localX + b.j.gy*localY + b.k.gy*localZ ),
-	gz ( b.i.gz*localX + b.j.gz*localY + b.k.gz*localZ )
+Vector::Vector(rnum localX, rnum localY, rnum localZ, const IConstBasis& b) :
+	_gx ( b.i()._gx*localX + b.j()._gx*localY + b.k()._gx*localZ ),
+	_gy ( b.i()._gy*localX + b.j()._gy*localY + b.k()._gy*localZ ),
+	_gz ( b.i()._gz*localX + b.j()._gz*localY + b.k()._gz*localZ )
 {	
 }
 //-----------------------------------------------------------------------------
 Vector::Vector( const Point &p1, const Point &p2 ):
-	gx( p2.gx - p1.gx ),
-	gy( p2.gy - p1.gy ),
-	gz( p2.gz - p1.gz )
+	_gx( p2._gx - p1._gx ),
+	_gy( p2._gy - p1._gy ),
+	_gz( p2._gz - p1._gz )
 {
 }
 //-----------------------------------------------------------------------------
 Vector::Vector( const Vector &v ):
-	gx(v.gx),
-	gy(v.gy),
-	gz(v.gz)
+	_gx(v._gx),
+	_gy(v._gy),
+	_gz(v._gz)
 {
 	//?
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator=( const Vector &v )
 {
-	gx = v.gx;
-	gy = v.gy;
-	gz = v.gz;
+	_gx = v._gx;
+	_gy = v._gy;
+	_gz = v._gz;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector::~Vector()
 {	
 }
-//=============================================================================
+//==============================================================================
+rnum& Vector::rx()
+{
+    return _gx;
+}
+//-----------------------------------------------------------------------------
+rnum& Vector::ry()
+{
+    return _gy;
+}
+//-----------------------------------------------------------------------------
+rnum& Vector::rz()
+{
+    return _gz;
+}
+//==============================================================================
 rnum Vector::x() const
 {
-	return gx;
+	return _gx;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::x( const Basis &b ) const
+rnum Vector::lx(const IConstBasis &b) const
 {
-	return b.i.gx*gx + b.i.gy*gy + b.i.gz*gz;
+    const Vector&i = b.i();
+	return i._gx*_gx + i._gy*_gy + i._gz*_gz;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::x( const Basis *b ) const
+rnum Vector::lx(const IConstBasis *b) const
 {
-	if(b)
-		return b->i.gx*gx + b->i.gy*gy + b->i.gz*gz;
-	return gx;
+    if (b)
+        return lx(*b);
+	return _gx;
 }
 //-----------------------------------------------------------------------------
 rnum Vector::y() const
 {
-	return gy;
+	return _gy;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::y( const Basis &b ) const
+rnum Vector::ly(const IConstBasis &b) const
 {
-	return b.j.gx*gx + b.j.gy*gy + b.j.gz*gz;
+    const Vector&j = b.j();
+	return j._gx*_gx + j._gy*_gy + j._gz*_gz;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::y( const Basis *b ) const
+rnum Vector::ly(const IConstBasis *b) const
 {
-	if(b)
-		return b->j.gx*gx + b->j.gy*gy + b->j.gz*gz;
-	return gy;
+    if (b)
+        return ly(*b);
+	return _gy;
 }
 //-----------------------------------------------------------------------------
 rnum Vector::z() const
 {
-	return gz;
+	return _gz;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::z( const Basis &b ) const
+rnum Vector::lz(const IConstBasis &b) const
 {
-	return b.k.gx*gx + b.k.gy*gy + b.k.gz*gz;
+    const Vector&k = b.k();
+	return k._gx*_gx + k._gy*_gy + k._gz*_gz;
 }
 //-----------------------------------------------------------------------------
-rnum Vector::z( const Basis *b ) const
+rnum Vector::lz( const Basis *b ) const
 {
 	if(b)
-		return b->k.gx*gx + b->k.gy*gy + b->k.gz*gz;
-	return gz;
+		return b->k._gx*_gx + b->k._gy*_gy + b->k._gz*_gz;
+	return _gz;
 }
 //=============================================================================
 void Vector::setGlobal( rnum globalX, rnum globalY, rnum globalZ )
 {
-	gx = globalX;
-	gy = globalY;
-	gz = globalZ;
+	_gx = globalX;
+	_gy = globalY;
+	_gz = globalZ;
 }
 //-----------------------------------------------------------------------------
-void Vector::setLocal( rnum localX, rnum localY, rnum localZ )
+void Vector::setLocal(rnum localX, rnum localY, rnum localZ, const IConstBasis& b)
 {
-	setGlobal(localX,localY,localZ);
+    const Vector& i = b.i();
+    const Vector& j = b.j();
+    const Vector& k = b.k();
+	_gx = i._gx*localX + j._gx*localY + k._gx*localZ;
+	_gy = i._gy*localX + j._gy*localY + k._gy*localZ;
+	_gz = i._gz*localX + j._gz*localY + k._gz*localZ;
 }
 //-----------------------------------------------------------------------------
-void Vector::setLocal( rnum localX, rnum localY, rnum localZ, const Basis& b )
-{
-	gx = b.i.gx*localX + b.j.gx*localY + b.k.gx*localZ;
-	gy = b.i.gy*localX + b.j.gy*localY + b.k.gy*localZ;
-	gz = b.i.gz*localX + b.j.gz*localY + b.k.gz*localZ;
-}
-//-----------------------------------------------------------------------------
-void Vector::setLocalX( rnum localX )
-{
-	gx = localX;
-}
-//-----------------------------------------------------------------------------
-void Vector::setLocalX( rnum localX, const Basis& b )
+void Vector::setLocalX(rnum localX, const IConstBasis& b)
 {	
-	rnum dx = localX - ( b.i.gx*gx + b.i.gy*gy + b.i.gz*gz );
-	gx += b.i.gx*dx; 
-	gy += b.i.gy*dx;
-	gz += b.i.gz*dx;
+    const Vector& i = b.i();
+	rnum dx = localX - ( i._gx*_gx + i._gy*_gy + i._gz*_gz );
+	_gx += i._gx*dx; 
+	_gy += i._gy*dx;
+	_gz += i._gz*dx;
 }
 //-----------------------------------------------------------------------------
-void Vector::setLocalY( rnum localY )
-{	
-	gy = localY;
-}
-//-----------------------------------------------------------------------------
-void Vector::setLocalY( rnum localY, const Basis& b )
+void Vector::setLocalY(rnum localY, const IConstBasis& b)
 {
-	rnum dy = localY - ( b.j.gx*gx + b.j.gy*gy + b.j.gz*gz );
-	gx += b.j.gx*dy; 
-	gy += b.j.gy*dy;
-	gz += b.j.gz*dy;
+    const Vector& j = b.j();
+	rnum dy = localY - ( j._gx*_gx + j._gy*_gy + j._gz*_gz );
+	_gx += j._gx*dy; 
+	_gy += j._gy*dy;
+	_gz += j._gz*dy;
 }
 //-----------------------------------------------------------------------------
-void Vector::setLocalZ( rnum localZ )
+void Vector::setLocalZ(rnum localZ, const IConstBasis& b)
 {
-	gz = localZ;
-}
-//-----------------------------------------------------------------------------
-void Vector::setLocalZ( rnum localZ, const Basis& b )
-{
-	rnum dz = localZ - ( b.k.gx*gx + b.k.gy*gy + b.k.gz*gz );
-	gx += b.k.gx*dz; 
-	gy += b.k.gy*dz;
-	gz += b.k.gz*dz;
+    const Vector& k = b.k();
+	rnum dz = localZ - ( k._gx*_gx + k._gy*_gy + k._gz*_gz );
+	_gx += k._gx*dz; 
+	_gy += k._gy*dz;
+	_gz += k._gz*dz;
 }
 //-----------------------------------------------------------------------------
 void Vector::normalize()
@@ -162,9 +166,9 @@ void Vector::normalize()
 	rnum l = length();
 	if(l != 0)
 	{
-		gx /= l;
-		gy /= l;
-		gz /= l;
+		_gx /= l;
+		_gy /= l;
+		_gz /= l;
 	}
 #ifdef PREBIKES_VECTOR_NORMILIZE0
 	else
@@ -180,17 +184,17 @@ void Vector::setLength( rnum len )
 	if(cur_len != 0)
 	{
 		len /= cur_len;
-		gx *= len;
-		gy *= len;
-		gz *= len;
+		_gx *= len;
+		_gy *= len;
+		_gz *= len;
 	}
 }
 //-----------------------------------------------------------------------------
-void Vector::scaling( rnum scaleFactor )
+void Vector::scale( rnum scaleFactor )
 {
-	gx*=scaleFactor;
-	gy*=scaleFactor;
-	gz*=scaleFactor;
+	_gx*=scaleFactor;
+	_gy*=scaleFactor;
+	_gz*=scaleFactor;
 }
 //-----------------------------------------------------------------------------
 void Vector::rotate_W( const Vector &w, rnum a )
@@ -241,11 +245,11 @@ void Vector::rotate_globalX( rnum a )
 
 	cos_a -= 1.0;	
 	
-	rnum dy = gy*cos_a - gz*sin_a;
-	rnum dz = gz*cos_a + gy*sin_a;
+	rnum dy = _gy*cos_a - _gz*sin_a;
+	rnum dz = _gz*cos_a + _gy*sin_a;
 
-	gy += dy;
-	gz += dz;	
+	_gy += dy;
+	_gz += dz;	
 }
 //-----------------------------------------------------------------------------
 void Vector::rotate_globalY( rnum a )
@@ -258,11 +262,11 @@ void Vector::rotate_globalY( rnum a )
 
 	cos_a -= 1.0;
 
-	rnum dz = gz*cos_a - gx*sin_a;
-	rnum dx = gx*cos_a + gz*sin_a;
+	rnum dz = _gz*cos_a - _gx*sin_a;
+	rnum dx = _gx*cos_a + _gz*sin_a;
 
-	gz += dz;
-	gx += dx;	
+	_gz += dz;
+	_gx += dx;	
 }
 //-----------------------------------------------------------------------------
 void Vector::rotate_globalZ( rnum a )
@@ -275,143 +279,143 @@ void Vector::rotate_globalZ( rnum a )
 
 	cos_a -= 1.0;
 
-	rnum dx = gx*cos_a - gy*sin_a;
-	rnum dy = gy*cos_a + gx*sin_a;
+	rnum dx = _gx*cos_a - _gy*sin_a;
+	rnum dy = _gy*cos_a + _gx*sin_a;
 
-	gx += dx;
-	gy += dy;	
+	_gx += dx;
+	_gy += dy;	
 }
 //=============================================================================
 rnum Vector::length() const
 {
-	return sqrt( gx*gx + gy*gy + gz*gz);
+	return sqrt( _gx*_gx + _gy*_gy + _gz*_gz);
 }
 //-----------------------------------------------------------------------------
 rnum Vector::l() const
 {
-	return sqrt( gx*gx + gy*gy + gz*gz);
+	return sqrt( _gx*_gx + _gy*_gy + _gz*_gz);
 }
 //-----------------------------------------------------------------------------
 Vector Vector::e() const
 {
-	Vector v(gx,gy,gz);
+	Vector v(_gx,_gy,_gz);
 	v.normalize();
 	return v;
 }
 //-----------------------------------------------------------------------------
 bool Vector::isCollinear( const Vector& v2, rnum cos_angleEpsilon ) const
 {
-	rnum c = ((*this) % v2) / ( length() * v2.length() );
+	rnum c = ((*this) & v2) / ( length() * v2.length() );
 	return c >= cos_angleEpsilon || c <= -cos_angleEpsilon;
 }
 //-----------------------------------------------------------------------------
 rnum Vector::angle( const Vector& v ) const
 {
-	return arccos( ( v.gx*gx + v.gy*gy + v.gz*gz ) / (length() * v.length()) );
+	return arccos( ( v._gx*_gx + v._gy*_gy + v._gz*_gz ) / (length() * v.length()) );
 }
 //-----------------------------------------------------------------------------
 rnum Vector::cosAngle( const Vector& v ) const
 {
-	return ( v.gx*gx + v.gy*gy + v.gz*gz ) / (length() * v.length());
+	return ( v._gx*_gx + v._gy*_gy + v._gz*_gz ) / (length() * v.length());
 }
 //-----------------------------------------------------------------------------
 bool Vector::isEqual( const Vector&v ) const
 {
 #ifndef PREBIKES_VECTOR_EQUAL_EPSILON
-	return (v.gx == gx) && (v.gy == gy) && (v.gz == gz);
+	return (v._gx == _gx) && (v._gy == _gy) && (v._gz == _gz);
 #else
-	return isEqual(v.gx, gx, PREBIKES_VECTOR_EQUAL_EPSILON)  
-		&& isEqual(v.gy, gy, PREBIKES_VECTOR_EQUAL_EPSILON) 
-		&& isEqual(v.gz, gz, PREBIKES_VECTOR_EQUAL_EPSILON);
+	return isEqual(v._gx, _gx, PREBIKES_VECTOR_EQUAL_EPSILON)  
+		&& isEqual(v._gy, _gy, PREBIKES_VECTOR_EQUAL_EPSILON) 
+		&& isEqual(v._gz, _gz, PREBIKES_VECTOR_EQUAL_EPSILON);
 #endif
 }
 //-----------------------------------------------------------------------------
 bool Vector::isEqual( const Vector& v, rnum epsilon ) const
 {
-	return Bikes::isEqual(v.gx, gx, epsilon)  
-		&& Bikes::isEqual(v.gy, gy, epsilon) 
-		&& Bikes::isEqual(v.gz, gz, epsilon);
+	return Bikes::isEqual(v._gx, _gx, epsilon)  
+		&& Bikes::isEqual(v._gy, _gy, epsilon) 
+		&& Bikes::isEqual(v._gz, _gz, epsilon);
 }
 //=============================================================================
 Vector Vector::operator+( const Vector &v ) const
 {
-	return Vector( gx + v.gx, gy + v.gy, gz + v.gz);
+	return Vector( _gx + v._gx, _gy + v._gy, _gz + v._gz);
 }
 //-----------------------------------------------------------------------------
 Vector Vector::operator-( const Vector &v ) const
 {
-	return Vector( gx - v.gx, gy - v.gy, gz - v.gz);
+	return Vector( _gx - v._gx, _gy - v._gy, _gz - v._gz);
 }
 //-----------------------------------------------------------------------------
 Vector Vector::operator*( rnum n ) const
 {
-	return Vector( gx*n, gy*n, gz*n );
+	return Vector( _gx*n, _gy*n, _gz*n );
 }
 //-----------------------------------------------------------------------------
 Vector Vector::operator/( rnum n ) const
 {
-	return Vector( gx/n, gy/n, gz/n);
+	return Vector( _gx/n, _gy/n, _gz/n);
 }
 //-----------------------------------------------------------------------------
-rnum Vector::operator%( const Vector &v ) const
+rnum Vector::operator& ( const Vector &v ) const
 {
-	return v.gx*gx + v.gy*gy + v.gz*gz;
+	return v._gx*_gx + v._gy*_gy + v._gz*_gz;
 }
 //-----------------------------------------------------------------------------
 Vector Vector::operator*( const Vector &v ) const
 {
 	return  Vector(
-		gy*v.gz - gz*v.gy,
-		gz*v.gx - gx*v.gz,
-		gx*v.gy - gy*v.gx
+		_gy*v._gz - _gz*v._gy,
+		_gz*v._gx - _gx*v._gz,
+		_gx*v._gy - _gy*v._gx
 		);
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator+=( const Vector &v )
 {
-	gx += v.gx;
-	gy += v.gy;
-	gz += v.gz;
+	_gx += v._gx;
+	_gy += v._gy;
+	_gz += v._gz;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator-=( const Vector &v )
 {
-	gx -= v.gx;
-	gy -= v.gy;
-	gz -= v.gz;
+	_gx -= v._gx;
+	_gy -= v._gy;
+	_gz -= v._gz;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator*=( rnum n )
 {
-	gx *= n;
-	gy *= n;
-	gz *= n;
+	_gx *= n;
+	_gy *= n;
+	_gz *= n;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator/=( rnum n )
 {
-	gx /= n;
-	gy /= n;
-	gz /= n;
+	_gx /= n;
+	_gy /= n;
+	_gz /= n;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector& Vector::operator*=( const Vector& v ) 
 {
-	rnum nx = gy*v.gz - gz*v.gy;
-	rnum ny = gz*v.gx - gx*v.gz;
-	gz      = gx*v.gy - gy*v.gx;
-	gx = nx;
-	gy = ny;
+	rnum nx = _gy*v._gz - _gz*v._gy;
+	rnum ny = _gz*v._gx - _gx*v._gz;
+	_gz      = _gx*v._gy - _gy*v._gx;
+	_gx = nx;
+	_gy = ny;
 	return *this;
 }
 //-----------------------------------------------------------------------------
 Vector Vector::operator-() const
 {
-	return Vector(-gx,-gy,-gz);
+	return Vector(-_gx,-_gy,-_gz);
 }
 //-----------------------------------------------------------------------------
 bool Vector::operator == ( const Vector &v ) const
@@ -503,12 +507,12 @@ bool Vector::operator>=( const Vector &v ) const
 //=============================================================================
 bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
-	return ((v1*v2)%v3) > 0;
+	return ((v1*v2) & v3) > 0;
 }
 //-----------------------------------------------------------------------------
 bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
-	return ((v1*v2)%v3) < 0;
+	return ((v1*v2) & v3) < 0;
 }
 
 //-----------------------------------------------------------------------------

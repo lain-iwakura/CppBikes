@@ -15,10 +15,6 @@ class Vector
 {
 public:
 
- 	rnum gx; //!< - проекция на ось OX в глобальном базисе
-	rnum gy; //!< - проекция на ось OY в глобальном базисе
-	rnum gz; //!< - проекция на ось OZ в глобальном базисе
-
 	//! Конструктор по умолчанию для определения в глобальных координатах.
 	Vector( 
 		rnum globalX = 0, //!< - проекция на ось OX в глобальном базисе
@@ -31,7 +27,7 @@ public:
 		rnum localX,	//!< - проекция на ось OX в локальном базисе
 		rnum localY,	//!< - проекция на ось OY в локальном базисе
 		rnum localZ,	//!< - проекция на ось OZ в локальном базисе
-		const Basis &b	//!< - локальный базис.
+        const IConstBasis &b	//!< - локальный базис.
 		);
 
 	//! Конструктор для определения по двум точкам вектор.
@@ -46,35 +42,44 @@ public:
 	//! Оператор присваивания.
 	Vector& operator = (const Vector &v); 
 
-	//! Виртуальный деструктор.
-	virtual ~Vector(); 
+	//! НЕвиртуальный деструктор.
+	 ~Vector(); 
+
+     //! Проекция на ось OX в глобальном базисе. 
+     rnum& rx(); //?
+
+     //! Проекция на ось OY в глобальном базисе. 
+     rnum& ry(); //?
+
+     //! Проекция на ось OZ в глобальном базисе. 
+     rnum& rz(); //?
 	
-	//! Проекция на ось OX в собственном базисе. 
-	virtual rnum x() const; 
+	//! Проекция на ось OX в глобальном базисе. 
+	 rnum x() const; 
 
-	//! Проекция на ось OY в собственном базисе. 
-	virtual rnum y() const; 
+	//! Проекция на ось OY в глобальном базисе. 
+	 rnum y() const; 
 
-	//! Проекция на ось OZ в собственном базисе. 
-	virtual rnum z() const; 
+	//! Проекция на ось OZ в глобальном базисе. 
+	 rnum z() const; 
 
 	//! Проекция на ось OX в базисе *b.
-	rnum x(const Basis *b) const; 
+	rnum lx(const IConstBasis *b) const; 
 
 	//! Проекция на ось OY в базисе *b.
-	rnum y(const Basis *b) const; 
+	rnum ly(const IConstBasis *b) const; 
 
 	//! Проекция на ось OZ в базисе *b.
-	rnum z(const Basis *b) const; 
+	rnum lz(const IConstBasis *b) const; 
 
 	//! Проекция на ось OX в базисе b.
-	rnum x(const Basis &b) const; 
+    rnum lx(const IConstBasis &b) const;
 
 	//! Проекция на ось OY в базисе b.
-	rnum y(const Basis &b) const; 
+    rnum ly(const IConstBasis &b) const;
 
 	//! Проекция на ось OZ в базисе b.
-	rnum z(const Basis &b) const; 
+    rnum lz(const IConstBasis &b) const;
 
 	//! Вектор по проекциям в глобальном базисе.
 	void setGlobal(
@@ -83,44 +88,29 @@ public:
 		rnum globalZ  //!< - проекция на ось ОZ
 		);  
 	
-	// Вектор по проекциям в собственном базисе.
-	virtual void setLocal(
-		rnum localX, //!< - проекция на ось ОX
-		rnum localY, //!< - проекция на ось ОY
-		rnum localZ  //!< - проекция на ось ОZ
-		); 
-	
+
 	//! Вектор по проекциям в локальном базисе.
 	void setLocal(
 		rnum localX, //!< - проекция на ось ОX
 		rnum localY, //!< - проекция на ось ОY
 		rnum localZ, //!< - проекция на ось ОZ
-		const Basis& b //!< - локальный базис
+        const IConstBasis& b //!< - локальный базис
 		); 
 
 	//! Установить длину.
 	void setLength(rnum len);
 
 	//! Масштабировать
-	void scaling(rnum scaleFactor);
-	
-	//! Изменить проекцию на ось OX в собственном базисе.
-	virtual void setLocalX(rnum localX); 
-
-	//! Изменить проекцию на ось OY в собственном базисе.
-	virtual void setLocalY(rnum localY);
-
-	//! Изменить проекцию на ось OZ в собственном базисе.
-	virtual void setLocalZ(rnum localZ);
+	void scale(rnum scaleFactor);
 	
 	//! Изменить локальную проекцию на ось OX в базисе b.
-	void setLocalX(rnum localX, const Basis& b); 
+    void setLocalX(rnum localX, const IConstBasis& b);
 
 	//! Изменить локальную проекцию на ось OY в базисе b.
-	void setLocalY(rnum localY, const Basis& b);
+    void setLocalY(rnum localY, const IConstBasis& b);
 
 	//! Изменить локальную проекцию на ось OZ в базисе b.
-	void setLocalZ(rnum localZ, const Basis& b);	
+    void setLocalZ(rnum localZ, const IConstBasis& b);
 
 	//! Превратить в единичный вектор (разделить вектор на его длину).
 	void normalize(); 
@@ -185,7 +175,7 @@ public:
 	Vector operator / (rnum n) const; 
 
 	//! Получить скалярное произведение двух векторов.
-	rnum   operator % (const Vector& v) const; 
+	rnum   operator & (const Vector& v) const; 
 
 	//! Получить Векторное произведение двух вектор.
 	Vector operator * (const Vector& v) const; 
@@ -247,6 +237,11 @@ public:
 	//! Проверить, что длина данного вектора меньше или равна длине другого вектора.
 	bool operator <= (const Vector &v) const;
 
+protected:
+
+    rnum _gx; //!< - проекция на ось OX в глобальном базисе
+    rnum _gy; //!< - проекция на ось OY в глобальном базисе
+    rnum _gz; //!< - проекция на ось OZ в глобальном базисе
 };
 
 

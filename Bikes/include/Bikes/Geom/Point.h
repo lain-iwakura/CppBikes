@@ -6,7 +6,8 @@
 namespace Bikes
 {
 
-class Point: public Vector
+class Point: 
+    public Vector // не имеет виртуального деструктора (!)
 {
 public:
 
