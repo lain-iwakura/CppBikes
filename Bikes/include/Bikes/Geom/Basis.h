@@ -47,6 +47,8 @@ public:
 //==============================================================================
 class Basis: public IBasis
 {
+public:
+
 	Basis(const Vector& vi, const Vector& vj, const Vector& vk);	
 
 	Basis(const VectorPair& pair_ij, const Vector& vk);
@@ -73,11 +75,11 @@ protected:
     Vector _k;
 };
 //==============================================================================
-class TransientConstBasis: public IConstBasis
+class TransientBasis: public IConstBasis
 {
 public:
 
-    TransientConstBasis(const Vector& vi, const Vector& vj, const Vector& vk);
+    TransientBasis(const Vector& vi, const Vector& vj, const Vector& vk);
 
     Vector const& i() const;
     Vector const& j() const;
@@ -87,26 +89,6 @@ protected:
     const Vector& _i;
     const Vector& _j;
     const Vector& _k;
-};
-//==============================================================================
-class TransientBasis : public IBasis
-{
-public:
-
-    TransientBasis(Vector& vi, Vector& vj, Vector& vk);
-
-    Vector const& i() const;
-    Vector const& j() const;
-    Vector const& k() const;
-
-    Vector& i();
-    Vector& j();
-    Vector& k();
-
-protected:
-    Vector& _i;
-    Vector& _j;
-    Vector& _k;
 };
 //==============================================================================
 }

@@ -36,7 +36,7 @@ void IBasis::setRightOrtonormal(const Vector& vi, const Vector& vj)
 //------------------------------------------------------------------------------
 void IBasis::setRightOrtonormal(const VectorPair& ij)
 {
-    setRightOrtonormal(ij.vi, ij.vj);
+    setRightOrtonormal(ij.i(), ij.j());
 }
 //------------------------------------------------------------------------------
 void IBasis::setLeftOrtonormal(const Vector& vi, const Vector& vj)
@@ -50,7 +50,7 @@ void IBasis::setLeftOrtonormal(const Vector& vi, const Vector& vj)
 //------------------------------------------------------------------------------
 void IBasis::setLeftOrtonormal(const VectorPair& ij)
 {
-    setLeftOrtonormal(ij.vi, ij.vj);
+    setLeftOrtonormal(ij.i(), ij.j());
 }
 //==============================================================================
 Basis::Basis( const Vector& vi, const Vector& vj, const Vector& vk ):
@@ -61,16 +61,16 @@ Basis::Basis( const Vector& vi, const Vector& vj, const Vector& vk ):
 }
 //------------------------------------------------------------------------------
 Basis::Basis( const VectorPair& pair_ij, const Vector& vk ):
-	_i(pair_ij.vi),
-	_j(pair_ij.vj),
+	_i(pair_ij.i()),
+	_j(pair_ij.j()),
 	_k(vk)
 {
 }
 //------------------------------------------------------------------------------
 Basis::Basis( const Vector& vi, const VectorPair& pair_jk ):
 	_i(vi),
-	_j(pair_jk.vi),
-	_k(pair_jk.vj)
+	_j(pair_jk.i()),
+	_k(pair_jk.j())
 {
 }
 //------------------------------------------------------------------------------
@@ -127,36 +127,10 @@ Vector const& Basis::k() const
     return _k;
 }
 //==============================================================================
-TransientConstBasis::TransientConstBasis(
+TransientBasis::TransientBasis(
     const Vector& vi, 
     const Vector& vj, 
     const Vector& vk
-    ):
-    _i(vi),
-    _j(vj),
-    _k(vk)
-{
-}
-//------------------------------------------------------------------------------
-Vector const& TransientConstBasis::i() const
-{
-    return _i;
-}
-//------------------------------------------------------------------------------
-Vector const& TransientConstBasis::j() const
-{
-    return _j;
-}
-//------------------------------------------------------------------------------
-Vector const& TransientConstBasis::k() const
-{
-    return _k;
-}
-//==============================================================================
-TransientBasis::TransientBasis(
-    Vector& vi, 
-    Vector& vj, 
-    Vector& vk
     ):
     _i(vi),
     _j(vj),
@@ -169,27 +143,12 @@ Vector const& TransientBasis::i() const
     return _i;
 }
 //------------------------------------------------------------------------------
-Vector& TransientBasis::i()
-{
-    return _i;
-}
-//------------------------------------------------------------------------------
 Vector const& TransientBasis::j() const
 {
     return _j;
 }
 //------------------------------------------------------------------------------
-Vector& TransientBasis::j()
-{
-    return _j;
-}
-//------------------------------------------------------------------------------
 Vector const& TransientBasis::k() const
-{
-    return _k;
-}
-//------------------------------------------------------------------------------
-Vector& TransientBasis::k()
 {
     return _k;
 }

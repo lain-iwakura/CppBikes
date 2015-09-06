@@ -6,9 +6,10 @@
 namespace Bikes
 {
 
-class Basis;
+class IConstBasis;
 class Point;
 class TrAngle;
+class TransientVectorPair;
 
 //! ¬ектор в 3-х мерном пространстве.
 class Vector
@@ -111,6 +112,9 @@ public:
 
 	//! »зменить локальную проекцию на ось OZ в базисе b.
     void setLocalZ(rnum localZ, const IConstBasis& b);
+
+    //! »зменить проекцию на координатную ось, заданную вектором v.
+    void setProjection(rnum projectionLength, const Vector& v);
 
 	//! ѕревратить в единичный вектор (разделить вектор на его длину).
 	void normalize(); 
@@ -236,6 +240,9 @@ public:
 
 	//! ѕроверить, что длина данного вектора меньше или равна длине другого вектора.
 	bool operator <= (const Vector &v) const;
+
+    //! ѕолучить пару векторов (с сылками на заданные)
+    TransientVectorPair operator && (const Vector& v) const;
 
 protected:
 

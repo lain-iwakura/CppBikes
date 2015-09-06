@@ -1,6 +1,7 @@
 #include <Bikes/Geom/Vector.h>
 #include <Bikes/Geom/Basis.h>
 #include <Bikes/Geom/Point.h>
+#include <Bikes/Geom/VectorPair.h>
 #include <Bikes/Mathem.h>
 
 
@@ -70,8 +71,7 @@ rnum Vector::x() const
 //-----------------------------------------------------------------------------
 rnum Vector::lx(const IConstBasis &b) const
 {
-    const Vector&i = b.i();
-	return i._gx*_gx + i._gy*_gy + i._gz*_gz;
+    return *this & b.i();
 }
 //-----------------------------------------------------------------------------
 rnum Vector::lx(const IConstBasis *b) const
@@ -88,8 +88,7 @@ rnum Vector::y() const
 //-----------------------------------------------------------------------------
 rnum Vector::ly(const IConstBasis &b) const
 {
-    const Vector&j = b.j();
-	return j._gx*_gx + j._gy*_gy + j._gz*_gz;
+    return *this & b.j();
 }
 //-----------------------------------------------------------------------------
 rnum Vector::ly(const IConstBasis *b) const
@@ -106,14 +105,13 @@ rnum Vector::z() const
 //-----------------------------------------------------------------------------
 rnum Vector::lz(const IConstBasis &b) const
 {
-    const Vector&k = b.k();
-	return k._gx*_gx + k._gy*_gy + k._gz*_gz;
+    return *this & b.k();
 }
 //-----------------------------------------------------------------------------
-rnum Vector::lz( const Basis *b ) const
+rnum Vector::lz(const IConstBasis *b) const
 {
 	if(b)
-		return b->k._gx*_gx + b->k._gy*_gy + b->k._gz*_gz;
+		return lz(*b);
 	return _gz;
 }
 //=============================================================================
@@ -136,29 +134,25 @@ void Vector::setLocal(rnum localX, rnum localY, rnum localZ, const IConstBasis& 
 //-----------------------------------------------------------------------------
 void Vector::setLocalX(rnum localX, const IConstBasis& b)
 {	
-    const Vector& i = b.i();
-	rnum dx = localX - ( i._gx*_gx + i._gy*_gy + i._gz*_gz );
-	_gx += i._gx*dx; 
-	_gy += i._gy*dx;
-	_gz += i._gz*dx;
+    setProjection(localX, b.i());
 }
 //-----------------------------------------------------------------------------
 void Vector::setLocalY(rnum localY, const IConstBasis& b)
 {
-    const Vector& j = b.j();
-	rnum dy = localY - ( j._gx*_gx + j._gy*_gy + j._gz*_gz );
-	_gx += j._gx*dy; 
-	_gy += j._gy*dy;
-	_gz += j._gz*dy;
+    setProjection(localY, b.j());
 }
 //-----------------------------------------------------------------------------
 void Vector::setLocalZ(rnum localZ, const IConstBasis& b)
 {
-    const Vector& k = b.k();
-	rnum dz = localZ - ( k._gx*_gx + k._gy*_gy + k._gz*_gz );
-	_gx += k._gx*dz; 
-	_gy += k._gy*dz;
-	_gz += k._gz*dz;
+    setProjection(localZ, b.k());
+}
+//-----------------------------------------------------------------------------
+void Vector::setProjection(rnum projectionLength, const Vector& v)
+{
+    rnum dz = projectionLength - (v._gx*_gx + v._gy*_gy + v._gz*_gz);
+    _gx += v._gx*dz;
+    _gy += v._gy*dz;
+    _gz += v._gz*dz;
 }
 //-----------------------------------------------------------------------------
 void Vector::normalize()
@@ -502,8 +496,11 @@ bool Vector::operator>=( const Vector &v ) const
 	return length() >= v.length() - PREBIKES_VECTOR_EQUAL_EPSILON;
 #endif
 }
-
-
+//-----------------------------------------------------------------------------
+TransientVectorPair Vector::operator&&(const Vector& v) const
+{
+    return TransientVectorPair(*this, v);
+}
 //=============================================================================
 bool isRightHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
@@ -514,10 +511,6 @@ bool isLeftHandVectors( const Vector& v1, const Vector& v2, const Vector& v3 )
 {
 	return ((v1*v2) & v3) < 0;
 }
-
-//-----------------------------------------------------------------------------
-
-
 //=============================================================================
 
 }// <- namespace Bikes;

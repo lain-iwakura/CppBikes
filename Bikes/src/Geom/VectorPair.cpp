@@ -2,138 +2,70 @@
 
 namespace Bikes
 {
-
-
+//==============================================================================
 IConstVectorPair::~IConstVectorPair()
 {
 }
-
-
-// Vector const& IConstVectorPair::i() const
-// {
-//     return first();
-// }
-// 
-// Vector const& IConstVectorPair::j() const
-// {
-//     return second();
-// }
-
-//=========================================================================
-IVectorPair::~IVectorPair()
-{
-}
-
-// Vector& IVectorPair::i()
-// {
-//     return first();
-// }
-// 
-// Vector& IVectorPair::j()
-// {
-//     return second();
-// }
-//=========================================================================
+//==============================================================================
 VectorPair::VectorPair()
 {
 }
 
 VectorPair::VectorPair( const Vector &v1, const Vector &v2 ):
-	vi(v1),
-	vj(v2)
+	_i(v1),
+	_j(v2)
 {
 }
 
 VectorPair::VectorPair( IConstVectorPair const& ij ):
-    vi(ij.first()),
-    vj(ij.second())
+    _i(ij.i()),
+    _j(ij.j())
 {
+}
+
+Vector const& VectorPair::i() const
+{
+    return _i;
+}
+
+Vector& VectorPair::i()
+{
+    return _i;
 }
 
 
 
-Vector const& VectorPair::first() const
+Vector const& VectorPair::j() const
 {
-    return vi;
+    return _j;
 }
 
-Vector& VectorPair::first()
+Vector& VectorPair::j()
 {
-    return vi;
+    return _j;
 }
-
-
-
-Vector const& VectorPair::second() const
-{
-    return vj;
-}
-
-Vector& VectorPair::second()
-{
-    return vj;
-}
-//=========================================================================
-TransientConstVectorPair::TransientConstVectorPair( Vector const& vi, Vector const& vj ):
-    vi(vi),
-    vj(vj)
+//==============================================================================
+TransientVectorPair::TransientVectorPair( Vector const& vi, Vector const& vj ):
+    _i(vi),
+    _j(vj)
 {    
 }
 
-TransientConstVectorPair::TransientConstVectorPair( IConstVectorPair const& ij ):
-    vi(ij.first()),
-    vj(ij.second())
+TransientVectorPair::TransientVectorPair( IConstVectorPair const& ij ):
+    _i(ij.i()),
+    _j(ij.j())
 {
 }
 
 
-Vector const& TransientConstVectorPair::first() const
+Vector const& TransientVectorPair::i() const
 {
-    return vi;
+    return _i;
 }
 
-Vector const& TransientConstVectorPair::second() const
+Vector const& TransientVectorPair::j() const
 {
-    return vj;
+    return _j;
 }
-
-
-TransientVectorPair::TransientVectorPair( Vector& vi, Vector& vj ):
-    vi(vi),
-    vj(vj)
-{
-}
-
-TransientVectorPair::TransientVectorPair( IVectorPair& ij ):
-    vi(ij.first()),
-    vj(ij.second())
-{
-}
-
-Vector const& TransientVectorPair::first() const
-{
-    return vi;
-}
-
-Vector& TransientVectorPair::first()
-{
-    return vi;
-}
-
-Vector const& TransientVectorPair::second() const
-{
-    return vj;
-}
-
-Vector& TransientVectorPair::second()
-{
-    return vj;
-}
-
-
-
-
-
-
-
+//==============================================================================
 }
