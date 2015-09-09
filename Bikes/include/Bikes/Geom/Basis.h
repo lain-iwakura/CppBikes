@@ -3,12 +3,13 @@
 
 #include <Bikes/Geom/Vector.h>
 #include <Bikes/Geom/VectorPair.h>
+#include <Bikes/Geom/CoordinateSystem.h>
 
 namespace Bikes
 {
 class VectorPair;
 //==============================================================================
-class IConstBasis
+class IConstBasis: public ICoordinateSystem
 {
 public:
 
@@ -17,6 +18,25 @@ public:
     virtual Vector const& i() const = 0;
     virtual Vector const& j() const = 0;
     virtual Vector const& k() const = 0;
+
+
+    rnum getCoordinate1(const Vector& v) const;
+    rnum getCoordinate2(const Vector& v) const;
+    rnum getCoordinate3(const Vector& v) const;
+
+    void setCoordinate1(Vector& v, rnum x) const;
+    void setCoordinate2(Vector& v, rnum y) const;
+    void setCoordinate3(Vector& v, rnum z) const;
+
+    void setCoordinates(Vector& v, rnum x, rnum y, rnum z) const;
+
+    rnum getX(const Vector& v) const;
+    rnum getY(const Vector& v) const;
+    rnum getZ(const Vector& v) const;
+
+    void setX(Vector& v, rnum x) const;
+    void setY(Vector& v, rnum y) const;
+    void setZ(Vector& v, rnum z) const;
 
 };
 //==============================================================================

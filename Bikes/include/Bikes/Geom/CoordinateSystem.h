@@ -33,7 +33,6 @@ public:
 
     virtual void setCoordinates(Vector& v, rnum coord1, rnum coord2, rnum coord3) const;
     void setCoordinates(Vector& v, const Coordinates& coordinates) const;
-
 };
 //==============================================================================
 }

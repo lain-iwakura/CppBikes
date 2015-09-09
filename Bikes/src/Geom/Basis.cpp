@@ -4,6 +4,78 @@
 namespace Bikes
 {
 //==============================================================================
+rnum IConstBasis::getCoordinate1(const Vector& v) const
+{
+    return getX(v);
+}
+//------------------------------------------------------------------------------
+rnum IConstBasis::getCoordinate2(const Vector& v) const
+{
+    return getY(v);
+}
+//------------------------------------------------------------------------------
+rnum IConstBasis::getCoordinate3(const Vector& v) const
+{
+    return getZ(v);
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setCoordinate1(Vector& v, rnum x) const
+{
+    return setX(v, x);
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setCoordinate2(Vector& v, rnum y) const
+{
+    return setY(v, y);
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setCoordinate3(Vector& v, rnum z) const
+{
+    return setZ(v, z);
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setCoordinates(Vector& v, rnum x, rnum y, rnum z) const
+{
+    const Vector& _i = i();
+    const Vector& _j = j();
+    const Vector& _k = k();
+    v.setGlobal(
+        x*_i.x() + y*_j.x() + z*_k.x(),
+        x*_i.y() + y*_j.y() + z*_k.y(),
+        x*_i.z() + y*_j.z() + z*_k.z()
+        );
+}
+//------------------------------------------------------------------------------
+Bikes::rnum IConstBasis::getX(const Vector& v) const
+{
+    return v & i();
+}
+//------------------------------------------------------------------------------
+Bikes::rnum IConstBasis::getY(const Vector& v) const
+{
+    return v & j();
+}
+//------------------------------------------------------------------------------
+Bikes::rnum IConstBasis::getZ(const Vector& v) const
+{
+    return v & k();
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setX(Vector& v, rnum x) const
+{
+    v.setProjection(x, i());
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setY(Vector& v, rnum y) const
+{
+    v.setProjection(y, j());
+}
+//------------------------------------------------------------------------------
+void IConstBasis::setZ(Vector& v, rnum z) const
+{
+    v.setProjection(z, k());
+}
+//==============================================================================
 void IBasis::normalize()
 {
     i().normalize();
@@ -153,4 +225,6 @@ Vector const& TransientBasis::k() const
     return _k;
 }
 //==============================================================================
+
+
 }

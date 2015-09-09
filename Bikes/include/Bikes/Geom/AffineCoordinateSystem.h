@@ -7,9 +7,7 @@
 
 namespace Bikes{
 
-class AffineCoordinateSystem:
-    public ICoordinateSystem,
-    public Basis
+class AffineCoordinateSystem: public Basis
 {
 public:
 
