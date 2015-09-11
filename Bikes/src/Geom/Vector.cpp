@@ -124,36 +124,31 @@ void Vector::setGlobal( rnum globalX, rnum globalY, rnum globalZ )
 //-----------------------------------------------------------------------------
 void Vector::setLocal(rnum localX, rnum localY, rnum localZ, const IConstBasis& b)
 {
-    const Vector& i = b.i();
-    const Vector& j = b.j();
-    const Vector& k = b.k();
-	_gx = i._gx*localX + j._gx*localY + k._gx*localZ;
-	_gy = i._gy*localX + j._gy*localY + k._gy*localZ;
-	_gz = i._gz*localX + j._gz*localY + k._gz*localZ;
+    b.setCoordinates(*this, localX, localY, localZ);
 }
 //-----------------------------------------------------------------------------
 void Vector::setLocalX(rnum localX, const IConstBasis& b)
 {	
-    setProjection(localX, b.i());
+    b.setX(*this, localX);
 }
 //-----------------------------------------------------------------------------
 void Vector::setLocalY(rnum localY, const IConstBasis& b)
 {
-    setProjection(localY, b.j());
+    b.setY(*this, localY);
 }
 //-----------------------------------------------------------------------------
 void Vector::setLocalZ(rnum localZ, const IConstBasis& b)
 {
-    setProjection(localZ, b.k());
+    b.setZ(*this, localZ);
 }
 //-----------------------------------------------------------------------------
-void Vector::setProjection(rnum projectionLength, const Vector& v)
-{
-    rnum dz = projectionLength - (v._gx*_gx + v._gy*_gy + v._gz*_gz);
-    _gx += v._gx*dz;
-    _gy += v._gy*dz;
-    _gz += v._gz*dz;
-}
+// void Vector::setProjection(rnum projectionLength, const Vector& v)
+// {
+//     rnum dz = projectionLength - (v._gx*_gx + v._gy*_gy + v._gz*_gz);
+//     _gx += v._gx*dz;
+//     _gy += v._gy*dz;
+//     _gz += v._gz*dz;
+// }
 //-----------------------------------------------------------------------------
 void Vector::normalize()
 {

@@ -113,9 +113,6 @@ public:
 	//! Изменить локальную проекцию на ось OZ в базисе b.
     void setLocalZ(rnum localZ, const IConstBasis& b);
 
-    //! Изменить проекцию на координатную ось, заданную вектором v.
-    void setProjection(rnum projectionLength, const Vector& v);
-
 	//! Превратить в единичный вектор (разделить вектор на его длину).
 	void normalize(); 
 			

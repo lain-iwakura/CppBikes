@@ -2,6 +2,7 @@
 #define INCLUDE_BIKES_GEOM_VECTORPAIR_H
 
 #include <Bikes/Geom/Vector.h>
+#include <Bikes/Geom/CoordinateSystem.h>
 
 namespace Bikes
 {

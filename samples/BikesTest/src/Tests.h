@@ -9,4 +9,6 @@ void test_stream();
 
 void test_virtualclass();
 
+void test_Geom();
+
 #endif // <- TESTS_H

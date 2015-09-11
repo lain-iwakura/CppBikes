@@ -222,7 +222,8 @@ struct ChildType12 : public ChildType1, public ChildType2
 using namespace std;
 int main()
 {
-    test_virtualclass();
+    test_Geom();
+    //test_virtualclass();
 
     return 0;
     test_stream();

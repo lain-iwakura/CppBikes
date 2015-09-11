@@ -19,6 +19,10 @@ public:
     virtual Vector const& j() const = 0;
     virtual Vector const& k() const = 0;
 
+    virtual Vector const& inv_i() const = 0;
+    virtual Vector const& inv_j() const = 0;
+    virtual Vector const& inv_k() const = 0;
+
 
     rnum getCoordinate1(const Vector& v) const;
     rnum getCoordinate2(const Vector& v) const;
@@ -40,15 +44,35 @@ public:
 
 };
 //==============================================================================
-class IBasis: public IConstBasis
+namespace Inner{
+class InvBasisBase : virtual public IConstBasis
 {
 public:
 
-    virtual ~IBasis();
+    InvBasisBase();
 
-    virtual Vector& i() = 0;
-    virtual Vector& j() = 0;
-    virtual Vector& k() = 0;
+    Vector const& inv_i() const;
+    Vector const& inv_j() const;
+    Vector const& inv_k() const;
+
+protected:
+    void recalc_inv_later();
+private:    
+    void _recalc_inv() const;
+    Vector _inv_i;
+    Vector _inv_j;
+    Vector _inv_k;
+    bool _recalc;
+};
+//==============================================================================
+class BaseBasis : virtual public IConstBasis
+{
+public:
+
+    virtual Vector& ri() = 0; //X
+    virtual Vector& rj() = 0; //X
+    virtual Vector& rk() = 0; //X
+
 
     virtual void normalize();
 
@@ -64,8 +88,11 @@ public:
 
     virtual void setLeftOrtonormal(const VectorPair& ij);
 };
+} // Inner
 //==============================================================================
-class Basis: public IBasis
+class Basis: 
+    public Inner::BaseBasis,
+    public Inner::InvBasisBase
 {
 public:
 
@@ -85,9 +112,9 @@ public:
     Vector const& j() const;
     Vector const& k() const;
 
-    Vector& i();
-    Vector& j();
-    Vector& k();
+    Vector& ri();
+    Vector& rj();
+    Vector& rk();
 
 protected:
     Vector _i;
@@ -95,7 +122,7 @@ protected:
     Vector _k;
 };
 //==============================================================================
-class TransientBasis: public IConstBasis
+class TransientBasis : public Inner::InvBasisBase
 {
 public:
 
@@ -114,3 +141,4 @@ protected:
 }
 
 #endif // <- INCLUDE_BIKES_GEOM_BASIS_H
+

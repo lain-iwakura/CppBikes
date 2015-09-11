@@ -4,6 +4,10 @@
 namespace Bikes
 {
 //==============================================================================
+IConstBasis::~IConstBasis()
+{
+}
+//------------------------------------------------------------------------------
 rnum IConstBasis::getCoordinate1(const Vector& v) const
 {
     return getX(v);
@@ -47,83 +51,140 @@ void IConstBasis::setCoordinates(Vector& v, rnum x, rnum y, rnum z) const
 }
 //------------------------------------------------------------------------------
 Bikes::rnum IConstBasis::getX(const Vector& v) const
-{
-    return v & i();
+{    
+     return v & inv_i();
 }
 //------------------------------------------------------------------------------
 Bikes::rnum IConstBasis::getY(const Vector& v) const
 {
-    return v & j();
+    return v & inv_j();
 }
 //------------------------------------------------------------------------------
 Bikes::rnum IConstBasis::getZ(const Vector& v) const
 {
-    return v & k();
+    return v & inv_k();
 }
 //------------------------------------------------------------------------------
 void IConstBasis::setX(Vector& v, rnum x) const
 {
-    v.setProjection(x, i());
+    v += i() * (x - getX(v));
 }
 //------------------------------------------------------------------------------
 void IConstBasis::setY(Vector& v, rnum y) const
 {
-    v.setProjection(y, j());
+    v += j() * (y - getY(v));
 }
 //------------------------------------------------------------------------------
 void IConstBasis::setZ(Vector& v, rnum z) const
 {
-    v.setProjection(z, k());
+    v += k() * (z - getZ(v));
 }
 //==============================================================================
-void IBasis::normalize()
+namespace Inner{
+//==============================================================================
+void BaseBasis::normalize()
 {
-    i().normalize();
-    j().normalize();
-    k().normalize();
+    ri().normalize();
+    rj().normalize();
+    rk().normalize();
 }
 //------------------------------------------------------------------------------
-void IBasis::setScale(rnum scale)
+void BaseBasis::setScale(rnum scale)
 {
-    i().setLength(scale);
-    j().setLength(scale);
-    k().setLength(scale);
+    ri().setLength(scale);
+    rj().setLength(scale);
+    rk().setLength(scale);
 }
 //------------------------------------------------------------------------------
-void IBasis::scale(rnum scaleFactor)
+void BaseBasis::scale(rnum scaleFactor)
 {
-    i() *= scaleFactor;
-    j() *= scaleFactor;
-    k() *= scaleFactor;
+    ri() *= scaleFactor;
+    rj() *= scaleFactor;
+    rk() *= scaleFactor;
 }
 //------------------------------------------------------------------------------
-void IBasis::setRightOrtonormal(const Vector& vi, const Vector& vj)
+void BaseBasis::setRightOrtonormal(const Vector& vi, const Vector& vj)
 {
-    i() = vi;
-    k() = vi*vj;
-    i().normalize();
-    k().normalize();
-    j() = k()*i();
+    ri() = vi;
+    rk() = vi*vj;
+    ri().normalize();
+    rk().normalize();
+    rj() = rk()*ri();
 }
 //------------------------------------------------------------------------------
-void IBasis::setRightOrtonormal(const VectorPair& ij)
+void BaseBasis::setRightOrtonormal(const VectorPair& ij)
 {
     setRightOrtonormal(ij.i(), ij.j());
 }
 //------------------------------------------------------------------------------
-void IBasis::setLeftOrtonormal(const Vector& vi, const Vector& vj)
+void BaseBasis::setLeftOrtonormal(const Vector& vi, const Vector& vj)
 {
-    i() = vi;
-    k() = vi*vj;
-    i().normalize();
-    k().normalize();
-    j() = i()* k();
+    ri() = vi;
+    rk() = vi*vj;
+    ri().normalize();
+    rk().normalize();
+    rj() = ri()* rk();
 }
 //------------------------------------------------------------------------------
-void IBasis::setLeftOrtonormal(const VectorPair& ij)
+void BaseBasis::setLeftOrtonormal(const VectorPair& ij)
 {
     setLeftOrtonormal(ij.i(), ij.j());
 }
+//==============================================================================
+Vector const& InvBasisBase::inv_i() const
+{
+    _recalc_inv();
+    return _inv_i;
+}
+
+Vector const& InvBasisBase::inv_j() const
+{
+    _recalc_inv();
+    return _inv_j;
+}
+
+Vector const& InvBasisBase::inv_k() const
+{
+    _recalc_inv();
+    return _inv_k;
+}
+
+void InvBasisBase::_recalc_inv() const
+{
+    InvBasisBase* const _ = const_cast<InvBasisBase*>(this);
+    if (_recalc)
+    {
+        _->_recalc = false;
+        const Vector& _i = i();
+        const Vector& _j = j();
+        const Vector& _k = k();
+        rnum d = _i & _j* _k;
+        if (d != 0)
+        {
+            _->_inv_i = _j*_k; _->_inv_i /= d;
+            _->_inv_j = _k*_i; _->_inv_j /= d;
+            _->_inv_k = _i*_j; _->_inv_k /= d;
+        }else
+        {
+            _->_inv_i.setGlobal(0, 0, 0);
+            _->_inv_j.setGlobal(0, 0, 0);
+            _->_inv_k.setGlobal(0, 0, 0);
+        }
+    }
+}
+
+void InvBasisBase::recalc_inv_later()
+{
+    _recalc = true;
+}
+
+InvBasisBase::InvBasisBase():
+_recalc(true)
+{
+}
+
+//==============================================================================
+} // Inner
 //==============================================================================
 Basis::Basis( const Vector& vi, const Vector& vj, const Vector& vk ):
 	_i(vi),
@@ -169,8 +230,9 @@ Basis::Basis( const VectorPair& pair_ij, bool right/*=true*/ )
         setLeftOrtonormal(pair_ij);
 }
 //------------------------------------------------------------------------------
-Vector& Basis::i()
+Vector& Basis::ri()
 {
+    recalc_inv_later();
     return _i;
 }
 //------------------------------------------------------------------------------
@@ -179,8 +241,9 @@ Vector const& Basis::i() const
     return _i;
 }
 //------------------------------------------------------------------------------
-Vector& Basis::j()
+Vector& Basis::rj()
 {
+    recalc_inv_later();
     return _j;
 }
 //------------------------------------------------------------------------------
@@ -189,8 +252,9 @@ Vector const& Basis::j() const
     return _j;
 }
 //------------------------------------------------------------------------------
-Vector& Basis::k()
+Vector& Basis::rk()
 {
+    recalc_inv_later();
     return _k;
 }
 //------------------------------------------------------------------------------
